@@ -1,0 +1,53 @@
+<?php
+
+class Static_File {
+	
+	protected $config;
+
+	function __construct($config) {
+
+		$this->config = $config;
+
+	}	
+
+
+	function show() {
+
+		$subhost = $this->config->getID();
+
+		$subhostpath = '/var/www/appengine/apps/' . $subhost;
+
+		$localfile = $_SERVER['REQUEST_URI'];
+		if ($localfile === '/') $localfile = '/index.html';
+
+		$file = $subhostpath . $localfile;
+
+		if (preg_match('/\.html$/', $file)) {
+			header("Content-Type: text/html; chatset: utf-8");
+		} else if(preg_match('/\.png$/', $file)) {
+			header("Content-Type: image/png");
+		} else if(preg_match('/\.jpeg$/', $file)) {
+			header("Content-Type: image/jpeg");
+		} else if(preg_match('/\.jpg$/', $file)) {
+			header("Content-Type: image/jpeg");
+		} else if(preg_match('/\.gif$/', $file)) {
+			header("Content-Type: image/gif");
+		} else if(preg_match('/\.css$/', $file)) {
+			header("Content-Type: text/css");
+		} else if(preg_match('/\.js$/', $file)) {
+			header("Content-Type: application/javascript; charset: utf-8");
+		}
+
+
+		// TODO: Do strict input checking on filename. for security.
+
+		if (file_exists($file)) {
+			echo file_get_contents($file);
+		} else {
+			throw new Exception('File not found [' . $file . ']');
+		}
+
+	}
+
+}
+
