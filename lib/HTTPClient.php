@@ -112,9 +112,6 @@ class HTTPClient {
 			case "token":
 				return new HTTPClientToken($config);
 
-			// case "custom":
-			// 	return new HTTPClientCustom($config);
-
 			case "oauth2":
 				return new HTTPClientOAuth2($config);
 
