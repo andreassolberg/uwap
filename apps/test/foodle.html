@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>UNINETT WebAPP Demo</title>
+
+
+	<!-- JQuery hosted by Google -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+	<!-- Core API to UNINETT WebApp Park -->
+	<script type="text/javascript" src="/_/js/core.js"></script>
+
+	<script type="text/javascript">
+		
+		function foodleActivity(as) {
+			console.log('Got activity');
+			$(as.data).each(function(i, a) {
+				var html = '<h2 style="font-size: 110%; color: #222"><a style="color: #333" href="https://foodl.org/foodle/' + a.foodle.id + '">' + a.foodle.name + '</a></h2>';
+				if (a.ago) {
+					html += '<p style="color: #944">Updated ' + a.ago + '</p>';
+				}
+				if (a.foodle.summary) {
+					html += '<p>' + a.foodle.summary + '</p>';
+				}
+				$("div#out").append(html);
+			});
+			console.log(as);
+		}
+
+		$("document").ready(function() {
+			
+			UWAP.auth.require(function(user) {
+				$("div#out").prepend('<p>Logged in as <strong>' + user.name + '</strong> (<tt>' + user.userid + '</tt>)</p>');
+				UWAP.data.oget('https://foodl.org/api/activity', {}, foodleActivity);					
+			});
+			
+
+		});
+
+
+	</script>
+	
+	
+	
+</head>
+
+<body style="background: #fff; padding: 3em; font-family: sans-serif">
+
+
+	<img src="http://forskningsnett.uninett.no/om/uninettlogo.png.png" style="width: 200px" />	
+
+	<p style="">UNINETT WebAPP Demo</p>
+
+	<input type="submit" name="smt" value="Require login" />
+	<div id="out" style="margin: 2em 0px; background: #eee; border: 1px solid #ccc; padding: 1em"></div>
+	
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
