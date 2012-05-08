@@ -190,8 +190,9 @@ class So_StorageServerUWAP extends So_Storage {
 			"app" => $this->subid
 		);
 
-		error_log('Storage › getToken(' . $token . ')');
+		error_log('Storage  getToken(' . $token . ')');
 		$result = $this->store->queryOne('oauth2-server-tokens', $obj);
+		error_log("RESULT: " . $result);
 		if ($result === null) throw new Exception('Could not find the specified token.');
 		
 		return So_AccessToken::fromObj($result);
