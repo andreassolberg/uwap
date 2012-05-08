@@ -77,8 +77,9 @@ body {
 }
 
 .header {
-	width: 960px;
+	/*width: 960px;*/
 	height: 60px;
+	padding-right: 40px;
 	background: url('images/divider-1.png') no-repeat bottom;
 }
 
@@ -95,7 +96,7 @@ h1 {
 .get-it-buttons {
 	float: right;
 	height: 60px;
-	width: 330px;
+	/*width: 330px;*/
 }
 
 .free-trial-button, .buy-it-button {

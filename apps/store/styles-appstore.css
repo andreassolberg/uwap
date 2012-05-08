@@ -16,6 +16,8 @@ ul *, h3 {
 
 }
 
+
+
 .appBox {
 	border: 1px solid #ccc;
 	border-radius: 5px;
@@ -29,8 +31,6 @@ ul *, h3 {
 	height: 130px;
 
 /*	min-height: 150px;*/
-	
-
 }
 .appBox h3 {
 	margin: 0px 0px 4px 0px; padding: 0px;
@@ -39,7 +39,7 @@ ul *, h3 {
 	margin: 0px 0px 4px 2px; padding: 0px;
 }
 .appBox p.descr {
-	max-height: 50px; overflow: scroll;
+	max-height: 50px; overflow: hidden;
 }
 .appBox p.tilbyder {
 	color: #933;

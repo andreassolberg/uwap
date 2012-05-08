@@ -31,7 +31,7 @@
 		return my;
 	}
 
-	var performSearch = function(searchfield, callback) {
+	var performSearch = function(searchfield, callback, getSelection) {
 
 
 		return waiter(function(event) {
@@ -42,7 +42,7 @@
 			if (term.length === 1) return; 
 
 			console.log("Perform a search on term " + term);
-			callback(term);
+			callback(term, getSelection());
 		});
 
 	};
@@ -54,13 +54,13 @@
 
 
 
-	$.fn.uwapsearch = function( callback ) {  
+	$.fn.uwapsearch = function( callback, getSelection ) {  
 
 		return this.each(function() {
 
 			var $this = $(this);
 
-			var ps = performSearch($this, callback);
+			var ps = performSearch($this, callback, getSelection);
 
 			// this.parent.Utils.log(this.ui.popup.find("input.discojuice_search"));
 			$this.keydown(function (event) {

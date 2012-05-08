@@ -40,33 +40,50 @@
 					<!-- <a href="http://setup.app.bridge.uninett.no" class="buy-it-button">Setup new app</a> -->
 					<a href="http://developers.app.bridge.uninett.no" class="free-trial-button">For developers »</a> 
 				</div>
-				<img style="margin-top: 10px" src="https://www.uninett.no/sites/drupal.uninett.no.uninett/themes/uninett_2012/images/logo.png" />
+				<img class="loto" style="margin-top: 10px; margin-left: 10px" src="https://www.uninett.no/sites/drupal.uninett.no.uninett/themes/uninett_2012/images/logo.png" />
 			</div>
 			<div class="intro">
-				<h2><span style="font-size: 60%">UNINETT WebApp Park</span></h2>
-				<p>A complete highly available cloud for providing Web Application for the higher education sector.</p>
+				<h2><span style="font-size: 60%">edu App Store</span></h2>
+				<p>Services for students and employees in higher and lower education in norway. Currently both Feide services, and services running in the UWAP App Engine.</p>
 
 
 				<form id="search">
 					<input type="search" id="searchfield" name="search" value="" />
+
+
+					<div id="radioProvider">
+						Tjenestetilbyder
+						<input type="radio" id="radioProvider1" name="radioProvider" value="all" checked="checked" />
+						<label for="radioProvider1">Vis alle</label>
+
+						<input type="radio" id="radioProvider2" name="radioProvider"  value="uninett"  />
+						<label for="radioProvider2">Bare fra UNINETT</label>
+
+						<input type="radio" id="radioProvider3" name="radioProvider"  value="new" />
+						<label for="radioProvider3">Nye tjenester</label>
+
+						<input type="radio" id="radioProvider4" name="radioProvider"  value="fav" />
+						<label for="radioProvider4">Mine favoritter</label>
+
+						<!-- <input type="radio" id="radio3" name="radio" /><label for="radio3">Choice 3</label> -->
+					</div>
+
+					<div id="radioTarget">
+						Tjeneste målgruppe
+						<input type="radio" id="radioTarget1" name="radioTarget"  value="all" checked="checked" />
+						<label for="radioTarget1">Vis alle</label>
+
+						<input type="radio" id="radioTarget2" name="radioTarget"  value="you"  />
+						<label for="radioTarget2">Tilgjengelig for deg</label>
+
+						<input type="radio" id="radioTarget3" name="radioTarget" value="high" />
+						<label for="radioTarget3">Høyere utdanning</label>
+
+						<input type="radio" id="radioTarget4" name="radioTarget" value="low" />
+						<label for="radioTarget4">Grunnopplæringa</label>
+					</div>
+
 				</form>
-
-				<div id="radioProvider">
-					Tjenestetilbyder
-					<input type="radio" id="radioProvider1" name="radioProvider" /><label for="radioProvider1">Vis alle</label>
-					<input type="radio" id="radioProvider2" name="radioProvider" checked="checked" /><label for="radioProvider2">Bare fra UNINETT</label>
-					<input type="radio" id="radioProvider3" name="radioProvider"  /><label for="radioProvider3">Nye tjenester</label>
-					<input type="radio" id="radioProvider4" name="radioProvider"  /><label for="radioProvider4">Mine favoritter</label>
-					<!-- <input type="radio" id="radio3" name="radio" /><label for="radio3">Choice 3</label> -->
-				</div>
-
-				<div id="radioTarget">
-					Tjeneste målgruppe
-					<input type="radio" id="radioTarget1" name="radioTarget" /><label for="radioTarget1">Vis alle</label>
-					<input type="radio" id="radioTarget2" name="radioTarget" checked="checked" /><label for="radioTarget2">Tilgjengelig for deg</label>
-					<input type="radio" id="radioTarget3" name="radioTarget" /><label for="radioTarget3">Høyere utdanning</label>
-					<input type="radio" id="radioTarget4" name="radioTarget" /><label for="radioTarget4">Grunnopplæringa</label>
-				</div>
 
 
 			</div>
@@ -93,6 +110,7 @@
 		
 		<script type="text/javascript" src="js/libs/jquery.equalheights.js"></script>
 		<script type="text/javascript" src="js/libs/jquery.quicksand.js"></script>
+		<script type="text/javascript" src="js/libs/sha1.js"></script>
 
 		<script type="text/javascript" src="js/script.js"></script>
 		<script type="text/javascript" src="js/ui.js"></script>
