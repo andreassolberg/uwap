@@ -30,15 +30,15 @@ if ($config->getValue('type') === 'app') {
 } else if ($config->getValue('type') === 'proxy') {
 
 
-			// Specify domains from which requests are allowed
-			header('Access-Control-Allow-Origin: *');
+	// Specify domains from which requests are allowed
+	header('Access-Control-Allow-Origin: *');
 
-			// Specify which request methods are allowed
-			header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+	// Specify which request methods are allowed
+	header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 
-			// Additional headers which may be sent along with the CORS request
-			// The X-Requested-With header allows jQuery requests to go through
-			header('Access-Control-Allow-Headers: X-Requested-With, Authorization');
+	// Additional headers which may be sent along with the CORS request
+	// The X-Requested-With header allows jQuery requests to go through
+	header('Access-Control-Allow-Headers: X-Requested-With, Authorization');
 
 	$h = new Proxy_REST($config);
 	$h->show();

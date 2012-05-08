@@ -1,3 +1,11 @@
+/**
+ * @package UWAP
+ * @description The core UWAP javascript library communicates with the UWAP server using the REST API.
+ * @author Andreas Åkre Solberg
+ * @copyright UNINETT AS
+ * @version 1.0
+ */
+
 
 UWAP = {};
 
@@ -15,6 +23,7 @@ UWAP.utils.goAndReturn = function(url) {
 	var base = 'http://app.bridge.uninett.no';
 	window.location = UWAP.utils.addQueryParam(url, 'return', document.URL);	
 }
+
 
 UWAP.auth = {
 
