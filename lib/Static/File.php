@@ -7,9 +7,25 @@ class Static_File {
 	function __construct($config) {
 
 		$this->config = $config;
-
+		$acl = $this->config->getValue("access");
+		if (!empty($acl)) {
+			$this->authz();	
+		} 
 	}	
 
+	function authz() {
+		$acl = $this->config->getValue("access");
+		if ($acl["ip"]) {
+			// echo '<PRE>'; print_r($_SERVER); exit;
+			if (!in_array($_SERVER["REMOTE_ADDR"], $acl["ip"])) {
+				header("X-UWAP-ACCESS: Blocked by IP", true, 403);
+				header("Content-type: text/plain; charset: utf-8");
+				echo "Access denied.";
+				exit;
+				// throw new Exception("access denied.");
+			}
+		}
+	}
 
 	function show() {
 
