@@ -34,6 +34,7 @@ class Proxy_REST {
 				'max_redirects' => 1
 			)
 		);
+		error_log("URL: " . $url);
 		error_log("Options: " . var_export($opts, true));
 		error_log("Header string: " . $headerstring);
 		error_log("Headers: " . var_export($headers, true));
@@ -77,7 +78,15 @@ class Proxy_REST {
 
 			header('Content-Type: application/json; charset: utf-8');
 
-			echo $this->rawget($url, array("UWAP-UserID" => $this->userid));
+			$headers = array();
+
+			if ($proxyconfig[$proxy]["user"]) {
+				$headers["UWAP-UserID"] = $this->userid;
+			}
+			if ($proxyconfig[$proxy]["token_hdr"]) {
+				$headers[$proxyconfig[$proxy]["token_hdr"]] =$proxyconfig[$proxy]["token"];
+			}
+			echo $this->rawget($url, $headers);
 			exit;
 
 
