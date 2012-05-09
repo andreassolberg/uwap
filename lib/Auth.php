@@ -36,6 +36,34 @@ class Auth {
 		$this->store->store("consent", $this->getRealUserID(), $result);
 	}
 
+	public function getGroups() {
+
+		$attributes = $this->as->getAttributes();
+
+		$groups = array();
+		// echo '<pre>' . "\n";
+		// print_r($attributes);
+		$realm = 'na.feide.no';
+		if (!empty($attributes['eduPersonPrincipalName']) && !empty($attributes['eduPersonOrgDN:o'])) {
+			if (preg_match('/^(.*?)@(.*?)$/', $attributes['eduPersonPrincipalName'][0], $matches)) {
+				$realm = $matches[2];
+				$orgname = $attributes['eduPersonOrgDN:o'][0];
+				$groups['@realm:' . $realm] = $orgname;
+			}
+		}
+		if (!empty($attributes['eduPersonOrgUnitDN']) && !empty($attributes['eduPersonOrgUnitDN:cn'])) {
+			for($i = 0; $i < count($attributes['eduPersonOrgUnitDN']); $i++) {
+				$key = sha1($attributes['eduPersonOrgUnitDN'][$i]);
+				$name = $attributes['eduPersonOrgUnitDN:cn'][$i];
+				$groups['@orgunit:' . $realm . ':' . $key] = $name;
+			}
+		}
+		// print_r($groups);
+		// exit;
+
+		return $groups;
+	}
+
 	public function getVerifier() {
 		$attributes = $this->as->getAttributes();
 
@@ -95,6 +123,7 @@ class Auth {
 			'name' => $attributes['displayName'][0],	
 			'userid' => sha1($this->salt . '|' . $attributes['eduPersonPrincipalName'][0] . '|' . $this->config->getID()),
 			'mail' => $attributes['mail'][0],
+			'groups' => $this->getGroups(),
 		);
 
 		return $data;
