@@ -66,23 +66,40 @@ class UWAPStore {
 		return true;
 	}
 
-	public function queryOneUser($collection, $userid, $criteria = array()) {
-		$criteria["uwap-userid"] = $userid;
+	public function getACL($userid, $groups = array()) {
+		$grps = array_keys($groups);
+		$grps[] = '!public';
+		$criteria = array();
+		$criteria[] = array("uwap-userid" => $userid);
+		$criteria[] = array(
+			"uwap-acl-read" => array(
+				'$in' => $grps,
+			),
+		);
+		return $criteria;
+	}
+
+	public function queryOneUser($collection, $userid, $groups, $criteria = array()) {
+		// $criteria["uwap-userid"] = $userid;
+		$criteria['$or'] = $this->getACL($userid, $groups);
 		return $this->queryOne($collection, $criteria);
 	}
-	public function queryListUser($collection, $userid, $criteria = array()) {
-		$criteria["uwap-userid"] = $userid;
+	public function queryListUser($collection, $userid, $groups, $criteria = array()) {
+		// $criteria["uwap-userid"] = $userid;
+		$criteria['$or'] = $this->getACL($userid, $groups);
 		return $this->queryList($collection, $criteria);
 	}
 
 	public function queryOne($collection, $criteria) {
 		error_log("queryOne: (" . $collection . ") " . var_export($criteria, true));
+
 		$cursor = $this->db->{$collection}->find($criteria);
 		if ($cursor->count() < 1) return null;
 		return $cursor->getNext();
 	}
 
 	public function queryList($collection, $criteria) {
+		// echo "\n\n"; print_r($criteria); exit;
 		$cursor = $this->db->{$collection}->find($criteria);
 		if ($cursor->count() < 1) return null;
 		

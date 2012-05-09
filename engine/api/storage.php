@@ -45,7 +45,7 @@ try {
 		case 'queryOne':
 			if (empty($_REQUEST['query'])) throw new Exception("Missing required parameter [query] query");
 			$query = json_decode($_REQUEST['query'], true);
-			$result['data'] = $store->queryOneUser("appdata-" . $subhost, $auth->getRealUserID(), $query);
+			$result['data'] = $store->queryOneUser("appdata-" . $subhost, $auth->getRealUserID(), $auth->getGroups(), $query);
 			if (is_null($result['data'])) {
 				throw new Exception("Query did not return any results");
 			}
@@ -54,7 +54,7 @@ try {
 		case 'queryList':
 			if (empty($_REQUEST['query'])) throw new Exception("Missing required parameter [query] query");
 			$query = json_decode($_REQUEST['query'], true);
-			$result['data'] = $store->queryListUser("appdata-" . $subhost, $auth->getRealUserID(), $query);
+			$result['data'] = $store->queryListUser("appdata-" . $subhost, $auth->getRealUserID(), $auth->getGroups(), $query);
 			if (is_null($result['data'])) {
 				throw new Exception("Query did not return any results");
 			}
