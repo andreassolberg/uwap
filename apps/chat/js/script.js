@@ -25,7 +25,6 @@ var Chat = function (chatcontainer, groups) {
 		}
 	}
 
-
 	this.chatcontainer.find("input#chatmsg").focus().bind("change", function(data) {
 
 		var msg = chatcontainer.find("input#chatmsg").attr("value") ;
