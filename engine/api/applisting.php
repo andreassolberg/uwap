@@ -26,7 +26,7 @@ try {
 	// if (!empty($_REQUEST["handler"])) $handler = $_REQUEST["handler"];
 	
 
-	$apps = array('test', 'developers', 'store');
+	$apps = array('test', 'developers', 'store', 'chat');
 	$appconfig = array();
 
 	foreach ($apps as $key) {

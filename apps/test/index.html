@@ -5,8 +5,12 @@
 	<title>UNINETT WebAPP Demo</title>
 
 	<style>
-		div#out p {
-			color: #555;
+		body {
+			background: #ccc; color: #222; padding: 3em; font-family: sans-serif
+		}
+		div#out {
+			border-radius: 10px;
+			margin: 2em 0px; background: #eee; border: 1px solid #ccc; padding: 1em
 		}
 		dl dd {
 
@@ -51,14 +55,6 @@
 			}
 			$("div#out").append('<p>Groups:</p>').append(gr);
 
-
-			$("div#chatgroups").empty().append('<input type="checkbox" id="!public" name="!public"><label for="!public">Public</label> ');
-			if(user.groups) {
-				for(var key in user.groups) {
-					$("div#chatgroups").append('<input type="checkbox" name="' + key + '" id="' + key + '"><label for="' + key + '">' + 
-						user.groups[key] + '</label> ');
-				}
-			}
 
 		}
 		function notloggedin() {
@@ -175,28 +171,7 @@
 			UWAP.data.get(bussurl, {handler: "buss"}, bussResult);
 		}
 
-		function updateChatResponse(data) {
-			console.log("chat result", data);
-			$("div#chatoutput").empty();
-			$.each(data, function(i, msg) {
-				console.log("Chat entry", i, msg);
-				var ce = $('<p><span style="color: #999">' + msg['uwap-userid'] + '</span> ' + msg.msg + '</p>');
-				if (msg.hasOwnProperty("uwap-acl-read")) {
-					$.each(msg["uwap-acl-read"], function(j, item) {
-						console.log("ACL READ item", item);
-						ce.append('<span style="margin: 0px 10px; background: #ccc; padding: 2px; border-radius: 3px">' + getGroup(item) + '</span>');
-					});
-				}
-				console.log(ce);
-				$("div#chatoutput").prepend(ce);
-			});
-		}
 
-		function updateChat() {
-			UWAP.store.queryList({type: "msg"}, updateChatResponse);
-		}
-
-		setInterval(updateChat, 10000);
 
 		$("document").ready(function() {
 			
@@ -210,37 +185,7 @@
 				UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook"}, showfacebook);
 			});
 
-			updateChat();
-			$("input#chatmsg").focus().bind("change", function(data) {
-				var msg = $("input#chatmsg").attr("value") ;
-				console.log("Chat msg: " + msg);
 
-				if (msg === '') return false;
-
-				var groups = [];
-				$("div#chatgroups input").each(function(i, item) {
-					var grid = $(item).attr("name");
-					if ($(item).prop("checked")) {
-						groups.push(grid);
-					}
-					console.log("group found ", grid);
-				});
-
-				var msgobj = {
-					"type": "msg",
-					"msg": msg
-				};
-				if (groups) {
-					msgobj["uwap-acl-read"] = groups;
-				}
-
-				UWAP.store.save(msgobj, function(d) {
-					console.log("completed store function...");
-					updateChat();
-				});
-
-				$("input#chatmsg").attr("value", "");
-			});
 
 			// UWAP.data.get('http://www.vegvesen.no/trafikk/xml/savedsearch.xml?id=600', 
 			// 	{'xml': 1},
@@ -313,7 +258,7 @@
 	
 </head>
 
-<body style="background: #400; color: #222; padding: 3em; font-family: sans-serif">
+<body style="">
 
 
 	<img src="https://www.uninett.no/sites/drupal.uninett.no.uninett/themes/uninett_2012/images/logo.png" style="" />	
@@ -325,14 +270,9 @@
 	<input type="submit" id="smt" name="smt" value="Require login" />
 	<input type="submit" id="facebook" name="facebook" value="Load facebook" />
 
-	<div style="border: 1px solid #622; border-radius: 5px;  background: #eee; padding: 2em 1em;">
-		<h2>eduChat</h2>
-		<div id="chatgroups"></div>
-		<input type="text" id="chatmsg" name="chatmsg" value="" style="width: 80%; font-size: 110%" />
-		<div id="chatoutput"></div>
-	</div>
 
-	<div id="out" style="margin: 2em 0px; background: #eee; border: 1px solid #ccc; padding: 1em"></div>
+
+	<div id="out" style=""></div>
 
 
 	
