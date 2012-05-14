@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>UNINETT WebAPP Demo</title>
+
+	<style>
+		body {
+			background: #ccc; color: #222; padding: 3em; font-family: sans-serif
+		}
+		div.box {
+			border-radius: 10px;
+			margin: 2em 0px; background: #eee; border: 1px solid #ccc; padding: 1em
+		}
+
+	</style>
+
+	<!-- JQuery hosted by Google -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+	<!-- Core API to UNINETT WebApp Park -->
+	<script type="text/javascript" src="/_/js/core.js"></script>
+
+	<!-- data-main attribute tells require.js to load
+         scripts/main.js after require.js loads. -->
+    <script data-main="js/main" src="js/require.js"></script>
+
+	
+	
+	
+	
+</head>
+
+<body style="">
+
+
+	<img src="https://www.uninett.no/sites/drupal.uninett.no.uninett/themes/uninett_2012/images/logo.png" style="" />	
+
+	<div class="box">
+		<p>WebFinger</p>
+		<input type="search" id="search" name="search" placeholder="Search for a user" style="min-width: 80%" />
+	</div>
+
+	<div id="out" class="box"></div>
+
+
+	
+
+</body>
+</html>
+
+
