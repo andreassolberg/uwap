@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>UNINETT WebAPP Demo</title>
+
+	<style>
+		body {
+			background: #333; color: #aaa; 
+			font-family: "HelveticaNeue-Light";
+			margin: 0px; 
+			padding: 0px;
+
+background-image: linear-gradient(bottom, rgb(36,36,41) 28%, rgb(54,54,54) 79%);
+background-image: -o-linear-gradient(bottom, rgb(36,36,41) 28%, rgb(54,54,54) 79%);
+background-image: -moz-linear-gradient(bottom, rgb(36,36,41) 28%, rgb(54,54,54) 79%);
+background-image: -webkit-linear-gradient(bottom, rgb(36,36,41) 28%, rgb(54,54,54) 79%);
+background-image: -ms-linear-gradient(bottom, rgb(36,36,41) 28%, rgb(54,54,54) 79%);
+
+background-image: -webkit-gradient(
+	linear,
+	left bottom,
+	left top,
+	color-stop(0.28, rgb(36,36,41)),
+	color-stop(0.79, rgb(54,54,54))
+);
+		}
+		a, a:link {
+			text-decoration: none;
+			color: #bbb;
+		}
+		div#menu {
+			margin: 0px; 
+			padding: 6px 3px 3px 3px; 
+		}
+		div.menuitem:hover {
+			background: #666;
+			color: white;
+		}
+		div.menuitem {
+			display: inline;
+			margin: 0px 5px;
+			padding: 0px;
+		}
+		div#accountinfo p { 
+			margin: 0px; padding: 0px; text-align: right;
+		}
+		div#accountinfo {
+			float: right;
+			width: 200px;
+			margin: 0px;
+			padding: 6px 3px 3px 3px; 
+			height: 32px;
+		}
+
+	</style>
+
+	<!-- JQuery hosted by Google -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+	<!-- Core API to UNINETT WebApp Park -->
+	<script type="text/javascript" src="/_/js/core.js"></script>
+
+	<!-- data-main attribute tells require.js to load
+         scripts/main.js after require.js loads. -->
+    <script data-main="js/main" src="js/require.js"></script>
+
+</head>
+
+<body style="width: 100%">
+
+	<a href="http://www.uninett.no">
+		<img src="https://www.uninett.no/sites/drupal.uninett.no.uninett/themes/uninett_2012/images/logo.png" 
+			style="width: 64px; margin: 6px 10px 0px 10px; float: left; " />
+	</a>
+	<img src="https://www.google.com/uds/modules/identitytoolkit/image/signin-keyhole-light.png" style="float: right" />
+	<div id="accountinfo">
+	
+	</div>
+
+	<div id="menu">
+
+	
+	</div>
+
+</body>
+</html>
+
+
