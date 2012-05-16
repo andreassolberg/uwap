@@ -84,8 +84,36 @@ class Auth {
 		return true;
 	}
 
+	public function checkPassive() {
+		if (!$this->authenticated()) {
+			// If a passive authnrequest was attempted less than one minute ago, return false
+			if (isset($_SESSION['passiveAttempt']) && $_SESSION['passiveAttempt'] > (time() - 60)) {
+				return false;
+			} else {
+				$_SESSION['passiveAttempt'] = time();
+
+				SimpleSAML_Utilities::redirect('http://app.bridge.uninett.no/login', array(
+					'return' => $return,
+					'app' => $this->config->getID()
+				));
+
+			}
+		}
+		if (!$this->authorized()) return false;
+		return true;
+	}
+
 	public function authenticate() {
 		$this->as->requireAuth();
+	}
+
+	public function authenticatePassive() {
+
+		$this->as->login(array(
+            'isPassive' => true,
+            'ErrorURL' => SimpleSAML_Utilities::selfURL(),
+        ));
+
 	}
 
 	public function req($allowRedirect = false, $return = null) {

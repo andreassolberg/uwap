@@ -14,6 +14,8 @@ require_once($base . '/HTTPClientToken.php');
 require_once($base . '/HTTPClientOAuth1.php');
 require_once($base . '/HTTPClientOAuth2.php');
 
+require_once($base . '/ParentMessenger.php');
+
 require_once($base . '/Static/File.php');
 require_once($base . '/Proxy/REST.php');
 

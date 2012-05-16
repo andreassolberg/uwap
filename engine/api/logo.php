@@ -20,8 +20,6 @@ try {
 		throw new Exception("Missing parameter [url]");
 	}
 
-	
-
 	$c = new Config($_REQUEST['app']);
 	$ac = $c->getConfig();
 	
@@ -30,7 +28,6 @@ try {
 		header('Content-Type: image/png');
 		echo base64_decode($ac["logo"]);
 	}
-
 
 
 } catch(Exception $error) {

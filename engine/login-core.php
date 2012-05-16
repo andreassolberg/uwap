@@ -21,15 +21,24 @@ $config = new Config($app);
 
 
 
+
 if (!$auth->authenticated() ) {
-	$auth->authenticate();
+	if (isset($_REQUEST['passive']) && $_REQUEST['passive'] === 'true') {
+
+		if (!empty($_REQUEST['SimpleSAML_Auth_State_exceptionId'])) {
+			SimpleSAML_Utilities::redirect($_REQUEST['return'], array(
+				"fail" => "true",
+			));
+		}
+
+		$auth->authenticatePassive();
+	} else {
+		$auth->authenticate();
+	}
 }
 
 
-
-
 if (!$auth->authorized()) {
-
 
 	$verifier = $auth->getVerifier();
 
@@ -51,28 +60,12 @@ if (!$auth->authorized()) {
 
 		$data = $config->getConfig();
 		
-		// $data["verifier"] = 
-		// $data["verifierurl"] = SimpleSAML_Utilities::addURLparameter(
-		// 	SimpleSAML_Utilities::selfURL(),
-		// 	array(
-		// 		"verifier" => $data["verifier"]
-		// 	)
-		// );
-
-		//SimpleSAML_Utilities::redirect($_REQUEST['return']);
-
 		$user = $auth->getUserdata();
 
-		// echo '<pre>authenticated:';
-		// echo(var_export($auth->authenticated(), true));
-		// exit;
-
-		// print_r($data);
 		header("Content-Type: text/html; charset: utf-8");
 		require_once("../templates/consent.php"); exit;
 
 	}
-
 
 } 
 
@@ -90,22 +83,13 @@ if (!$auth->authenticated()) {
 }
 
 
-// 
-// if (!$as->isAuthenticated()) {
-// 	SimpleSAML_Utilities::redirect('http://app.bridge.uninett.no/login', array(
-// 		'return' => SimpleSAML_Utilities::getSelfURL()
-// 	));
-// }
-
-
 
 if (!empty($_REQUEST['return'])) {
+	// echo '<pre>About to return to : ' . $_REQUEST['return']; exit;
 	SimpleSAML_Utilities::redirect($_REQUEST['return']);
 } else {
 	
 	echo '<h1>No redirect specified.</h1>';
-	
-	print_r($attributes);	
 }
 
 

@@ -25,6 +25,17 @@ UWAP.utils.goAndReturn = function(url) {
 }
 
 
+
+UWAP.messenger = {};
+UWAP.messenger.send = function(msg) {
+	if (UWAP.messenger.receiver) {
+		UWAP.messenger.receiver(msg);
+	} else {
+		console.error("Could not deliver message from iframe, because listener was not setup.");
+	}
+
+}
+
 UWAP.auth = {
 
 	require: function (callbackSuccess) {
@@ -43,6 +54,38 @@ UWAP.auth = {
 		
 	},
 
+	checkPassive: function (callbackSuccess, callbackNo) {
+
+		$.getJSON('/_/api/auth.php', function(data, textStatus, jqXHR) {
+			console.log('Response auth check()');
+			console.log(data);
+			if (data.status === 'ok') {
+				callbackSuccess(data.user);
+			} else {
+				
+				UWAP.messenger.receiver = function(msg) {
+
+					if (msg.type === "passiveAuth" && msg.status === "success") {
+
+						UWAP.auth.check(callbackSuccess, callbackNo)
+
+					} else {
+						callbackNo();
+					}
+
+					console.log("Received response. Juhu ", msg);
+					delete UWAP.messenger.receiver;
+					// $("body iframe.uwap_messenger_iframe").remove();
+
+				};
+				$("body").prepend('<iframe class="uwap_messenger_iframe" style="display: none" src="/_/login?passive=true"></iframe>');
+
+			}
+
+		});
+
+	},
+
 	check: function (callbackSuccess, callbackNo) {
 		
 		$.getJSON('/_/api/auth.php', function(data, textStatus, jqXHR) {
@@ -53,7 +96,6 @@ UWAP.auth = {
 			} else {
 				callbackNo();
 			}
-
 		});
 		
 	}
