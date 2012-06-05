@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>UNINETT WebApp Park</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<!-- Le styles -->
+		<link href="css/bootstrap.css" rel="stylesheet">
+		<style type="text/css">
+			body {
+				padding-top: 60px;
+				padding-bottom: 40px;
+			}
+			.sidebar-nav {
+				padding: 9px 0;
+			}
+		</style>
+		<link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+		<!--[if lt IE 9]>
+			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+		<!-- Le fav and touch icons -->
+		<link rel="shortcut icon" href="ico/favicon.ico">
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png">
+	</head>
+
+	<body>
+
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container-fluid">
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</a>
+					<a class="brand" href="#">UWAP</a>
+					<div class="btn-group pull-right">
+						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+							<i class="icon-user"></i> Andreas Åkre Solberg
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li><a href="#">Profile</a></li>
+							<li class="divider"></li>
+							<li><a href="#">Sign Out</a></li>
+						</ul>
+					</div>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li><a href="http://store.app.bridge.uninett.no">App Store</a></li>
+							<li class="active"><a href="#">Developers</a></li>
+							<li><a href="http://developers.app.bridge.uninett.no/">About</a></li>
+
+						</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
+
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div class="span3">
+					<div class="well sidebar-nav">
+						<ul class="nav nav-list">
+							<li class="nav-header">Applications</li>
+							<li class="active"><a href="#">Link</a></li>
+							<li><a href="#">Foodle</a></li>
+							<li><a href="#">Solberg dashboard</a></li>
+							<li><a href="#">Link</a></li>
+							<li class="nav-header">SOA Proxies</li>
+							<li><a href="#">VOOT Data</a></li>
+							<li><a href="#">Feide statistics</a></li>
+
+							<li class="nav-header">Clients</li>
+							<li><a href="#">Test 1</a></li>
+							<li><a href="#">Dev tool</a></li>
+							<li><a href="#">CMD client</a></li>
+						</ul>
+					</div><!--/.well -->
+				</div><!--/span-->
+				<div class="span9">
+
+
+					<div class="row-fluid">
+
+						<div class="span9">
+							<h2>Foodle <span class="label label-success">App</span></h2>
+
+							<p>Foodle is an simple and generic survey and event registration app. You may use Foodle to setup new meetings, inviting to events, scheduling events and a lot more. Foodle has a third party API open to developers, and supports open standards such as iCalendar.</p>
+
+						</div>
+						<div class="span3">
+
+							<p><img src="http://lorempixel.com/128/128/abstract/" style="padding: 5px; border: 1px solid #999; border-radius: 10px; backgroud: #eee" /></p>
+
+						</div>
+
+					</div>
+
+
+
+					<div class="row-fluid">
+
+						<div class="span4">
+							<h3>Application data</h3>
+							<p>You may access your application area using WebDAV</p>
+
+							<dl>
+								<dt>WebDAV URL</dt>
+								<dd><code>https://dav.edugapp.org</code></dd>
+								<dt>Username</dt>
+								<dd><code>andreas</code></dd>
+								<dt>Password</dt>
+								<dd><code>sdf76sd8f76sdf</code></dd>
+							</dl>
+	
+
+						</div>
+						<div class="span4">
+
+							<h3>Storages</h3>
+
+
+							<p>12.3MB of total 100MB of application storage.</p>
+							<div class="progress progress-striped progress-success">
+								<div class="bar" style="width: 12%;"></div>
+							</div>
+
+							<p>689MB of total 1GB of document data.</p>
+
+							<div class="progress progress-striped progress-warning">
+								<div class="bar" style="width: 68%;"></div>
+							</div>
+
+							<p>Current application plan: <b>basic student</b></p>
+
+						</div>
+						<div class="span4">
+							<h3>Usage Statistics</h3>
+
+							<p><img src="http://clippings.erlang.no/ZZ3247EB47.jpg" style="border-radius: 5px"></p>
+
+							<p>3415 registered users. ( <a href="">see more statistics</a> )</p>
+
+						</div>
+
+					</div>
+
+
+					<h3>REST Authorization handlers</h3>
+					<p>You may configure any number of tagged authorization handlers that might be used in your applications API to access protected data on remote sources. Examples of supported authorization types are: token, OAuth 1.0 and OAuth 2.0.</p>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Client name</th>
+								<th>Authorization type</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Facebook</td><td>OAuth 2.0</td><td>
+		<div class="btn-group">
+          <button class="btn dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a href="#">Edit..</a></li>
+            <li><a href="#">Remove..</a></li>
+            <li><a href="#">Reset..</a></li>
+            <li><a href="#">Manage authorization data</a></li>
+          </ul>
+        </div>
+							</td>
+							</tr>
+							<tr>
+								<td>Twitter</td><td>OAuth 1.0</td><td><div class="btn-group">
+          <button class="btn dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a href="#">Edit..</a></li>
+            <li><a href="#">Remove..</a></li>
+            <li><a href="#">Reset..</a></li>
+            <li><a href="#">Manage authorization data</a></li>
+          </ul>
+        </div></td>
+							</tr>
+							<tr>
+								<td>AtB BussAPI using API key</td><td>Custom</td><td><div class="btn-group">
+          <button class="btn dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a href="#">Edit..</a></li>
+            <li><a href="#">Remove..</a></li>
+            <li><a href="#">Reset..</a></li>
+            <li><a href="#">Manage authorization data</a></li>
+          </ul>
+        </div></td>
+							</tr>
+							<tr>
+								<td>NTNU Emneoversikt</td><td>Token</td><td><div class="btn-group">
+          <button class="btn dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a href="#">Edit..</a></li>
+            <li><a href="#">Remove..</a></li>
+            <li><a href="#">Reset..</a></li>
+            <li><a href="#">Manage authorization data</a></li>
+          </ul>
+        </div></td>
+							</tr>
+							<tr>
+								<td>FS studentsystemer</td><td>OAuth 2.0</td><td><div class="btn-group">
+          <button class="btn dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a href="#">Edit..</a></li>
+            <li><a href="#">Remove..</a></li>
+            <li><a href="#">Reset..</a></li>
+            <li><a href="#">Manage authorization data</a></li>
+          </ul>
+        </div></td>
+							</tr>
+							<tr>
+								<td>UNINETT Sympa postlistetjener</td><td>Custom</td><td><div class="btn-group">
+          <button class="btn dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a href="#">Edit..</a></li>
+            <li><a href="#">Remove..</a></li>
+            <li><a href="#">Reset..</a></li>
+            <li><a href="#">Manage authorization data</a></li>
+          </ul>
+        </div></td>
+							</tr>
+							<tr>
+								<td>FAS Agora gruppeserver</td><td>OAuth 2.0</td><td><div class="btn-group">
+          <button class="btn dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a href="#">Edit..</a></li>
+            <li><a href="#">Remove..</a></li>
+            <li><a href="#">Reset..</a></li>
+            <li><a href="#">Manage authorization data</a></li>
+          </ul>
+        </div></td>
+							</tr>
+						</tbody>
+					</table>
+
+					<p><button type="submit" class="btn">Add new authorization handler</button>  </p>
+
+					<div class="row-fluid">
+
+						<div class="span4">
+							<h3>Release management</h3>
+							<p>You manage these tagged instances</p>
+
+							<dl>
+								<dt>production</dt>
+								<dd>Production instance</dd>
+								<dt>pre-prod</dt>
+								<dd>Pre-production for verification</dd>
+								<dt>test</dt>
+								<dd>Development version</dd>
+							</dl>
+
+							<p><a href="">Manage releases</a></p>
+	
+
+						</div>
+						<div class="span4">
+
+							<h3>Cron robots</h3>
+
+							<p style="color: #555">No cron robots registered</p>
+							<p><a href="">Setup new robot</a></p>
+
+						</div>
+						<div class="span4">
+							<h3>Server API</h3>
+
+							<p style="color: #555">No servers registered</p>
+							<p><a href="">Setup new server</a></p>
+
+						</div>
+
+					</div>
+
+
+					<h3>Manage clients access to your SOA API</h3>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Client</th>
+								<th>Scopes</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Mike's test cmd client</td><td>read notify</td><td></td>
+							</tr>
+							<tr>
+								<td>Foodle client</td><td>read notify offline</td><td></td>
+							</tr>
+							<tr>
+								<td>Agora</td><td>write</td><td></td>
+							</tr>
+							<tr>
+								<td>Test 123</td><td>admin write</td><td></td>
+							</tr>
+						</tbody>
+					</table>
+
+
+
+
+				</div><!--/span-->
+			</div><!--/row-->
+
+
+
+			<hr>
+
+			<footer>
+				<p>&copy; UNINETT 2012</p>
+			</footer>
+
+		</div><!--/.fluid-container-->
+
+		<!-- Le javascript
+		================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script src="js/jquery.js"></script>
+		<script src="js/bootstrap-transition.js"></script>
+		<script src="js/bootstrap-alert.js"></script>
+		<script src="js/bootstrap-modal.js"></script>
+		<script src="js/bootstrap-dropdown.js"></script>
+		<script src="js/bootstrap-scrollspy.js"></script>
+		<script src="js/bootstrap-tab.js"></script>
+		<script src="js/bootstrap-tooltip.js"></script>
+		<script src="js/bootstrap-popover.js"></script>
+		<script src="js/bootstrap-button.js"></script>
+		<script src="js/bootstrap-collapse.js"></script>
+		<script src="js/bootstrap-carousel.js"></script>
+		<script src="js/bootstrap-typeahead.js"></script>
+
+	</body>
+</html>
