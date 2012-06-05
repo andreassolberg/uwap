@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>UNINETT WebAPP Demo</title>
+
+
+	<!-- JQuery hosted by Google -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+	<!-- Core API to UNINETT WebApp Park -->
+	<script type="text/javascript" src="/_/js/core.js"></script>
+
+	<script type="text/javascript">
+
+
+		function loggedin(user) {
+			console.log("logged in as user, closing tab")
+			window.close();
+		}
+
+		function notloggedin() {
+			
+		}
+
+
+		$("document").ready(function() {
+			
+			UWAP.auth.require(loggedin);
+		});
+
+
+	</script>
+	
+	
+	
+</head>
+
+<body style="">
+
+
+
+	<div id="out" style=""></div>
+
+
+	
+
+</body>
+</html>
+
+
+
+
+
+
+
+
