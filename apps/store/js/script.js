@@ -1,13 +1,13 @@
 
 function applisting(ui, o) {
-	var k;
-	for (k in o) {
+	var i;
+	for (i = 0; i < o.length; i++) {
 		// appinfo(k, o[k]);
-		var item = o[k];
-		item.id = "uwap-" + k;
-		item.logo = '/_/api/logo.php?app=' + k;
-		item.link_run = 'http://' + k + '.app.bridge.uninett.no';
-		item.link_moreinfo = 'http://' + k + '.app.bridge.uninett.no';
+		var item = o[i];
+		item.xmlid = "uwap-" + item.id;
+		item.logo = '/_/api/logo.php?app=' +item.id;
+		item.link_run = 'http://' + item.id + '.app.bridge.uninett.no';
+		item.link_moreinfo = 'http://' + item.id + '.app.bridge.uninett.no';
 		ui.addItem(item);
 	}
 	ui.ready();
@@ -56,9 +56,9 @@ function getSelection() {
 }
 
 $(document).ready(function() {
-	UWAP.data.get("https://tjenester.uninett.no/feide/api/get_published_sp_list", null, function(data) {
-		feidelisting(ui, data)
-	});
+	// UWAP.data.get("https://tjenester.uninett.no/feide/api/get_published_sp_list", null, function(data) {
+	// 	feidelisting(ui, data)
+	// });
 
 	var ui = storeUI($("#appListingContainer"));
 
