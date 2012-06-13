@@ -13,12 +13,22 @@ class UWAPStore {
 		$this->db = $dbc->uwap;
 	}
 
+	public function getStats($collection) {
+		$result = $this->db->execute('db["appdata-' . $collection . '"].stats()');
+		// echo '<pre>'; print_r($result); exit;
+		if (!$result['ok']) return null;
+		if (!$result['retval']['ok']) return null;
+		return $result['retval'];
+	}
+
 	public function store($collection, $userid = null, $obj, $expiresin = null) {
 		
 		if (isset($userid)) {
 			$obj["uwap-userid"] = $userid;	
 		}
-		
+		// if (isset($obj["_id"])) {
+		// 	$obj["_id"] = new MongoId($obj["_id"]['$id']);
+		// }
 
 		if (isset($obj["_id"]) && !is_object($obj["_id"]) && isset($obj["_id"]['$id'])) {
 			$obj["_id"] = new MongoId($obj["_id"]['$id']);
@@ -79,28 +89,35 @@ class UWAPStore {
 		return $criteria;
 	}
 
-	public function queryOneUser($collection, $userid, $groups, $criteria = array()) {
+	public function queryOneUser($collection, $userid, $groups, $criteria = array(), $fields = array()) {
 		// $criteria["uwap-userid"] = $userid;
-		$criteria['$or'] = $this->getACL($userid, $groups);
-		return $this->queryOne($collection, $criteria);
+		if ($userid !== null) {
+			$criteria['$or'] = $this->getACL($userid, $groups);
+		}
+		
+		return $this->queryOne($collection, $criteria, $fields);
 	}
-	public function queryListUser($collection, $userid, $groups, $criteria = array()) {
+	public function queryListUser($collection, $userid, $groups, $criteria = array(), $fields = array()) {
 		// $criteria["uwap-userid"] = $userid;
 		$criteria['$or'] = $this->getACL($userid, $groups);
-		return $this->queryList($collection, $criteria);
+		return $this->queryList($collection, $criteria, $fields);
 	}
 
-	public function queryOne($collection, $criteria) {
+	public function count($collection, $criteria = array()) {
+		return $this->db->{$collection}->count($criteria);
+	}
+
+	public function queryOne($collection, $criteria = array(), $fields = array()) {
 		error_log("queryOne: (" . $collection . ") " . var_export($criteria, true));
 
-		$cursor = $this->db->{$collection}->find($criteria);
+		$cursor = $this->db->{$collection}->find($criteria, $fields);
 		if ($cursor->count() < 1) return null;
 		return $cursor->getNext();
 	}
 
-	public function queryList($collection, $criteria) {
+	public function queryList($collection, $criteria, $fields = array()) {
 		// echo "\n\n"; print_r($criteria); exit;
-		$cursor = $this->db->{$collection}->find($criteria);
+		$cursor = $this->db->{$collection}->find($criteria, $fields);
 		if ($cursor->count() < 1) return null;
 		
 		$result = array();
