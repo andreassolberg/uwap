@@ -17,20 +17,24 @@ class Auth {
 
 	function authorized() {
 		$query = array(
-			"app" => $this->config->getID()
+			"app" => $this->config->getID(),
+			"uwap-userid" => $this->getRealUserID(),
 		);
-		$result = $this->store->queryOneUser("consent", $this->getRealUserID(), $query);
+		$result = $this->store->queryOne("consent", $query);
 		error_log("Query authorization: " . var_export($result, true));
+		// echo '<pre>'; print_r($query); exit;
 		if (empty($result)) return false;
 		if (isset($result["ok"]) && $result["ok"] === true) return true;
+		return false;
 	}
 
 	function authorize() {
 		$this->req();
 		$query = array(
-			"app" => $this->config->getID()
+			"app" => $this->config->getID(),
+			"uwap-userid" => $this->getRealUserID(),
 		);
-		$result = $this->store->queryOneUser("consent", $this->getRealUserID(), $query);
+		$result = $this->store->queryOne("consent", $query);
 		if (empty($result)) $result = array("app" => $this->config->getID());
 		$result["ok"] = true;
 		$this->store->store("consent", $this->getRealUserID(), $result);
