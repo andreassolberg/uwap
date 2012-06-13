@@ -3,41 +3,27 @@
 /*
  * This API is reached through
  * 
- * 		appid.uwap.org/_/api/data.php
+ * 		appid.uwap.org/_/api/applisting.php
  *
  * This is used only indirectly through the UWAP core js API.
- * Data is fetched from a remote source and returned, using the specified handler, 
- * such as OAuth1, basic auth or similar
+ * Returns list of applications to be used in public display, such as app store.
  */
 
 require_once('../../lib/autoload.php');
 
-
-
 try {
 
-	// if (empty($_REQUEST['url'])) {
-	// 	throw new Exception("Missing parameter [url]");
+	$ac = new Config();
+	$listing = $ac->getAppListing();
+
+	// foreach ($apps as $key) {
+	// 	$ac = new Config($key);
+	// 	$appconfig[$key] = $ac->getConfig();
 	// }
-
-	// $url = $_REQUEST["url"];
-	// $handler = "plain";
-
-	// if (!empty($_REQUEST["handler"])) $handler = $_REQUEST["handler"];
-	
-
-	$apps = array('test', 'developers', 'store', 'chat', 'webfinger');
-	$appconfig = array();
-
-	foreach ($apps as $key) {
-		$ac = new Config($key);
-		$appconfig[$key] = $ac->getConfig();
-	}
-
 	
 	$result = array(
 		'status' => 'ok',
-		'data' => $appconfig
+		'data' => $listing
 	);
 
 	header('Content-Type: application/json; charset=utf-8');

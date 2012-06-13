@@ -13,7 +13,6 @@
 require_once('../../lib/autoload.php');
 
 
-
 try {
 
 	if (empty($_REQUEST['url'])) {
@@ -32,7 +31,6 @@ try {
 
 	header('Content-Type: application/json; charset=utf-8');
 	echo json_encode($result);
-
 
 } catch(Exception $error) {
 

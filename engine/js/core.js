@@ -177,11 +177,122 @@ UWAP.store = {
 	}
 };
 
+UWAP.appconfig = {
+	list: function(callback, errorcallback) {
+		
+		$.ajax({
+			type: 'GET',
+			url: '/_/api/appconfig.php/apps',
+			dataType: 'json',
+			// data: JSON.stringify({ "command": "on" }),
+			// processData: false,
+			success: function(result, textStatus, jqXHR) {
+				console.log('Response appconfig get()');
+				console.log(result);
+				if (result.status === 'ok') {
+					callback(result.data);
+				} else {
+					if  (typeof errorcallback === 'function') {
+						errorcallback(result.message);
+					}
+					console.log('Data request error (server side): ' + result.message);
+				}
+
+			},
+			error: function(err) {
+				if  (typeof errorcallback === 'function') {
+					errorcallback(err);
+				}
+				console.log('Data request error (client side): ' + err);
+			}
+		});
+
+	},
+
+	store: function(object, callback, errorcallback) {
+		var parameters = {};
+		// parameters.store = "save";
+		parameters.store = JSON.stringify(object);
+
+
+		$.ajax({
+			type: 'POST',
+			url: '/_/api/appconfig.php/apps',
+			dataType: 'json',
+			contentType: "application/json",
+			data: JSON.stringify(object),
+			processData: false,
+			success: function(result, textStatus, jqXHR) {
+				console.log('Response data save()');
+				console.log(result);
+				if (result.status === 'ok') {
+					callback(result.data);
+				} else {
+					if  (typeof errorcallback === 'function') {
+						errorcallback(result.message);
+					}
+					console.log('Data request error (server side): ' + result.message);
+				}
+
+			},
+			error: function(err) {
+				if  (typeof errorcallback === 'function') {
+					errorcallback(err);
+				}
+				console.log('Data request error (client side): ' + err);
+			}
+		});
+
+	},
+	check: function(id, callback, errorcallback) {
+
+		$.getJSON('/_/api/appconfig.php/check/' + id, null, function(result, textStatus, jqXHR) {
+			console.log('Response apiconfig check');
+			console.log(result);
+			if (result.status === 'ok') {
+				callback(result.data);
+			} else {
+				if  (typeof errorcallback === 'function') {
+					errorcallback(result.message);
+				}
+				console.log('Data request error (server side): ' + result.message);
+			}
+
+		}, function(err) {
+			if  (typeof errorcallback === 'function') {
+				errorcallback(err);
+			}
+			console.log('Data request error (client side): ' + err);
+		});
+	} ,
+	get: function(id, callback, errorcallback) {
+
+		$.getJSON('/_/api/appconfig.php/app/' + id, null, function(result, textStatus, jqXHR) {
+			console.log('Response data queryOne()');
+			console.log(result);
+			if (result.status === 'ok') {
+				callback(result.data);
+			} else {
+				if  (typeof errorcallback === 'function') {
+					errorcallback(result.message);
+				}
+				console.log('Data request error (server side): ' + result.message);
+			}
+
+		}, function(err) {
+			if  (typeof errorcallback === 'function') {
+				errorcallback(err);
+			}
+			console.log('Data request error (client side): ' + err);
+		});
+	}
+};
+
 UWAP.applisting = {
 	list: function(callback, errorcallback) {
 
 		$.getJSON('/_/api/applisting.php', {}, function(result, textStatus, jqXHR) {
-			console.log('Response data get()');
+			console.log('Response applisting get()');
 			console.log(result);
 			if (result.status === 'ok') {
 				callback(result.data);
