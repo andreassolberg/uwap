@@ -34,9 +34,7 @@ try {
 		case 'save':
 			if (empty($_REQUEST['object'])) throw new Exception("Missing required parameter [object] object to save");
 			$parsed = json_decode($_REQUEST['object'], true);
-			if (isset($parsed["_id"])) {
-				$parsed["_id"] = new MongoId($parsed["_id"]['$id']);
-			}
+
 			// echo "Is about to store object:"; print_r($parsed); exit;
 			$store->store("appdata-" . $subhost, $auth->getRealUserID(), $parsed);
 			break;
