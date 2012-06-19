@@ -14,6 +14,7 @@ class Config {
 
 		$this->getGlobalConfig();
 
+		$this->store = new UWAPStore();
 
 		if ($id === false) {
 			$this->subid = null;
@@ -28,7 +29,7 @@ class Config {
 
 
 
-		$this->store = new UWAPStore();
+
 
 		
 		$this->config = $this->store->queryOne('appconfig', array("id" => $this->subid));
@@ -65,7 +66,7 @@ class Config {
 		return $listing;
 	}
 
-	public static function getAppPath() {
+	public function getAppPath() {
 		return self::getPath('apps/' . $this->subid . '/');
 	}
 
@@ -118,7 +119,7 @@ class Config {
 		}
 
 		$credentials = array(
-			'url' => 'https://dav.uwap.org/app/' . $this->subid,
+			'url' => 'https://dav.' . Config::hostname() . '/' . $this->subid
 		);
 
 		$lookup = $this->store->queryOne('davcredentials', array("uwap-userid" => $userid));
@@ -330,7 +331,7 @@ class Config {
 
 		$pc = $this->config["handlers"][$handler];
 		if ($pc["type"] === "oauth2") {
-			$pc["client_credentials"]["redirect_uri"] = 'http://' . $this->subid . '.' . Config::hostname() . '/_/api/callbackOAuth2.php';
+			$pc["client_credentials"]["redirect_uri"] = 'https://' . $this->subid . '.' . Config::hostname() . '/_/api/callbackOAuth2.php';
 		}
 		return $pc;
 	}
