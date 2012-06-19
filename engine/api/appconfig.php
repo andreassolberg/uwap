@@ -85,13 +85,12 @@ try {
 		
 		
 	} else if ($first === 'check') {
+
 		if(empty($parameters)) throw new Exception('Missing app id in request');
 
 		$subid = array_shift($parameters);
 		Utils::validateID($subid);
 		$result['data'] = !$config->exists($subid);
-
-
 
 	} else {
 		throw new Exception('Invalid request URI');
