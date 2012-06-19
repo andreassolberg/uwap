@@ -96,7 +96,7 @@ class Auth {
 			} else {
 				$_SESSION['passiveAttempt'] = time();
 
-				SimpleSAML_Utilities::redirect('http://app.bridge.uninett.no/login', array(
+				SimpleSAML_Utilities::redirect('https://core.' . Config::hostname() . '/login', array(
 					'return' => $return,
 					'app' => $this->config->getID()
 				));
@@ -124,7 +124,7 @@ class Auth {
 		if ($return === null) $return = SimpleSAML_Utilities::selfURL();
 		if (!$this->as->isAuthenticated()) {
 			if ($allowRedirect) {
-				SimpleSAML_Utilities::redirect('http://app.bridge.uninett.no/login', array(
+				SimpleSAML_Utilities::redirect('https://core.' . Config::hostname() . '/login', array(
 					'return' => $return,
 					'app' => $this->config->getID()
 				));

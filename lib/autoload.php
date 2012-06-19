@@ -25,6 +25,7 @@ require_once(dirname($base) . '/solberg-oauth/lib/soauth.php');
 require_once($base . '/So_StorageUWAP.php');
 require_once($base . '/So_StorageServerUWAP.php');
 
+$UWAP_BASEDIR = dirname($base);
 
 
 /* --- SimpleSAMLphp ---- */

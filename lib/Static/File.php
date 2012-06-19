@@ -31,7 +31,7 @@ class Static_File {
 
 		$subhost = $this->config->getID();
 
-		$subhostpath = '/var/www/appengine/apps/' . $subhost;
+		$subhostpath = Config::getPath('apps/' . $subhost);
 
 		$localfile = $_SERVER['REQUEST_URI'];
 		if ($localfile === '/') $localfile = '/index.html';

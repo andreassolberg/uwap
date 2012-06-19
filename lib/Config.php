@@ -7,13 +7,17 @@ class Config {
 	protected $config;
 	protected $store;
 	
+	protected static $globalConfig = null;
+
 	function __construct($id = null) {
 
+		$this->getGlobalConfig();
 		if ($id === null) {
 			$this->subid = Utils::getSubID();			
 		} else {
 			$this->subid = $id;
 		}
+
 
 		$this->store = new UWAPStore();
 		
@@ -22,6 +26,13 @@ class Config {
 			throw new Exception("Could not find configuration for app.");
 		}
 
+		self::initGlobalConfig();
+
+	}
+
+	public static function getPath($path) {
+		$base = dirname(dirname(__FILE__));
+		return $base . '/' . $path;
 	}
 	
 	/**
@@ -160,7 +171,7 @@ class Config {
 		$stat['capacity'] = ceil(25 * $M);
 		$stat['capacityH'] = self::human_filesize($stat['capacity']);
 
-		$f = '/var/www/appengine/apps/' . $this->subid;
+		$f = Config::getPath('apps/' . $this->subid);
 		$io = popen ( '/usr/bin/du -sb ' . $f, 'r' );
 		$size = fgets ( $io, 4096);
 		// $size = substr ( $size, 0, strpos ( $size, ' ' ) );
@@ -240,9 +251,35 @@ class Config {
 		return $obj;
 	}
 
-	public function getValue($key, $default = null) {
-		if (isset($this->config[$key])) return $this->config[$key];
+	public function getGlobalConfig() {
+		self::initGlobalConfig();
+		return self::$globalConfig;
+	}
+
+	public function getGlobalConfigValue($key, $default = null, $required = false) {
+		$config = $this->getGlobalConfig();
+		if (isset($config[$key])) return $config[$key];
+		if ($required === true) throw new Exception('Missing required global configuration property [' . $key . ']');
 		return $default;
+	}
+
+	public function getValue($key, $default = null, $required = false) {
+		if (isset($this->config[$key])) return $this->config[$key];
+		if ($required === true) throw new Exception('Missing app config configuration property [' . $key . ']');
+		return $default;
+	}
+
+	public static function initGlobalConfig() {
+		global $UWAP_BASEDIR;
+		if (is_null(self::$globalConfig)) {
+			self::$globalConfig = json_decode(file_get_contents($UWAP_BASEDIR . '/config/config.json'), true);
+		}
+	}
+
+	public static function hostname() {
+		self::initGlobalConfig();
+		if (!isset(self::$globalConfig['mainhost'])) throw new Exception('Missing global property mainhost');
+		return self::$globalConfig['mainhost'];
 	}
 
 	public function getHandlerConfig($handler) {
@@ -253,7 +290,7 @@ class Config {
 
 		$pc = $this->config["handlers"][$handler];
 		if ($pc["type"] === "oauth2") {
-			$pc["client_credentials"]["redirect_uri"] = 'http://' . $this->subid . '.app.bridge.uninett.no/_/api/callbackOAuth2.php';
+			$pc["client_credentials"]["redirect_uri"] = 'http://' . $this->subid . '.' . Config::hostname() . '/_/api/callbackOAuth2.php';
 		}
 		return $pc;
 	}
