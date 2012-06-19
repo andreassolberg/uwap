@@ -6,16 +6,21 @@ class Config {
 	protected $subid;
 	protected $config;
 	protected $store;
+	protected $basepath;
 	
 	function __construct($id = null) {
 
-		if ($id === null) {
+		$this->basepath = '/var/www/appengine/apps';
+		$this->store = new UWAPStore();
+
+		if ($id === false) {
+			$this->subid = null;
+			return;
+		} else if ($id === null) {
 			$this->subid = Utils::getSubID();			
 		} else {
 			$this->subid = $id;
 		}
-
-		$this->store = new UWAPStore();
 		
 		$this->config = $this->store->queryOne('appconfig', array("id" => $this->subid));
 		if(empty($this->config)) {
@@ -44,6 +49,10 @@ class Config {
 		return $listing;
 	}
 
+	public function getAppPath() {
+		return $this->basepath . '/' . $this->subid . '/';
+	}
+
 	public function getMyApps($userid) {
 		$fields = array(
 			'id' => true,
@@ -65,7 +74,33 @@ class Config {
 		return $sorted;
 	}
 
-	public function getDavCredentials($userid) {
+	public function getAllApps() {
+		$fields = array(
+			'id' => true,
+			'name' => true,
+			'descr' => true,
+			'type' => true,
+			'owner-userid' => true,
+			'owner' => true,
+			'name' => true,
+		);
+		$listing = $this->store->queryList('appconfig', array(), $fields);
+
+		$sorted = array("app" => array(), "proxy" => array(), "client" => array());
+		foreach($listing AS $e) {
+			if (isset($e['type']) && isset($sorted[$e['type']])) {
+				$sorted[$e['type']][] = $e;
+			}
+		}
+		return $sorted;
+	}
+
+	public function getDavCredentials($userid = null) {
+
+		if (empty($userid)) {
+			$userid = $this->config['uwap-userid'];
+		}
+
 		$credentials = array(
 			'url' => 'https://dav.uwap.org/app/' . $this->subid,
 		);
