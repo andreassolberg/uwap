@@ -48,7 +48,7 @@ class HTTPClientOauth1 extends HTTPClient {
 
 		// Authorize the request token
 		$url = $consumer->getAuthorizeRequest($this->config['authorize'], $requestToken, FALSE, 
-			'http://' . $this->config["subhost"] . '.app.bridge.uninett.no/_/api/callbackOAuth1.php?' . 
+			'httsp://' . $this->config["subhost"] . '.' . Config::hostname() . '/_/api/callbackOAuth1.php?' . 
 			'provider=' . $options["handler"] . '&return=' . urlencode($options['returnTo']) . 
 			'&requestToken=' . urlencode($requestToken->key)
 		);
