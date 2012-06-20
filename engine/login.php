@@ -57,7 +57,7 @@ if (!$auth->check()) {
 			// echo '<pre>passiveattempt is ' . $_SESSION['passiveAttempt'];
 			// exit;
 			
-			SimpleSAML_Utilities::redirect('https://core.' . Config::hostname() . '/login', array(
+			SimpleSAML_Utilities::redirect(Config::scheme() . '://core.' . Config::hostname() . '/login', array(
 				'return' => SimpleSAML_Utilities::selfURL(),
 				"app" => $config->getID(),
 				"passive" => "true",
@@ -67,7 +67,7 @@ if (!$auth->check()) {
 
 	} else {
 
-		SimpleSAML_Utilities::redirect('https://core.' . Config::hostname() . '/login', array(
+		SimpleSAML_Utilities::redirect(Config::scheme() . '://core.' . Config::hostname() . '/login', array(
 			'return' => SimpleSAML_Utilities::selfURL(),
 			"app" => $config->getID()
 		));	
