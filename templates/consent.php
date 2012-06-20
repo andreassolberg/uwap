@@ -155,7 +155,7 @@ fieldset
 
 #inputs input
 {
-    background: #f1f1f1 url(http://www.red-team-design.com/wp-content/uploads/2011/09/login-sprite.png) no-repeat;
+    /*background: #f1f1f1 url(http://www.red-team-design.com/wp-content/uploads/2011/09/login-sprite.png) no-repeat;*/
     padding: 15px 15px 15px 30px;
     margin: 0 0 10px 0;
     width: 353px; /* 353 + 2 + 45 = 400 */
@@ -318,13 +318,11 @@ fieldset
     </fieldset> -->
     <fieldset id="actions">
         <input type="submit" id="submit" value="OK, I accept">
-       	<a href="">Cancel login</a><a target="_blank" href="http://app.bridge.uninett.no">Read more about this app</a>
+       	<a href="">Cancel login</a><a target="_blank" href="#">Read more about this app</a>
     </fieldset>
     <!-- <a href="http://www.red-team-design.com/slick-login-form-with-html5-css3" id="back">Back to article...</a> -->
 </form>
 
-<!-- BSA AdPacks code -->
-<script src="http://code.jquery.com/jquery-1.6.3.min.js"></script>
 
 
 </body>

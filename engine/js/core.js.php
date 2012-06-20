@@ -6,10 +6,16 @@
  * @version 1.0
  */
 
+<?php
+
+require_once(dirname(dirname(dirname(__FILE__))) . '/lib/autoload.php');
+
+?>
 
 UWAP = {};
-
 UWAP.utils = {};
+UWAP.utils.hostname = '<?php echo Config::hostname(); ?>';
+UWAP.utils.scheme = '<?php echo Config::scheme(); ?>';
 
 UWAP.utils.addQueryParam = function (url, key, value) {
 	var delimiter = ((url.indexOf('?') != -1) ? '&' : '?');
@@ -20,7 +26,7 @@ UWAP.utils.addQueryParam = function (url, key, value) {
 };
 UWAP.utils.goAndReturn = function(url) {
 	console.log("About to redirect to: " + UWAP.utils.addQueryParam(url, 'return', document.URL));
-	var base = 'http://app.bridge.uninett.no';
+	var base = UWAP.utils.scheme + '://core.' + UWAP.utils.hostname + '/';
 	window.location = UWAP.utils.addQueryParam(url, 'return', document.URL);	
 }
 

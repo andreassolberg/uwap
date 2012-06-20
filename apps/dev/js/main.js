@@ -53,7 +53,7 @@ define([
 		// 	vegmelding);
 		
 		// UWAP.data.get('https://foodl.org/api/activity', {handler: "foodle"}, activity);
-		// UWAP.data.get('http://bridge.uninett.no/rest.php', {handler: "plain"}, generic);
+		// UWAP.data.get('http://foo/rest.php', {handler: "plain"}, generic);
 
 	});
 

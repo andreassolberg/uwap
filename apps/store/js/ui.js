@@ -96,7 +96,7 @@ var storeUI = function(container) {
 		if (item.link_run) {
 			appbox.append('<a href="' + item.link_run + '" class="run-app-button">Run app</a> ');	
 		}
-		// appbox.append('<a href="http://' + item.id + '.app.bridge.uninett.no" class="run-app-button">View info</a> ');
+		// appbox.append('<a href="http://' + item.id + '.uwap.org" class="run-app-button">View info</a> ');
 
 		if (item.id) {
 			appbox.attr("data-id", item.id);	

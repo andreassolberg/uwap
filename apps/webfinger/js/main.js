@@ -32,13 +32,6 @@ $("document").ready(function() {
 	});
 
 
-	// UWAP.data.get('http://www.vegvesen.no/trafikk/xml/savedsearch.xml?id=600', 
-	// 	{'xml': 1},
-	// 	vegmelding);
-	
-	// UWAP.data.get('https://foodl.org/api/activity', {handler: "foodle"}, activity);
-	// UWAP.data.get('http://bridge.uninett.no/rest.php', {handler: "plain"}, generic);
-
 });
 
 

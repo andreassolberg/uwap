@@ -27,7 +27,7 @@ try {
 
 	$auth = new Auth();
 	if (!$auth->check()) {
-		SimpleSAML_Utilities::redirect("http://app.bridge.uninett.no/login", array(
+		SimpleSAML_Utilities::redirect("https://" . Config::hostname() . "/login", array(
 			'return' => SimpleSAML_Utilities::selfURL(),
 			"app" => $config->getID()
 		));	

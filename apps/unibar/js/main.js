@@ -246,9 +246,9 @@ require(["unibar"], function(unibar) {
 		$("div#accountinfo").prepend('<p>Login…</p>');
 		$("div#accountinfo").bind('click', function() {
 			// UWAP.auth.require(loggedin);
-			// window.open('http://unibar.app.bridge.uninett.no/login.html');
+			// window.open('http://unibar.uwap.org/login.html');
 			$("div#accountinfo").empty();
-			var win = window.open('http://unibar.app.bridge.uninett.no/login.html', 'google','width=800,height=600,status=0,toolbar=0');   
+			var win = window.open('http://unibar.uwap.org/login.html', 'google','width=800,height=600,status=0,toolbar=0');   
 			var timer = setInterval(function() {   
 			    if(win.closed) {  
 			        clearInterval(timer);  

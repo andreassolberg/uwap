@@ -333,7 +333,7 @@ fieldset
 
     <fieldset id="actions">
         <input type="submit" id="submit" value="OK, I accept">
-       	<a href="">Cancel login</a><a target="_blank" href="http://app.bridge.uninett.no">Read more about this app</a>
+       	<a href="">Cancel login</a><a target="_blank" href="#">Read more about this app</a>
     </fieldset>
 
     <!-- <a href="http://www.red-team-design.com/slick-login-form-with-html5-css3" id="back">Back to article...</a> -->

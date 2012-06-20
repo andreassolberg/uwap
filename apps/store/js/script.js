@@ -6,8 +6,8 @@ function applisting(ui, o) {
 		var item = o[i];
 		item.xmlid = "uwap-" + item.id;
 		item.logo = '/_/api/logo.php?app=' +item.id;
-		item.link_run = 'http://' + item.id + '.app.bridge.uninett.no';
-		item.link_moreinfo = 'http://' + item.id + '.app.bridge.uninett.no';
+		item.link_run = 'http://' + item.id + '.uwap.org';
+		item.link_moreinfo = 'http://' + item.id + '.uwap.org';
 		ui.addItem(item);
 	}
 	ui.ready();

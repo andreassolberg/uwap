@@ -1,16 +1,18 @@
 # UNINETT WebApp Park
 
 
-app.bridge.uninett.no
-	Alias /login /var/www/appengine/engine/login-core.php
-	Alias /simplesaml /var/www/appengine/simplesamlphp/www/
+core.uwap.org
+
+	Alias /login /var/www/uwap/engine/login-core.php
+	Alias /simplesaml /var/www/uwap/simplesamlphp/www/
 
 
-*.app.bridge.uninett.no
-	Alias /_/api /var/www/appengine/engine/api
-	Alias /_/js /var/www/appengine/engine/js
-	Alias /_/login /var/www/appengine/engine/login.php
-	Alias / /var/www/appengine/engine/engine.php/
+*.uwap.org
+
+	Alias /_/api /var/www/uwap/engine/api
+	Alias /_/js /var/www/uwap/engine/js
+	Alias /_/login /var/www/uwap/engine/login.php
+	Alias / /var/www/uwap/engine/engine.php/
 
 
 The endpoints:
@@ -20,17 +22,17 @@ The endpoints:
 /_/login endpoint to login the user, UWAP core is redirecting the user here.
 / engine/engin.php is processing each file and pushing it to the user.
 
-An app runs at `http://test.app.bridge.uninett.no/`
+An app runs at `http://test.uwap.org/`
 
 Container HTML refers an js API:
 
 	<script type="text/javascript" src="/_/js/core.js"></script>
 
-The script is located here: /var/www/appengine/engine/js
+The script is located here: /var/www/uwap/engine/js
 
 The script communicates with the endpoints under:
 
-	http://test.app.bridge.uninett.no/_/api/*
+	http://test.uwap.no/_/api/*
 
 APIS:
 

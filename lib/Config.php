@@ -27,10 +27,6 @@ class Config {
 			$this->subid = $id;
 		}
 
-
-
-
-
 		
 		$this->config = $this->store->queryOne('appconfig', array("id" => $this->subid));
 		if(empty($this->config)) {
@@ -321,6 +317,24 @@ class Config {
 		self::initGlobalConfig();
 		if (!isset(self::$globalConfig['mainhost'])) throw new Exception('Missing global property mainhost');
 		return self::$globalConfig['mainhost'];
+	}
+
+	public static function scheme() {
+		if(!array_key_exists('HTTPS', $_SERVER)) {
+			/* Not a https-request. */
+			return 'http';
+		}
+
+		if($_SERVER['HTTPS'] === 'off') {
+			/* IIS with HTTPS off. */
+			return 'http';
+		}
+
+		/* Otherwise, HTTPS will be a non-empty string. */
+		if ($_SERVER['HTTPS'] !== '') {
+			return 'https';
+		}
+		return 'http';
 	}
 
 	public function getHandlerConfig($handler) {
