@@ -9,6 +9,7 @@
 <?php
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/lib/autoload.php');
+header('Content-Type: application/javascript');
 
 ?>
 
