@@ -22,7 +22,7 @@ The endpoints:
 /_/login endpoint to login the user, UWAP core is redirecting the user here.
 / engine/engin.php is processing each file and pushing it to the user.
 
-An app runs at `http://test.uwap.org/`
+An app runs at `https://test.uwap.org/`
 
 Container HTML refers an js API:
 
@@ -32,7 +32,7 @@ The script is located here: /var/www/uwap/engine/js
 
 The script communicates with the endpoints under:
 
-	http://test.uwap.no/_/api/*
+	https://test.uwap.no/_/api/*
 
 APIS:
 
