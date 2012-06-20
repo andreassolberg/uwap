@@ -185,6 +185,12 @@
 				UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook"}, showfacebook);
 			});
 
+			function showemner(emner) {
+				console.log('Emner', emner);
+			}
+
+			var emneapi = 'http://www.ime.ntnu.no/api/course/-';
+			UWAP.data.get(emneapi, {}, showemner);
 
 
 			// UWAP.data.get('http://www.vegvesen.no/trafikk/xml/savedsearch.xml?id=600', 
