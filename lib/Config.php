@@ -115,7 +115,7 @@ class Config {
 		}
 
 		$credentials = array(
-			'url' => 'https://dav.' . Config::hostname() . '/' . $this->subid
+			'url' => Config::scheme() . '://dav.' . Config::hostname() . '/' . $this->subid
 		);
 
 		$lookup = $this->store->queryOne('davcredentials', array("uwap-userid" => $userid));
