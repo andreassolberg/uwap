@@ -217,10 +217,6 @@ UWAP.appconfig = {
 	},
 
 	store: function(object, callback, errorcallback) {
-		var parameters = {};
-		// parameters.store = "save";
-		parameters.store = JSON.stringify(object);
-
 
 		$.ajax({
 			type: 'POST',
@@ -229,6 +225,67 @@ UWAP.appconfig = {
 			contentType: "application/json",
 			data: JSON.stringify(object),
 			processData: false,
+			success: function(result, textStatus, jqXHR) {
+				console.log('Response data save()');
+				console.log(result);
+				if (result.status === 'ok') {
+					callback(result.data);
+				} else {
+					if  (typeof errorcallback === 'function') {
+						errorcallback(result.message);
+					}
+					console.log('Data request error (server side): ' + result.message);
+				}
+
+			},
+			error: function(err) {
+				if  (typeof errorcallback === 'function') {
+					errorcallback(err);
+				}
+				console.log('Data request error (client side): ' + err);
+			}
+		});
+
+	},
+	updateAuthzHandler: function(id, object, callback, errorcallback) {
+		$.ajax({
+			type: 'POST',
+			url: '/_/api/appconfig.php/app/' + id + '/authorizationhandler/' + object.id,
+			dataType: 'json',
+			contentType: "application/json",
+			data: JSON.stringify(object),
+			processData: false,
+			success: function(result, textStatus, jqXHR) {
+				console.log('Response data save()');
+				console.log(result);
+				if (result.status === 'ok') {
+					callback(result.data);
+				} else {
+					if  (typeof errorcallback === 'function') {
+						errorcallback(result.message);
+					}
+					console.log('Data request error (server side): ' + result.message);
+				}
+
+			},
+			error: function(err) {
+				if  (typeof errorcallback === 'function') {
+					errorcallback(err);
+				}
+				console.log('Data request error (client side): ' + err);
+			}
+		});
+
+	},
+	deleteAuthzHandler: function(appid, objectid, callback, errorcallback) {
+		
+		$.ajax({
+			type: 'DELETE',
+			url: '/_/api/appconfig.php/app/' + appid + '/authorizationhandler/' + objectid,
+			dataType: 'json',
+			contentType: "application/json",
+			// data: JSON.stringify(object),
+			// processData: false,
 			success: function(result, textStatus, jqXHR) {
 				console.log('Response data save()');
 				console.log(result);
@@ -271,7 +328,7 @@ UWAP.appconfig = {
 			}
 			console.log('Data request error (client side): ' + err);
 		});
-	} ,
+	},
 	get: function(id, callback, errorcallback) {
 
 		$.getJSON('/_/api/appconfig.php/app/' + id, null, function(result, textStatus, jqXHR) {

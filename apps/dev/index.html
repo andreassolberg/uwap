@@ -39,14 +39,15 @@
 			<tr>
 				<td>${title}</td>
 				<td><code>${id}</code></td>
-				<td><code>${host}</code></td>
 				<td>${type}</td>
 
 				<!-- Actions -->
 				<td>
 					<a class="handlerEdit btn btn-mini" href="#"><i class="icon-wrench"></i> Edit</a> 
 					<a class="handlerDelete btn btn-danger btn-mini" href="#"><i class="icon-trash icon-white"></i> Delete</a>
-					<a class="handlerReset btn btn-warning btn-mini" href="#"><i class="icon-repeat icon-white"></i> Reset</a> 
+					{{if $item.data.type === "oauth1" || $item.data.type === "oauth2"}}
+						<a class="handlerReset btn btn-warning btn-mini" href="#"><i class="icon-repeat icon-white"></i> Reset</a> 
+					{{/if}}
 				</td>
 			</tr>
 		</script>
@@ -58,7 +59,7 @@
 					<h3>Edit authorization handler</h3>
 				</div>
 				<div class="modal-body">
-					<p>You are about to create a new application to be hosted in the UNINETT WebApp Park.</p>
+					<p>Authorization handlers are mechamisms to protect REST messages exchanged using the <tt>UWAP.data</tt> API. This enables authentication of the client, and possible also the user by using OAuth version 1 or 2.</p>
 
 					<form class="registerform form-horizontal">  
 
@@ -155,6 +156,8 @@
 							</div>
 						</div>
 
+
+
 						<div class="control-group authzproperty token">
 							<label class="control-label" for="field_token_hdr">Token HTTP Header</label>
 							<div class="controls">
@@ -168,6 +171,11 @@
 								<input type="text" class="input-xlarge"  id="field_token_val" value="${token_val}" placeholder="">
 							</div>
 						</div>
+
+					<div class="control-group authzproperty oauth2">
+						<p>Register this redirect URI at your OAuth 2.0 provider.</p>
+						<p><code>${redirect_uri}</code></p>
+					</div>
 
 
 					</form>
@@ -267,7 +275,6 @@
 						<thead>
 							<tr>
 								<th>Title</th>
-								<th>Handler ID</th>
 								<th>Hostname</th>
 								<th>Authorization type</th>
 								<th>Actions</th>
@@ -277,7 +284,7 @@
 						</tbody>
 					</table>
 
-					<p><button type="submit" class="btn">Add new authorization handler</button>  </p>
+					<p><button type="submit" id="addNewAuthzHandle" class="btn">Add new authorization handler</button>  </p>
 
 					<div class="row-fluid">
 

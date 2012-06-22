@@ -140,8 +140,6 @@ class So_StorageUWAP extends So_Storage {
 		// if (!isset($token['access_token'])) throw new Exception('Trying to delete an access token where accesstoken is empty.');
 		$obj['access_token'] = $token->getValue();
 
-
-
 		return $this->store->remove("oauth2-client-tokens", $this->userid, $obj);
 
 	}

@@ -1,15 +1,23 @@
 define(function() {
 	
 	var AuthzHandlerEditor = Spine.Class.sub({
-		init: function(container, handler, callback) {
+		init: function(container, handler, isnew, callback) {
 			this.handler = handler;
 			this.callback = callback;
+			this.isnew = isnew;
 			this.element = $("#authhandlereditortmpl").tmpl(handler);
 
-			console.log("this element", this.element);
 			container.append(this.element);
 
+			if (this.handler.type) {
+				$(this.element).find("select.handlerType").val(this.handler.type);
+			}
+			$(this.element).find("#handlerTitle").focus();
 			this.changeHandlerType();
+			
+			if(!isnew) {
+				$(this.element).find("#handlerIdentifier").attr("disabled", "disabled");
+			}
 
 			$(this.element).on("change", ".handlerType", this.proxy(this.changeHandlerType));
 			$(this.element).on("click" , ".saveAuthZHandler", this.proxy(this.save));
@@ -20,7 +28,6 @@ define(function() {
 			// $(this.element).find("#newAppName")
 			// 	.on("change", this.proxy(this.checkIfReady))
 			// 	.on("keyup", this.proxy(this.checkIfReady));
-
 			// $(this.element).find(".createNewBtn")
 			// 	.on("click", this.proxy(this.submit));
 		},
@@ -64,6 +71,7 @@ define(function() {
 			});
 
 			// this.trigger("submit", obj);
+			console.log("About to callback(", obj, ")");
 			this.callback(obj);
 			$(this.element).modal("hide");
 			$(this.element).remove();

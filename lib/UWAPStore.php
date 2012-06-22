@@ -36,7 +36,9 @@ class UWAPStore {
 
 		$updatestmnt = array('$set' => $updates);
 
-		$this->db->{$collection}->update($criteria, $updatestmnt);
+		$return = $this->db->{$collection}->update($criteria, $updatestmnt, array("safe" => true));
+		error_log("Return on update() : " . var_export($return, true));
+		return $return;
 	}
 
 	public function store($collection, $userid = null, $obj, $expiresin = null) {

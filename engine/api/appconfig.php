@@ -68,6 +68,9 @@ try {
 			$result['data']['appdata-stats'] = $ac->getStats();
 			$result['data']['files-stats'] = $ac->getFilestats();
 			$result['data']['user-stats'] = $ac->getUserStats();
+
+
+
 			// echo '<pre>';
 			// print_r($result); exit;
 
@@ -82,7 +85,7 @@ try {
 				if (count($parameters) !== 1) {
 					throw new Exception('Invalid number of parameters');
 				}
-				$authzhandler = array_unshift($parameters);
+				$authzhandler = array_shift($parameters);
 
 
 				if ($method === 'post') {

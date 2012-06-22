@@ -266,6 +266,16 @@ class Config {
 	public function updateAuthzHandler($id, $obj, $userid) {
 		$current = $this->getConfig();
 
+		$allowedFields = array(
+			'id', 'title', 'type', 
+			'authorization', 'token', 'request', 'authorize', 'access', 'client_id', 'client_user', 'client_secret', 'token_hdr', 'token_val');
+		foreach($obj AS $k => $v) {
+			if (!in_array($k, $allowedFields)) {
+				unset($obj[$k]);
+			}
+		}
+
+
 		if(empty($current['handlers'])) {
 			$current['handlers'] = array();
 		}
@@ -275,7 +285,16 @@ class Config {
 
 		$updates = array('handlers' => $current['handlers']);
 
-		$this->store->update('appconfig', $criteria, $userid, $updates);
+		error_log("   updateAuthzHandler --->   id   " . $id);
+		error_log("   updateAuthzHandler ---> userid " . $userid);
+		error_log("   updateAuthzHandler --->   obj  " . var_export($obj, true));
+
+		// update($collection, $userid, $criteria, $updates)
+		$ret = $this->store->update('appconfig',  $userid, $criteria, $updates);
+
+		if (empty($ret)) {
+			throw new Exception('Empty response from update() on storage. Indicates an error occured. Check logs.');;
+		}
 
 		return $current['handlers'];
 	}
@@ -288,7 +307,7 @@ class Config {
 		unset($current['handlers'][$id]);
 		$criteria = array('id' => $this->config['id']);
 		$updates = array('handlers' => $current['handlers']);
-		$this->store->update('appconfig', $criteria, $userid, $updates);
+		$this->store->update('appconfig',  $userid, $criteria, $updates);
 		return $current['handlers'];
 	}
 
@@ -312,9 +331,18 @@ class Config {
 	}
 	
 	public function getConfig() {
-		$obj = $this->config;
-		$obj['url'] = 'https://' . $this->subid . '.uwap.org';
-		return $obj;
+		$current = $this->config;
+		$current['url'] = Config::scheme() . '://' . $this->subid . '.' . Config::hostname();
+
+		if (!empty($current['handlers'])) {
+			foreach($current['handlers'] AS $key => $handler) {
+				if (isset($handler['type']) && $handler['type'] === 'oauth2') {
+					$current['handlers'][$key]['redirect_uri'] = Config::oauth2callback($this->getID());
+				}
+			}
+		}
+
+		return $current;
 	}
 
 	public function getGlobalConfig() {
@@ -366,6 +394,10 @@ class Config {
 		return 'http';
 	}
 
+	public static function oauth2callback($id) {
+		return Config::scheme() . '://' . $id . '.' . Config::hostname() . '/_/api/callbackOAuth2.php';
+	} 
+
 	public function getHandlerConfig($handler) {
 
 		// echo "getHandlerConfig($handler)"; print_r($this->config);
@@ -374,7 +406,7 @@ class Config {
 
 		$pc = $this->config["handlers"][$handler];
 		if ($pc["type"] === "oauth2") {
-			$pc["client_credentials"]["redirect_uri"] = 'https://' . $this->subid . '.' . Config::hostname() . '/_/api/callbackOAuth2.php';
+			$pc["redirect_uri"] = self::oauth2callback($this->subid);
 		}
 		return $pc;
 	}
