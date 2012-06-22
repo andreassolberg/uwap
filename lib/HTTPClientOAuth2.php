@@ -18,6 +18,7 @@ class HTTPClientOAuth2 extends HTTPClient {
 
 		$makeMoreAttempts = true;
 
+
 		while ($makeMoreAttempts) {
 			$makeMoreAttempts = false;
 

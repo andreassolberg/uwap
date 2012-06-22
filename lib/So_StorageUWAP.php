@@ -117,8 +117,11 @@ class So_StorageUWAP extends So_Storage {
 
 		// $result = $this->extractList('tokens', array('id' => $id, 'userid' => $userid));
 
+
+		error_log('Query tokens ' . json_encode($query));
+
 		// queryListUser($collection, $userid, $criteria = array()) {
-		$result = $this->store->queryListUser("oauth2-client-tokens", $this->userid, $query);
+		$result = $this->store->queryListUser("oauth2-client-tokens", $this->userid, null, $query);
 		if ($result === null) return null;
 		
 		$objs = array();
