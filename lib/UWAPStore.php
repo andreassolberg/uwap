@@ -115,8 +115,13 @@ class UWAPStore {
 		return $this->queryOne($collection, $criteria, $fields);
 	}
 	public function queryListUser($collection, $userid, $groups, $criteria = array(), $fields = array()) {
-		// $criteria["uwap-userid"] = $userid;
-		$criteria['$or'] = $this->getACL($userid, $groups);
+		
+		if (empty($groups)) {
+			$criteria["uwap-userid"] = $userid;
+		} else {
+			$criteria['$or'] = $this->getACL($userid, $groups);
+		}
+
 		return $this->queryList($collection, $criteria, $fields);
 	}
 
