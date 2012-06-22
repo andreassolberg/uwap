@@ -38,6 +38,7 @@ define([
 						console.log("Error storing new app.");
 					});
 				});
+				
 				// na.bind("submit", function(no) {
 				// 	console.log("Creating new app", no);
 				// });

@@ -263,6 +263,35 @@ class Config {
 
 	}
 
+	public function updateAuthzHandler($id, $obj, $userid) {
+		$current = $this->getConfig();
+
+		if(empty($current['handlers'])) {
+			$current['handlers'] = array();
+		}
+		$current['handlers'][$id] = $obj;
+
+		$criteria = array('id' => $this->config['id']);
+
+		$updates = array('handlers' => $current['handlers']);
+
+		$this->store->update('appconfig', $criteria, $userid, $updates);
+
+		return $current['handlers'];
+	}
+
+	public function deleteAuthzHandler($id, $userid) {
+		$current = $this->getConfig();
+		if(empty($current['handlers'])) {
+			$current['handlers'] = array();
+		}
+		unset($current['handlers'][$id]);
+		$criteria = array('id' => $this->config['id']);
+		$updates = array('handlers' => $current['handlers']);
+		$this->store->update('appconfig', $criteria, $userid, $updates);
+		return $current['handlers'];
+	}
+
 	public function store($config, $userid) {
 		$this->validateAppConfig($config);
 		$id = $config["id"];

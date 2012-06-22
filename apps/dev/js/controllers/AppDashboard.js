@@ -48,6 +48,7 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 			console.log(obj);
 			var handlerEditor = new AuthzHandlerEditor(this.container, obj, function(item) {
 				console.log("Done editing an authorization handler", item);
+				
 			});
 			handlerEditor.activate();
 		},

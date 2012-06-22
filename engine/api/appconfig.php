@@ -77,6 +77,29 @@ try {
 
 			if ($second === 'davcredentials') {
 				$result['data'] = $ac->getDavCredentials($auth->getRealUserID());
+			} else if ($second === 'authorizationhandler') {
+
+				if (count($parameters) !== 1) {
+					throw new Exception('Invalid number of parameters');
+				}
+				$authzhandler = array_unshift($parameters);
+
+
+				if ($method === 'post') {
+					$object = json_decode(file_get_contents('php://input'), true);
+					$object["id"] = $authzhandler;
+					Utils::validateID($authzhandler);
+
+					$handlers = $ac->updateAuthzHandler($authzhandler, $object, $auth->getRealUserID());
+					$result['data'] = $handlers;
+
+				} else if ($method === 'delete') {
+					$res = $ac->deleteAuthzHandler($authzhandler, $auth->getRealUserID());
+					$result['data'] = $res;
+				}
+
+
+
 			} else {
 				throw new Exception('Invalid app property part of URL');
 			}

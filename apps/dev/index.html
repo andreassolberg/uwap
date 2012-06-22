@@ -3,12 +3,13 @@
 	<head>
 		<meta charset="utf-8">
 		<title>UNINETT WebApp Park</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="">
-		<meta name="author" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="" />
+		<meta name="author" content="" />
 
 		<!-- Le styles -->
-		<link href="css/bootstrap.css" rel="stylesheet">
+		<link href="css/bootstrap.css" rel="stylesheet" />
+		<link href="css/style-authzhandler.css" rel="stylesheet" />
 		<style type="text/css">
 			body {
 				padding-top: 60px;
@@ -32,11 +33,6 @@
 		<script type="text/javascript" src="js/spine.js"></script>
 		<script src="js/jquery.tmpl.js" type="text/javascript" charset="utf-8"></script>
 
-		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-		<!--[if lt IE 9]>
-		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
-
 
 
 		<script id="authorizationhandlertmpl" type="text/x-jquery-tmpl">
@@ -56,7 +52,7 @@
 		</script>
 
 		<script id="authhandlereditortmpl" type="text/x-jquery-tmpl">
-			<div class="modal hide" id="myModal">
+			<div class="modal hide" >
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">×</button>
 					<h3>Edit authorization handler</h3>
@@ -64,61 +60,114 @@
 				<div class="modal-body">
 					<p>You are about to create a new application to be hosted in the UNINETT WebApp Park.</p>
 
-					<form class="registerform form-inline">  
-
-						<p>First, you need to register an app identifier. This will be used as part of the domain name. It can only
-							contain letters and numbers [a-z] and [0-9].</p>
-
-						<p>
-							<input style="width: 200px" type="text" class="input" id="handlerIdentifier" 
-								value="${id}" placeholder="Identifier">
-						</p>
-
-						<p>
-							<input style="width: 200px" type="text" class="input" id="handlerHostname" 
-								value="${host}" placeholder="hostname">
-						</p>
-
-						<p>
-							Type of authentication handler
-							<select name="handlerType">
-								<option>OAuth 2.0</option>
-								<option>OAuth 1.0</option>
-								<option>Custom HTTP Header Token</option>
-								<option>Basic Authentication</option>
-							</select>
-						</p>
-
-						<div class="handlerTypeOauth">
-
-							<p>Authorization endpoint</p>
-							<p><input style="width: 300px" id="handlerOauth" type="text" class="input" placeholder="Authorization endpoint"></p>							
-							<p>Token endpoint</p>
-							<p><input style="width: 300px" id="sdfsdfs" type="text" class="input" placeholder="Token endpoint"></p>				
-
-							<p>Redirect URI</p>
-							<p><input style="width: 300px" id="sdfsdfs" type="text" class="input" placeholder="Token endpoint"></p>			
-
-							<p>Consumer key</p>
-							<p><input style="width: 300px" id="sdfsdfs" type="text" class="input" placeholder="Consumer key"></p>			
-
-							<p>Consumer secret</p>
-							<p><input style="width: 300px" id="sdfsdfs" type="text" class="input" placeholder="Consumer secret"></p>			
+					<form class="registerform form-horizontal">  
 
 
+
+						<div class="control-group">
+							<label class="control-label" for="handlerTitle">Title</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge"  id="handlerTitle" value="${title}" placeholder="title">
+							</div>
+						</div>
+
+						<div class="control-group">
+							<label class="control-label" for="input01">Identifier</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge"  id="handlerIdentifier" value="${id}" placeholder="Identifier">
+								<p class="help-block">A unique handle used to identify this authorization handler.</p>
+							</div>
+						</div>
+
+						<div class="control-group">
+							<label class="control-label" for="handlerType">Type</label>
+							<div class="controls">
+								<select class="handlerType" id="handlerType" name="handlerType">
+									<option value="oauth2">OAuth 2.0</option>
+									<option value="oauth1">OAuth 1.0</option>
+									<option value="token">Custom HTTP Header Token</option>
+									<option value="basic">Basic Authentication</option>
+								</select>
+								
+							</div>
 						</div>
 
 
-						<p style="display: none">
-							<input type="text" class="input" disabled="disabled" placeholder="yourowndomain.org">
-						</p>
-
-						<p>Then, give your application a short desriptive name, and a longer descriptive text to explain what your application does.</p>
-
-						<p><input style="width: 300px" id="newAppName" type="text" class="input" placeholder="Name"></p>
+						<hr />
 
 
-						<p><textarea style="width: 300px" id="newAppDescr" placeholder="Describe your application..."></textarea></p>
+						<div class="control-group authzproperty oauth2">
+							<label class="control-label" for="field_authorization">Authorization endpoint</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge"  id="field_authorization" value="${authorization}" placeholder="https://">
+							</div>
+						</div>
+
+
+						<div class="control-group authzproperty oauth2">
+							<label class="control-label" for="field_token">Token endpoint</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge"  id="field_token" value="${token}" placeholder="https://">
+							</div>
+						</div>
+
+
+						<div class="control-group authzproperty oauth1">
+							<label class="control-label" for="field_request">Request endpoint</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge"  id="field_request" value="${request}" placeholder="https://">
+							</div>
+						</div>
+
+						<div class="control-group authzproperty oauth1">
+							<label class="control-label" for="field_authorize">Authorization endpoint</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge"  id="field_authorize" value="${authorize}" placeholder="https://">
+							</div>
+						</div>
+
+						<div class="control-group authzproperty oauth1">
+							<label class="control-label" for="field_access">Access endpoint</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge"  id="field_access" value="${access}" placeholder="https://">
+							</div>
+						</div>
+
+
+						<div class="control-group authzproperty oauth1 oauth2">
+							<label class="control-label" for="field_client_id">Client ID</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge"  id="field_client_id" value="${client_id}" placeholder="">
+							</div>
+						</div>
+
+						<div class="control-group authzproperty basic">
+							<label class="control-label" for="field_client_user">Client username</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge"  id="field_client_user" value="${client_user}" placeholder="">
+							</div>
+						</div>
+
+						<div class="control-group authzproperty oauth1 oauth2 basic">
+							<label class="control-label" for="field_client_secret">Client password</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge"  id="field_client_secret" value="${client_secret}" placeholder="">
+							</div>
+						</div>
+
+						<div class="control-group authzproperty token">
+							<label class="control-label" for="field_token_hdr">Token HTTP Header</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge"  id="field_token_hdr" value="${token_hdr}" placeholder="X-SpecialAPIKey">
+							</div>
+						</div>
+
+						<div class="control-group authzproperty token">
+							<label class="control-label" for="field_token_val">Token HTTP Value</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge"  id="field_token_val" value="${token_val}" placeholder="">
+							</div>
+						</div>
 
 
 					</form>
@@ -126,7 +175,7 @@
 				</div>
 				<div class="modal-footer">
 					<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-					<a href="#" class="createNewBtn btn btn-primary">Save authorization handler</a>
+					<a href="#" class="saveAuthZHandler btn btn-primary">Save authorization handler</a>
 				</div>
 			</div>
 		</script>
@@ -203,7 +252,7 @@
 						<div class="span4">
 							<h3>Usage Statistics</h3>
 
-							<p><img src="http://clippings.erlang.no/ZZ3247EB47.jpg" style="border-radius: 5px"></p>
+							<p><img src="img/plot.jpg" style="border-radius: 5px"></p>
 
 							<p>${$item.data['user-stats'].count} registered users. ( <a href="">see more statistics</a> )</p>
 

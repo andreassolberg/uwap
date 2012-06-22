@@ -21,14 +21,29 @@ class UWAPStore {
 		return $result['retval'];
 	}
 
+
+	// Use the $set operator to set a particular value. The $set operator requires the following syntax:
+	// 
+	// 		db.collection.update( { field: value1 }, { $set: { field1: value2 } } );
+	// 
+	// This statement updates in the document in collection where field matches value1 by replacing the value of 
+	// the field field1 with value2. This operator will add the specified field or fields if they do not exist in 
+	// this document or replace the existing value of the specified field(s) if they already exist.
+	public function update($collection, $userid, $criteria, $updates) {
+		if (isset($userid)) {
+			$criteria["uwap-userid"] = $userid;	
+		}
+
+		$updatestmnt = array('$set' => $updates);
+
+		$this->db->{$collection}->update($criteria, $updatestmnt);
+	}
+
 	public function store($collection, $userid = null, $obj, $expiresin = null) {
 		
 		if (isset($userid)) {
 			$obj["uwap-userid"] = $userid;	
 		}
-		// if (isset($obj["_id"])) {
-		// 	$obj["_id"] = new MongoId($obj["_id"]['$id']);
-		// }
 
 		if (isset($obj["_id"]) && !is_object($obj["_id"]) && isset($obj["_id"]['$id'])) {
 			$obj["_id"] = new MongoId($obj["_id"]['$id']);

@@ -27,6 +27,10 @@ try {
 
 		header('Content-Type: image/png');
 		echo base64_decode($ac["logo"]);
+	} else {
+
+		header("HTTP/1.0 404 Not Found");
+
 	}
 
 
