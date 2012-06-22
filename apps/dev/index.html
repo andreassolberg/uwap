@@ -96,6 +96,32 @@
 
 						<hr />
 
+						<div class="control-group authzproperty oauth2">
+							<label class="control-label" for="field_tokentransport">Token transport</label>
+							<div class="controls">
+								<select class="handlerType" id="field_tokentransport" name="field_tokentransport">
+									<option value="header">Authorization header</option>
+									<option value="query">Query string</option>
+								</select>
+							</div>
+						</div>
+
+
+						<div class="control-group authzproperty oauth2">
+							<label class="control-label" for="field_defaultscopes">Default requested scopes<br /><small>(separate by spaces)</small></label>
+							<div class="controls">
+								<input type="text" class="input-xlarge"  id="field_defaultscopes" value="${defaultscopes}" placeholder="">
+							</div>
+						</div>
+
+						<div class="control-group authzproperty oauth2">
+							<label class="control-label" for="field_defaultexpire">Default token expiration (seconds)</label>
+							<div class="controls">
+								<input type="text" class="input-medium"  id="field_defaultexpire" value="${defaultexpire}" placeholder="">
+							</div>
+						</div>
+
+
 
 						<div class="control-group authzproperty oauth2">
 							<label class="control-label" for="field_authorization">Authorization endpoint</label>

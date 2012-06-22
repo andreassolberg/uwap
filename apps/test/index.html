@@ -42,8 +42,6 @@
 			$("div#out").prepend('<p>Logged in as <strong>' + user.name + '</strong> (<tt>' + user.userid + '</tt>)</p>');
 			$("input#smt").attr('disabled', 'disabled');
 
-
-
 			var gr = $('<dl></dl>')
 			if(user.groups) {
 				groups = user.groups;
@@ -55,7 +53,8 @@
 			}
 			$("div#out").append('<p>Groups:</p>').append(gr);
 
-
+			// UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook", requestedScopes: ["read_stream"], requiredScopes: ["read_stream"]}, showfacebook);
+			UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook"}, showfacebook);
 		}
 		function notloggedin() {
 			$("div#out").prepend('<p>Not logged in</p>');
@@ -182,15 +181,15 @@
 			});
 			
 			$("input#facebook").click(function() {
-				UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook"}, showfacebook);
+				UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook", requestedScopes: ["read_stream"], requiredScopes: ["read_stream"]}, showfacebook);
 			});
 
 			function showemner(emner) {
 				console.log('Emner', emner);
 			}
 
-			var emneapi = 'http://www.ime.ntnu.no/api/course/-';
-			UWAP.data.get(emneapi, {}, showemner);
+			// var emneapi = 'http://www.ime.ntnu.no/api/course/-';
+			// UWAP.data.get(emneapi, {}, showemner);
 
 
 			// UWAP.data.get('http://www.vegvesen.no/trafikk/xml/savedsearch.xml?id=600', 
@@ -202,7 +201,7 @@
 
 			// 
 
-			bussRequest();
+			// bussRequest();
 
 			// UWAP.store.save(
 			// 	{

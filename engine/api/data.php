@@ -15,18 +15,23 @@ require_once('../../lib/autoload.php');
 
 try {
 
-	if (empty($_REQUEST['url'])) {
+	if (empty($_REQUEST['args'])) {
+		throw new Exception('Missing parameter [args]');
+	}
+	$args = json_decode($_REQUEST['args'], true);
+	
+	if (empty($args['url'])) {
 		throw new Exception("Missing parameter [url]");
 	}
 
-	$url = $_REQUEST["url"];
+	$url = $args["url"];
 	$handler = "plain";
 
-	if (!empty($_REQUEST["handler"])) $handler = $_REQUEST["handler"];
+	if (!empty($args["handler"])) $handler = $args["handler"];
 	
 
 	$client = HTTPClient::getClient($handler);
-	$result = $client->get($url, $_REQUEST);
+	$result = $client->get($url, $args);
 
 
 	header('Content-Type: application/json; charset=utf-8');

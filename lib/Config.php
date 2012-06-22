@@ -268,7 +268,9 @@ class Config {
 
 		$allowedFields = array(
 			'id', 'title', 'type', 
-			'authorization', 'token', 'request', 'authorize', 'access', 'client_id', 'client_user', 'client_secret', 'token_hdr', 'token_val');
+			'authorization', 'token', 'request', 'authorize', 'access', 'client_id', 'client_user', 'client_secret', 'token_hdr', 'token_val',
+			'defaultscopes', 'defaultexpire', 'tokentransport'
+		);
 		foreach($obj AS $k => $v) {
 			if (!in_array($k, $allowedFields)) {
 				unset($obj[$k]);
@@ -336,9 +338,9 @@ class Config {
 
 		if (!empty($current['handlers'])) {
 			foreach($current['handlers'] AS $key => $handler) {
-				if (isset($handler['type']) && $handler['type'] === 'oauth2') {
+				// if (isset($handler['type']) && $handler['type'] === 'oauth2') {
 					$current['handlers'][$key]['redirect_uri'] = Config::oauth2callback($this->getID());
-				}
+				// }
 			}
 		}
 

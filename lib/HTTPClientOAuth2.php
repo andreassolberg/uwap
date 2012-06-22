@@ -27,17 +27,35 @@ class HTTPClientOAuth2 extends HTTPClient {
 
 			try {
 
-				// error_log('Stored provider config: ' . var_export($this->config));
-				// error_log('GET specific options: ' . var_export($options));
+				error_log('Stored provider config: ' . var_export($this->config, true));
+				error_log('GET specific options: ' . var_export($options, true));
 
-				$scopes = null;
-				if (isset($this->config["scopes"])) {
-					$scopes = $this->config["scopes"];
-				}				
-				// if (isset($options["scopes"])) {
-				// 	$scopes = array_merge($scopes, $options["scopes"]);
-				// }
-				$feed = $client->getHTTP($options["handler"], null, $url, $scopes, null, false, $options["returnTo"]);
+				$requestedScopes = array();
+
+				if (isset($this->config["defaultscopes"])) {
+					$requestedScopes = explode(' ', $this->config["defaultscopes"]);
+				// } else if (isset($this->config["scopes"])) {
+				// 	$requestedScopes = $this->config["scopes"];
+				}	
+				if (isset($options["requestedScopes"])) {
+					$requestedScopes = array_merge($requestedScopes, $options["requestedScopes"]);
+				}
+
+				// echo 'about to start request: ' . json_encode($requestedScopes); exit;
+
+				$requiredScopes = array();
+				if (isset($options["requiredScopes"])) {
+					$requiredScopes = array_merge($requiredScopes, $options["requiredScopes"]);
+				}
+
+				$allowRedirect = false;
+				if (isset($options['allowRedirect'])) {
+					$allowRedirect = $options['allowRedirect'];
+				}
+
+				// getHTTP($provider_id, $user_id, $url, array $requestScope = null, array $requireScope = null, $allowRedirect = true, $returnTo = null) {
+				// error_log("Scopes: " . var_export($this->config, true));
+				$feed = $client->getHTTP($options["handler"], null, $url, $requestedScopes, $requiredScopes, $allowRedirect, $options["returnTo"]);
 
 				$parsed = json_decode($feed, true);
 				$result = array(
@@ -66,7 +84,13 @@ class HTTPClientOAuth2 extends HTTPClient {
 				);
 				return $result;
 
-			} 
+			} catch (So_InsufficientScope $e) {
+				$result = array(
+					'status' => 'error',
+					'message' => $e->getMessage()
+				);
+				return $result;
+			}
 			
 			// catch(Exception $e) {
 			// 	return array(

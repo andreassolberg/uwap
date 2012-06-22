@@ -12,6 +12,9 @@ define(function() {
 			if (this.handler.type) {
 				$(this.element).find("select.handlerType").val(this.handler.type);
 			}
+			if (this.handler.tokentransport) {
+				$(this.element).find("select#field_tokentransport").val(this.handler.tokentransport);
+			}
 			$(this.element).find("#handlerTitle").focus();
 			this.changeHandlerType();
 			
@@ -62,7 +65,7 @@ define(function() {
 			obj.title = $(this.element).find("#handlerTitle").val();
 			obj.type = $(this.element).find("select.handlerType").val();
 
-			fields = ['authorization', 'token', 'request', 'authorize', 'access', 'client_id', 'client_user', 'client_secret', 'token_hdr', 'token_val'];
+			fields = ['authorization', 'token', 'request', 'tokentransport', 'authorize', 'access', 'client_id', 'client_user', 'client_secret', 'token_hdr', 'token_val', 'defaultexpire', 'defaultscopes'];
 			$.each(fields, function(i, field) {
 				var val = $(that.element).find("#field_" + field).val();
 				if (val) {

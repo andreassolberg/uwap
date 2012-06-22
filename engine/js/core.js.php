@@ -1,3 +1,4 @@
+
 /**
  * @package UWAP
  * @description The core UWAP javascript library communicates with the UWAP server using the REST API.
@@ -380,24 +381,28 @@ UWAP.data = {
 
 	get: function (url, options, callback, errorcallback) {
 
-		var parameters = {};
-		parameters.url = url;
-		parameters.returnTo = window.location.href;
-
 		options = options || {};
+		options.url = url;
+		options.returnTo = window.location.href;
 
-		if (options.handler) {
-			parameters.handler = options.handler;
-		}
-		if (options.xml) {
-			parameters.xml = (options.xml ? '1' : '0');
-		}
+		// var parameters = {};
+		// parameters.url = url;
+		// parameters.returnTo = window.location.href;
+
+		// options = options || {};
+
+		// if (options.handler) {
+		// 	parameters.handler = options.handler;
+		// }
+		// if (options.xml) {
+		// 	parameters.xml = (options.xml ? '1' : '0');
+		// }
 
 		console.log("Performing GET request to " + url);
 		console.log("Parameters");
-		console.log(parameters);
+		console.log(options);
 
-		$.getJSON('/_/api/data.php', parameters, function(result, textStatus, jqXHR) {
+		$.getJSON('/_/api/data.php', {args: JSON.stringify(options)}, function(result, textStatus, jqXHR) {
 			console.log('Response data get()');
 			console.log(result);
 			if (result.status === 'ok') {
