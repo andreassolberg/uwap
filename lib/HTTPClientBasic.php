@@ -11,10 +11,10 @@ class HTTPClientBasic extends HTTPClientUserAuth {
 		$result = array("status" => "ok");
 
 		if (empty($this->config["client_user"])) throw new Exception("missing handler configuration [client_user]");
-		if (empty($this->config["client_password"])) throw new Exception("missing handler configuration [client_password]");
+		if (empty($this->config["client_secret"])) throw new Exception("missing handler configuration [client_secret]");
 
 		$headers = array(
-			"Authorization" => $this->clientauth($this->config["client_user"], $this->config["client_password"])
+			"Authorization" => $this->clientauth($this->config["client_user"], $this->config["client_secret"])
 		);
 
 		if (isset($this->config['user']) && $this->config['user'] === true) {

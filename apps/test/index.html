@@ -54,7 +54,7 @@
 			$("div#out").append('<p>Groups:</p>').append(gr);
 
 			// UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook", requestedScopes: ["read_stream"], requiredScopes: ["read_stream"]}, showfacebook);
-			UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook"}, showfacebook);
+			// UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook"}, showfacebook);
 		}
 		function notloggedin() {
 			$("div#out").prepend('<p>Not logged in</p>');
@@ -187,6 +187,11 @@
 			function showemner(emner) {
 				console.log('Emner', emner);
 			}
+
+			UWAP.data.get('http://bridge.uninett.no/rest.php', {handler: "basic"}, function(data) {
+				console.log("Data response headers", data);
+			});
+
 
 			// var emneapi = 'http://www.ime.ntnu.no/api/course/-';
 			// UWAP.data.get(emneapi, {}, showemner);
