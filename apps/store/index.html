@@ -1,121 +1,184 @@
+
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<html lang="en">
 	<head>
-		<meta charset="utf-8" />
-		<title>UNINETT WebApp Park</title>
-		<link rel="stylesheet" type="text/css" href="styles.css" />
+		<meta charset="utf-8">
+		<title>UNINET WebApp Park</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="" />
+		<meta name="author" content="" />
 
-		<link rel="stylesheet" href="styles-appstore.css" type="text/css" media="screen" />
-		<!-- <link rel="stylesheet" href="css/splitter.css" type="text/css" media="screen" /> -->
+		<!-- Le styles -->
+		<link href="css/bootstrap.css" rel="stylesheet" />
+		<link href="css/bootstrap-responsive.css" rel="stylesheet">
+		<link href="css/uwap-docs.css" rel="stylesheet">
 
-<!-- 		<link rel="stylesheet" href="nivoslider/nivo-slider.css" type="text/css" media="screen" />
-		<link rel="stylesheet" href="nivoslider/themes/default/default.css" type="text/css" media="screen" />
-		<link rel="stylesheet" href="fancybox/jquery.fancybox-1.3.4.css" type="text/css" media="screen" />
- -->
+		<link rel="stylesheet" href="css/styles-appstore.css" type="text/css" media="screen" />
+		<!-- <link rel="stylesheet" href="css/styles.css" type="text/css" media="screen" /> -->
+
+		<style type="text/css">
+			body {
+				padding-top: 60px;
+				padding-bottom: 40px;
+			}
+		</style>
 
 
-
-
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-
+		<!-- JQuery hosted by Google -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
 
 		<link type="text/css" href="js/jquery-ui/css/smoothness/jquery-ui-1.8.19.custom.css" rel="stylesheet" />
 		<script type="text/javascript" src="js/jquery-ui/js/jquery-ui-1.8.19.custom.min.js"></script>
 
-
 		<!-- Core API to UNINETT WebApp Park -->
 		<script type="text/javascript" src="/_/js/core.js"></script>
 
-	</head> 
+
+		<script>
+		</script>
 
 
-	<body>
-	
-		<div class="container">
-			<div class="header">
-				<!-- <h1 style="font-size: 100%">Andreas &Aring;kre Solberg</h1> -->
-				
-				<div class="get-it-buttons">
-					<!-- <a href="https://setup.uwap.org" class="buy-it-button">Setup new app</a> -->
-					<a href="https://developers.uwap.org" class="free-trial-button">For developers »</a> 
+	</head>
+
+	<body >
+
+
+
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+			 <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			 </a>
+			 <a class="brand" href="#">UWAP</a>
+			 <div class="btn-group pull-right">
+				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+					<i class="icon-user"></i> <span id="username"></span>
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a href="#">Profile</a></li>
+					<li class="divider"></li>
+					<li><a href="#">Sign Out</a></li>
+				</ul>
+			 </div>
+			 <div class="nav-collapse">
+				<ul class="nav">
+					<li class="active"><a href="#">App Store</a></li>
+					<li><a href="https://dev.uwap.org">Developers</a></li>
+					<li><a href="https://docs.uwap.org/">Documentation</a></li>
+					<li><a href="https://developers.uwap.org">About</a></li>
+
+				</ul>
+			 </div><!--/.nav-collapse -->
+			</div>
+		</div>
+	 </div>
+
+	<div class="container">
+
+		<header class="jumbotron subhead" id="overview">
+			<h1>UNINETT WebApp Park <small>App Store</small></h1>
+			<p class="lead">A vast of WebApps for educational students and employees.</p>
+		</header>
+
+
+
+		<div class="intro">
+
+			<form id="search">
+				<input type="search" id="searchfield" name="search" value="" />
+
+
+<!-- 				<div id="radioProvider">
+					Tjenestetilbyder
+					<input type="radio" id="radioProvider1" name="radioProvider" value="all" checked="checked" />
+					<label for="radioProvider1">Vis alle</label>
+
+					<input type="radio" id="radioProvider2" name="radioProvider"  value="uninett"  />
+					<label for="radioProvider2">Bare fra UNINETT</label>
+
+					<input type="radio" id="radioProvider3" name="radioProvider"  value="new" />
+					<label for="radioProvider3">Nye tjenester</label>
+
+					<input type="radio" id="radioProvider4" name="radioProvider"  value="fav" />
+					<label for="radioProvider4">Mine favoritter</label>
+					
 				</div>
-				<img class="loto" style="margin-top: 10px; margin-left: 10px" src="https://www.uninett.no/sites/drupal.uninett.no.uninett/themes/uninett_2012/images/logo.png" />
-			</div>
-			<div class="intro">
-				<h2><span style="font-size: 60%">edu App Store</span></h2>
-				<p>Services for students and employees in higher and lower education in norway. Currently both Feide services, and services running in the UWAP App Engine.</p>
+
+				<div id="radioTarget">
+					Tjeneste målgruppe
+					<input type="radio" id="radioTarget1" name="radioTarget"  value="all" checked="checked" />
+					<label for="radioTarget1">Vis alle</label>
+
+					<input type="radio" id="radioTarget2" name="radioTarget"  value="you"  />
+					<label for="radioTarget2">Tilgjengelig for deg</label>
+
+					<input type="radio" id="radioTarget3" name="radioTarget" value="high" />
+					<label for="radioTarget3">Høyere utdanning</label>
+
+					<input type="radio" id="radioTarget4" name="radioTarget" value="low" />
+					<label for="radioTarget4">Grunnopplæringa</label>
+				</div> -->
+
+			</form>
 
 
-				<form id="search">
-					<input type="search" id="searchfield" name="search" value="" />
-
-
-					<div id="radioProvider">
-						Tjenestetilbyder
-						<input type="radio" id="radioProvider1" name="radioProvider" value="all" checked="checked" />
-						<label for="radioProvider1">Vis alle</label>
-
-						<input type="radio" id="radioProvider2" name="radioProvider"  value="uninett"  />
-						<label for="radioProvider2">Bare fra UNINETT</label>
-
-						<input type="radio" id="radioProvider3" name="radioProvider"  value="new" />
-						<label for="radioProvider3">Nye tjenester</label>
-
-						<input type="radio" id="radioProvider4" name="radioProvider"  value="fav" />
-						<label for="radioProvider4">Mine favoritter</label>
-
-						<!-- <input type="radio" id="radio3" name="radio" /><label for="radio3">Choice 3</label> -->
-					</div>
-
-					<div id="radioTarget">
-						Tjeneste målgruppe
-						<input type="radio" id="radioTarget1" name="radioTarget"  value="all" checked="checked" />
-						<label for="radioTarget1">Vis alle</label>
-
-						<input type="radio" id="radioTarget2" name="radioTarget"  value="you"  />
-						<label for="radioTarget2">Tilgjengelig for deg</label>
-
-						<input type="radio" id="radioTarget3" name="radioTarget" value="high" />
-						<label for="radioTarget3">Høyere utdanning</label>
-
-						<input type="radio" id="radioTarget4" name="radioTarget" value="low" />
-						<label for="radioTarget4">Grunnopplæringa</label>
-					</div>
-
-				</form>
-
-
-			</div>
-			<div class="divider-2"></div>
-			<div class="top-features">
-				
-				<div id="appListingContainer">
-				</div>
-
-				
-				<br class="clear" />
-				
-			</div>
+		</div>
+		<div class="divider-2"></div>
+		<div class="top-features">
 			
-			<div class="footer">
-				<p>Copyright 2012 <strong>Andreas &Aring;kre Solberg</strong>. All Rights Reserved.
-				<div class="get-it-buttons">
-					<!-- <a href="https://setup.uwap.org" class="buy-it-button">Setup new app</a> -->
-					<a href="https://developers.uwap.org" class="free-trial-button">For developers »</a> 
-				</div>
+			<div id="appListingContainer">
 			</div>
+
+			
+			<br class="clear" />
 			
 		</div>
-		
-		<script type="text/javascript" src="js/libs/jquery.equalheights.js"></script>
-		<script type="text/javascript" src="js/libs/jquery.quicksand.js"></script>
-		<script type="text/javascript" src="js/libs/sha1.js"></script>
 
-		<script type="text/javascript" src="js/script.js"></script>
-		<script type="text/javascript" src="js/ui.js"></script>
-		<script type="text/javascript" src="js/search.js"></script>
-	
+			
+
+
+
+		<hr>
+
+		<footer>
+			<p>&copy; UNINETT 2012</p>
+		</footer>
+	</div>
+
+
+	 <div id="modalContainer"></div>
+
+	 <!-- Le javascript
+	 ================================================== -->
+	 <!-- Placed at the end of the document so the pages load faster -->
+	 
+
+	<script type="text/javascript" src="js/libs/jquery.equalheights.js"></script>
+	<script type="text/javascript" src="js/libs/jquery.quicksand.js"></script>
+	<script type="text/javascript" src="js/libs/sha1.js"></script>
+
+	<script type="text/javascript" src="js/script.js"></script>
+	<script type="text/javascript" src="js/ui.js"></script>
+	<script type="text/javascript" src="js/search.js"></script>
+
+
+
+    <script src="js/uwap-docs.js"></script>    
+    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/bootstrap-alert.js"></script>
+    <script src="js/bootstrap-modal.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+    <script src="js/bootstrap-scrollspy.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+    <script src="js/bootstrap-popover.js"></script>
+    <script src="js/bootstrap-button.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script src="js/bootstrap-carousel.js"></script>
+    <script src="js/bootstrap-typeahead.js"></script>
 	</body>
-
 </html>
