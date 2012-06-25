@@ -1,0 +1,433 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>UWAP Docs</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="" />
+		<meta name="author" content="" />
+
+		<!-- Le styles -->
+		<link href="css/bootstrap.css" rel="stylesheet" />
+		<link href="css/bootstrap-responsive.css" rel="stylesheet">
+		<link href="css/uwap-docs.css" rel="stylesheet">
+
+		<style type="text/css">
+			body {
+				padding-top: 60px;
+				padding-bottom: 40px;
+			}
+
+		</style>
+
+
+		<!-- JQuery hosted by Google -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+		<!-- Core API to UNINETT WebApp Park -->
+		<script type="text/javascript" src="/_/js/core.js"></script>
+
+		<!-- Code prettifier from google -->
+		<link href="prettify.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="prettify.js"></script>
+
+
+		<script>
+		</script>
+
+
+	</head>
+
+	<body data-spy="scroll" data-target=".subnav" data-offset="50">
+
+
+
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+			 <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			 </a>
+			 <a class="brand" href="#">UWAP</a>
+			 <div class="btn-group pull-right">
+				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+					<i class="icon-user"></i> <span id="username"></span>
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a href="#">Profile</a></li>
+					<li class="divider"></li>
+					<li><a href="#">Sign Out</a></li>
+				</ul>
+			 </div>
+			 <div class="nav-collapse">
+				<ul class="nav">
+					<li><a href="https://store.uwap.org">App Store</a></li>
+					<li><a href="https://dev.uwap.org">Developers</a></li>
+					<li class="active"><a href="#">Documentation</a></li>
+					<li><a href="https://developers.uwap.org/">About</a></li>
+
+				</ul>
+			 </div><!--/.nav-collapse -->
+			</div>
+		</div>
+	 </div>
+
+	<div class="container">
+
+		<header class="jumbotron subhead" id="overview">
+			<h1>UWAP API Documentation</h1>
+			<p class="lead">Supersimple access to federated authentication, document storage and a sophisticated REST engine.</p>
+			<div class="subnav">
+				<ul class="nav nav-pills">
+					<li><a href="#installation">Installation and usage</a></li>
+					<li><a href="#auth">Authentication</a></li>
+					<li><a href="#store">Storage</a></li>
+					<li><a href="#data">REST</a></li>
+				</ul>
+			</div>
+		</header>
+
+
+
+
+		<section id="installation">
+
+
+
+			<h2>Installation and usage</h2>
+
+			<p>In your HTML file, include a reference to the UWAP core javascript. Then this API becomes available to you!</p>
+
+			<pre class="prettyprint lang-js">
+&lt;script type="text/javascript" src="/_/js/core.js">&lt;/script></pre>				
+
+
+			<div class="row">
+
+				<div class="span4">
+					<h3>Authentication API</h3>
+					<p>This API allows you to control authentication of the user. You may check if an user is authenticated or force authentication of the user. When the user is authenticated you'll get access to a user object with some basic information about the user.</p>
+				</div>
+
+				<div class="span4">
+					<h3>Storage API</h3>
+					<p>This API gives you access to a sophisticated storage for you application. The storage is personal and is automatically making use of the authentication session with the user.</p>
+					<p>The storage allows you to store JSON documents per user, with a sophisticated query language and supports group-based authorization and access control.</p>
+				</div>
+				<div class="span4">
+					<h3>Data API</h3>
+
+					<p>The data API gives you access to perform HTTP calls to any remote data source. The most basic operation is accssing public REST APIs, but by making use of Authorization Handlers, you may also connect to protected APIs using OAuth 2.0, OAuth 1.0 or any custom token format.</p>
+					<p>.</p>
+
+				</div>
+			</div>
+
+
+
+		</section>
+
+
+
+
+		<section id="auth">
+			<h2>Authentication API <small>&mdash; UWAP.auth</small></h2>
+
+			<p>Currently the authentication layer of UWAP is integrated with <a href="http://feide.no">Feide</a>, which means that all students and employes from norwegian educational institusions, may log in to your app using their local user account.</p>
+
+			<h3>UWAP.auth.require(callback)</h3>
+
+			<p>If you need the user to be authenticated before continuing operations, you may use the <tt>require()</tt> function. It will first check if the user is already authenticated, and if not, it will redirect the user away and enfore authentication.</p>
+
+			<p><span class="label label-info">Remember</span> This function may redirect the user, you SHOULD ensure that you keep the state, to be able to continue the operation when the user returns. The user will return to the current page, and will even include the same <tt>location.hash</tt>, which means that you may use the hash to keep state.</p>
+
+			<pre><code>callback(user)</code></pre>
+
+			<p>The callback is called only if the user is successully logged in. (If the user is not, it is redirected)</p>
+			<p>The <strong>callback</strong> includes these parameters:</p>
+
+			<dl>
+				<dt><tt>user</tt></dt>
+				<dd>A user object</dd>
+			</dl>
+
+			<pre class="prettyprint lang-js">{
+	"name": "Andreas Åkre Solberg",
+	"userid": "35d481a62b3839ad56aec2fcc76925b5f4c3bff6",
+	"mail": "andreas.solberg@uninett.no",
+	"groups": {
+		"@realm:uninett.no": "UNINETT",
+		"@orgunit:uninett.no:5ff6caf859c3b03af7edb3930f34f9b4d2b07781": "Tjenesteavdeling",
+		"@orgunit:uninett.no:0a02f6092fa92d03b3b29a792eeafeac7b7f2b11": "Identitetshåndtering"
+	}
+}</pre>
+
+
+			<p>Example of usage:</p>
+			<pre class="prettyprint lang-js">function loggedin(user) {
+	$(&quot;div#out&quot;).prepend('&lt;p&gt;Logged in as &lt;strong&gt;' + user.name + '&lt;/strong&gt; (&lt;tt&gt;' + user.userid + '&lt;/tt&gt;)&lt;/p&gt;');
+	var gr = $('&lt;dl&gt;&lt;/dl&gt;')
+	if(user.groups) {
+		groups = user.groups;
+		for(var key in user.groups) {
+			gr.append('&lt;dt&gt;' + user.groups[key] + '&lt;/dt&gt;');
+			gr.append('&lt;dd&gt;&lt;tt&gt;' + key + '&lt;/tt&gt;&lt;/dd&gt;');
+		}
+	}
+	$(&quot;div#out&quot;).append('&lt;p&gt;Groups:&lt;/p&gt;').append(gr);
+}
+UWAP.auth.require(loggedin);</pre>
+
+			<h3>UWAP.auth.check(callbackLoggedIn, callbackNotLoggedIn)</h3>
+
+			<p>If your application supports both authenticated and unauthenticated users, you may want to check if the user is logged in, but if the user is not logged in, you would like to continue operations and not redirect the user for authentication. Typically, you can do a <tt>check()</tt> operation at page load, and bind a <tt>require()</tt> function to a login button.</p>
+
+			<p>The <strong>callbackLoggedIn</strong> includes these parameters:</p>
+
+			<dl>
+				<dt><tt>user</tt></dt>
+				<dd>A user object</dd>
+			</dl>
+
+			<p>The <strong>callbackNotLoggedIn</strong> includes no parameters.</p>
+
+
+			<p>Example of usage:</p>
+			<pre class="prettyprint lang-js">function notloggedin() {
+	$(&quot;div#out&quot;).prepend('&lt;p&gt;Not logged in&lt;/p&gt;');
+}
+UWAP.auth.check(loggedin, notloggedin);
+$(&quot;input#smt&quot;).click(function() {
+	UWAP.auth.require(loggedin);
+});</pre>
+
+
+			<h3>UWAP.auth.checkPassive(callbackLoggedIn, callbackNotLoggedIn)</h3>
+
+			<p>The <tt>checkPassive</tt> function is working very similar to the <tt>check</tt> function, with the single difference that in addition to check if the user has a current active authenticated session, if it has not, it will load an invisible iFrame in the the current document and perform a passive authentication request to the Identity Provider (Feide), before it calls any of the callbacks.</p>
+
+			<p>This means that a user logged in through another Feide serivce, will be logged in by using <tt>checkPassive</tt>.</p>
+
+
+
+
+			<pre class="prettyprint linenums lang-js">
+			require: function (callbackSuccess) {
+			checkPassive: function (callbackSuccess, callbackNo) {
+			check: function (callbackSuccess, callbackNo) {
+			</pre>
+		</section>
+
+		<section id="store">
+			<h2>Data API <small>&mdash; UWAP.store</small></h2>
+
+			<p>The data REST API allows you to perform cross-origin HTTP requests to any site, and process the result in a callback.</p>
+
+			<h3>UWAP.data.get(url, options, callback, errorcallback)</h3>
+
+			<p>The parameters:</p>
+			<dl>
+				<dt><tt>url</tt></dt>
+				<dd>The URL to fetch data from, starting with <tt>http</tt> or <tt>https</tt>.</dd>
+
+				<dt><tt>options</tt> (optional)</dt>
+				<dd>The options object is optional, you may provide null or an empty object.</dd>
+				<dd>The list of options are:
+
+					<dl>
+						<dt><tt>handler</tt></dt>
+						<dd>Select an authorization handler. <a href="#authzhandlers">Read more about authroization handlers</a>.</dd>
+
+						<dt><tt>xml</tt></dt>
+						<dd>Enable automatic translation from XML to JSON by setting <tt>xml</tt> to <tt>1</tt>.</dd>
+
+
+					</dl>
+
+				</dd>
+
+				<dt><tt>callback(data)</tt></dt>
+				<dd>When the REST engine successfully obtains a JSON response, the JSON data object is passed to the <tt>callback</tt>.</dd>
+
+				<dt><tt>errorcallback(error)</tt></dt>
+				<dd>When the REST engine fails to fetch data, also including when the response status code is not 200 OK. The error object contains a <tt>message</tt> parameter with more details.</dd>
+			</dl>
+
+
+
+			<h3 id="authzhandlers">Authorization handlers</h3>
+
+			<p>An authorization handler is a predefined confiruation that performs authentication of the client and with OAuth also of the user.</p>
+			<p>The OAuth authorization handlers requres that the user is already authenticated, which means you should run UWAP.auth.require() first. Then the UWAP engine also caches OAuth access tokens in a personalized token storage for each user.</p>
+
+
+			<h4>OAuth 2.0</h4>
+			<p><a href="http://oauth.net/2">Read more about OAuth 2.0</a></p>
+
+
+
+			<h4>OAuth 1.0</h4>
+			<p><a href="http://oauth.net/">Read more about OAuth 1.0</a></p>
+
+
+
+			<h4>Basic authentication</h4>
+			<p>You have predfined a client username and password.</p>
+
+			<p>A request like this:</p>
+			<pre class="prettyprint lang-js">UWAP.data.get('http://api.example.org/basic', {handler: "somehandler"}, callback);</pre>			
+
+			<p>May end up like this from the REST engine:</p>
+			<pre>GET /basic HTTP/1.1
+Host: api.example.org
+Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==</pre>
+
+
+			<h4>Custom header</h4>
+			<p>You have predefined a HTTP header field and a value that will be added to all REST request using this handler.</p>
+			<p>An example of this is if you have access to a proprietary API that requires you to include a HTTP header <tt>X-Foo-API-Key</tt>.</p>
+
+			<p>A request like this:</p>
+			<pre class="prettyprint lang-js">UWAP.data.get('http://api.example.org/propertieryapi', {handler: "somehandler"}, callback);</pre>			
+
+			<p>May end up like this from the REST engine:</p>
+			<pre>GET /propertieryapi HTTP/1.1
+Host: api.example.org
+X-Foo-API-Key: sf76sd5f7sd65f69sdf67sd5f</pre>
+
+			
+			
+
+		</section>
+
+
+		<section id="data">
+			<h2>Storage API <small>&mdash; UWAP.data</small></h2>
+
+			<p>This API gives you access to a sophisticated storage for you application. The storage is personal and is automatically making use of the authentication session with the user.</p>
+			<p>The storage allows you to store JSON documents per user, with a sophisticated query language and supports group-based authorization and access control.</p>
+
+			<p>See <a href="http://docs.mongodb.org/manual/">MongoDB Documentation</a> for information about the query language.</p>
+
+
+			<h3>UWAP.store.save(object, callback, errorcallback)</h3>
+			<p>To store a JSON object in the user store.</p>
+
+			<p>Example of storing a simple object:</p>
+			<pre class="prettyprint lang-js">UWAP.store.save(
+	{
+		&quot;test&quot;: &quot;value&quot;,
+		&quot;size&quot;: Math.floor(Math.random()*1000),
+		&quot;bool&quot;: true
+		&quot;speed&quot;: 1.2333,
+		&quot;geolocation&quot;: {
+			&quot;city&quot;: &quot;Trondheim&quot;,
+			&quot;code&quot;: &quot;7040&quot;
+		}
+	}, function() {
+		console.log(&quot;Successfully stored object.&quot;)
+	}, function(err) {
+		console.log(&quot;Error storing object: &quot; + err.message)
+	}
+);</pre>
+
+			<h3>UWAP.store.queryOne(query, callback, errorcallback)</h3>
+			<p>To query the storage and return only a single entry. The callback is invoked with the data object as a parameter.</p>
+			<p>The returned objects include a magic property <tt>_id</tt> that contains an internal reference to the object, and you should never add or modify this. If you save an object you have retrieved, it will be overwritten with the new data. If you remove the <tt>_id</tt> parameter you will duplicate the object when you store it.</p>
+
+			<p>Example of queriying a single object, mofifying it and save it again.</p>
+			<pre class="prettyprint lang-js">UWAP.store.queryOne(
+	{&quot;bool&quot;: true},
+	function(res) {
+		console.log(&quot;Query one returned result:&quot;);
+		console.log(res);
+		res.text = &quot;Modified2&quot;;
+		console.log(&quot;Is about to save entry with id: &quot;, res[&quot;_id&quot;]);
+		UWAP.store.save(res, function() {
+			console.log(&quot;Successfully stored modified attribute&quot;);
+		});
+	}
+);</pre>
+
+
+			<h3>UWAP.store.queryList(query, callback, errorcallback)</h3>
+			<p>To query the storage and return a list of entries. The callback is invoked with the object list as a parameter.</p>
+
+			<p>Example of queriying a list of objects:</p>
+			<pre class="prettyprint lang-js">UWAP.store.queryList(
+	{&quot;bool&quot;: true},
+	function(res) {
+		console.log(res);
+	}, function(err) {
+		console.log(err);
+	}
+);</pre>
+
+
+		</section>
+
+
+<!--
+
+		<section id="appconfig">
+			<h2>UWAP.appconfig</h2>
+
+			<p>Not important</p>
+
+			<pre class="prettyprint lang-js">
+			list: function(callback, errorcallback) {
+			store: function(object, callback, errorcallback) {
+			updateAuthzHandler: function(id, object, callback, errorcallback) {
+			deleteAuthzHandler: function(appid, objectid, callback, errorcallback) {
+			check: function(id, callback, errorcallback) {
+			get: function(id, callback, errorcallback) {
+			</pre>
+		</section>
+
+
+		<section id="applisting">
+			<h2>UWAP.applisting</h2>
+
+			<p>Not important</p>
+
+			<pre class="prettyprint">
+			list: function(callback, errorcallback) {
+			</pre>
+		</section>
+
+-->
+
+
+		<hr>
+
+		<footer>
+			<p>&copy; UNINETT 2012</p>
+		</footer>
+	</div>
+
+
+	 <div id="modalContainer"></div>
+
+	 <!-- Le javascript
+	 ================================================== -->
+	 <!-- Placed at the end of the document so the pages load faster -->
+	 
+
+    <script src="js/uwap-docs.js"></script>    
+    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/bootstrap-alert.js"></script>
+    <script src="js/bootstrap-modal.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+    <script src="js/bootstrap-scrollspy.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+    <script src="js/bootstrap-popover.js"></script>
+    <script src="js/bootstrap-button.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script src="js/bootstrap-carousel.js"></script>
+    <script src="js/bootstrap-typeahead.js"></script>
+	</body>
+</html>
