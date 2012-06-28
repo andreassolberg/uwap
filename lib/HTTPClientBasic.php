@@ -21,9 +21,11 @@ class HTTPClientBasic extends HTTPClientUserAuth {
 			$headers["UWAP-UserID"] = $this->userauth();
 		}
 
-		error_log(var_export($headers, true));
+		error_log("HTTPClientBasic headers:" .  var_export($headers, true));
 
-		$result["data"] = $this->rawget($url, $headers);
+		$result["data"] = $this->rawget($url, $headers, true, false, $options);
+		// ($url, $headers = array(), $redir = true, $curl = false, $options = array()) {
+		// 
 		$result = $this->decode($result, $options);
 		return $result;
 	}

@@ -29,10 +29,8 @@ try {
 
 	if (!empty($args["handler"])) $handler = $args["handler"];
 	
-
 	$client = HTTPClient::getClient($handler);
 	$result = $client->get($url, $args);
-
 
 	header('Content-Type: application/json; charset=utf-8');
 	echo json_encode($result);

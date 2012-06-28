@@ -33,34 +33,75 @@ class HTTPClient {
 	}
 
 	// TODO: Security check on URL to not refer to local file system
-	protected function rawget($url, $headers = array(), $redir = true, $curl = false) {
+	protected function rawget($url, $headers = array(), $redir = true, $curl = false, $options = array()) {
+
+		if (isset($options['data'])) {
+			$headers['Content-type'] = 'application/json';
+		}
 
 		$headerstring = '';
 		foreach($headers AS $k => $v) {
 			$headerstring .= $k . ': ' . $v . "\r\n";
 		}
+		$method = "GET";
+		if (isset($options["method"])) {
+			$method = $options["method"];
+		}
 		$opts = array(
 			// Documentation on http stream options available here:
 			// * http://www.php.net/manual/en/context.http.php
 			'http'=>array(
-				'method'=>"GET",
+				'method'=> $method,
 				'header'=> $headerstring,
 				'follow_location' => $redir,
 				'max_redirects' => ($redir ? 9 : 1)
 			)
 		);
+		if (isset($options['data'])) {
+			$opts['http']['content'] = json_encode($options['data']);
+		}
 		error_log("Options: " . json_encode($opts));
 		error_log("Header string: " . $headerstring);
-		error_log("Headers: " . json_encode($headers));
+		error_log("HTTPClient      headers:" .  var_export($headers, true));
 		$context = stream_context_create($opts);
 
 		if ($curl) {
 			return $this->file_get_contents_curl($url, $headers, $redir);
 		}
+
 		error_log("About to retrieve: " . $url);
-		$rawdata = file_get_contents($url, false, $context);
-		if ($rawdata === false) throw new Exception();
+		$rawdata = @file_get_contents($url, false, $context);
+
+		list($version, $status_code, $msg) = explode(' ', $http_response_header[0], 3);
+		$headers = array();
+		foreach($http_response_header AS $hdr) {
+			self::http_parse_headers($hdr, &$headers);
+		}
+
+		if ($rawdata === false) throw new Exception('Status [' . $status_code .  ']: ' . $msg);
+
 		return $rawdata;
+	}
+
+	protected static function http_parse_headers( $header, $hdrs ) {
+		$key = null;
+		$value = null;
+
+		$fields = explode("\r\n", preg_replace('/\x0D\x0A[\x09\x20]+/', ' ', $header));
+		foreach( $fields as $field ) {
+		    if( preg_match('/([^:]+): (.+)/m', $field, $match) ) {
+		        $key = strtolower(preg_replace('/(?<=^|[\x09\x20\x2D])./e', 'strtoupper("\0")', strtolower(trim($match[1]))));
+		        $value = trim($match[2]);
+
+		        if (isset($key)) {
+		        	if (!isset($hdrs[$key])) {
+		        		$hdrs[$key] = array();
+		        	}
+		        	$hdrs[$key][] = $value;
+		        }
+
+		    }
+		}
 	}
 
 
@@ -100,7 +141,9 @@ class HTTPClient {
 
 	public function get($url, $options) {
 		$result = array("status" => "ok");
-		$result["data"] = $this->rawget($url);
+
+		// ($url, $headers = array(), $redir = true, $curl = false, $options = array()) {
+		$result["data"] = $this->rawget($url, array(), true, false, $options);
 
 		// error_log("Got data: " . var_export($result["data"], true)) ;
 

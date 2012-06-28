@@ -26,9 +26,14 @@ class Proxy_REST {
 		foreach($headers AS $k => $v) {
 			$headerstring .= $k . ': ' . $v . "\r\n";
 		}
+		$method = "GET";
+
+		if (isset($opts["method"])) {
+			$method = $opts["method"];
+		}
 		$opts = array(
 			'http'=>array(
-				'method'=>"GET",
+				'method'=> $method,
 				'header'=> $headerstring,
 				'follow_location' => $redir,
 				'max_redirects' => 1
@@ -51,8 +56,6 @@ class Proxy_REST {
 	function show() {
 
 
-		
-
 		$fullpath = $_SERVER['REQUEST_URI'];
 		$proxyconfig = $this->config->getValue('proxies', array());
 
@@ -74,7 +77,7 @@ class Proxy_REST {
 				exit;
 			}
 
-			error_log("proxying request to: " . $url);
+			error_log("Proxying request to: " . $url);
 
 			header('Content-Type: application/json; charset: utf-8');
 
