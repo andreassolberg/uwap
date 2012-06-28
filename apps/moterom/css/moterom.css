@@ -1,0 +1,101 @@
+body {
+	background: #000 !important;
+	background-image: radial-gradient(32% 47%, circle cover, #666666, #000000 76%);
+}
+
+div#main {
+	
+}
+
+.dateclock {
+	color: #fff;
+	font-size: 120%;	
+}
+.dateclock span.clock {
+	font-weight: bold;
+	font-size: 140%;	
+}
+
+div.room.empty { border: none; }
+div.room {
+	/**/
+	/*padding: 2px;
+	margin-left: 5px;*/
+	/*padding: 5px;*/
+	border: 4px solid rgba(0, 0, 0, 0.8);
+	margin: 2px;
+	padding: 5px;
+	border-radius: 5px;
+	/*margin-top: 10px;*/
+	overflow: visible;
+}
+div.roomcontainer.activeRoom div.room {
+	border: 4px solid rgba(0, 0, 0, 0.5);
+}
+/*div.roomcontainer div.roomReg { display: none; }
+div.roomcontainer.available div.roomReg { display: block; }*/
+
+div.roomcontainer div.room div.event {
+	display: none;
+}
+div.roomcontainer.activeRoom div.room div.event {
+	display: block;
+}
+div.room,div.roomcontainer {
+	overflow-y: visible;	
+}
+div.roomHdr {
+	float: right; color: white;
+	font-size: 160%;
+}
+div.roomcontainer div.roomReg {
+	display: none;
+}
+div.roomcontainer.activeRoom.available div.roomReg {
+	display: block;
+	margin: 1em 2px;
+}
+div.event {
+	background: rgba(0, 0, 0, 0.6);
+	color: rgba(255, 255, 255, 0.6);
+
+	border-radius: 4px;
+	border: 2px solid rgba(0, 0, 0, 0.8);
+	padding: 3px; 
+	margin: 3px;
+
+}
+div.event.now {
+	color: #ccc;
+	border: 2px dashed rgba(0, 0, 0, 0.8);
+	color: #fff;
+	font-size: 110%;
+}
+div.event.next {
+	
+}
+
+div.etghdr {
+	font-size: xx-large;
+	text-align: left;
+	padding: 10px 0px;
+	/*min-height: 80px;*/
+}
+
+.eventHdr {
+	font-size: 115%;
+	font-weight: bold;
+}
+div.eventDate {
+	font-weight: light;
+}
+
+div.room.roomtype-gra { background: #ccc;}
+div.room.roomtype-orange { background: #FF7722; }
+div.room.roomtype-sort { background: #333; color: white;}
+div.room.roomtype-lilla { background: #8968CD;}
+div.room.roomtype-rod { background: #42C0FB;}
+div.room.roomtype-gul { background: #458B00;}
+div.room.roomtype-gronn { background: #0276FD;}
+
+

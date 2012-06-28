@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>UNINETT Møterom</title>
+		<meta name="description" content="" />
+		<meta name="author" content="Andreas Åkre Solberg" />
+
+		<meta name="apple-mobile-web-app-capable" content="yes" /> 
+		<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+
+		<link href="css/moterom.css"  rel="stylesheet" />
+		<link href="css/bootstrap.css" rel="stylesheet" />
+		<link href="css/bootstrap-responsive.css" rel="stylesheet">
+		<!-- <link href="css/uwap-docs.css" rel="stylesheet"> -->
+
+		<!-- JQuery hosted by Google -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+		<!-- Core API to UNINETT WebApp Park -->
+		<script type="text/javascript" src="/_/js/core.js"></script>
+
+		<script type="text/javascript" src="js/moment.min.js"></script>
+
+		<script type="text/javascript" src="js/spine/spine.js"></script>
+		<!-- script type="text/javascript" src="js/spine/local.js"></script -->
+		<script src="js/jquery.tmpl.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript" src="js/jquery/jquery.equalheights.js"></script>
+
+		<script type="text/javascript" src="js/script.js"></script>
+
+		<script type='text/javascript' charset='utf-8'>
+
+
+
+
+
+		</script>
+
+
+		<script id="deviceInfoTmpl" type="text/x-jquery-tmpl">
+			<div style="margin-top: 40px" class="navbar">
+				<div class="navbar-inner">
+					<p style="text-align: right">Device registered: <strong>${name}</strong> 
+						<button class="unregister btn btn-inverse">Unregister</button>
+					</p>
+				</div>
+			</div>
+		</script>
+
+		<script id="regTmpl" type="text/x-jquery-tmpl">
+			<div class="modal hide">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">×</button>
+					<h3>Registrer ad-hoc møte</h3>
+				</div>
+				<div class="selecthours modal-body">
+					<p>Du kan gjøre en ad-hoc møteromsregistrering her fra nå og opp til en time frem i tid.</p>
+
+					<button class="btn" data-minutes="0">15 min</button>
+					<button class="btn" data-minutes="1">30 min</button>
+					<button class="btn" data-minutes="2">45 min</button>
+					<button class="btn" data-minutes="3">1 time</button>
+
+					<hr />
+
+					<p style="">Dersom du ønsker å registrere møterommet på et annet tidspunkt eller en lengre periode, kan du med din telefon eller desktop gå til:</p>
+
+					<p><code>https://moterom.uwap.org</code></p>
+
+				</div>
+				<div class="modal-footer">
+					<a href="#" class="btn" data-dismiss="modal">Avbryt</a>
+					<!-- <a href="#" class="btn btn-primary">OK, reserver nå</a> -->
+				</div>
+			</div>
+		</script>
+
+		<script id="authDialogTmpl" type="text/x-jquery-tmpl">
+			<div class="modal hide">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">×</button>
+					<h3>Authentication</h3>
+				</div>
+				<div class="modal-body">
+					<p>You can choose to register a new public display</p>
+					
+					<form class="well">
+						<input type="text" id="devicename" placeholder="Device name" name="device" />
+						<input type="text" id="devicekey" placeholder="Device secret key" name="key" />
+						<p>Which room?
+							<select name="deviceroom" id="deviceroom">
+								<option value="gra">Grå (3etg)</option>
+								<option value="gronn">Blå (3etg)</option>
+								<option value="orange">Orange (4etg)</option>
+								<option value="lilla">Lilla (4etg)</option>
+								<option value="rod">Turkis (5etg)</option>
+								<option value="sort">Sort (6etg)</option>
+								<option value="gul">Grønn (6etg)</option>
+							</select>
+						</p>
+						<button class="btn devicereg" ><i class="icon-ok-sign"></i> Register device</button>
+					</form>
+
+					<p>or to login using Feide on your personal device</p>
+					<button class="btn btn-primary login" ><i class="icon-user icon-white"></i> Feide login</button>
+				</div>
+				<div class="modal-footer">
+					<a href="#" class="btn" data-dismiss="modal">Avbryt</a>
+					<!-- <a href="#" class="btn btn-primary">OK, reserver nå</a> -->
+				</div>
+			</div>
+		</script>
+
+		<script id="roomTmpl" type="text/x-jquery-tmpl">
+			<div class="roomcontainer roomtype-${name} span5">
+				<div class="room roomtype-${name}">
+					<div class="roomHdr">${$item.data.short }</div>
+					<div class="roomEvents"></div>
+					<div class="roomReg">
+						<button class="btn btn-inverse register"><i class="icon-edit icon-white"></i> Registrer ad-hoc møte</button>
+					</div>
+				</div>
+			</div>
+		</script>
+
+		<script id="eventTmpl" type="text/x-jquery-tmpl">
+			<div class="event ${$item.data.getClass() }">
+				
+
+				<div class="eventDate">${$item.data.getTime() } 
+					<span class="eventHdr">${$item.data.getHdr() }</span>
+					<span class="eventP">
+						<button class="btn btn-inverse btn-mini">
+						<i class="icon-user icon-white"></i> 
+						${$item.data.getPerson() }</button>
+					</span>
+				</div>
+
+			</div>
+		</script>
+
+		<script id="nowTmpl" type="text/x-jquery-tmpl">
+			<div class="eventNow">
+				{{if $item.data.isAvailable() }}
+
+					{{if $item.data.isAvailableFor(15) }}
+						<button class="btn btn-success">Ledig (<span class="remaining">${$item.data.isAvailableForHowLong() }</span>)</button>
+					{{else}}
+						<button class="btn btn-warning">Ledig (<span class="remaining">${$item.data.isAvailableForHowLong() }</span>)</button>
+					{{/if}}
+				{{else}}
+					<button class="btn btn-danger">Opptatt (<span class="remaining">${$item.data.isAvailableToday() }</span>)</button>
+				{{/if}}
+				<!-- div class="roomMore">${$item.data.getMore() }</div> -->
+			</div>
+		</script>
+
+		<script id="authTmpl" type="text/x-jquery-tmpl">
+
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button"class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="./index.html">Bootstrap</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="">
+                <a href="./index.html">Overview</a>
+              </li>
+              <li class="active">
+                <a href="./scaffolding.html">Scaffolding</a>
+              </li>
+              <li class="">
+                <a href="./base-css.html">Base CSS</a>
+              </li>
+              <li class="">
+                <a href="./components.html">Components</a>
+              </li>
+              <li class="">
+                <a href="./javascript.html">Javascript plugins</a>
+              </li>
+              <li class="">
+                <a href="./less.html">Using LESS</a>
+              </li>
+              <li class="divider-vertical"></li>
+              <li class="">
+                <a href="./download.html">Customize</a>
+              </li>
+              <li class="">
+                <a href="./examples.html">Examples</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div><!--
+
+			<div class="navbar navbar-fixed-top">
+				<div class="navbar-inner">
+					<div class="container">
+						<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</a> 
+						<a class="brand" href="#">Møterom</a>
+						<div class="btn-group pull-right">
+							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+								<i class="icon-user"></i> <span id="username">${name}</span>
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="#">Profile</a></li>
+								<li class="divider"></li>
+								<li><a href="#">Sign Out</a></li>
+							</ul>
+						</div>
+						<div class="nav-collapse">
+							<ul class="nav">
+								
+								<li class="active"><a href="#">Oversikt</a></li>
+								
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			-->
+		</script>
+
+	</head>
+
+	<body>
+
+
+
+		<div id="main" class="container-fluid">
+
+			<div class="etg row-fluid etg6"></div>
+			<div class="etg row-fluid etg5"></div>
+			<div class="etg row-fluid etg4"></div>
+			<div class="etg row-fluid etg3"></div>
+
+		</div>
+
+
+		 <div id="modalContainer"></div>
+
+	 <!-- Le javascript
+	 ================================================== -->
+	 <!-- Placed at the end of the document so the pages load faster -->
+	 
+
+        <script src="js/bootstrap-modal.js"></script>
+        <script src="js/bootstrap-dropdown.js"></script>
+<!--    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/bootstrap-alert.js"></script>
+
+    
+    <script src="js/bootstrap-scrollspy.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+    <script src="js/bootstrap-popover.js"></script>
+    <script src="js/bootstrap-button.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script src="js/bootstrap-carousel.js"></script>
+    <script src="js/bootstrap-typeahead.js"></script> -->
+	</body>
+</html>
