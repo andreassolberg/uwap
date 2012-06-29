@@ -14,6 +14,10 @@ require_once('../../lib/autoload.php');
 try {
 
 
+/*
+  * TODO: REstrict access to this API to other apps than 'dev'.
+ */
+
 	$config = new Config();
 	$subhost = $config->getID();
 
@@ -22,7 +26,7 @@ try {
 
 	$result = array();
 	$result['status'] = 'ok';
-
+	
 
 	if (empty($_SERVER['PATH_INFO']) || strlen($_SERVER['PATH_INFO']) < 2) {
 		throw new Exception('Missing part of the URL path.');

@@ -209,6 +209,97 @@ UWAP.store = {
 	}
 };
 
+UWAP.groups = {
+	listMyOwnGroups: function(callback, errorcallback) {
+		$.ajax({
+			type: 'GET',
+			url: '/_/api/groups.php/groups?filter=admin',
+			dataType: 'json',
+			// data: JSON.stringify({ "command": "on" }),
+			// processData: false,
+			success: function(result, textStatus, jqXHR) {
+				console.log('Response listMyOwnGroups get()');
+				console.log(result);
+				if (result.status === 'ok') {
+					callback(result.data);
+				} else {
+					if  (typeof errorcallback === 'function') {
+						errorcallback(result.message);
+					}
+					console.log('Data request error (server side): ' + result.message);
+				}
+
+			},
+			error: function(err) {
+				if  (typeof errorcallback === 'function') {
+					errorcallback(err);
+				}
+				console.log('Data request error (client side): ' + err);
+			}
+		});
+
+	},
+	listMyGroups: function(callback, errorcallback) {
+		$.ajax({
+			type: 'GET',
+			url: '/_/api/groups.php/groups',
+			dataType: 'json',
+			// data: JSON.stringify({ "command": "on" }),
+			// processData: false,
+			success: function(result, textStatus, jqXHR) {
+				console.log('Response listMyGroups get()');
+				console.log(result);
+				if (result.status === 'ok') {
+					callback(result.data);
+				} else {
+					if  (typeof errorcallback === 'function') {
+						errorcallback(result.message);
+					}
+					console.log('Data request error (server side): ' + result.message);
+				}
+
+			},
+			error: function(err) {
+				if  (typeof errorcallback === 'function') {
+					errorcallback(err);
+				}
+				console.log('Data request error (client side): ' + err);
+			}
+		});
+	},
+	addGroup: function(object) {
+		$.ajax({
+			type: 'POST',
+			url: '/_/api/groups.php/groups',
+			dataType: 'json',
+			contentType: "application/json",
+			data: JSON.stringify(object),
+			processData: false,
+			success: function(result, textStatus, jqXHR) {
+				console.log('Response data save()');
+				console.log(result);
+				if (result.status === 'ok') {
+					callback(result.data);
+				} else {
+					if  (typeof errorcallback === 'function') {
+						errorcallback(result.message);
+					}
+					console.log('Data request error (server side): ' + result.message);
+				}
+
+			},
+			error: function(err) {
+				if  (typeof errorcallback === 'function') {
+					errorcallback(err);
+				}
+				console.log('Data request error (client side): ' + err);
+			}
+		});
+	}
+
+};
+
+
 UWAP.appconfig = {
 	list: function(callback, errorcallback) {
 		

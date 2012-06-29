@@ -62,6 +62,13 @@ class Auth {
 				$groups['@orgunit:' . $realm . ':' . $key] = $name;
 			}
 		}
+
+		$groupmanager = new GroupManager($this->getRealUserID());
+		$adhocgroups = $groupmanager->getMyGroups();
+		foreach($adhocgroups AS $adhocgroup) {
+			$groups['@' . $adhocgroup['id']] = $adhocgroup['title'];
+		}
+
 		// print_r($groups);
 		// exit;
 

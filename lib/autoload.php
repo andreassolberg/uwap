@@ -6,6 +6,7 @@ $base = dirname(__FILE__);
 require_once($base . '/Utils.php');
 require_once($base . '/Config.php');
 require_once($base . '/Auth.php');
+require_once($base . '/GroupManager.php');
 require_once($base . '/UWAPStore.php');
 require_once($base . '/HTTPClient.php');
 require_once($base . '/HTTPClientUserAuth.php');
@@ -15,6 +16,7 @@ require_once($base . '/HTTPClientOAuth1.php');
 require_once($base . '/HTTPClientOAuth2.php');
 
 require_once($base . '/ParentMessenger.php');
+
 
 require_once($base . '/Static/File.php');
 require_once($base . '/Proxy/REST.php');
