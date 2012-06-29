@@ -135,6 +135,30 @@ UWAP.store = {
 			console.log('Data request error (client side): ' + err);
 		});
 	},
+	remove: function(object, callback, errorcallback) {
+		var parameters = {};
+		parameters.op = "remove";
+		parameters.object = JSON.stringify(object);
+
+		$.getJSON('/_/api/storage.php', parameters, function(result, textStatus, jqXHR) {
+			console.log('Response data remove()');
+			console.log(result);
+			if (result.status === 'ok') {
+				callback();
+			} else {
+				if  (typeof errorcallback === 'function') {
+					errorcallback(result.message);
+				}
+				console.log('Data request error (server side): ' + result.message);
+			}
+
+		}, function(err) {
+			if  (typeof errorcallback === 'function') {
+				errorcallback(err);
+			}
+			console.log('Data request error (client side): ' + err);
+		});
+	},
 	queryOne: function(query, callback, errorcallback) {
 		var parameters = {};
 		parameters.op = "queryOne";

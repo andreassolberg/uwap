@@ -31,6 +31,15 @@ try {
 
 	switch($_REQUEST['op']) {
 
+
+		case 'remove':
+			if (empty($_REQUEST['object'])) throw new Exception("Missing required parameter [object] object to save");
+			$parsed = json_decode($_REQUEST['object'], true);
+
+			// echo "Is about to store object:"; print_r($parsed); exit;
+			$store->remove("appdata-" . $subhost, $auth->getRealUserID(), $parsed);
+			break;
+
 		case 'save':
 			if (empty($_REQUEST['object'])) throw new Exception("Missing required parameter [object] object to save");
 			$parsed = json_decode($_REQUEST['object'], true);

@@ -42,6 +42,8 @@
 			$("div#out").prepend('<p>Logged in as <strong>' + user.name + '</strong> (<tt>' + user.userid + '</tt>)</p>');
 			$("input#smt").attr('disabled', 'disabled');
 
+			console.log(JSON.stringify(user));
+
 			var gr = $('<dl></dl>')
 			if(user.groups) {
 				groups = user.groups;
@@ -208,31 +210,45 @@
 
 			// bussRequest();
 
-			// UWAP.store.save(
-			// 	{
-			// 		"test": "value",
-			// 		"size": Math.floor(Math.random()*1000),
-			// 		"bool": true
-			// 		// "speed": 1.2333,
-			// 		// "geolocation": {
-			// 		// 	"city": "Trondheim",
-			// 		// 	"code": "7040"
-			// 		// }
-			// 	}, function() {
-			// 		console.log("Successfully stored object.")
-			// 	}, function(err) {
-			// 		console.log("Error storing object: " + err.message)
-			// 	}
-			// );
+			UWAP.store.save(
+				{
+					"test": "value",
+					"size": Math.floor(Math.random()*1000),
+					"bool": true
+					// "speed": 1.2333,
+					// "geolocation": {
+					// 	"city": "Trondheim",
+					// 	"code": "7040"
+					// }
+				}, function() {
+					console.log("Successfully stored object.")
+				}, function(err) {
+					console.log("Error storing object: " + err.message)
+				}
+			);
 
-			// UWAP.store.queryList(
-			// 	{"bool": true},
-			// 	function(res) {
-			// 		console.log(res);
-			// 	}, function(err) {
-			// 		console.log(err);
-			// 	}
-			// );
+			UWAP.store.queryList(
+				{"bool": true},
+				function(res) {
+					console.log(res);
+
+					UWAP.store.remove(
+						{"bool": true},
+						function(res) {
+							console.log(res);
+						}, function(err) {
+							console.log(err);
+						}
+					);
+					
+				}, function(err) {
+					console.log(err);
+				}
+			);
+
+
+
+
 
 			// UWAP.store.queryOne(
 			// 	{"bool": true},

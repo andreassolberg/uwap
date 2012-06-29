@@ -367,6 +367,20 @@ X-Foo-API-Key: sf76sd5f7sd65f69sdf67sd5f</pre>
 );</pre>
 
 
+			<h3>UWAP.store.remove(query, callback, errorcallback)</h3>
+			<p>To remove one or more entries matching a query. The callback is invoked with no parameters when successfully deleted.</p>
+
+			<p>Example of queriying a list of objects:</p>
+			<pre class="prettyprint lang-js">UWAP.store.remove(
+	{&quot;bool&quot;: true},
+	function() {
+		console.log("Successfully deleted");
+	}, function(err) {
+		console.log("Error:" + err);
+	}
+);</pre>
+
+
 		</section>
 
 
