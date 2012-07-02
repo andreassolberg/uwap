@@ -76,7 +76,15 @@ class Config {
 			'owner' => true,
 			'name' => true,
 		);
-		$listing = $this->store->queryList('appconfig', array("uwap-userid" => $userid), $fields);
+
+		$query = array(
+			"uwap-userid" => $userid,
+			"status" => array(
+				'$ne' => "pendingDelete"
+			),
+		);
+
+		$listing = $this->store->queryList('appconfig',$query, $fields);
 
 		$sorted = array("app" => array(), "proxy" => array(), "client" => array());
 		foreach($listing AS $e) {
@@ -97,7 +105,12 @@ class Config {
 			'owner' => true,
 			'name' => true,
 		);
-		$listing = $this->store->queryList('appconfig', array(), $fields);
+		$query = array(
+			"status" => array(
+				'$ne' => "pendingDelete"
+			),
+		);
+		$listing = $this->store->queryList('appconfig', $query, $fields);
 
 		$sorted = array("app" => array(), "proxy" => array(), "client" => array());
 		foreach($listing AS $e) {
