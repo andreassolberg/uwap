@@ -17,6 +17,15 @@ if (count($argv) > 0) {
 }
 
 
+function clog($header, $str) {
+
+
+
+	$tag = "\033[0;35m" . sprintf("%18s ", $header) . "\033[0m";
+
+	error_log($tag . $str);
+}
+
 
 function crypt_apr1_md5($plainpasswd) {
     $salt = substr(str_shuffle("abcdefghijklmnopqrstuvwxyz0123456789"), 0, 8);
@@ -88,34 +97,33 @@ foreach($listing["app"] AS $app) {
 	$config = $current->getConfig();
 
 	if (empty($config['uwap-userid'])) {
-		echo "Skipping [" . $config["name"] . "] without owner.\n";
-		print_r($config);
+		clog($app['id'], "Skipping [" . $config["name"] . "] without owner.");
+		// print_r($config);
 		continue;
 	}
 
 	$p = $current->getAppPath();
 	$credentials = $current->getDavCredentials();
 
-
-	echo "\n\n------------------------------------\n";
-	echo "Processing [" . $app["name"] . "]\n";
-
+	clog($app['id'], "Processing " . $config["name"]);
 	
 
 	if (is_dir($p)) {
-		echo " Dir " . $p . " exists.\n";
+		// clog($app['id'], " Directory " . $p . " exists.");
 	} else {
 		mkdir($p);
-		echo " Dir " . $p . " does not exists.\n";
+		chmod($p, 0777);
+		clog($app['id'], " Creating dir " . $p . "");
 	}
 
 	$hta = $p . '.htaccess';
 
 	if (file_exists($hta )) {
-		echo " .htaccess file exists\n";
+		// echo " .htaccess file exists\n";
 	} else {
-		echo " .htaccess file does not exists\n";
+		clog($app['id'], " Creating file " . $hta . "");
 		file_put_contents($hta, "Require user " . $credentials["username"] . "\n");
+		chmod($hta, 0644);
 	}
 
 	// print_r($credentials);
