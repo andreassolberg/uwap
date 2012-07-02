@@ -42,7 +42,57 @@ UWAP.messenger.send = function(msg) {
 		console.error("Could not deliver message from iframe, because listener was not setup.");
 	}
 
-}
+};
+
+/**
+ * A generic protocol request wrapper function.
+ * @param  {string}   method        The HTTP Method to use. GET is default
+ * @param  {string}   url           The relative URL
+ * @param  {object}   data          Optionally an object to send.
+ * @param  {object}   options       A set of options
+ * @param  {Function} callback      Success callback
+ * @param  {Function} errorcallback Error callback
+ * @return {void}                 Returns undefined
+ */
+UWAP._request = function(method, url, data, options, callback, errorcallback) {
+	method = method || 'GET';
+
+	var ar = {
+		type: method,
+		url: url,
+		dataType: 'json',
+		success: function(result, textStatus, jqXHR) {
+			console.log('Response _request response reviced()');
+			console.log(result);
+			if (result.status === 'ok') {
+				if  (typeof callback === 'function') {
+					callback(result.data);
+				}
+			} else {
+				if  (typeof errorcallback === 'function') {
+					errorcallback(result.message);
+				}
+				console.error('Data request error (server side): ' + result.message);
+			}
+
+		},
+		error: function(err) {
+			if  (typeof errorcallback === 'function') {
+				errorcallback(err.responseText + '(' + err.status + ')');
+			}
+			console.error('Data request error (client side): ', err);
+		}
+	};
+
+	if (data) {
+		ar.data = JSON.stringify(data);
+		ar.processData = false;
+		ar.dataType = 'json';
+	}
+	$.ajax(ar);
+
+};
+
 
 UWAP.auth = {
 
@@ -211,90 +261,46 @@ UWAP.store = {
 
 UWAP.groups = {
 	listMyOwnGroups: function(callback, errorcallback) {
-		$.ajax({
-			type: 'GET',
-			url: '/_/api/groups.php/groups?filter=admin',
-			dataType: 'json',
-			// data: JSON.stringify({ "command": "on" }),
-			// processData: false,
-			success: function(result, textStatus, jqXHR) {
-				console.log('Response listMyOwnGroups get()');
-				console.log(result);
-				if (result.status === 'ok') {
-					callback(result.data);
-				} else {
-					if  (typeof errorcallback === 'function') {
-						errorcallback(result.message);
-					}
-					console.log('Data request error (server side): ' + result.message);
-				}
-
-			},
-			error: function(err) {
-				if  (typeof errorcallback === 'function') {
-					errorcallback(err);
-				}
-				console.log('Data request error (client side): ' + err);
-			}
-		});
-
+		UWAP._request(
+		 	'GET', 
+		 	'/_/api/groups.php/groups?filter=admin',
+		 	null,
+		 	null, callback, errorcallback);
 	},
 	listMyGroups: function(callback, errorcallback) {
-		$.ajax({
-			type: 'GET',
-			url: '/_/api/groups.php/groups',
-			dataType: 'json',
-			// data: JSON.stringify({ "command": "on" }),
-			// processData: false,
-			success: function(result, textStatus, jqXHR) {
-				console.log('Response listMyGroups get()');
-				console.log(result);
-				if (result.status === 'ok') {
-					callback(result.data);
-				} else {
-					if  (typeof errorcallback === 'function') {
-						errorcallback(result.message);
-					}
-					console.log('Data request error (server side): ' + result.message);
-				}
-
-			},
-			error: function(err) {
-				if  (typeof errorcallback === 'function') {
-					errorcallback(err);
-				}
-				console.log('Data request error (client side): ' + err);
-			}
-		});
+		UWAP._request(
+		 	'GET', 
+		 	'/_/api/groups.php/groups',
+		 	null,
+		 	null, callback, errorcallback);
 	},
-	addGroup: function(object) {
-		$.ajax({
-			type: 'POST',
-			url: '/_/api/groups.php/groups',
-			dataType: 'json',
-			contentType: "application/json",
-			data: JSON.stringify(object),
-			processData: false,
-			success: function(result, textStatus, jqXHR) {
-				console.log('Response data save()');
-				console.log(result);
-				if (result.status === 'ok') {
-					callback(result.data);
-				} else {
-					if  (typeof errorcallback === 'function') {
-						errorcallback(result.message);
-					}
-					console.log('Data request error (server side): ' + result.message);
-				}
-
-			},
-			error: function(err) {
-				if  (typeof errorcallback === 'function') {
-					errorcallback(err);
-				}
-				console.log('Data request error (client side): ' + err);
-			}
-		});
+	addGroup: function(object, callback, errorcallback) {
+		UWAP._request(
+		 	'POST', 
+		 	'/_/api/groups.php/groups',
+		 	object, 
+		 	null, callback, errorcallback);
+	},
+	get: function(groupid, callback, errorcallback) {
+		 UWAP._request(
+		 	'GET', 
+		 	'/_/api/groups.php/group/' + groupid,
+		 	null,
+		 	null, callback, errorcallback);
+	},
+	addMember: function(groupid, user, callback, errorcallback) {
+		 UWAP._request(
+		 	'POST', 
+		 	'/_/api/groups.php/group/' + groupid + '/members',
+		 	user, 
+		 	null, callback, errorcallback);
+	},
+	removeMember: function(groupid, userid, callback, errorcallback) {
+		 UWAP._request(
+		 	'DELETE', 
+		 	'/_/api/groups.php/group/' + groupid + '/member/' + userid,
+		 	null,
+		 	null, callback, errorcallback);
 	}
 
 };

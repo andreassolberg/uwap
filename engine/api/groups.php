@@ -41,6 +41,7 @@ try {
 
 	/**
 	 * TODO
+	 *  Make athorization of operations.
 	 *  - remove member of a group
 	 *  - update a users collection with real names
 	 *  - return real names together with members
@@ -65,7 +66,10 @@ try {
 
 
 	} else if (Utils::route('get', '/group/([^/]+)$', &$parameters)) {
-		throw new Exception('Not yet implemented get group info endpoint');
+
+		$groupid = $parameters[1];
+		Utils::validateGroupID($groupid);
+		$result['data'] = $groupmanager->getGroup($groupid);
 
 	} else if (Utils::route('delete', '/group/([^/]+)$', &$parameters)) {
 
@@ -81,8 +85,26 @@ try {
 		$groupid = $parameters[1];
 		Utils::validateGroupID($groupid);
 
+		$admin = false;
+		if (isset($object['admin'])) {
+			$admin = $object['admin'];
+			unset($object['admin']);
+		}
+
 		// addMember($groupid, $member, $admin = false) {
-		$groupmanager->addMember($groupid, $object, $object['admin']);
+		$result['data'] = $groupmanager->addMember($groupid, $object, $admin);
+
+	} else if (Utils::route('delete', '/group/([^/]+)/member/([^/]+)$', &$parameters, &$object)) {
+
+		// Add member to group
+		
+		$groupid = $parameters[1];
+		Utils::validateGroupID($groupid);
+
+		$userid = $parameters[2];
+
+		// addMember($groupid, $member, $admin = false) {
+		$result['data'] = $groupmanager->removeMember($groupid, $userid);
 
 	} else {
 		throw new Exception('Invalid URL or HTTP Method');

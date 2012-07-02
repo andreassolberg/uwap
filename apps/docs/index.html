@@ -86,6 +86,7 @@
 					<li><a href="#auth">Authentication</a></li>
 					<li><a href="#store">Storage</a></li>
 					<li><a href="#data">REST</a></li>
+					<li><a href="#groups">Groups</a></li>
 				</ul>
 			</div>
 		</header>
@@ -413,6 +414,44 @@ X-Foo-API-Key: sf76sd5f7sd65f69sdf67sd5f</pre>
 		</section>
 
 -->
+
+
+
+
+
+		<section id="groups">
+			<h2>Ad-Hoc Groups API <small>&mdash; UWAP.groups</small></h2>
+
+			<p>This API gives you access to manage ad-hoc created groups of people.</p>
+			<p>This API is NOT available to all applications.</p>
+
+
+			<h3>listMyOwnGroups(callback, errorcallback)</h3>
+			<p>List all groups you manage (own).</p>
+
+			<h3>listMyGroups(callback, errorcallback)</h3>
+			<p>List all groups you are member of.</p>
+
+			<h3>addGroup(object, callback, errorcallback)</h3>
+			<p>Add a new group.</p>
+
+			<h3>get(groupid, callback, errorcallback)</h3>
+			<p>Get details about a specific group. This includes a more complete member list than the group listing functions.</p>
+
+			<h3>addMember(groupid, user, callback, errorcallback)</h3>
+			<p>Add a new member to a group. This operation requires that you are owner or admin of the specific group.</p>
+
+			<h3>removeMember(groupid, userid, callback, errorcallback)</h3>
+			<p>Remove a member from a group. This operation requires that you are owner or admin of the specific group.</p>
+
+
+
+
+		</section>
+
+
+
+
 
 
 		<hr>
