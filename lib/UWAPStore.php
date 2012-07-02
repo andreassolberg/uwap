@@ -37,7 +37,7 @@ class UWAPStore {
 		$updatestmnt = array('$set' => $updates);
 
 		$return = $this->db->{$collection}->update($criteria, $updatestmnt, array("safe" => true));
-		error_log("Return on update() : " . var_export($return, true));
+		// error_log("Return on update() : " . var_export($return, true));
 		return $return;
 	}
 
@@ -54,12 +54,12 @@ class UWAPStore {
 			$obj["expires"] = time() + $expiresin;
 		}
 
-		error_log("store() " . var_export($obj, true));
+		// error_log("store() " . var_export($obj, true));
 		// try {
 		$this->db->{$collection}->save($obj, array("safe" => true));	
 
 
-		error_log("STORING Object: ". var_export($obj, true));
+		// error_log("STORING Object: ". var_export($obj, true));
 		// } catch (Exception $e) {
 		// 	print_r($e);
 		// }
@@ -130,7 +130,7 @@ class UWAPStore {
 	}
 
 	public function queryOne($collection, $criteria = array(), $fields = array()) {
-		error_log("queryOne: (" . $collection . ") " . var_export($criteria, true));
+		// error_log("queryOne: (" . $collection . ") " . var_export($criteria, true));
 
 		$cursor = $this->db->{$collection}->find($criteria, $fields);
 		if ($cursor->count() < 1) return null;
