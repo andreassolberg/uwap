@@ -23,7 +23,7 @@ function clog($header, $str) {
 
 	$tag = "\033[0;35m" . sprintf("%18s ", $header) . "\033[0m";
 
-	error_log($tag . $str);
+	echo($tag . $str . "\n");
 }
 
 
