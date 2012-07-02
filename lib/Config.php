@@ -58,7 +58,7 @@ class Config {
 			'owner' => true,
 			'name' => true,
 		);
-		$listing = $this->store->queryList('appconfig', array(), $fields);
+		$listing = $this->store->queryList('appconfig', array('status' => 'listing'), $fields);
 		return $listing;
 	}
 
@@ -294,6 +294,8 @@ class Config {
 				$new[] = $candidate;
 			} else if ($update[$candidate] === false) {
 				unset($update[$candidate]);
+			} else {
+				throw new Exception('Invalid status update defintion.');
 			}
 		}
 		foreach($update AS $k => $v) {
@@ -302,6 +304,7 @@ class Config {
 			}
 		}
 
+		$this->config['status'] = $new;
 		$criteria = array('id' => $this->config['id']);
 
 		$ret = $this->store->update('appconfig',  $userid, $criteria, array('status' => $new));

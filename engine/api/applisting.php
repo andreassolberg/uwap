@@ -16,6 +16,8 @@ try {
 	$ac = new Config();
 	$listing = $ac->getAppListing();
 
+	// print_r($listing); exit;
+
 	// foreach ($apps as $key) {
 	// 	$ac = new Config($key);
 	// 	$appconfig[$key] = $ac->getConfig();

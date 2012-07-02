@@ -59,6 +59,27 @@ try {
 		$result['data']['files-stats'] = $ac->getFilestats();
 		$result['data']['user-stats'] = $ac->getUserStats();
 
+	} else if (Utils::route('post', '/app/([^/]+)/status$', &$parameters, &$object)) {
+
+		$subid = $parameters[1];
+		Utils::validateID($subid);
+
+		$ac = new Config($subid);
+		$ac->updateStatus($object, $auth->getRealUserID());
+
+		$c = $ac->getConfig();
+
+		$result['data'] = $c['status'];
+
+	} else if (Utils::route('get', '/app/([^/]+)/status$', &$parameters, &$object)) {
+
+		$subid = $parameters[1];
+		Utils::validateID($subid);
+		$ac = new Config($subid);
+		$c = $ac->getConfig();
+
+		$result['data'] = $c['status'];
+
 	} else if (Utils::route('get', '/app/([^/]+)/davcredentials$', &$parameters, &$object)) {
 
 		$subid = $parameters[1];

@@ -369,6 +369,13 @@ UWAP.appconfig = {
 		});
 
 	},
+	updateStatus: function(id, object, callback, errorcallback) {
+		 UWAP._request(
+		 	'POST', 
+		 	'/_/api/appconfig.php/app/' + id + '/status',
+		 	object, 
+		 	null, callback, errorcallback);
+	},
 	updateAuthzHandler: function(id, object, callback, errorcallback) {
 		$.ajax({
 			type: 'POST',

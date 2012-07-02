@@ -1,5 +1,14 @@
 define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 	
+	var in_array = function (key, array) {
+
+		var i;
+		for(i = 0; i < array.length; i++) {
+			if (key === array[i]) return true;
+		}
+		return false;
+	}
+
 	var AppDashboard = Spine.Class.sub({
 		init: function(container, appconfig) {
 
@@ -18,20 +27,42 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 			$(this.element).find("tbody.authorizationhandlers")
 				.on("click", "a.handlerDelete", this.proxy(this.handlerDelete));
 
+			$(this.element).on("click", "div.appstatus button.appDelete", 
+				this.proxy(this.deleteApp));
+
+			$(this.element).on("click", "div.appstatus div.listing button.listingAdd", 
+				this.proxy(this.listingAdd));
+			$(this.element).on("click", "div.appstatus div.listing button.listingRemove", 
+				this.proxy(this.listingRemove));
+
 
 			$(this.element).on('click', '#addNewAuthzHandle', this.proxy(this.handlerNew));
 
-			// $(this.element).find("#newAppIdentifier")
-			// 	.on("change", this.proxy(this.updateIdentifier))
-			// 	.on("keyup", this.proxy(this.updateIdentifier));
-			// $(this.element).find("#newAppName")
-			// 	.on("change", this.proxy(this.checkIfReady))
-			// 	.on("keyup", this.proxy(this.checkIfReady));
-
-			// $(this.element).find(".createNewBtn")
-			// 	.on("click", this.proxy(this.submit));
 		},
+		updateStatus: function() {
 
+		},
+		deleteApp: function() {
+			var that = this;
+			UWAP.appconfig.updateStatus(this.appconfig.id, {pendingDelete: true, operational: false, listing: false}, function(newstatus) {
+				that.appconfig.status = newstatus;
+				that.drawAppStatus();
+			});
+		},
+		listingAdd: function() {
+			var that = this;
+			UWAP.appconfig.updateStatus(this.appconfig.id, {listing: true}, function(newstatus) {
+				that.appconfig.status = newstatus;
+				that.drawAppStatus();
+			});
+		},
+		listingRemove: function() {
+			var that = this;
+			UWAP.appconfig.updateStatus(this.appconfig.id, {listing: false}, function(newstatus) {
+				that.appconfig.status = newstatus;
+				that.drawAppStatus();
+			});
+		},
 		draw: function() {
 			this.element = $("#appdashboardtmpl").tmpl(this.appconfig);
 			console.log("this element", this.element);
@@ -39,7 +70,55 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 			this.container.append(this.element);
 
 			this.drawAuthzHandlers();
+			this.drawAppStatus();
 		},
+		drawAppStatus: function() {
+
+			$(this.element).find("div.appstatus div.appstatusMain").empty();
+			$(this.element).find("div.appstatus div.listing").empty();
+			$(this.element).find("div.appstatus div.deletion").empty();
+
+
+			if (this.hasStatus(['operational'])) {
+				$("div.appstatusMain").append('<p>Application is <span class="label label-success">operational</span>.</p>');
+			} else {
+				$("div.appstatusMain").append('<p>Application is <span class="label label-fail">not operational</span>.</p>');
+			}
+
+			if (this.hasStatus(['pendingDAV'])) {
+				$("div.appstatus").append('<p>Application is beeing setup very recently, wait a few minutes and it should be operational.</p>');
+			} 
+
+
+
+			if (this.hasStatus(['pendingDelete'])) {
+				$("div.deletion").append('<p>This application is <strong>scheduled for deletion</strong>.</p>');
+			} else {
+				$("div.deletion").append('<p><strong>Deleting an application</strong> will also delete all application files and data.</p>');
+				$("div.deletion").append('<p><button class="btn btn-mini btn-danger appDelete">Delete application</button></p>');
+
+				if (this.hasStatus(['listing'])) {
+					$("div.listing").append('<p>Including your application in the <strong>public listing</strong> may increase traffic to your application.</p>');
+					$("div.listing").append('<p>Your application <a href="https://store.uwap.org" target="_blank"><strong>is currently listed</strong></a>.</p>');
+					$("div.listing").append('<p><button class="btn btn-mini btn-warning listingRemove">Remove from listing</button></p>');
+
+				} else {
+					$("div.listing").append('<p>Including your application in the <strong>public listing</strong> may increase traffic to your application.</p>');
+					$("div.listing").append('<p>Your application is not listed.</p>');
+					$("div.listing").append('<p><button class="btn btn-mini btn-success listingAdd">Add to listing</button></p>');
+				}
+			}
+		},
+		hasStatus: function(statuses) {
+			var i;
+			for(i = 0; i < statuses.length; i++) {
+				if (!in_array(statuses[i], this.appconfig.status)) {
+					return false;
+				}
+			}
+			return true;
+		},
+
 		drawAuthzHandlers: function() {
 			var that = this;
 			$(this.element).find("tbody.authorizationhandlers").empty();
