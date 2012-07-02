@@ -65,8 +65,10 @@ class Auth {
 
 		$groupmanager = new GroupManager($this->getRealUserID());
 		$adhocgroups = $groupmanager->getMyGroups();
-		foreach($adhocgroups AS $adhocgroup) {
-			$groups['@' . $adhocgroup['id']] = $adhocgroup['title'];
+		if (!empty($adhocgroups)) {
+			foreach($adhocgroups AS $adhocgroup) {
+				$groups['@' . $adhocgroup['id']] = $adhocgroup['title'];
+			}
 		}
 
 		// print_r($groups);
