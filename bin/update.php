@@ -16,14 +16,11 @@ if (count($argv) > 0) {
 	exit(2);
 }
 
-
 function clog($header, $str) {
 
-
-
 	$tag = "\033[0;35m" . sprintf("%18s ", $header) . "\033[0m";
-
 	echo($tag . $str . "\n");
+
 }
 
 
@@ -126,14 +123,16 @@ foreach($listing["app"] AS $app) {
 		chmod($hta, 0644);
 	}
 
+	if ($current->hasStatus(array('pendingDAV'))) {
+		$current->updateStatus(array('pendingDAV' => false, 'operational' => true));
+		clog($app['id'], "Setting WebApp status from pendingDAV to operational");
+	}
+
 	// print_r($credentials);
 	// echo json_encode($app) . "\n";
 
 
-
 }
-
-
 
 
 

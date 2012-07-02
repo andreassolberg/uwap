@@ -38,15 +38,6 @@ try {
 	$groupmanager = new GroupManager($userid);
 
 
-
-	/**
-	 * TODO
-	 *  Make athorization of operations.
-	 *  - remove member of a group
-	 *  - update a users collection with real names
-	 *  - return real names together with members
-	 */
-
 	$parameters = null;
 	$object = null;
 

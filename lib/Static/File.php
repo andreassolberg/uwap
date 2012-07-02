@@ -10,7 +10,17 @@ class Static_File {
 		$acl = $this->config->getValue("access");
 		if (!empty($acl)) {
 			$this->authz();	
-		} 
+		}
+
+		if (!$this->config->hasStatus(array('operational'))) {
+			if ($this->config->hasStatus(array('pendingDAV'))) {
+				echo 'Site is just created. It may take a few minutes before the site is operational.';
+			} else {
+				echo 'This site is disabled.';
+			}
+			exit;
+		}
+
 	}	
 
 	function authz() {
@@ -30,7 +40,6 @@ class Static_File {
 	function show() {
 
 		$subhost = $this->config->getID();
-
 		$subhostpath = Config::getPath('apps/' . $subhost);
 
 		$localfile = $_SERVER['REQUEST_URI'];

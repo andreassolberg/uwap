@@ -28,132 +28,79 @@ try {
 	$result['status'] = 'ok';
 	
 
-	if (empty($_SERVER['PATH_INFO']) || strlen($_SERVER['PATH_INFO']) < 2) {
-		throw new Exception('Missing part of the URL path.');
-	}
-	$parameters = explode('/', substr($_SERVER['PATH_INFO'], 1));
-	$method = strtolower($_SERVER['REQUEST_METHOD']);
-	$first = array_shift($parameters);
 
-	if ($first === 'apps') {
+	$parameters = null;
+	$object = null;
 
-		if ($method === 'get') {
-			$ac = new Config();
-			$listing = $ac->getMyApps($auth->getRealUserID());
-			$result['data'] = $listing;
+	if (Utils::route('get', '/apps$', &$parameters)) {
 
-		} else if ($method === 'post') {
-			$object = json_decode(file_get_contents('php://input'), true);
-			$id = $object["id"];
-			Utils::validateID($id);
-			$config->store($object, $auth->getRealUserID());
+		$ac = new Config();
+		$listing = $ac->getMyApps($auth->getRealUserID());
+		$result['data'] = $listing;
 
-			$ac = new Config($id);
-			$result['data'] = $ac->getConfig();
+	} else if (Utils::route('post', '/apps$', &$parameters, &$object)) {
 
-		} else {
-			throw new Exception('Invalid method');
-		}
+		$id = $object["id"];
+		Utils::validateID($id);
+		$config->store($object, $auth->getRealUserID());
 
+		$ac = new Config($id);
+		$result['data'] = $ac->getConfig();
 
-	} else if ($first === 'app') {
+	} else if (Utils::route('get', '/app/([^/]+)$', &$parameters, &$object)) {
 
-		if(empty($parameters)) throw new Exception('Missing app id in request');
-
-		$subid = array_shift($parameters);
+		$subid = $parameters[1];
 		Utils::validateID($subid);
 		$ac = new Config($subid);
 
+		$result['data'] = $ac->getConfig();
+		$result['data']['davcredentials'] = $ac->getDavCredentials($auth->getRealUserID());
+		$result['data']['appdata-stats'] = $ac->getStats();
+		$result['data']['files-stats'] = $ac->getFilestats();
+		$result['data']['user-stats'] = $ac->getUserStats();
 
-		if (empty($parameters)) {
+	} else if (Utils::route('get', '/app/([^/]+)/davcredentials$', &$parameters, &$object)) {
 
-			$result['data'] = $ac->getConfig();
-			$result['data']['davcredentials'] = $ac->getDavCredentials($auth->getRealUserID());
-			$result['data']['appdata-stats'] = $ac->getStats();
-			$result['data']['files-stats'] = $ac->getFilestats();
-			$result['data']['user-stats'] = $ac->getUserStats();
+		$subid = $parameters[1];
+		Utils::validateID($subid);
+		$ac = new Config($subid);
 
+		$result['data'] = $ac->getDavCredentials($auth->getRealUserID());
 
+	} else if (Utils::route('post', '/app/([^/]+)/authorizationhandler/([^/]+)$', &$parameters, &$object)) {
 
-			// echo '<pre>';
-			// print_r($result); exit;
-
-		} else {
-
-			$second = array_shift($parameters);
-
-			if ($second === 'davcredentials') {
-				$result['data'] = $ac->getDavCredentials($auth->getRealUserID());
-			} else if ($second === 'authorizationhandler') {
-
-				if (count($parameters) !== 1) {
-					throw new Exception('Invalid number of parameters');
-				}
-				$authzhandler = array_shift($parameters);
-
-
-				if ($method === 'post') {
-					$object = json_decode(file_get_contents('php://input'), true);
-					$object["id"] = $authzhandler;
-					Utils::validateID($authzhandler);
-
-					$handlers = $ac->updateAuthzHandler($authzhandler, $object, $auth->getRealUserID());
-					$result['data'] = $handlers;
-
-				} else if ($method === 'delete') {
-					$res = $ac->deleteAuthzHandler($authzhandler, $auth->getRealUserID());
-					$result['data'] = $res;
-				}
-
-
-
-			} else {
-				throw new Exception('Invalid app property part of URL');
-			}
-		}
-
+		$subid = $parameters[1];
+		Utils::validateID($subid);
+		$ac = new Config($subid);
 		
+		$authzhandler = $parameters[2];
+		Utils::validateID($authzhandler);
+
+		$handlers = $ac->updateAuthzHandler($authzhandler, $object, $auth->getRealUserID());
+		$result['data'] = $handlers;
+
+	} else if (Utils::route('delete', '/app/([^/]+)/authorizationhandler/([^/]+)$', &$parameters, &$object)) {
+
+		$subid = $parameters[1];
+		Utils::validateID($subid);
+		$ac = new Config($subid);
 		
-	} else if ($first === 'check') {
+		$authzhandler = $parameters[2];
+		Utils::validateID($authzhandler);
 
-		if(empty($parameters)) throw new Exception('Missing app id in request');
+		$res = $ac->deleteAuthzHandler($authzhandler, $auth->getRealUserID());
+		$result['data'] = $res;
 
-		$subid = array_shift($parameters);
+	} else if (Utils::route('get', '/check/([^/]+)$', &$parameters, &$object)) {
+		$subid = $parameters[1];
 		Utils::validateID($subid);
 		$result['data'] = !$config->exists($subid);
 
 	} else {
-		throw new Exception('Invalid request URI');
+		throw new Exception('Invalid URL or HTTP Method');
 	}
 
-	
-	// if (!empty($_REQUEST['get'])) {
 
-	// 	Utils::validateID($_REQUEST['get']);
-	// 	$ac = new Config($_REQUEST['get']);
-	// 	$result['data'] = $ac->getConfig();
-
-	// } else if (!empty($_REQUEST['check'])) {
-
-	// 	Utils::validateID($_REQUEST['check']);
-	// 	$result['data'] = !$config->exists($_REQUEST['check']);
-
-	// } else if (!empty($_REQUEST['store'])) {
-
-	// 	$c = json_decode($_REQUEST['store']);
-	// 	Utils::validateID($c['id']);
-	// 	$config->store('appconfig', $auth->getRealUserID(), $c);
-
-	// 	$ac = new Config($c['id']);
-	// 	$result['data'] = $ac->getConfig();
-
-	// } else {
-
-	// 	$ac = new Config();
-	// 	$listing = $ac->getMyApps($auth->getRealUserID());
-	// 	$result['data'] = $listing;
-
-	// }
 
 
 	header('Content-Type: application/json; charset=utf-8');

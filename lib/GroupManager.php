@@ -52,16 +52,11 @@ class GroupManager {
 		$query = array('userid' => array('$in' => $users));
 		$u = $this->store->queryList('users', $query);
 
-		// echo '<pre>users:'; print_r($u); print_r($query); exit;
-
 		if (empty($u)) return null;
-
-
 
 		foreach($u AS $user) {
 			$ret[$user['userid']] = $user;
 		}
-
 
 		return $ret;
 	}
