@@ -279,7 +279,7 @@ class Config {
 		);
 		foreach($app AS $k => $v) {
 			if (!in_array($k, $allowedFields)) {
-				unset($obj[$k]);
+				unset($app[$k]);
 			}
 		}
 	}
@@ -407,6 +407,10 @@ class Config {
 					$current['handlers'][$key]['redirect_uri'] = Config::oauth2callback($this->getID());
 				// }
 			}
+		}
+
+		if (empty($current['status'])) {
+			$current['status'] = array();
 		}
 
 		return $current;
