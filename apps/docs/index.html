@@ -266,6 +266,17 @@ $(&quot;input#smt&quot;).click(function() {
 
 
 			<h4>OAuth 2.0</h4>
+
+			<p>Additional parameters available when using the OAuth 2.0 handler:</p>
+
+			<dl>
+				<dt><tt>requestedScopes</tt></dt>
+				<dd>OAuth 2.0 scopes that will be sent in the authorization request.</dd>
+
+				<dt><tt>requiredScopes</tt></dt>
+				<dd>When reviewing cached access tokens, missing scopes from this lists means that the token should not be used. You should include all the scopes listed here in the requestedScopes as well!</dd>
+			</dl>
+
 			<p><a href="http://oauth.net/2">Read more about OAuth 2.0</a></p>
 
 
