@@ -37,15 +37,35 @@ class Static_File {
 		}
 	}
 
+	public static function getpath($p) {
+		$default = '/index.html';
+		if (empty($p)) return $default;
+		// error_log("Checking " . $p);
+		if (preg_match('/^([a-zA-Z0-9\-._\/]*)(\?.*)?$/', $p, $matches)) {
+			// error_log("MATCH");
+
+			if (preg_match('/\.\./', $p)) {
+					throw new Exception('Invalid with .. in filename.');
+			}
+
+			return $matches[1];
+		} else {
+			throw new Exception('Invalid file name');
+		}
+		return $default;
+	}
+
 	function show() {
 
 		$subhost = $this->config->getID();
 		$subhostpath = Config::getPath('apps/' . $subhost);
 
-		$localfile = $_SERVER['REQUEST_URI'];
+		$localfile = self::getpath($_SERVER['REQUEST_URI']);
 		if ($localfile === '/') $localfile = '/index.html';
 
 		$file = $subhostpath . $localfile;
+
+		// error_log('File is: ' . $file);
 
 		if (preg_match('/\.html$/', $file)) {
 			header("Content-Type: text/html; chatset: utf-8");
