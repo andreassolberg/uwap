@@ -1,0 +1,202 @@
+table.layout, table.layout tr, table.layout tr td {
+	margin: 0px;
+	padding: 0px;
+	border-collapse: collapse;
+	border: none;
+	/*vertical-align: top ! important;*/
+}
+body {
+	margin: 0px; padding: 0px;
+	font-family: "MalayalamSangamMN";
+}
+#col2 {
+	width: 310px ! important;
+}
+
+iframe {
+	border: none;
+	margin: 0px; padding: 0px;
+}
+
+h2 {
+	
+	border-top: 1px solid #ccc;
+	padding: 0px;
+	margin: 10px 3px 3px 3px;
+	font-size: 16pt;
+}
+div#middag h2 {
+	
+	border-top: 1px solid #ccc;
+	padding: 22px 10px 3px 10px;
+	margin: 0px;
+}
+div#middag div.middag {
+
+	border-top: 1px solid #ccc;
+	padding: 3px 10px 3px 10px;
+}
+div#middag div.middag div.name {
+	font-size: 120%;
+
+}
+div#middag div.middag div.day {
+	font-size: 90%;
+	color: #c33;
+}
+
+div#middag div.middag:nth-child(2n+1) {
+	background: #eee;
+}
+
+div#todo span.priority {
+	border-radius: 4px;
+	padding: 2px 6px;
+	background: #eee;
+	color: #666;
+	margin: 1px 3px;
+}
+div#msg div.msgentry {
+	font-family: "Noteworthy-Light";
+	font-size: 14pt;
+	border: 1px solid #777;
+	padding: 3px 10px 3px 10px;
+	margin: 5px;
+	border-radius: 10px;
+	background: #ccc;
+	color: #222;
+}
+
+
+p.updated {
+	
+	border-top: 1px solid #ccc;
+	padding: 2px;
+	margin: 0px;
+	text-align: center;
+}
+
+
+
+table.innert td {
+	border-right: 1px solid #eee;
+
+}
+br.clear {
+	clear: both;
+	height: 0px;
+}
+
+
+div#bussl div.bussentry {
+	border-top: 1px solid #eee;
+	
+	padding: 0px;
+	margin: 0px;
+	clear: both;
+}
+div#bussl div.bussentry.toolate {
+	background: #ddd;
+	color: #bbb;
+}
+div#bussl div.bussentry.soon {
+	background: #FEF1B5;
+	
+}
+
+
+div#bussl div.bussentry.rute {}
+div#bussl div.bussentry.sanntid {}
+div#bussl div.bussentry span.line {
+	font-size: 28pt;
+	float: left;
+	margin: 1px 5px 0px 2px;
+	padding: 0px;
+}
+div#bussl div.bussentry span.destination {
+	font-size: 10pt;
+}
+div#bussl div.bussentry span.tid {
+	display: block;
+}
+div#bussl div.bussentry span.diff {}
+div#bussl div.bussentry span.count span.minutes {
+color: #000;
+	font-weight: bold;
+}
+div#bussl div.bussentry span.count {
+	float: right;
+	color: #888;
+}
+
+
+div#call div.day {
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 25px 0px;
+	border-bottom: 1px solid #999;
+}
+div#call div.day div.dayheader {
+	margin: 0px 0px 5px 0px;
+	padding: 0px;
+	font-weight: bold;
+	background: #eee;
+	color: #555;
+}
+
+div#call div.day div.calentry {
+	margin: 2px;
+	padding: 2px;
+	font-size: 10pt;
+	/*border-top: 1px solid #ccc;*/
+}
+
+div#call div.day div.calentry span.timerange {
+	font-size: 9pt;
+	font-weight: bold;
+	margin-left: 10px;
+}
+div#call div.day div.calentry.middag {
+	border-radius: 5px;
+	border: 1px solid #eee;
+	background: #fafafa;
+	font-size: 12pt;
+}
+
+div.calentry.andreas span.caltype { background: #f8ecb3; color: #444; }
+div.calentry.andreasjobb span.caltype { background: #b7ebef; }
+div.calentry.solberg span.caltype { background: #e0c7bc; }
+div.calentry.vigdis span.caltype { background: #c6e2b3; }
+div.calentry.linnea span.caltype { background: #9d5ba0; }
+div.calentry.helligdager span.caltype { background: #f7b8b7; }
+div.calentry.helligdager2 span.caltype { background: #a00; }
+div.calentry.barnehage span.caltype {background: #fcc9b2; }
+div.calentry.uninett span.caltype {background: #8FD1DB; }
+div.calentry span.caltype {
+	border-radius: 6px;
+	background: #800;
+	color: white;
+	padding: 2px 4px;
+}
+
+
+
+
+
+div.gaveentry {
+	border-top: 1px solid #eee;
+	
+	padding: 0px;
+	margin: 0px;
+	clear: both;
+}
+
+div.gaveentry div.name {
+	color: #555;
+	font-size: 10pt;
+
+}
+div.gaveentry div.until {
+	
+	color: #080;
+		font-size: 11pt;
+}
