@@ -5,6 +5,7 @@ define(function() {
 
 
 			this.callback = callback;
+			this.container = container;
 			this.element = $("#frontpage").tmpl();
 
 			container.append(this.element);
@@ -20,6 +21,9 @@ define(function() {
 
 			$(this.element).find(".createNewBtn")
 				.on("click", this.proxy(this.submit));
+		},
+		activate: function() {
+			this.container.append(this.element);
 		}
 	});
 

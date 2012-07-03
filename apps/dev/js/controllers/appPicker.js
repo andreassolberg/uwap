@@ -24,6 +24,24 @@ define(function() {
 			}
 		},
 
+		findElement: function(appid) {
+			var found = null;
+			$.each($(this.element).find("li"), function(i, item) {
+				if ($(item).data('itemid') === appid) found = $(item);
+			});
+			return found;
+		},
+
+		selectApp: function(appid) {
+			var element = this.findElement(appid);
+			if (appid !== this.selected) {
+				this.selected = appid;
+				this.trigger('selected', appid);
+				$(this.element).find("li").removeClass("active");
+				element.addClass("active");
+			}
+		},
+
 		getAppItem: function(item) {
 			var ji = $('<li class=""><a href="#">' + item.name + '</a></li>');
 			ji.attr('data-itemid', item.id);

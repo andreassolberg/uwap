@@ -3,6 +3,7 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 	var in_array = function (key, array) {
 
 		var i;
+		if (typeof array === 'undefined' || !array.length) return false;
 		for(i = 0; i < array.length; i++) {
 			if (key === array[i]) return true;
 		}

@@ -4,6 +4,9 @@ define([
 
 	$("document").ready(function() {
 
+
+
+
 		UWAP.auth.require(function(user) {
 
 			var picker = new appPicker($("ul.applicationlist"));
@@ -27,23 +30,31 @@ define([
 				
 			});
 
-			var fpage = new frontpage($("div#appmaincontainer"));
+			$(".breadcrumb").on("click", "a.navDashboard", function() {
+				fpage.activate();
+				console.log("ACTIVATE frontpage");
+			});
 
+			var fpage = new frontpage($("div#appmaincontainer"));
 			$(".newAppBtn").bind("click", function() {
 				var na = new newApp($("body"), function(no) {
 					// console.log("Created new...", no);
 					UWAP.appconfig.store(no, function() {
 						console.log("Successully stored new app");
+
+						UWAP.appconfig.list(function(list) {
+							console.log(list);
+							picker.addList(list);
+							// console.log("About to select new entry", no);
+							picker.selectApp(no.id);
+						});
+
 					}, function(err) {
 						console.log("Error storing new app.");
 					});
 				});
 				
-				// na.bind("submit", function(no) {
-				// 	console.log("Creating new app", no);
-				// });
 				na.activate();
-
 			});
 
 		});
