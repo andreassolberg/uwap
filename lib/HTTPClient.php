@@ -70,7 +70,7 @@ class HTTPClient {
 		}
 
 		error_log("About to retrieve: " . $url);
-		$rawdata = @file_get_contents($url, false, $context);
+		$rawdata = file_get_contents($url, false, $context);
 
 		list($version, $status_code, $msg) = explode(' ', $http_response_header[0], 3);
 		$headers = array();
