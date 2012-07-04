@@ -88,6 +88,20 @@ try {
 
 		$result['data'] = $ac->getDavCredentials($auth->getRealUserID());
 
+	} else if (Utils::route('post', '/app/([^/]+)/bootstrap$', &$parameters, &$object)) {
+
+		if (!is_string($object) || empty($object)) {
+			throw new Exception('Invalid template input to bootstrap application data');
+		}
+		if (!in_array($object, array('twitter', 'boilerplate'))) {
+			throw new Exception('Not valid template to bootstrap application data');	
+		}
+
+		$subid = $parameters[1];
+		Utils::validateID($subid);
+		$ac = new Config($subid);
+		$result['data'] = $ac->bootstrap($object);
+
 	} else if (Utils::route('post', '/app/([^/]+)/authorizationhandler/([^/]+)$', &$parameters, &$object)) {
 
 		$subid = $parameters[1];

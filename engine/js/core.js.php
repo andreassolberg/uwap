@@ -376,6 +376,14 @@ UWAP.appconfig = {
 		 	object, 
 		 	null, callback, errorcallback);
 	},
+	bootstrap: function(id, template, callback, errorcallback) {
+		UWAP._request(
+			'POST', 
+			'/_/api/appconfig.php/app/' + id + '/bootstrap',
+			template, 
+			null, callback, errorcallback);
+	},
+
 	updateAuthzHandler: function(id, object, callback, errorcallback) {
 		$.ajax({
 			type: 'POST',

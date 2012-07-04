@@ -39,9 +39,19 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 
 			$(this.element).on('click', '#addNewAuthzHandle', this.proxy(this.handlerNew));
 
+
+			$(this.element).on('click', 'div.bootstrapform button#bootstrap_action', this.proxy(this.bootstrap));
+
 		},
 		updateStatus: function() {
 
+		},
+		bootstrap: function() {
+			var template = $(this.element).find("div.bootstrapform select#bootstrap_template").val();
+			console.log("Bootstrapping with template " + template);
+			UWAP.appconfig.bootstrap(this.appconfig.id, template, function() {
+				alert("Successfully applied bootstrap template to your application.");
+			});
 		},
 		deleteApp: function() {
 			var that = this;

@@ -65,8 +65,6 @@ class Static_File {
 
 		$file = $subhostpath . $localfile;
 
-		// error_log('File is: ' . $file);
-
 		if (preg_match('/\.html$/', $file)) {
 			header("Content-Type: text/html; chatset: utf-8");
 		} else if(preg_match('/\.png$/', $file)) {

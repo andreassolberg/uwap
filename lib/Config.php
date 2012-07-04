@@ -215,6 +215,24 @@ class Config {
 		return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
 	}
 
+	public function bootstrap($template) {
+
+		$td = Config::getPath('bootstrap/' . $template);
+		$ad = Config::getPath('apps/' . $this->subid);
+
+		if (!is_dir($td)) throw new Exception('Could not find bootstrap dir');
+		if (!is_dir($ad)) throw new Exception('Could not find application dir');
+
+		$cmd = 'cp -ruT ' . $td . ' ' . $ad;
+		error_log("Executing " . $cmd);
+
+		$ret = null;
+		$output = null;
+		exec($cmd, &$output, &$ret);
+		
+		return ($ret === 0);
+	}
+
 	public function getFilestats() {
 		$M = (1024*1024);
 		$stat = array();

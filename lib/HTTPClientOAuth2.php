@@ -54,6 +54,7 @@ class HTTPClientOAuth2 extends HTTPClient {
 					$allowRedirect = $options['allowRedirect'];
 				}
 
+
 				// getHTTP($provider_id, $user_id, $url, array $requestScope = null, array $requireScope = null, $allowRedirect = true, $returnTo = null) {
 				// error_log("Scopes: " . var_export($this->config, true));
 				$feed = $client->getHTTP($options["handler"], null, $url, $requestedScopes, $requiredScopes, $allowRedirect, $options["returnTo"]);
