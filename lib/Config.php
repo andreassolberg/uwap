@@ -422,7 +422,7 @@ class Config {
 		if (!empty($current['handlers'])) {
 			foreach($current['handlers'] AS $key => $handler) {
 				// if (isset($handler['type']) && $handler['type'] === 'oauth2') {
-					$current['handlers'][$key]['redirect_uri'] = Config::oauth2callback($this->getID());
+					$current['handlers'][$key]['redirect_uri'] = Config::oauth2callback($this->getID(), $key);
 				// }
 			}
 		}
@@ -483,8 +483,8 @@ class Config {
 		return 'http';
 	}
 
-	public static function oauth2callback($id) {
-		return Config::scheme() . '://' . $id . '.' . Config::hostname() . '/_/api/callbackOAuth2.php';
+	public static function oauth2callback($id, $handler) {
+		return Config::scheme() . '://' . $id . '.' . Config::hostname() . '/_/oauth2callback/' . $handler;
 	} 
 
 	public function getHandlerConfig($handler) {
@@ -495,7 +495,7 @@ class Config {
 
 		$pc = $this->config["handlers"][$handler];
 		if ($pc["type"] === "oauth2") {
-			$pc["redirect_uri"] = self::oauth2callback($this->subid);
+			$pc["redirect_uri"] = self::oauth2callback($this->subid, $handler);
 		}
 		return $pc;
 	}

@@ -15,15 +15,54 @@ require_once('../../lib/autoload.php');
 
 try {
 
+	$subconfigobj = new Config();
+	$subhost = $subconfigobj->getID();
+	$subconfig = $subconfigobj->getConfig();
+
+
+	$parameters = null;
+	$object = null;
+	$handler = null;
+
+	// echo $_SERVER['PATH_INFO']; exit;
+
+	if (Utils::route('get', '/([a-zA-Z0-9-_]+)$', &$parameters)) {
+		$handler = $parameters[1];
+	} else {
+		throw new Exception('Missing handler parameter.');
+	}
+
+
+	$handlerconfig = array("type" => "plain");
+	if ($handler !== 'plain') {
+
+		if (empty($subconfig["handlers"]) || empty($subconfig["handlers"][$handler])) {
+			throw new Exception("Cannot find a authentication handler for [" . $handler . "]");
+		}
+		$handlerconfig = $subconfig["handlers"][$handler];			
+	}
+
+
+
 	$store = new UWAPStore();
 	$auth = new Auth();
-	$auth->req();
-	$userdata = $auth->getUserdata();
 
 
+		error_log("Config " . json_encode($handlerconfig));
 
-	$client = new So_Client(new So_StorageUWAP($auth->getRealUserID()));
-	$client->callback($auth->getRealUserID());
+	if (isset($handlerconfig["sharedtokens"]) && $handlerconfig["sharedtokens"] === true) {
+		error_log("SHARED Tokens: true");
+		$userid = '_sharedtokens';
+	} else {
+		error_log("SHARED Tokens: false");
+		$auth->req();
+		// $userdata = $auth->getUserdata();
+		$userid = $auth->getRealUserID();
+	}
+
+
+	$client = new So_Client(new So_StorageUWAP($userid));
+	$client->callback($userid);
 
 
 } catch(Exception $e) {

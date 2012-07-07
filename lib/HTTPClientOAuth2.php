@@ -13,17 +13,26 @@ class HTTPClientOAuth2 extends HTTPClient {
 		
 		$store = new UWAPStore();
 		$auth = new Auth();
-		$auth->req();
-		$userdata = $auth->getUserdata();
 
+		error_log("Config " . json_encode($this->config));
+		if (isset($this->config["sharedtokens"]) && $this->config["sharedtokens"] === true) {
+			error_log("SHARED Tokens: true");
+			$userid = '_sharedtokens';
+		} else {
+			error_log("SHARED Tokens: false");
+			$auth->req();
+			// $userdata = $auth->getUserdata();
+			$userid = $auth->getRealUserID();
+		}
 		$makeMoreAttempts = true;
 
 
 		while ($makeMoreAttempts) {
 			$makeMoreAttempts = false;
 
+
 			// OAuth 2.0 library
-			$client = new So_Client(new So_StorageUWAP($auth->getRealUserID()));
+			$client = new So_Client(new So_StorageUWAP($userid));
 			// $token = $client->getToken($options["handler"], 'andreas');
 
 			try {
@@ -54,6 +63,7 @@ class HTTPClientOAuth2 extends HTTPClient {
 					$allowRedirect = $options['allowRedirect'];
 				}
 
+				error_log("Adding returnto parameter to gethttp oauth2 " + $options["returnTo"] );
 
 				// getHTTP($provider_id, $user_id, $url, array $requestScope = null, array $requireScope = null, $allowRedirect = true, $returnTo = null) {
 				// error_log("Scopes: " . var_export($this->config, true));

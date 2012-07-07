@@ -4,8 +4,6 @@
 
 ## OAuth 2.0
 
-
-
 OAuth 2.0
 
 	{
@@ -16,6 +14,14 @@ OAuth 2.0
 		client_id	"254785877865195"
 		client_secret	"e506356c1f2e2004cadc3c6d0f686abf"
 	}
+
+
+Require authentication to store tokens or share tokens?
+
+	sharedtoken true/false
+
+Not exposed in dev UI yet.
+
 
 ## OAuth 1.0
 
