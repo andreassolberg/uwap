@@ -66,7 +66,7 @@ try {
 
 		$groupid = $parameters[1];
 		Utils::validateGroupID($groupid);
-		$result['data'] = $groupmanager->remove($groupid);
+		$result['data'] = $groupmanager->removeGroup($groupid);
 
 
 	} else if (Utils::route('post', '/group/([^/]+)/members$', &$parameters, &$object)) {

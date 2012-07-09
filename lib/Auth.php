@@ -67,7 +67,7 @@ class Auth {
 		$adhocgroups = $groupmanager->getMyGroups();
 		if (!empty($adhocgroups)) {
 			foreach($adhocgroups AS $adhocgroup) {
-				$groups['@' . $adhocgroup['id']] = $adhocgroup['title'];
+				$groups[$adhocgroup['id']] = $adhocgroup['title'];
 			}
 		}
 

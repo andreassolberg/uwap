@@ -281,6 +281,13 @@ UWAP.groups = {
 		 	object, 
 		 	null, callback, errorcallback);
 	},
+	removeGroup: function(groupid, callback, errorcallback) {
+		 UWAP._request(
+		 	'DELETE', 
+		 	'/_/api/groups.php/group/' + groupid,
+		 	null,
+		 	null, callback, errorcallback);
+	},
 	get: function(groupid, callback, errorcallback) {
 		 UWAP._request(
 		 	'GET', 

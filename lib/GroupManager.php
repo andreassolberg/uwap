@@ -14,16 +14,15 @@ class GroupManager {
 	}
 
 	public function getMyOwnGroups() {
+		// error_log("Filtering groups " . $this->userid);
 		$groups = $this->store->queryListUser('groups', $this->userid, null, array() );
+		return $groups;
 	}
 
 	public function getMyGroups() {
 		$query = array('members' => array('$all' => array($this->userid)) );
 		return $this->store->queryList('groups', $query );
 	}
-
-
-
 
 
 	public function addGroup($group) {
@@ -41,11 +40,13 @@ class GroupManager {
 
 
 		Utils::validateGroupID($group['id']);
-		if ($this->exists($group['id'])) throw new Exception('Group ID is already taken.');
+		if ($this->exists($group['id'])) throw new Exception('Group ID [' . $group['id'] . '] is already taken.');
 
 		$this->store->store('groups', $this->userid, $group);
 		return true;
 	}
+
+
 
 	public function getUsers($users) {
 		$ret = array();
@@ -61,7 +62,7 @@ class GroupManager {
 		return $ret;
 	}
 
-	public function deleteGroup($groupid) {
+	public function removeGroup($groupid) {
 		$this->getGroup($groupid, 'admin');
 		return $this->store->remove('groups', $this->userid, array('id' => $groupid));
 	}
@@ -72,6 +73,7 @@ class GroupManager {
 
 	public function exists($groupid) {
 		$res = $this->getGroup($groupid);
+		// echo "Group returned"; print_r($res);
 		return !empty($res);
 	}
 
@@ -86,6 +88,8 @@ class GroupManager {
 	 */
 	public function getGroup($groupid, $access = null) {
 		$group = $this->store->queryOne('groups', array('id' => $groupid));
+
+		if (empty($group)) return null;
 
 		if (!isset($group['members']) || !is_array($group['members'])) $group['members'] = array();
 		if (!isset($group['admins']) || !is_array($group['admins'])) $group['admins'] = array();
@@ -181,7 +185,7 @@ class GroupManager {
 		// echo '<pre>SEARCH RESULt: ['; print_r($search); echo ']';
 		if ($search) return false;
 
-		$allowedFields = array('userid', 'name', 'email');
+		$allowedFields = array('userid', 'name', 'mail');
 		foreach($user AS $key => $val) {
 			if (!in_array($key, $allowedFields)) throw new Exception('Invalid user attribute provided');
 		}

@@ -440,20 +440,166 @@ X-Foo-API-Key: sf76sd5f7sd65f69sdf67sd5f</pre>
 			<h3>listMyOwnGroups(callback, errorcallback)</h3>
 			<p>List all groups you manage (own).</p>
 
+
 			<h3>listMyGroups(callback, errorcallback)</h3>
 			<p>List all groups you are member of.</p>
+			<pre class="prettyprint lang-js">function displayAdHocGroup(i, group) {
+	$(&quot;div#out&quot;).append('&lt;p&gt;' + group.title + ' &lt;tt&gt;' + group.id + '&lt;/tt&gt;&lt;/p&gt;');
+	if (group.description) {
+		$(&quot;div#out&quot;).append('&lt;p&gt;&lt;small&gt;' + group.description + '&lt;/small&gt;&lt;/p&gt;');	
+	}
+	$(&quot;div#out&quot;).append('&lt;p&gt;Members&lt;/p&gt;');
+	var list = $('&lt;ul&gt;&lt;/ul&gt;');
+	$.each(group.members, function(i, member) {
+		console.log(member);
+		list.append('&lt;li&gt;' + member + '&lt;/li&gt;');
+	});
+	$(&quot;div#out&quot;).append(list);
+}
+
+
+UWAP.groups.listMyGroups(function(data) {
+	console.log(&quot;Groups that I am member of&quot;);
+	console.log(data);
+	$(&quot;div#out&quot;).append('&lt;h2&gt;Groups that I am member of&lt;/h2&gt;')
+	$.each(data, displayAdHocGroup);
+});
+UWAP.groups.listMyOwnGroups(function(data) {
+	console.log(&quot;Groups that I have created&quot;);
+	console.log(data);
+	$(&quot;div#out&quot;).append('&lt;h2&gt;Groups that I have created&lt;/h2&gt;')
+	$.each(data, displayAdHocGroup);
+});</pre>
+
+
+<p>Example of the group object returned by these list functions. They will be wrapped in arrays.</p>
+			<pre class="prettyprint lang-js">{
+    "title": "UWAP Developers",
+    "description": "The developers of UNINETT WebApp Park",
+    "id": "7aaf41df-27e2-4bc3-a810-6d2631874f5c",
+    "members": [
+        "andreas@uninett.no",
+        "olavmo@uninett.no",
+        "navjord@uninett.no"
+    ],
+    "admins": [],
+    "uwap-userid": "andreas@uninett.no"
+}</pre>
+
+
 
 			<h3>addGroup(object, callback, errorcallback)</h3>
 			<p>Add a new group.</p>
+			<pre class="prettyprint lang-js">var newGroup = {
+	title: "UWAP Developers",
+	description: "The developers of UNINETT WebApp Park"
+};
+UWAP.groups.addGroup(newGroup, function() {
+	console.log("group successfully added.");
+}, function() {
+	console.error("Error creating new group");
+});</pre>
+	
+
+
+			<h3>removeGroup(groupid, callback, errorcallback)</h3>
+			<p>Remove a group by groupid.</p>
+			<pre class="prettyprint lang-js">UWAP.groups.removeGroup('45eebcdc-2a1c-48e9-8ff2-05b89a591857', function() {
+	console.log("Successfully removed the group.");
+}, function(err) {
+	console.error("Eror removing group", err);
+});</pre>
+
 
 			<h3>get(groupid, callback, errorcallback)</h3>
 			<p>Get details about a specific group. This includes a more complete member list than the group listing functions.</p>
+			<pre class="prettyprint lang-js">UWAP.groups.get('7aaf41df-27e2-4bc3-a810-6d2631874f5c', function(group) {
+	$(&quot;div#out&quot;).append('&lt;h2&gt;' + group.title + '&lt;/h2&gt;&lt;p&gt;&lt;tt&gt;' + group.id + '&lt;/tt&gt;&lt;/p&gt;');
+	if (group.description) {
+		$(&quot;div#out&quot;).append('&lt;p&gt;&lt;small&gt;' + group.description + '&lt;/small&gt;&lt;/p&gt;');	
+	}
+	$(&quot;div#out&quot;).append('&lt;p&gt;Members&lt;/p&gt;');
+	var list = $('&lt;ul&gt;&lt;/ul&gt;');
+	$.each(group.userlist, function(i, member) {
+		console.log(member);
+		list.append('&lt;li&gt;' + member.name + ' (' + member.userid + ')&lt;/li&gt;');
+	});
+	$(&quot;div#out&quot;).append(list);
+
+	console.log(JSON.stringify(group));
+}, function(err) {
+	console.error(&quot;Eror removing group&quot;, err);
+});
+</pre>
+
+			<p>Example of the group object returned by UWAP.groups.get():</p>
+			<pre class="prettyprint lang-js">{
+    "title": "UWAP Developers",
+    "description": "The developers of UNINETT WebApp Park",
+    "id": "7aaf41df-27e2-4bc3-a810-6d2631874f5c",
+    "members": [
+        "andreas@uninett.no",
+        "olavmo@uninett.no",
+        "navjord@uninett.no"
+    ],
+    "admins": [],
+    "uwap-userid": "andreas@uninett.no",
+    "userlist": {
+        "olavmo@uninett.no": {
+            "userid": "olavmo@uninett.no",
+            "name": "Olav Morken"
+        },
+        "andreas@uninett.no": {
+            "userid": "andreas@uninett.no",
+            "name": "andreas åkre solberg"
+        },
+        "navjord@uninett.no": {
+            "userid": "navjord@uninett.no",
+            "mail": "terje.navjord@uninett.no",
+            "name": "Terje Navjord"
+        }
+    }
+}</pre>
+
+
+
+
 
 			<h3>addMember(groupid, user, callback, errorcallback)</h3>
 			<p>Add a new member to a group. This operation requires that you are owner or admin of the specific group.</p>
+			<pre class="prettyprint lang-js">var olav = {
+	'userid': 'olavmo@uninett.no',
+	'mail': 'olav.morken@uninett.no',
+	'name': 'Olav Morken'
+};
+var terje = {
+	'userid': 'navjord@uninett.no',
+	'mail': 'terje.navjord@uninett.no',
+	'name': 'Terje Navjord'
+};
+
+UWAP.groups.addMember("7aaf41df-27e2-4bc3-a810-6d2631874f5c", olav, function() {
+	console.log("Successfully added a member");
+}, function(err) {
+	console.error("Error adding a member", err);
+});
+UWAP.groups.addMember("7aaf41df-27e2-4bc3-a810-6d2631874f5c", terje, function() {
+	console.log("Successfully added a member");
+}, function(err) {
+	console.error("Error adding a member", err);
+});</pre>
+
+
+
+
 
 			<h3>removeMember(groupid, userid, callback, errorcallback)</h3>
 			<p>Remove a member from a group. This operation requires that you are owner or admin of the specific group.</p>
+			<pre class="prettyprint lang-js">UWAP.groups.removeMember('7aaf41df-27e2-4bc3-a810-6d2631874f5c', 'olavmo@uninett.no', function(group) {
+	console.log("Successfully removed member from group.");
+}, function(err) {
+	console.error("Eror removing group", err);
+});</pre>
 
 
 

@@ -122,7 +122,13 @@ class UWAPStore {
 			$criteria['$or'] = $this->getACL($userid, $groups);
 		}
 
-		return $this->queryList($collection, $criteria, $fields);
+		error_log("Collection " . var_export($collection, true));
+		error_log("userid     " . var_export($userid, true));
+		error_log("fields     " . var_export($fields, true));
+
+		$ret = $this->queryList($collection, $criteria, $fields);
+		// echo 'Result'; print_r($ret); exit;
+		return $ret;
 	}
 
 	public function count($collection, $criteria = array()) {
