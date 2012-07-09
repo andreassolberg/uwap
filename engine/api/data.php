@@ -32,6 +32,8 @@ try {
 	$client = HTTPClient::getClient($handler);
 	$result = $client->get($url, $args);
 
+	// echo "result was"; print_r(json_encode($result));
+
 	header('Content-Type: application/json; charset=utf-8');
 	echo json_encode($result);
 

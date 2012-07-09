@@ -18,7 +18,7 @@ class HTTPClientOauth1 extends HTTPClient {
 		$auth->req();
 		$userdata = $auth->getUserdata();
 
-		$consumer = new sspmod_oauth_Consumer($this->config['key'], $this->config['secret']);
+		$consumer = new sspmod_oauth_Consumer($this->config['client_id'], $this->config['client_secret']);
 
 		// print_r($this->config); exit;
 
@@ -34,6 +34,7 @@ class HTTPClientOauth1 extends HTTPClient {
 
 			error_log("Got this access token:");
 			error_log(var_export($accessToken, true));
+			error_log("Accessing signed URL endpoint " . $url);
 
 			$result = array("status" => 'ok');
 			$result['data'] = $consumer->getUserInfo($url, $accessToken);
@@ -48,13 +49,12 @@ class HTTPClientOauth1 extends HTTPClient {
 
 		// Authorize the request token
 		$url = $consumer->getAuthorizeRequest($this->config['authorize'], $requestToken, FALSE, 
-			'httsp://' . $this->config["subhost"] . '.' . Config::hostname() . '/_/api/callbackOAuth1.php?' . 
-			'provider=' . $options["handler"] . '&return=' . urlencode($options['returnTo']) . 
-			'&requestToken=' . urlencode($requestToken->key)
+			'httsp://' . $this->config["subhost"] . '.' . Config::hostname() . '/_/oauth1callback/' . $options['handler']
 		);
 		
 		$state = array(
 			'requestToken' => $requestToken,
+			'return' => $options['returnTo']
 		);
 		$session->setData('appengine:oauth',  $options["handler"] . ':' . $requestToken->key, $state, 3600);
 		

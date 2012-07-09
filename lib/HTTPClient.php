@@ -78,6 +78,7 @@ class HTTPClient {
 			self::http_parse_headers($hdr, &$headers);
 		}
 
+		// print_r($rawdata);
 		if ($rawdata === false) throw new Exception('Status [' . $status_code .  ']: ' . $msg);
 
 		return $rawdata;
@@ -126,15 +127,20 @@ class HTTPClient {
 		if (empty($result["data"])) {
 			return $result;
 		}
+		// error_log("About to decode " . $result['data']);
 
 		if (isset($options['xml']) && $options['xml'] == 1) {
+			error_log("Retrieved data is in format: XML");
 			$result['data'] = json_decode(json_encode(new SimpleXMLElement($result["data"]), true));
 			$result['type'] = 'xml2json';
 		} else if ($this->isJson($result["data"])) {
+			error_log("Retrieved data is in format: json");
 			$result['data'] = json_decode($result["data"], true);		
 			$result['type'] = 'json';
 		} else {
+			error_log("Retrieved data is in format: text");
 			$result['type'] = 'text';
+			// $result['data'] = (string) $result['data'];
 		}
 		return $result;
 	}
@@ -145,9 +151,11 @@ class HTTPClient {
 		// ($url, $headers = array(), $redir = true, $curl = false, $options = array()) {
 		$result["data"] = $this->rawget($url, array(), true, false, $options);
 
-		// error_log("Got data: " . var_export($result["data"], true)) ;
+		error_log("Got data: " . var_export($result["data"], true)) ;
 
 		$result = $this->decode($result, $options);
+
+
 
 		return $result;
 	}

@@ -32,7 +32,6 @@ try {
 		throw new Exception('Missing handler parameter.');
 	}
 
-
 	$handlerconfig = array("type" => "plain");
 	if ($handler !== 'plain') {
 
@@ -42,13 +41,12 @@ try {
 		$handlerconfig = $subconfig["handlers"][$handler];			
 	}
 
-
-
+	
 	$store = new UWAPStore();
 	$auth = new Auth();
 
 
-		error_log("Config " . json_encode($handlerconfig));
+	error_log("Config " . json_encode($handlerconfig));
 
 	if (isset($handlerconfig["sharedtokens"]) && $handlerconfig["sharedtokens"] === true) {
 		error_log("SHARED Tokens: true");

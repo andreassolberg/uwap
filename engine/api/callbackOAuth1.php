@@ -15,9 +15,37 @@ require_once('../../lib/autoload.php');
 
 try {
 
+
+
 	$subconfigobj = new Config();
 	$subhost = $subconfigobj->getID();
 	$subconfig = $subconfigobj->getConfig();
+
+
+	$parameters = null;
+	$object = null;
+	$handler = null;
+
+	// echo $_SERVER['PATH_INFO']; exit;
+
+	if (Utils::route('get', '/([a-zA-Z0-9-_]+)$', &$parameters)) {
+		$handler = $parameters[1];
+	} else {
+		throw new Exception('Missing handler parameter.');
+	}
+
+	$handlerconfig = array("type" => "plain");
+	if ($handler !== 'plain') {
+
+		if (empty($subconfig["handlers"]) || empty($subconfig["handlers"][$handler])) {
+			throw new Exception("Cannot find a authentication handler for [" . $handler . "]");
+		}
+		$handlerconfig = $subconfig["handlers"][$handler];			
+	}
+
+
+
+
 
 	$session = SimpleSAML_Session::getInstance();
 
@@ -26,13 +54,16 @@ try {
 	$auth->req();
 	$userdata = $auth->getUserdata();
 
-	if (empty($_REQUEST['provider'])) throw new Exception("Missing required parameter in callback URL: provider" );
-	if (empty($_REQUEST['return'])) throw new Exception("Missing required parameter in callback URL: return" );
+	// if (empty($_REQUEST['return'])) {
+	// 	$return = 'http://test.app.bridge.uninett.no/twitter.html';
+	// 	// throw new Exception("Missing required parameter in callback URL: return" );
+	// } else {
+	// 	$return = $_REQUEST['return'];
+	// }
 
-	$provider = $_REQUEST['provider'];
-	$return = $_REQUEST['return'];
-	$requestTokenKey = $_REQUEST['requestToken'];
-
+	$provider = $handler;
+	
+	$requestTokenKey = $_REQUEST['oauth_token'];
 
 	$oauthconfig = $subconfig['handlers'][$provider];
 
@@ -40,14 +71,13 @@ try {
 
 
 
-
-
-	$consumer = new sspmod_oauth_Consumer($oauthconfig['key'], $oauthconfig['secret']);
+	$consumer = new sspmod_oauth_Consumer($oauthconfig['client_id'], $oauthconfig['client_secret']);
 	
 	$state = $session->getData('appengine:oauth', $provider . ':' . $requestTokenKey);
 	//	echo '<pre>rt: ' . $requestTokenKey . ' state: '; print_r($state); exit;
 	
 	$requestToken = $state['requestToken'];
+	$return = $state['return'];
 	
 	error_log("Is about to retrieve the access token with request token " . $requestToken);
 	error_log("access url is " . $oauthconfig['access']);
