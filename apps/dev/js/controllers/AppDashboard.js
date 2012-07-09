@@ -154,7 +154,7 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 		handlerNew: function() {
 			var obj = {"type": "oauth2"};
 			var that = this;
-			var handlerEditor = new AuthzHandlerEditor(this.container, obj, true, function(item) {
+			var handlerEditor = new AuthzHandlerEditor(this.container, this.appconfig, obj, true, function(item) {
 				console.log("Done editing an authorization handler", item);
 				UWAP.appconfig.updateAuthzHandler(that.appconfig.id, item, function(handlers) {
 					console.log("Autorization handler completed.", handlers);
@@ -173,7 +173,7 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 			obj.new = false;
 			var that = this;
 			console.log("HandlerEdit on object: ", obj);
-			var handlerEditor = new AuthzHandlerEditor(this.container, obj, false, function(item) {
+			var handlerEditor = new AuthzHandlerEditor(this.container, this.appconfig, obj, false, function(item) {
 				console.log("Done editing an authorization handler", item);
 				UWAP.appconfig.updateAuthzHandler(that.appconfig.id, item, function(handlers) {
 					console.log("Autorization handler completed.", handlers);

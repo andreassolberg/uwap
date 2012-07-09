@@ -32,6 +32,11 @@ UWAP.utils.goAndReturn = function(url) {
 	window.location = UWAP.utils.addQueryParam(url, 'return', document.URL);	
 }
 
+UWAP.utils.getURL = function(sub, path) {
+	var base = UWAP.utils.scheme + '://' + sub + '.' + UWAP.utils.hostname + '';
+	return base + path;
+}
+
 
 
 UWAP.messenger = {};

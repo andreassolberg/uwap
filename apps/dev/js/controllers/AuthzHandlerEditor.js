@@ -1,11 +1,16 @@
 define(function() {
 	
 	var AuthzHandlerEditor = Spine.Class.sub({
-		init: function(container, handler, isnew, callback) {
+		init: function(container, appconfig, handler, isnew, callback) {
 			this.handler = handler;
 			this.callback = callback;
 			this.isnew = isnew;
-			this.element = $("#authhandlereditortmpl").tmpl(handler);
+			this.appconfig = appconfig;
+
+			this.handler.redirect_uri2 = UWAP.utils.getURL(this.appconfig.id, '/_/oauth2callback');
+			this.handler.redirect_uri1 = UWAP.utils.getURL(this.appconfig.id, '/_/oauth1callback');
+
+			this.element = $("#authhandlereditortmpl").tmpl(this.handler);
 
 			container.append(this.element);
 
