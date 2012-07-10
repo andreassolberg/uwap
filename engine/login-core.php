@@ -16,7 +16,7 @@ $app = $_REQUEST['app'];
 error_log("App id provided was " . $_REQUEST["app"]);
 
 $auth = new Auth($app);
-$config = new Config($app);
+
 
 
 
@@ -57,8 +57,6 @@ if (!$auth->authorized()) {
 		$postdata["return"] = $_REQUEST["return"];
 		$postdata["verifier"] = $verifier;
 		$posturl = SimpleSAML_Utilities::selfURLNoQuery();
-
-		$data = $config->getConfig();
 		
 		$user = $auth->getUserdata();
 

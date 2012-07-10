@@ -5,7 +5,7 @@ class Utils {
 	
 	public static function getSubID() {
 		$subhost = null;
-		$mainhost = Config::hostname();
+		$mainhost = GlobalConfig::hostname();
 
 		if (preg_match('/^([a-zA-Z0-9]+).' . $mainhost . '$/', $_SERVER['HTTP_HOST'], $matches)) {
 			$subhost = $matches[1];
@@ -71,6 +71,69 @@ class Utils {
 		}
 		throw new Exception('Invalid characters in provided app ID');
 	}
+
+	public static function human_filesize($bytes, $decimals = 2) {
+		$sz = 'BKMGTP';
+		$factor = floor((strlen($bytes) - 1) / 3);
+		return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
+	}
+	
+
+	/*
+	 * TODO: Moved to Utils from Config, Start using it.
+	 */
+	public static function generateCleanUsername($userid) {
+		$username = preg_replace('/[^a-zA-Z0-9]+/', '_', $userid);
+		return $username;
+	}
+
+
+	/**
+	 *
+	 * TODO: Moved to Utils. From Config. STart using it.
+	 * 
+	 * Generate random password.
+	 * Borrowed from here: http://www.codemiles.com/php-tutorials/generate-password-using-php-t3120.html
+	 * @var integer
+	 */
+	public static function  generateRandpassword($size=12, $power=7) {
+	    $vowels = 'aeuy';
+	    $randconstant = 'bdghjmnpqrstvz';
+	    if ($power & 1) {
+	        $randconstant .= 'BDGHJLMNPQRSTVWXZ';
+	    }
+	    if ($power & 2) {
+	        $vowels .= "AEUY";
+	    }
+	    if ($power & 4) {
+	        $randconstant .= '23456789';
+	    }
+	    if ($power & 8) {
+	        $randconstant .= '@#$%';
+	    }
+
+	    $Randpassword = '';
+	    $alt = time() % 2;
+	    for ($i = 0; $i < $size; $i++) {
+	        if ($alt == 1) {
+	            $Randpassword .= $randconstant[(rand() % strlen($randconstant))];
+	            $alt = 0;
+	        } else {
+	            $Randpassword .= $vowels[(rand() % strlen($vowels))];
+	            $alt = 1;
+	        }
+	    }
+	    return $Randpassword;
+	}
+
+
+
+	// TODO: Moved from Config. Start using it...
+	public static function getPath($path) {
+		$base = dirname(dirname(__FILE__));
+		return $base . '/' . $path;
+	}
+
 
 	/* This function redirects the user to the specified address.
 	 * An optional set of query parameters can be appended by passing

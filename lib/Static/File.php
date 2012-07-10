@@ -4,9 +4,10 @@ class Static_File {
 	
 	protected $config;
 
-	function __construct($config) {
+	function __construct() {
 
-		$this->config = $config;
+		$this->config = Config::getInstance();
+
 		$acl = $this->config->getValue("access");
 		if (!empty($acl)) {
 			$this->authz();	
@@ -56,9 +57,9 @@ class Static_File {
 	}
 
 	function show() {
-
+		error_log( "show is: " );
 		$subhost = $this->config->getID();
-		$subhostpath = Config::getPath('apps/' . $subhost);
+		$subhostpath = $this->config->getAppPath(''); //Utils::getPath('apps/' . $subhost);
 
 		$localfile = self::getpath($_SERVER['REQUEST_URI']);
 		if ($localfile === '/') $localfile = '/index.html';
@@ -83,6 +84,8 @@ class Static_File {
 
 
 		// TODO: Do strict input checking on filename. for security.
+
+		error_log( "File is: " . $file);
 
 		if (file_exists($file)) {
 			echo file_get_contents($file);

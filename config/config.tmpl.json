@@ -1,3 +1,4 @@
 {
-	"mainhost": "uwap.org"
+	"mainhost": "uwap.org",
+	"instance": "main"
 }

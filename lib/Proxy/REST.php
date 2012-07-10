@@ -4,10 +4,9 @@ class Proxy_REST {
 	
 	protected $config, $userid;
 
-	function __construct($config) {
+	function __construct() {
 
-		$this->config = $config;
-
+		$this->config = Config::getInstance();
 	}
 
 	function oauth() {
@@ -59,6 +58,8 @@ class Proxy_REST {
 		$fullpath = $_SERVER['REQUEST_URI'];
 		$proxyconfig = $this->config->getValue('proxies', array());
 
+		
+
 		if (preg_match('|^/([a-zA-Z0-9_\-]+)/(.*?)$|', $fullpath, $matches)) {
 
 			$proxy = $matches[1];
@@ -90,6 +91,8 @@ class Proxy_REST {
 				$headers[$proxyconfig[$proxy]["token_hdr"]] =$proxyconfig[$proxy]["token"];
 			}
 			echo $this->rawget($url, $headers);
+
+			error_log( "show" . $file);
 			exit;
 
 

@@ -16,8 +16,8 @@ header('Content-Type: application/javascript');
 
 UWAP = {};
 UWAP.utils = {};
-UWAP.utils.hostname = '<?php echo Config::hostname(); ?>';
-UWAP.utils.scheme = '<?php echo Config::scheme(); ?>';
+UWAP.utils.hostname = '<?php echo GlobalConfig::hostname(); ?>';
+UWAP.utils.scheme = '<?php echo GlobalConfig::scheme(); ?>';
 
 UWAP.utils.addQueryParam = function (url, key, value) {
 	var delimiter = ((url.indexOf('?') != -1) ? '&' : '?');

@@ -23,7 +23,7 @@ class So_StorageUWAP extends So_Storage {
 		$this->userid = $userid;
 		// $this->handler = $handler;
 
-		$this->config = new Config($subid);
+		$this->config = Config::getInstance($subid);
 		$this->subid = $this->config->getID();
 	}
 

@@ -18,8 +18,8 @@ session_start();
 require_once('../lib/autoload.php');
 
 $auth = new Auth();
-$config = new Config();
 
+$config = Config::getInstance();
 
 function parentMessage() {
 
@@ -54,10 +54,10 @@ if (!$auth->check()) {
 
 		} else {
 			$_SESSION['passiveAttempt'] = time();
-			// echo '<pre>passiveattempt is ' . $_SESSION['passiveAttempt'];
+			// echo '<pre></pre>passiveattempt is ' . $_SESSION['passiveAttempt'];
 			// exit;
 			
-			SimpleSAML_Utilities::redirect(Config::scheme() . '://core.' . Config::hostname() . '/login', array(
+			SimpleSAML_Utilities::redirect(GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/login', array(
 				'return' => SimpleSAML_Utilities::selfURL(),
 				"app" => $config->getID(),
 				"passive" => "true",
@@ -67,7 +67,7 @@ if (!$auth->check()) {
 
 	} else {
 
-		SimpleSAML_Utilities::redirect(Config::scheme() . '://core.' . Config::hostname() . '/login', array(
+		SimpleSAML_Utilities::redirect(GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/login', array(
 			'return' => SimpleSAML_Utilities::selfURL(),
 			"app" => $config->getID()
 		));	

@@ -5,9 +5,12 @@
 $base = dirname(__FILE__);
 require_once($base . '/Utils.php');
 require_once($base . '/Config.php');
+require_once($base . '/GlobalConfig.php');
 require_once($base . '/Auth.php');
 require_once($base . '/GroupManager.php');
+require_once($base . '/AppDirectory.php');
 require_once($base . '/UWAPStore.php');
+require_once($base . '/UWAPLogger.php');
 require_once($base . '/HTTPClient.php');
 require_once($base . '/HTTPClientUserAuth.php');
 require_once($base . '/HTTPClientBasic.php');

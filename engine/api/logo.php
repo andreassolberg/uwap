@@ -22,7 +22,7 @@ try {
 		throw new Exception("Missing parameter [url]");
 	}
 
-	$c = new Config($_REQUEST['app']);
+	$c = Config::getInstance($_REQUEST['app']);
 	$ac = $c->getConfig();
 	
 	if (!empty($ac["logo"])) {

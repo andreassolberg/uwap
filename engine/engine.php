@@ -12,14 +12,15 @@
 
 require_once('../lib/autoload.php');
 
+error_log( "show about to go");
 
 
-$config = new Config();
-
-if ($config->getValue('type') === 'app') {
+if (Config::getValue('type') === 'app') {
 
 	try {
-		$h = new Static_File($config);
+
+
+		$h = new Static_File();
 		$h->show();
 
 	} catch(Exception $e) {
@@ -27,7 +28,7 @@ if ($config->getValue('type') === 'app') {
 		echo "Error: " . $e->getMessage();
 	}
 
-} else if ($config->getValue('type') === 'proxy') {
+} else if (Config::getValue('type') === 'proxy') {
 
 
 	// Specify domains from which requests are allowed
@@ -40,12 +41,11 @@ if ($config->getValue('type') === 'app') {
 	// The X-Requested-With header allows jQuery requests to go through
 	header('Access-Control-Allow-Headers: X-Requested-With, Authorization');
 
-	$h = new Proxy_REST($config);
+	$h = new Proxy_REST();
 	$h->show();
 
 
 } else {
 	throw new Exception('Unknown type.');
 }
-
 

@@ -3,9 +3,6 @@
 
 class HTTPClientToken extends HTTPClientUserAuth {
 	
-	public function __construct($config) {
-		parent::__construct($config);
-	}
 
 	public function get($url, $options) {
 		$result = array("status" => "ok");
