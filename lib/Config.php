@@ -419,14 +419,6 @@ class Config {
 		$current = $this->config;
 		$current['url'] = Config::scheme() . '://' . $this->subid . '.' . Config::hostname();
 
-		if (!empty($current['handlers'])) {
-			foreach($current['handlers'] AS $key => $handler) {
-				// if (isset($handler['type']) && $handler['type'] === 'oauth2') {
-					$current['handlers'][$key]['redirect_uri'] = Config::oauth2callback($this->getID(), $key);
-				// }
-			}
-		}
-
 		if (empty($current['status'])) {
 			$current['status'] = array();
 		}
@@ -483,9 +475,6 @@ class Config {
 		return 'http';
 	}
 
-	public static function oauth2callback($id, $handler) {
-		return Config::scheme() . '://' . $id . '.' . Config::hostname() . '/_/oauth2callback/' . $handler;
-	} 
 
 	public function getHandlerConfig($handler) {
 
@@ -494,9 +483,6 @@ class Config {
 		if (!isset($this->config["handlers"][$handler])) return null;
 
 		$pc = $this->config["handlers"][$handler];
-		if ($pc["type"] === "oauth2") {
-			$pc["redirect_uri"] = self::oauth2callback($this->subid, $handler);
-		}
 		return $pc;
 	}
 	
