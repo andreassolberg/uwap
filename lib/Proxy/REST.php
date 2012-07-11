@@ -4,11 +4,12 @@ class Proxy_REST {
 	
 	protected $config, $userid;
 
-	function __construct($config) {
+	function __construct() {
 
-		$this->config = $config;
-
+		$this->config = Config::getInstance();
 	}
+
+
 
 	function oauth() {
 		$storage = new So_StorageServerUWAP();
@@ -53,11 +54,23 @@ class Proxy_REST {
 		// return file_get_contents($url);
 	}
 
+
+	function getInfo() {
+		$fullpath = $_SERVER['REQUEST_URI'];
+		$proxyconfig = $this->config->getValue('proxies', array());
+
+		return array(
+			'fullpath' => $fullpath,
+			'proxyconfig' => $proxyconfig,
+		);
+	}
+
 	function show() {
 
 
 		$fullpath = $_SERVER['REQUEST_URI'];
 		$proxyconfig = $this->config->getValue('proxies', array());
+
 
 		if (preg_match('|^/([a-zA-Z0-9_\-]+)/(.*?)$|', $fullpath, $matches)) {
 
@@ -90,6 +103,8 @@ class Proxy_REST {
 				$headers[$proxyconfig[$proxy]["token_hdr"]] =$proxyconfig[$proxy]["token"];
 			}
 			echo $this->rawget($url, $headers);
+
+			error_log( "show" . $file);
 			exit;
 
 

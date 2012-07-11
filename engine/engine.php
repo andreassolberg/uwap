@@ -14,21 +14,25 @@ require_once('../lib/autoload.php');
 
 
 
-$config = new Config();
 
-if ($config->getValue('type') === 'app') {
+if (Config::getValue('type') === 'app') {
+
+	
 
 	try {
-		$h = new Static_File($config);
+
+		$h = new Static_File();
+		UWAPLogger::info('engine', 'Accessing a static file from app area.', $h->getInfo());
 		$h->show();
 
 	} catch(Exception $e) {
 		header("X-Error: Notfound", true, 404);
+		UWAPLogger::error('engine', 'Error processing a static file from app area.', $e->getMessage());
+
 		echo "Error: " . $e->getMessage();
 	}
 
-} else if ($config->getValue('type') === 'proxy') {
-
+} else if (Config::getValue('type') === 'proxy') {
 
 	// Specify domains from which requests are allowed
 	header('Access-Control-Allow-Origin: *');
@@ -40,12 +44,13 @@ if ($config->getValue('type') === 'app') {
 	// The X-Requested-With header allows jQuery requests to go through
 	header('Access-Control-Allow-Headers: X-Requested-With, Authorization');
 
-	$h = new Proxy_REST($config);
+	$h = new Proxy_REST();
+	UWAPLogger::info('engine', 'Accessing a SOA proxied endpoint', $h->getInfo());
 	$h->show();
 
 
 } else {
+	UWAPLogger::error('engine', 'Trying to access an WebApp of unknown type.');
 	throw new Exception('Unknown type.');
 }
-
 

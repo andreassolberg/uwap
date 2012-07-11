@@ -3,9 +3,6 @@
 
 class HTTPClientOauth1 extends HTTPClient {
 	
-	public function __construct($config) {
-		parent::__construct($config);
-	}
 
 
 	public function get($url, $options) {

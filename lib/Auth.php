@@ -9,7 +9,7 @@ class Auth {
 
 	public function __construct($appid = null) {
 
-		$this->config = new Config($appid);
+		$this->config = Config::getInstance($appid);
 		$this->store = new UWAPStore();
 		$this->as = new SimpleSAML_Auth_Simple('default-sp');
 
@@ -21,8 +21,11 @@ class Auth {
 			"uwap-userid" => $this->getRealUserID(),
 		);
 		$result = $this->store->queryOne("consent", $query);
-		error_log("Query authorization: " . var_export($result, true));
-		// echo '<pre>'; print_r($query); exit;
+
+		UWAPLogger::debug('auth', 
+			'Checking if authenticated user [' . $this->getRealUserID() . '] is also authorized to use app [' . $this->config->getID() . ']', 
+			$result);
+
 		if (empty($result)) return false;
 		if (isset($result["ok"]) && $result["ok"] === true) return true;
 		return false;
@@ -45,7 +48,7 @@ class Auth {
 		$attributes = $this->as->getAttributes();
 
 		$groups = array();
-		// echo '<pre>' . "\n";
+		// echo '<pre></pre>' . "\n";
 		// print_r($attributes);
 		$realm = 'na.feide.no';
 		if (!empty($attributes['eduPersonPrincipalName']) && !empty($attributes['eduPersonOrgDN:o'])) {
@@ -105,7 +108,7 @@ class Auth {
 			} else {
 				$_SESSION['passiveAttempt'] = time();
 
-				SimpleSAML_Utilities::redirect(Config::scheme() . '://core.' . Config::hostname() . '/login', array(
+				SimpleSAML_Utilities::redirect(GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/login', array(
 					'return' => $return,
 					'app' => $this->config->getID()
 				));
@@ -133,7 +136,7 @@ class Auth {
 		if ($return === null) $return = SimpleSAML_Utilities::selfURL();
 		if (!$this->as->isAuthenticated()) {
 			if ($allowRedirect) {
-				SimpleSAML_Utilities::redirect(Config::scheme() . '://core.' . Config::hostname() . '/login', array(
+				SimpleSAML_Utilities::redirect(GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/login', array(
 					'return' => $return,
 					'app' => $this->config->getID()
 				));

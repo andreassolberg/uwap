@@ -18,7 +18,8 @@ try {
   * TODO: REstrict access to this API to other apps than 'dev'.
  */
 
-	$config = new Config();
+	$config = Config::getInstance();
+	$appdirectory = new AppDirectory();
 	$subhost = $config->getID();
 
 	$auth = new Auth();
@@ -34,8 +35,7 @@ try {
 
 	if (Utils::route('get', '/apps$', &$parameters)) {
 
-		$ac = new Config();
-		$listing = $ac->getMyApps($auth->getRealUserID());
+		$listing = $appdirectory->getMyApps($auth->getRealUserID());
 		$result['data'] = $listing;
 
 	} else if (Utils::route('post', '/apps$', &$parameters, &$object)) {
@@ -44,14 +44,14 @@ try {
 		Utils::validateID($id);
 		$config->store($object, $auth->getRealUserID());
 
-		$ac = new Config($id);
+		$ac = Config::getInstance($id);
 		$result['data'] = $ac->getConfig();
 
 	} else if (Utils::route('get', '/app/([^/]+)$', &$parameters, &$object)) {
 
 		$subid = $parameters[1];
 		Utils::validateID($subid);
-		$ac = new Config($subid);
+		$ac = Config::getInstance($subid);
 
 		$result['data'] = $ac->getConfig();
 		$result['data']['davcredentials'] = $ac->getDavCredentials($auth->getRealUserID());
@@ -64,7 +64,7 @@ try {
 		$subid = $parameters[1];
 		Utils::validateID($subid);
 
-		$ac = new Config($subid);
+		$ac = Config::getInstance($subid);
 		$ac->updateStatus($object, $auth->getRealUserID());
 
 		$c = $ac->getConfig();
@@ -75,7 +75,7 @@ try {
 
 		$subid = $parameters[1];
 		Utils::validateID($subid);
-		$ac = new Config($subid);
+		$ac = Config::getInstance($subid);
 		$c = $ac->getConfig();
 
 		$result['data'] = $c['status'];
@@ -84,7 +84,7 @@ try {
 
 		$subid = $parameters[1];
 		Utils::validateID($subid);
-		$ac = new Config($subid);
+		$ac = Config::getInstance($subid);
 
 		$result['data'] = $ac->getDavCredentials($auth->getRealUserID());
 
@@ -98,15 +98,18 @@ try {
 		}
 
 		$subid = $parameters[1];
+		error_log("app " . $subid);
 		Utils::validateID($subid);
-		$ac = new Config($subid);
+		$ac = Config::getInstance($subid);
 		$result['data'] = $ac->bootstrap($object);
 
 	} else if (Utils::route('post', '/app/([^/]+)/authorizationhandler/([^/]+)$', &$parameters, &$object)) {
 
+
+
 		$subid = $parameters[1];
 		Utils::validateID($subid);
-		$ac = new Config($subid);
+		$ac = Config::getInstance($subid);
 		
 		$authzhandler = $parameters[2];
 		Utils::validateID($authzhandler);
@@ -118,7 +121,7 @@ try {
 
 		$subid = $parameters[1];
 		Utils::validateID($subid);
-		$ac = new Config($subid);
+		$ac = Config::getInstance($subid);
 		
 		$authzhandler = $parameters[2];
 		Utils::validateID($authzhandler);
@@ -129,7 +132,7 @@ try {
 	} else if (Utils::route('get', '/check/([^/]+)$', &$parameters, &$object)) {
 		$subid = $parameters[1];
 		Utils::validateID($subid);
-		$result['data'] = !$config->exists($subid);
+		$result['data'] = !$appdirectory->exists($subid);
 
 	} else {
 		throw new Exception('Invalid URL or HTTP Method');

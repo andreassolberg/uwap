@@ -16,7 +16,7 @@ require_once('../../lib/autoload.php');
 
 try {
 
-	$config = new Config();
+	$config = Config::getInstance();
 	$subhost = $config->getID();
 
 	$auth = new Auth();

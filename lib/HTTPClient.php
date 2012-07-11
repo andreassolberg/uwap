@@ -162,7 +162,7 @@ class HTTPClient {
 
 	static function getClient($handler) {
 
-		$subconfigobj = new Config();
+		$subconfigobj = Config::getInstance();
 		$subhost = $subconfigobj->getID();
 		$subconfig = $subconfigobj->getConfig();
 

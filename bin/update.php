@@ -83,14 +83,14 @@ file_put_contents($uwapBaseDir . '/passwords', $pwdfile);
 
 
 
-$ac = new Config(false);
+$ac = new AppDirectory();
 $listing = $ac->getAllApps();
 
 
 foreach($listing["app"] AS $app) {
 
 
-	$current = new Config($app["id"]);
+	$current = Config::getInstance($app["id"]);
 	$config = $current->getConfig();
 
 	if (empty($config['uwap-userid'])) {
@@ -99,7 +99,7 @@ foreach($listing["app"] AS $app) {
 		continue;
 	}
 
-	$p = $current->getAppPath();
+	$p = $current->getAppPath('/');
 	$credentials = $current->getDavCredentials();
 
 	clog($app['id'], "Processing " . $config["name"]);

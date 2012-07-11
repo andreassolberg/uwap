@@ -12,24 +12,35 @@
 
 require_once('../../lib/autoload.php');
 
-
 try {
 
-	$config = new Config();
+	$config = Config::getInstance();
 	$subhost = $config->getID();
 
 	$auth = new Auth();
-
 	$data = array("status" => "error");
 	if ($auth->check()) {
 		$data['status'] = 'ok';
 		$data['user'] = $auth->getUserdata();	
+
+		UWAPLogger::info('auth', 
+			'Request on /auth endpoint. User is successfully logged in', 
+			$data['user']);
+	} else {
+		UWAPLogger::info('auth', 'Request on /auth endpoint. User is not logged in');
 	}
+
+
 
 	header('Content-Type: application/json; charset=utf-8');
 	echo json_encode($data);
 	
 } catch(Exception $error) {
+
+	UWAPLogger::info('auth', 
+		'Request on /auth endpoint. Error occured.', 
+		$error);
+
 
 	$result = array();
 	$result['status'] = 'error';
@@ -37,10 +48,5 @@ try {
 	echo json_encode($result);
 
 }
-
-
-
-
-
 
 

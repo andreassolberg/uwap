@@ -17,7 +17,7 @@ try {
 
 
 
-	$subconfigobj = new Config();
+	$subconfigobj = Config::getInstance();
 	$subhost = $subconfigobj->getID();
 	$subconfig = $subconfigobj->getConfig();
 

@@ -3,122 +3,32 @@
 
 class Config {
 	
+	// Static variables
+	protected static $instances = array();
+
+	// object variables
+	protected $store;
 	protected $subid;
 	protected $config;
-	protected $store;
-	
-	protected static $globalConfig = null;
-
-	function __construct($id = null) {
 
 
-		$this->getGlobalConfig();
-
+	/**
+	 * Private constructor, use Config::getInstance([id]), instead.
+	 * @param [type] $id [description]
+	 */
+	protected function __construct($id) {
 		$this->store = new UWAPStore();
-
-		if ($id === false) {
-			$this->subid = null;
-			return;
-
-		} else if ($id === null) {
-
-			$this->subid = Utils::getSubID();			
-		} else {
-			$this->subid = $id;
-		}
-
-		
+		$this->subid = $id;
 		$this->config = $this->store->queryOne('appconfig', array("id" => $this->subid));
 		if(empty($this->config)) {
-			throw new Exception("Could not find configuration for app.");
+			throw new Exception("Could not find configuration for app [" . $id . "]");
 		}
-
-		self::initGlobalConfig();
-
 	}
 
-	public static function getPath($path) {
-		$base = dirname(dirname(__FILE__));
-		return $base . '/' . $path;
-	}
-	
-	/**
-	 * Get a list of all available applications. Does not required authenticated user.
-	 * Only a subset of the configuration will be included, intended for public display.
-	 * @return array List of app config objects.
-	 */
-	public function getAppListing() {
-		$fields = array(
-			'id' => true,
-			'name' => true,
-			'descr' => true,
-			'logo' => true,
-			'type' => true,
-			'owner-userid' => true,
-			'owner' => true,
-			'name' => true,
-		);
-		$listing = $this->store->queryList('appconfig', array('status' => 'listing'), $fields);
-		return $listing;
-	}
 
-	public function getAppPath() {
-		return self::getPath('apps/' . $this->subid . '/');
-	}
 
-	public function getMyApps($userid) {
-		$fields = array(
-			'id' => true,
-			'name' => true,
-			'descr' => true,
-			'type' => true,
-			'owner-userid' => true,
-			'owner' => true,
-			'name' => true,
-		);
-
-		$query = array(
-			"uwap-userid" => $userid,
-			"status" => array(
-				'$ne' => "pendingDelete"
-			),
-		);
-
-		$listing = $this->store->queryList('appconfig',$query, $fields);
-
-		$sorted = array("app" => array(), "proxy" => array(), "client" => array());
-		foreach($listing AS $e) {
-			if (isset($e['type']) && isset($sorted[$e['type']])) {
-				$sorted[$e['type']][] = $e;
-			}
-		}
-		return $sorted;
-	}
-
-	public function getAllApps() {
-		$fields = array(
-			'id' => true,
-			'name' => true,
-			'descr' => true,
-			'type' => true,
-			'owner-userid' => true,
-			'owner' => true,
-			'name' => true,
-		);
-		$query = array(
-			"status" => array(
-				'$ne' => "pendingDelete"
-			),
-		);
-		$listing = $this->store->queryList('appconfig', $query, $fields);
-
-		$sorted = array("app" => array(), "proxy" => array(), "client" => array());
-		foreach($listing AS $e) {
-			if (isset($e['type']) && isset($sorted[$e['type']])) {
-				$sorted[$e['type']][] = $e;
-			}
-		}
-		return $sorted;
+	public function getAppPath($path = '/') {
+		return Utils::getPath('apps/' . $this->subid . $path);
 	}
 
 	public function getDavCredentials($userid = null) {
@@ -128,7 +38,7 @@ class Config {
 		}
 
 		$credentials = array(
-			'url' => Config::scheme() . '://dav.' . Config::hostname() . '/' . $this->subid
+			'url' => GlobalConfig::scheme() . '://dav.' . GlobalConfig::hostname() . '/' . $this->subid
 		);
 
 		$lookup = $this->store->queryOne('davcredentials', array("uwap-userid" => $userid));
@@ -139,50 +49,13 @@ class Config {
 		$lookup = $this->store->queryOne('davcredentials', array("uwap-userid" => $userid));
 
 		$credentials['username'] = $lookup['username'];
-		$credentials['password'] = $lookup['password'];
 
+		UWAPLogger::info('core-dev', 'Got DAVcredentials. (hidden password)', $credentials);
+
+		$credentials['password'] = $lookup['password'];
 		return $credentials;
 	}
 
-	/**
-	 * Generate random password.
-	 * Borrowed from here: http://www.codemiles.com/php-tutorials/generate-password-using-php-t3120.html
-	 * @var integer
-	 */
-	public static function  generateRandpassword($size=12, $power=7) {
-	    $vowels = 'aeuy';
-	    $randconstant = 'bdghjmnpqrstvz';
-	    if ($power & 1) {
-	        $randconstant .= 'BDGHJLMNPQRSTVWXZ';
-	    }
-	    if ($power & 2) {
-	        $vowels .= "AEUY";
-	    }
-	    if ($power & 4) {
-	        $randconstant .= '23456789';
-	    }
-	    if ($power & 8) {
-	        $randconstant .= '@#$%';
-	    }
-
-	    $Randpassword = '';
-	    $alt = time() % 2;
-	    for ($i = 0; $i < $size; $i++) {
-	        if ($alt == 1) {
-	            $Randpassword .= $randconstant[(rand() % strlen($randconstant))];
-	            $alt = 0;
-	        } else {
-	            $Randpassword .= $vowels[(rand() % strlen($vowels))];
-	            $alt = 1;
-	        }
-	    }
-	    return $Randpassword;
-	}
-
-	public static function generateCleanUsername($userid) {
-		$username = preg_replace('/[^a-zA-Z0-9]+/', '_', $userid);
-		return $username;
-	}
 
 	public function generateDavCredentials($userid) {
 		$username = self::generateCleanUsername($userid);
@@ -193,21 +66,10 @@ class Config {
 			'username' => $username,
 			'password' => $password
 		);
+		UWAPLogger::info('core-dev', 'Generating new DAV credentials for ' . $username);
 		$this->store->store('davcredentials', null, $credentials);
 	}
 
-	/**
-	 * User to migrate filebased config files to MongoDB Store. Not used anymore...
-	 * @param  id $id id of app
-	 * @return 
-	 */
-	public function migrate($id) {
-		if ($this->exists($id)) throw new Exception("Already migrated this app config [" . $id . "]");
-		$file = dirname(dirname(__FILE__)) . '/config/' . $id . '.js';
-		$config = json_decode(file_get_contents($file), true);
-		$config["id"] = $id;
-		$this->store->store("appconfig", null, $config);
-	}
 
 	public static function human_filesize($bytes, $decimals = 2) {
 		$sz = 'BKMGTP';
@@ -217,18 +79,23 @@ class Config {
 
 	public function bootstrap($template) {
 
-		$td = Config::getPath('bootstrap/' . $template);
-		$ad = Config::getPath('apps/' . $this->subid);
+		$td = Utils::getPath('bootstrap/' . $template);
+		$ad = Utils::getPath('apps/' . $this->subid);
 
 		if (!is_dir($td)) throw new Exception('Could not find bootstrap dir');
 		if (!is_dir($ad)) throw new Exception('Could not find application dir');
 
 		$cmd = 'cp -ruT ' . $td . ' ' . $ad;
-		error_log("Executing " . $cmd);
 
 		$ret = null;
 		$output = null;
 		exec($cmd, &$output, &$ret);
+
+		UWAPLogger::info('core-dev', 'Bootstrapping application ', array(
+			'command' => $cmd,
+			'output' => $output,
+			'returnvalue' => $ret,
+		));
 		
 		return ($ret === 0);
 	}
@@ -239,7 +106,7 @@ class Config {
 		$stat['capacity'] = ceil(25 * $M);
 		$stat['capacityH'] = self::human_filesize($stat['capacity']);
 
-		$f = Config::getPath('apps/' . $this->subid);
+		$f = Utils::getPath('apps/' . $this->subid);
 		$io = popen ( '/usr/bin/du -sb ' . $f, 'r' );
 		$size = fgets ( $io, 4096);
 		// $size = substr ( $size, 0, strpos ( $size, ' ' ) );
@@ -263,6 +130,7 @@ class Config {
 		$stats = array(
 			'count' => $this->store->count('consent', array('app' => $this->subid))
 		);
+		UWAPLogger::debug('core-dev', 'Get user statistics ', $stats);
 		return $stats;
 	}
 
@@ -282,6 +150,7 @@ class Config {
 
 			}
 		}
+		UWAPLogger::debug('core-dev', 'Get statistics for app ', $stat);
 		return $stat;
 	}
 
@@ -338,6 +207,11 @@ class Config {
 		$this->config['status'] = $new;
 		$criteria = array('id' => $this->config['id']);
 
+		UWAPLogger::info('core-dev', 'Updating application status configuration', array(
+			'criteria' => $criteria,
+			'new_status' => $new,
+		));
+
 		$ret = $this->store->update('appconfig',  $userid, $criteria, array('status' => $new));
 		if (empty($ret)) {
 			throw new Exception('Empty response from update() on storage. Indicates an error occured. Check logs.');;
@@ -369,9 +243,12 @@ class Config {
 
 		$updates = array('handlers' => $current['handlers']);
 
-		error_log("   updateAuthzHandler --->   id   " . $id);
-		error_log("   updateAuthzHandler ---> userid " . $userid);
-		error_log("   updateAuthzHandler --->   obj  " . var_export($obj, true));
+		UWAPLogger::info('core-dev', 'Updating authorization handler', array(
+			'id' => $id,
+			'userid' => $userid,
+			'obj' => $obj,
+			'updates' => $updates,
+		));
 
 		// update($collection, $userid, $criteria, $updates)
 		$ret = $this->store->update('appconfig',  $userid, $criteria, $updates);
@@ -391,6 +268,12 @@ class Config {
 		unset($current['handlers'][$id]);
 		$criteria = array('id' => $this->config['id']);
 		$updates = array('handlers' => $current['handlers']);
+
+		UWAPLogger::info('core-dev', 'Deleting authorization handler', array(
+			'criteria' => $criteria,
+			'updates' => $updates,
+		));
+
 		$this->store->update('appconfig',  $userid, $criteria, $updates);
 		return $current['handlers'];
 	}
@@ -403,13 +286,14 @@ class Config {
 		if (!empty($lookup)) {
 			throw new Exception('Application ID already exists, cannot create new app with this ID.');
 		}
+		UWAPLogger::info('core-dev', 'Store application configuration', array(
+			'userid' => $userid,
+			'id' => $id,
+ 			'config' => $config,
+		));
 		$this->store->store('appconfig', $userid, $config);
 	}
 
-	public function exists($id) {
-		$config = $this->store->queryOne('appconfig', array("id" => $id));
-		return (!empty($config));
-	}
 
 	public function getID() {
 		return $this->subid;
@@ -417,15 +301,8 @@ class Config {
 	
 	public function getConfig() {
 		$current = $this->config;
-		$current['url'] = Config::scheme() . '://' . $this->subid . '.' . Config::hostname();
+		$current['url'] = GlobalConfig::scheme() . '://' . $this->subid . '.' . GlobalConfig::hostname();
 
-		if (!empty($current['handlers'])) {
-			foreach($current['handlers'] AS $key => $handler) {
-				// if (isset($handler['type']) && $handler['type'] === 'oauth2') {
-					$current['handlers'][$key]['redirect_uri'] = Config::oauth2callback($this->getID(), $key);
-				// }
-			}
-		}
 
 		if (empty($current['status'])) {
 			$current['status'] = array();
@@ -434,58 +311,8 @@ class Config {
 		return $current;
 	}
 
-	public function getGlobalConfig() {
-		self::initGlobalConfig();
-		return self::$globalConfig;
-	}
 
-	public function getGlobalConfigValue($key, $default = null, $required = false) {
-		$config = $this->getGlobalConfig();
-		if (isset($config[$key])) return $config[$key];
-		if ($required === true) throw new Exception('Missing required global configuration property [' . $key . ']');
-		return $default;
-	}
 
-	public function getValue($key, $default = null, $required = false) {
-		if (isset($this->config[$key])) return $this->config[$key];
-		if ($required === true) throw new Exception('Missing app config configuration property [' . $key . ']');
-		return $default;
-	}
-
-	public static function initGlobalConfig() {
-		global $UWAP_BASEDIR;
-		if (is_null(self::$globalConfig)) {
-			self::$globalConfig = json_decode(file_get_contents($UWAP_BASEDIR . '/config/config.json'), true);
-		}
-	}
-
-	public static function hostname() {
-		self::initGlobalConfig();
-		if (!isset(self::$globalConfig['mainhost'])) throw new Exception('Missing global property mainhost');
-		return self::$globalConfig['mainhost'];
-	}
-
-	public static function scheme() {
-		if(!array_key_exists('HTTPS', $_SERVER)) {
-			/* Not a https-request. */
-			return 'http';
-		}
-
-		if($_SERVER['HTTPS'] === 'off') {
-			/* IIS with HTTPS off. */
-			return 'http';
-		}
-
-		/* Otherwise, HTTPS will be a non-empty string. */
-		if ($_SERVER['HTTPS'] !== '') {
-			return 'https';
-		}
-		return 'http';
-	}
-
-	public static function oauth2callback($id, $handler) {
-		return Config::scheme() . '://' . $id . '.' . Config::hostname() . '/_/oauth2callback/' . $handler;
-	} 
 
 	public function getHandlerConfig($handler) {
 
@@ -494,11 +321,40 @@ class Config {
 		if (!isset($this->config["handlers"][$handler])) return null;
 
 		$pc = $this->config["handlers"][$handler];
-		if ($pc["type"] === "oauth2") {
-			$pc["redirect_uri"] = self::oauth2callback($this->subid, $handler);
-		}
 		return $pc;
 	}
+
+
+	public function _getValue($key, $default = null, $required = false) {
+		if (isset($this->config[$key])) return $this->config[$key];
+		if ($required === true) throw new Exception('Missing app config configuration property [' . $key . ']');
+		return $default;
+	}
+
+	public static function getValue($key, $default = null, $required = false) {
+		$config = self::getInstance();
+		return $config->_getValue($key, $default, $required);
+	}
+
+
+	/**
+	 * Public static function get to get an config instance for a specific app.
+	 * @var [type]
+	 */
+	public static function getInstance($id = null) {
+
+		if ($id === false) throw new Exception('Deprecated use of Config object.');
+		if ($id === null) {
+			$id = Utils::getSubID();			
+		}
+
+		if (!array_key_exists($id, self::$instances)) {
+			self::$instances[$id] = new self($id);
+		}
+		return self::$instances[$id];
+	}
+
+
 	
 }
 
