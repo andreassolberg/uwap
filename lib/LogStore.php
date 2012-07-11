@@ -8,7 +8,7 @@ class LogStore {
 		$this->store = new UWAPStore;
 	}
 
-	public function getLogs($after, $max = 100) {
+	public function getLogs($after, $filters = array(), $max = 100) {
 
 		$query = array(
 			'time' => array(

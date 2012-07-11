@@ -4,11 +4,12 @@ define(['libs/moment'], function(moment) {
 	var LogRetriever;
 
 	LogRetriever = function(callback) {
+		this.timer = null;
+
+		this.filters = [];
 		this.callback = callback;
 		this.cursor = ((new Date()).getTime() / 1000.0) - 1.0;
 		this.getLogs();
-
-		
 	};
 
 	LogRetriever.prototype.updateCursor = function(time) {
@@ -22,7 +23,7 @@ define(['libs/moment'], function(moment) {
 		console.log("About to request logs from " + moment.unix(this.cursor).format('HH:mm:ss.SSS') + '  cursor in ms ' + this.cursor);
 
 		var that = this;
-		UWAP.logs.get(this.cursor, function(logs) {
+		UWAP.logs.get(this.cursor, this.filters, function(logs) {
 			if (logs.data !== null) {
 				that.callback(logs);
 				that.updateCursor(logs.to);
@@ -30,14 +31,23 @@ define(['libs/moment'], function(moment) {
 				console.log("Empty log result");
 			}
 
-			setTimeout($.proxy(that.getLogs, that), 1000);
+			that.timer = setTimeout($.proxy(that.getLogs, that), 1000);
 
 		}, function(err) {
 			console.error("Error occured fetching logs. Stopping.");
 		});
 	}
 
+	LogRetriever.prototype.addFilter = function(filter) {
+		this.filters.push(filter);
+	};
 
+	LogRetriever.prototype.resetFrom = function(from) {
+		if(this.timer) clearTimeout(this.timer);
+		if (!from) throw new Error("Missing [from] parameter to LogRetriever.resetForm()");
+		this.cursor = from;
+		this.getLogs();
+	};
 
 	return LogRetriever;
 });

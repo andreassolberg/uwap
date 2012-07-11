@@ -22,7 +22,7 @@ if (Config::getValue('type') === 'app') {
 	try {
 
 		$h = new Static_File();
-		UWAPLogger::info('engine', 'Accessing a static file from app area.', $h->getInfo());
+		UWAPLogger::debug('engine', 'Accessing a static file from app area.', $h->getInfo());
 		$h->show();
 
 	} catch(Exception $e) {
@@ -45,7 +45,7 @@ if (Config::getValue('type') === 'app') {
 	header('Access-Control-Allow-Headers: X-Requested-With, Authorization');
 
 	$h = new Proxy_REST();
-	UWAPLogger::info('engine', 'Accessing a SOA proxied endpoint', $h->getInfo());
+	UWAPLogger::debug('engine', 'Accessing a SOA proxied endpoint', $h->getInfo());
 	$h->show();
 
 

@@ -318,10 +318,13 @@ UWAP.groups = {
 };
 
 UWAP.logs = {
-	get: function(after, callback, errorcallback) {
+	get: function(after, filters, callback, errorcallback) {
+
+		filters = filters || [];
+		console.log("Fitlers", filters);
 		UWAP._request(
 		 	'GET', 
-		 	'/_/api/logs.php?after=' + after,
+		 	'/_/api/logs.php?after=' + after + '&filters=' + encodeURIComponent(JSON.stringify(filters)),
 		 	null,
 		 	null, callback, errorcallback);
 	}
