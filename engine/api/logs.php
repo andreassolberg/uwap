@@ -27,11 +27,13 @@ try {
 	$result['status'] = 'ok';
 	
 
+	$after = (microtime(true)) - 1.0;
+	if (isset($_REQUEST['after'])) $after = floatval($_REQUEST['after']);
 
+	$secondsAgo = (microtime(true) - $after);
 
-	$after = microtime() - 1000;
-	if (isset($_REQUEST['after'])) $before = $_REQUEST['after'];
-
+	error_log("Requesting logs from staring (seconds ago) " . $secondsAgo);
+	
 	$max = 100;
 
 	$result['data'] = $logstore->getLogs($after, $max);

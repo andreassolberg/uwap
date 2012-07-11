@@ -24,6 +24,17 @@ class UWAPLogger {
 
 		$this->logLevel   = 4; // Debug and more
 		$this->stacktrace = false;
+
+		if (!empty($_SERVER['REQUEST_URI'])) {
+			$object = array(
+				'method' => $_SERVER['REQUEST_METHOD'],
+				'host' => $_SERVER['SERVER_NAME'],
+				'request' => $_SERVER['REQUEST_URI'],
+			);
+			$this->_log(3, 'generic', 'Accessing ' . $_SERVER['REQUEST_METHOD']  . 
+				' ' . $_SERVER['SERVER_NAME'] . ' ' . $_SERVER['REQUEST_URI'], $object);	
+		}
+		
 	}
 
 
@@ -50,6 +61,10 @@ class UWAPLogger {
 			'module' => $module,
 			'subid' => $this->subid,
 		);
+
+		if (!empty($_SERVER['REMOTE_ADDR'])) {
+			$logmessage['ip'] = $_SERVER['REMOTE_ADDR'];
+		}
 
 		if (isset($obj)) {
 			$logmessage['object'] = $obj;

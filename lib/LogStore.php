@@ -18,13 +18,33 @@ class LogStore {
 
 		error_log("Query:  " . json_encode($query));
 
-		$res = $this->store->queryList('log', $query);
+		$options = array(
+			'limit' => $max,
+			'sort' => array('time' => -1),
+		);
+
+		$res = $this->store->queryList('log', $query, array(), $options);
+		$res2 = array();
 		$result = array(
-			'data' => $res,
+			'data' => null,
 		);
 		if (count($res) > 0) {
-			$result['to'] = $res[0]['time'];
-			$result['from'] = $res[count($result)-1]['time'];
+
+			$lastTimestamp = number_format($res[count($res)-1]['time'], 6, '.', '');
+
+			foreach($res AS $r) {
+				if (number_format($r['time'], 4, '.', '') !== $lastTimestamp) {
+					$res2[] = $r;
+				}
+			}
+ 
+			error_log('From time ' . number_format($res[0]['time'], 6, '.', ''));
+			error_log('To   time ' . number_format($res[count($res)-1]['time'], 6, '.', ''));
+			error_log('To2  time ' . number_format($res2[count($res2)-1]['time'], 6, '.', ''));
+
+			$result['to'] = number_format($res2[0]['time'], 6, '.', '');
+			$result['from'] = number_format($res2[count($res2)-1]['time'], 6, '.', '');
+			$result['data'] = $res2;
 		}
 		return $result;
 	}

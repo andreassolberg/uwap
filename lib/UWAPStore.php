@@ -143,10 +143,17 @@ class UWAPStore {
 		return $cursor->getNext();
 	}
 
-	public function queryList($collection, $criteria, $fields = array()) {
+	public function queryList($collection, $criteria, $fields = array(), $options = array()) {
 		// echo "\n\n"; print_r($criteria); exit;
 		$cursor = $this->db->{$collection}->find($criteria, $fields);
 		if ($cursor->count() < 1) return null;
+
+		if (isset($options['limit'])) {
+			$cursor->limit($options['limit']);
+		}
+		if (isset($options['sort'])) {
+			$cursor->sort($options['sort']);
+		}
 		
 		$result = array();
 		foreach($cursor AS $element) $result[] = $element;
