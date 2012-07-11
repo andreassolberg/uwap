@@ -1,5 +1,45 @@
 
-/* Replace this CSS content with CSS that is specific for your application */
-p.helloworld {
-	color: #844;
+
+div.logentry:hover {
+	background-color: #ddd !important;
+	border-top: 1px solid #333;
+	border-bottom: 1px solid #333;
+	padding: 0px 1px 0px 1px;
+}
+div.logentry {
+	font-size: 90%;
+	clear: both;
+	border: none;
+	margin: 1px 0px 1px 0px;
+	padding: 1px;
+}
+div.logentry.level1 { background-color: #faa;}
+div.logentry.level2 { background-color: #fcc;}
+div.logentry.level3 { background-color: #fafafa;}
+div.logentry.level4 { background-color: #eee;}
+
+div.logentry span.time {
+	color: #114D6E;
+}
+div.logentry span.module {
+	color: #651071;
+}
+div.logentry span.subid {
+	color: #90A216;
+}
+div.logentry span.host {
+	color: #BF9058;
+}
+div.logentry span.ip {
+	color: #A66517;
+}
+
+div.filterbtn {
+	float: right;
+}
+div.logentry.active div.logExtra {
+	display: block;
+}
+div.logExtra {
+	display: none;
 }

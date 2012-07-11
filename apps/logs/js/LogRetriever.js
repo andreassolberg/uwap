@@ -7,6 +7,8 @@ define(['libs/moment'], function(moment) {
 		this.callback = callback;
 		this.cursor = ((new Date()).getTime() / 1000.0) - 1.0;
 		this.getLogs();
+
+		
 	};
 
 	LogRetriever.prototype.updateCursor = function(time) {
