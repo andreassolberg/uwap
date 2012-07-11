@@ -10,6 +10,11 @@ $autoload = $uwapBaseDir . '/lib/autoload.php';
 /* Add library autoloader. */
 require_once($autoload);
 
+UWAPLogger::init(array('logLevel' => 3));
+UWAPLogger::info('bin-update', 'Running command line update.php cron script.');
+
+
+
 $program = array_shift($argv);
 if (count($argv) > 0) {
 	echo "Wrong number of parameters. Run:   " . $program . " .... TBD\n"; 
@@ -111,6 +116,7 @@ foreach($listing["app"] AS $app) {
 		mkdir($p);
 		chmod($p, 0777);
 		clog($app['id'], " Creating dir " . $p . "");
+		UWAPLogger::info('bin-update', " Creating dir " . $p . "");
 	}
 
 	$hta = $p . '.htaccess';
@@ -121,11 +127,13 @@ foreach($listing["app"] AS $app) {
 		clog($app['id'], " Creating file " . $hta . "");
 		file_put_contents($hta, "Require user " . $credentials["username"] . "\n");
 		chmod($hta, 0644);
+		UWAPLogger::info('bin-update', "Adding .htpasswd file. Require user " . $credentials["username"] . "\n");
 	}
 
 	if ($current->hasStatus(array('pendingDAV'))) {
 		$current->updateStatus(array('pendingDAV' => false, 'operational' => true));
 		clog($app['id'], "Setting WebApp status from pendingDAV to operational");
+		UWAPLogger::info('bin-update', "Setting WebApp status from pendingDAV to operational");
 	}
 
 	// print_r($credentials);

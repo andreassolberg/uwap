@@ -50,7 +50,7 @@ class Config {
 
 		$credentials['username'] = $lookup['username'];
 
-		UWAPLogger::info('core-dev', 'Got DAVcredentials. (hidden password)', $credentials);
+		UWAPLogger::debug('config', 'Got DAVcredentials. (hidden password)', $credentials);
 
 		$credentials['password'] = $lookup['password'];
 		return $credentials;

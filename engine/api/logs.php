@@ -15,6 +15,12 @@ require_once('../../lib/autoload.php');
 
 try {
 
+	/*
+	 * We would like to not log more than errors for requests on this endpoint.
+	 * Because if not viewing logs would kind of increase the log intensity.
+	 */
+	UWAPLogger::init(array('logLevel' => 2));
+
 	$logstore = new LogStore();
 
 	$config = Config::getInstance();
