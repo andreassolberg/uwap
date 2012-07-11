@@ -20,8 +20,20 @@ define(['./libs/moment', './LogRetriever'], function(moment, LogRetriever) {
 
 			that.logr.addFilter(filter);
 
-			// $(event.currentTarget).toggleClass("active");
-			// return false;
+			$(that.eloutput).empty();
+
+			that.logr.resetFrom(that.from);
+			that.from = null;
+		});
+
+		this.elfilters.on("click", "#resetfilters", function(event) {
+			that.logr.removeFilters();
+			$(that.eloutput).empty();
+			that.logr.resetFrom(that.from);
+			that.from = null;
+
+			
+
 		});
 
 
@@ -69,12 +81,7 @@ define(['./libs/moment', './LogRetriever'], function(moment, LogRetriever) {
 	}
 
 	LogApp.addFilter = function(filter) {
-		this.logr.addFilter(filter);
 
-		$(this.eloutput).empty();
-
-		this.logr.resetFrom(this.from);
-		this.from = null;
 
 	};
 
@@ -96,7 +103,7 @@ define(['./libs/moment', './LogRetriever'], function(moment, LogRetriever) {
 
 			f2 = {}
 			f2[prop] = {};
-			f2[prop][o[prop]] = true;
+			f2[prop][o[prop]] = false;
 
 
 			li2 = $('<li><a href="#">Exclude ' + prop + ' ' + o[prop] + '</a></li>').data('filter', f2);

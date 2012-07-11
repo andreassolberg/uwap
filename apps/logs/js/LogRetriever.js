@@ -41,6 +41,9 @@ define(['libs/moment'], function(moment) {
 	LogRetriever.prototype.addFilter = function(filter) {
 		this.filters.push(filter);
 	};
+	LogRetriever.prototype.removeFilters = function() {
+		this.filters = [];
+	}
 
 	LogRetriever.prototype.resetFrom = function(from) {
 		if(this.timer) clearTimeout(this.timer);

@@ -10,13 +10,47 @@ class LogStore {
 
 	public function getLogs($after, $filters = array(), $max = 100) {
 
-		$query = array(
-			'time' => array(
-				'$gt' => $after,
-			),
+		$query = array();
+
+
+		foreach($filters AS $filter) {
+
+			foreach($filter AS $attr => $def) {
+
+
+				foreach($def AS $value => $include) {
+
+					error_log("Processing [" . $attr . ", " . var_export($value, true) . ", " . $include) ;
+
+					if (!array_key_exists($attr, $query)) $query[$attr] = array();
+
+					if ($value == 1) {
+						if (!array_key_exists('$in', $query[$attr])) {
+							$query[$attr]['$in'] = array();
+						}
+						$query[$attr]['$in'][] = $value;
+					} else if ($value == 0) {
+						if (!array_key_exists('$nin', $query[$attr])) {
+							$query[$attr]['$nin'] = array();
+						}
+						$query[$attr]['$nin'][] = $value;
+					}
+
+
+				}
+
+			}
+
+		}
+
+
+		$query['time'] = array(
+			'$gt' => $after,
 		);
 
-		error_log("Query:  " . json_encode($query));
+
+		error_log(">>>>> Incomming filter: " . json_encode($filters));
+		error_log(">>>>> Genereated query  " . json_encode($query));
 
 		$options = array(
 			'limit' => $max,

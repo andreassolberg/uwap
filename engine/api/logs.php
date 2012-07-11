@@ -42,7 +42,12 @@ try {
 	
 	$max = 100;
 
-	$result['data'] = $logstore->getLogs($after, $max);
+	$filters = array();
+	if (isset($_REQUEST['filters'])) {
+		$filters = json_decode($_REQUEST['filters'], true);
+	}
+
+	$result['data'] = $logstore->getLogs($after, $filters, $max);
 
 
 	header('Content-Type: application/json; charset=utf-8');
