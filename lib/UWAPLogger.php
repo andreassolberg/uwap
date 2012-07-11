@@ -9,40 +9,46 @@ class UWAPLogger {
 	// Object variables
 	protected $store, $config, $subid;
 
-	protected static $logLevel = 4;
-	protected static $stacktrace = true;
+	protected $logLevel = 4;
+	protected $stacktrace = true;
 
 	// Private constructor, called by init()
-	private function __construct() {
+	protected function __construct() {
 
 		$this->store = new UWAPStore();
-		$configobj = new Config($subid);
-		$conf = $configobj->getGlobalConfig();
-		$this->config = isset($conf['logging']) ? $conf['logging'] : array();
-		$this->subid = $this->config->getID();
+
+		$this->config = GlobalConfig::getValue('logging', array());
+
+		// $this->config = isset($conf['logging']) ? $conf['logging'] : array();
+		$this->subid = Utils::getSubID();
 
 		$this->logLevel   = 4; // Debug and more
 		$this->stacktrace = false;
 	}
 
+
 	public static function init() {
-		if (!is_null(self::$instance)) return;
-		self::$instance = new self();
+		if (is_null(self::$instance)){
+			self::$instance = new self();	
+		}
+		
+		return self::$instance;
 	}
 
 
 	// ----- ----- ----- ----- Object methods
 
-	protected function _log($level, $message, $obj = null) {
+	public function _log($level, $module, $message, $obj = null) {
 
-		if ($level > self::$logLevel) continue;
-		if (empty(self::$db)) self::init();
+		if ($level > $this->logLevel) continue;
 
 		$logmessage = array(
 			'message' => $message,
 			'level' => $level,
 			'time' => microtime(true),
-			'host' => gethostname()
+			'host' => gethostname(),
+			'module' => $module,
+			'subid' => $this->subid,
 		);
 
 		if (isset($obj)) {
@@ -59,17 +65,19 @@ class UWAPLogger {
 	}
 
 
+
 	// ----- ----- ----- ----- Static methods
 
-	protected static function log($level, $message, $obj = null) { 
-		self::init();
-		self::log($level, $message, $obj); 
+	protected static function log($level, $module, $message, $obj = null) { 
+		error_log("Static logger [level " . $level . "] module [" . $module . "]: " . $message);
+		$l = self::init();
+		$l->_log($level, $module, $message, $obj); 
 	}
 
-	public static function debug($module, $message, $obj = array()) { self::log(4, $message, $obj); }
-	public static function info($module, $message, $obj = array()) { self::log(3, $message, $obj); }
-	public static function warn($module, $message, $obj = array()) { self::log(2, $message, $obj); }
-	public static function error($module, $message, $obj = array()) { self::log(1, $message, $obj); }
+	public static function debug ($module, $message, $obj = array()) { self::log(4, $module, $message, $obj); }
+	public static function info  ($module, $message, $obj = array()) { self::log(3, $module, $message, $obj); }
+	public static function warn  ($module, $message, $obj = array()) { self::log(2, $module, $message, $obj); }
+	public static function error ($module, $message, $obj = array()) { self::log(1, $module, $message, $obj); }
 
 	public static function statistics($path) {
 		

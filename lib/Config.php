@@ -28,7 +28,7 @@ class Config {
 
 
 	public function getAppPath($path = '/') {
-		return Utils::getPath('apps/' . $this->subid);
+		return Utils::getPath('apps/' . $this->subid . $path);
 	}
 
 	public function getDavCredentials($userid = null) {
@@ -49,8 +49,10 @@ class Config {
 		$lookup = $this->store->queryOne('davcredentials', array("uwap-userid" => $userid));
 
 		$credentials['username'] = $lookup['username'];
-		$credentials['password'] = $lookup['password'];
 
+		UWAPLogger::info('core-dev', 'Got DAVcredentials. (hidden password)', $credentials);
+
+		$credentials['password'] = $lookup['password'];
 		return $credentials;
 	}
 
@@ -64,6 +66,7 @@ class Config {
 			'username' => $username,
 			'password' => $password
 		);
+		UWAPLogger::info('core-dev', 'Generating new DAV credentials for ' . $username);
 		$this->store->store('davcredentials', null, $credentials);
 	}
 
@@ -83,11 +86,16 @@ class Config {
 		if (!is_dir($ad)) throw new Exception('Could not find application dir');
 
 		$cmd = 'cp -ruT ' . $td . ' ' . $ad;
-		error_log("Executing " . $cmd);
 
 		$ret = null;
 		$output = null;
 		exec($cmd, &$output, &$ret);
+
+		UWAPLogger::info('core-dev', 'Bootstrapping application ', array(
+			'command' => $cmd,
+			'output' => $output,
+			'returnvalue' => $ret,
+		));
 		
 		return ($ret === 0);
 	}
@@ -122,6 +130,7 @@ class Config {
 		$stats = array(
 			'count' => $this->store->count('consent', array('app' => $this->subid))
 		);
+		UWAPLogger::debug('core-dev', 'Get user statistics ', $stats);
 		return $stats;
 	}
 
@@ -141,6 +150,7 @@ class Config {
 
 			}
 		}
+		UWAPLogger::debug('core-dev', 'Get statistics for app ', $stat);
 		return $stat;
 	}
 
@@ -197,6 +207,11 @@ class Config {
 		$this->config['status'] = $new;
 		$criteria = array('id' => $this->config['id']);
 
+		UWAPLogger::info('core-dev', 'Updating application status configuration', array(
+			'criteria' => $criteria,
+			'new_status' => $new,
+		));
+
 		$ret = $this->store->update('appconfig',  $userid, $criteria, array('status' => $new));
 		if (empty($ret)) {
 			throw new Exception('Empty response from update() on storage. Indicates an error occured. Check logs.');;
@@ -228,9 +243,12 @@ class Config {
 
 		$updates = array('handlers' => $current['handlers']);
 
-		error_log("   updateAuthzHandler --->   id   " . $id);
-		error_log("   updateAuthzHandler ---> userid " . $userid);
-		error_log("   updateAuthzHandler --->   obj  " . var_export($obj, true));
+		UWAPLogger::info('core-dev', 'Updating authorization handler', array(
+			'id' => $id,
+			'userid' => $userid,
+			'obj' => $obj,
+			'updates' => $updates,
+		));
 
 		// update($collection, $userid, $criteria, $updates)
 		$ret = $this->store->update('appconfig',  $userid, $criteria, $updates);
@@ -250,6 +268,12 @@ class Config {
 		unset($current['handlers'][$id]);
 		$criteria = array('id' => $this->config['id']);
 		$updates = array('handlers' => $current['handlers']);
+
+		UWAPLogger::info('core-dev', 'Deleting authorization handler', array(
+			'criteria' => $criteria,
+			'updates' => $updates,
+		));
+
 		$this->store->update('appconfig',  $userid, $criteria, $updates);
 		return $current['handlers'];
 	}
@@ -262,6 +286,11 @@ class Config {
 		if (!empty($lookup)) {
 			throw new Exception('Application ID already exists, cannot create new app with this ID.');
 		}
+		UWAPLogger::info('core-dev', 'Store application configuration', array(
+			'userid' => $userid,
+			'id' => $id,
+ 			'config' => $config,
+		));
 		$this->store->store('appconfig', $userid, $config);
 	}
 
@@ -313,11 +342,6 @@ class Config {
 	 * @var [type]
 	 */
 	public static function getInstance($id = null) {
-		error_log(json_encode(debug_backtrace()));
-
-
-
-		error_log("getInstance" . $id);
 
 		if ($id === false) throw new Exception('Deprecated use of Config object.');
 		if ($id === null) {

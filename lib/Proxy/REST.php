@@ -9,6 +9,8 @@ class Proxy_REST {
 		$this->config = Config::getInstance();
 	}
 
+
+
 	function oauth() {
 		$storage = new So_StorageServerUWAP();
 		$server = new So_Server($storage);
@@ -52,13 +54,23 @@ class Proxy_REST {
 		// return file_get_contents($url);
 	}
 
+
+	function getInfo() {
+		$fullpath = $_SERVER['REQUEST_URI'];
+		$proxyconfig = $this->config->getValue('proxies', array());
+
+		return array(
+			'fullpath' => $fullpath,
+			'proxyconfig' => $proxyconfig,
+		);
+	}
+
 	function show() {
 
 
 		$fullpath = $_SERVER['REQUEST_URI'];
 		$proxyconfig = $this->config->getValue('proxies', array());
 
-		
 
 		if (preg_match('|^/([a-zA-Z0-9_\-]+)/(.*?)$|', $fullpath, $matches)) {
 

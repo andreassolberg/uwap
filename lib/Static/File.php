@@ -56,8 +56,26 @@ class Static_File {
 		return $default;
 	}
 
+	function getInfo() {
+
+		$subhost = $this->config->getID();
+		$subhostpath = $this->config->getAppPath(''); //Utils::getPath('apps/' . $subhost);
+
+		$localfile = self::getpath($_SERVER['REQUEST_URI']);
+		if ($localfile === '/') $localfile = '/index.html';
+
+		$file = $subhostpath . $localfile;
+
+		return array(
+			'subhost' => $subhost,
+			'subhostpath' => $subhostpath,
+			'localfile' => $localfile,
+			'file' => $file,
+ 		);
+	}
+
 	function show() {
-		error_log( "show is: " );
+
 		$subhost = $this->config->getID();
 		$subhostpath = $this->config->getAppPath(''); //Utils::getPath('apps/' . $subhost);
 

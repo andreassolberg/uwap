@@ -22,9 +22,9 @@ class Auth {
 		);
 		$result = $this->store->queryOne("consent", $query);
 
-		// UWAPLogger::debug('auth', 
-		// 	'Checking if authenticated user [' + $this->getRealUserID() + '] is also authorized to use app [' + $this->config->getID() + ']', 
-		// 	$result);
+		UWAPLogger::debug('auth', 
+			'Checking if authenticated user [' . $this->getRealUserID() . '] is also authorized to use app [' . $this->config->getID() . ']', 
+			$result);
 
 		if (empty($result)) return false;
 		if (isset($result["ok"]) && $result["ok"] === true) return true;
@@ -108,7 +108,7 @@ class Auth {
 			} else {
 				$_SESSION['passiveAttempt'] = time();
 
-				SimpleSAML_Utilities::redirect(Config::scheme() . '://core.' . Config::hostname() . '/login', array(
+				SimpleSAML_Utilities::redirect(GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/login', array(
 					'return' => $return,
 					'app' => $this->config->getID()
 				));
@@ -136,7 +136,7 @@ class Auth {
 		if ($return === null) $return = SimpleSAML_Utilities::selfURL();
 		if (!$this->as->isAuthenticated()) {
 			if ($allowRedirect) {
-				SimpleSAML_Utilities::redirect(Config::scheme() . '://core.' . Config::hostname() . '/login', array(
+				SimpleSAML_Utilities::redirect(GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/login', array(
 					'return' => $return,
 					'app' => $this->config->getID()
 				));

@@ -317,6 +317,16 @@ UWAP.groups = {
 
 };
 
+UWAP.logs = {
+	get: function(after, callback, errorcallback) {
+		UWAP._request(
+		 	'GET', 
+		 	'/_/api/logs.php?after=' + after,
+		 	null,
+		 	null, callback, errorcallback);
+	}
+}
+
 
 UWAP.appconfig = {
 	list: function(callback, errorcallback) {

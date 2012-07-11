@@ -4,6 +4,7 @@
 // App engine core
 $base = dirname(__FILE__);
 require_once($base . '/Utils.php');
+
 require_once($base . '/Config.php');
 require_once($base . '/GlobalConfig.php');
 require_once($base . '/Auth.php');
@@ -24,6 +25,7 @@ require_once($base . '/ParentMessenger.php');
 require_once($base . '/Static/File.php');
 require_once($base . '/Proxy/REST.php');
 
+require_once($base . '/LogStore.php');
 
 require_once(dirname($base) . '/solberg-oauth/lib/soauth.php');
 
