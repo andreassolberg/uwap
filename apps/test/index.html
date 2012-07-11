@@ -176,22 +176,27 @@
 
 		$("document").ready(function() {
 			
-			UWAP.auth.check(loggedin, notloggedin);
-			// 
-			$("input#smt").click(function() {
-				UWAP.auth.require(loggedin);
-			});
+			// UWAP.auth.check(loggedin, notloggedin);
+			// // 
+			// $("input#smt").click(function() {
+			// 	UWAP.auth.require(loggedin);
+			// });
 			
-			$("input#facebook").click(function() {
-				UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook", requestedScopes: ["read_stream"], requiredScopes: ["read_stream"]}, showfacebook);
-			});
+			// $("input#facebook").click(function() {
+			// 	UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook", requestedScopes: ["read_stream"], requiredScopes: ["read_stream"]}, showfacebook);
+			// });
 
-			function showemner(emner) {
-				console.log('Emner', emner);
-			}
+			// function showemner(emner) {
+			// 	console.log('Emner', emner);
+			// }
 
-			UWAP.data.get('http://bridge.uninett.no/rest.php', {handler: "basic"}, function(data) {
-				console.log("Data response headers", data);
+			// UWAP.data.get('http://bridge.uninett.no/rest.php', {handler: "basic"}, function(data) {
+			// 	console.log("Data response headers", data);
+			// });
+
+
+			UWAP.data.get('http://www.ntnu.no/studieinformasjon/rom/?sok=EL5&gr=1', null, function(data) {
+				console.log("Got data", data);
 			});
 
 
@@ -210,41 +215,42 @@
 
 			// bussRequest();
 
-			UWAP.store.save(
-				{
-					"test": "value",
-					"size": Math.floor(Math.random()*1000),
-					"bool": true
-					// "speed": 1.2333,
-					// "geolocation": {
-					// 	"city": "Trondheim",
-					// 	"code": "7040"
-					// }
-				}, function() {
-					console.log("Successfully stored object.")
-				}, function(err) {
-					console.log("Error storing object: " + err.message)
-				}
-			);
+			// UWAP.store.save(
+			// 	{
+			// 		"test": "value",
+			// 		"size": Math.floor(Math.random()*1000),
+			// 		"bool": true
+			// 		// "speed": 1.2333,
+			// 		// "geolocation": {
+			// 		// 	"city": "Trondheim",
+			// 		// 	"code": "7040"
+			// 		// }
+			// 	}, function() {
+			// 		console.log("Successfully stored object.")
+			// 	}, function(err) {
+			// 		console.log("Error storing object: " + err.message)
+			// 	}
+			// );
 
-			UWAP.store.queryList(
-				{"bool": true},
-				function(res) {
-					console.log(res);
+			// UWAP.store.queryList(
+			// 	{"bool": true},
+			// 	function(res) {
+			// 		console.log(res);
 
-					UWAP.store.remove(
-						{"bool": true},
-						function(res) {
-							console.log(res);
-						}, function(err) {
-							console.log(err);
-						}
-					);
+			// 		UWAP.store.remove(
+			// 			{"bool": true},
+			// 			function(res) {
+			// 				console.log(res);
+			// 			}, function(err) {
+			// 				console.log(err);
+			// 			}
+			// 		);
 					
-				}, function(err) {
-					console.log(err);
-				}
-			);
+			// 	}, function(err) {
+			// 		console.log(err);
+			// 	}
+			// );
+
 
 
 
