@@ -67,8 +67,8 @@ UWAP._request = function(method, url, data, options, callback, errorcallback) {
 		url: url,
 		dataType: 'json',
 		success: function(result, textStatus, jqXHR) {
-			console.log('Response _request response reviced()');
-			console.log(result);
+			// console.log('Response _request response reviced()');
+			// console.log(result);
 			if (result.status === 'ok') {
 				if  (typeof callback === 'function') {
 					callback(result.data);
@@ -104,12 +104,12 @@ UWAP.auth = {
 	require: function (callbackSuccess) {
 		
 		$.getJSON('/_/api/auth.php', function(data, textStatus, jqXHR) {
-			console.log('Response auth require()');
+			// console.log('Response auth require()');
 			console.log(data);
 			if (data.status === 'ok') {
 				callbackSuccess(data.user);
 			} else {
-				console.log("goAndReturn");
+				// console.log("goAndReturn");
 				UWAP.utils.goAndReturn('/_/login');
 			}
 
@@ -120,8 +120,8 @@ UWAP.auth = {
 	checkPassive: function (callbackSuccess, callbackNo) {
 
 		$.getJSON('/_/api/auth.php', function(data, textStatus, jqXHR) {
-			console.log('Response auth check()');
-			console.log(data);
+			// console.log('Response auth check()');
+			// console.log(data);
 			if (data.status === 'ok') {
 				callbackSuccess(data.user);
 			} else {
@@ -136,7 +136,7 @@ UWAP.auth = {
 						callbackNo();
 					}
 
-					console.log("Received response. Juhu ", msg);
+					// console.log("Received response. Juhu ", msg);
 					delete UWAP.messenger.receiver;
 					// $("body iframe.uwap_messenger_iframe").remove();
 
@@ -152,8 +152,8 @@ UWAP.auth = {
 	check: function (callbackSuccess, callbackNo) {
 		
 		$.getJSON('/_/api/auth.php', function(data, textStatus, jqXHR) {
-			console.log('Response auth check()');
-			console.log(data);
+			// console.log('Response auth check()');
+			// console.log(data);
 			if (data.status === 'ok') {
 				callbackSuccess(data.user);
 			} else {
@@ -172,22 +172,22 @@ UWAP.store = {
 		parameters.object = JSON.stringify(object);
 
 		$.getJSON('/_/api/storage.php', parameters, function(result, textStatus, jqXHR) {
-			console.log('Response data save()');
-			console.log(result);
+			// console.log('Response data save()');
+			// console.log(result);
 			if (result.status === 'ok') {
 				callback(result.data);
 			} else {
 				if  (typeof errorcallback === 'function') {
 					errorcallback(result.message);
 				}
-				console.log('Data request error (server side): ' + result.message);
+				// console.log('Data request error (server side): ' + result.message);
 			}
 
 		}, function(err) {
 			if  (typeof errorcallback === 'function') {
 				errorcallback(err);
 			}
-			console.log('Data request error (client side): ' + err);
+			// console.log('Data request error (client side): ' + err);
 		});
 	},
 	remove: function(object, callback, errorcallback) {
@@ -196,22 +196,22 @@ UWAP.store = {
 		parameters.object = JSON.stringify(object);
 
 		$.getJSON('/_/api/storage.php', parameters, function(result, textStatus, jqXHR) {
-			console.log('Response data remove()');
-			console.log(result);
+			// console.log('Response data remove()');
+			// console.log(result);
 			if (result.status === 'ok') {
 				callback();
 			} else {
 				if  (typeof errorcallback === 'function') {
 					errorcallback(result.message);
 				}
-				console.log('Data request error (server side): ' + result.message);
+				// console.log('Data request error (server side): ' + result.message);
 			}
 
 		}, function(err) {
 			if  (typeof errorcallback === 'function') {
 				errorcallback(err);
 			}
-			console.log('Data request error (client side): ' + err);
+			// console.log('Data request error (client side): ' + err);
 		});
 	},
 	queryOne: function(query, callback, errorcallback) {
@@ -220,22 +220,22 @@ UWAP.store = {
 		parameters.query = JSON.stringify(query);
 
 		$.getJSON('/_/api/storage.php', parameters, function(result, textStatus, jqXHR) {
-			console.log('Response data queryOne()');
-			console.log(result);
+			// console.log('Response data queryOne()');
+			// console.log(result);
 			if (result.status === 'ok') {
 				callback(result.data);
 			} else {
 				if  (typeof errorcallback === 'function') {
 					errorcallback(result.message);
 				}
-				console.log('Data request error (server side): ' + result.message);
+				// console.log('Data request error (server side): ' + result.message);
 			}
 
 		}, function(err) {
 			if  (typeof errorcallback === 'function') {
 				errorcallback(err);
 			}
-			console.log('Data request error (client side): ' + err);
+			// console.log('Data request error (client side): ' + err);
 		});
 	},
 	queryList: function(query, callback, errorcallback) {
@@ -244,22 +244,22 @@ UWAP.store = {
 		parameters.query = JSON.stringify(query);
 
 		$.getJSON('/_/api/storage.php', parameters, function(result, textStatus, jqXHR) {
-			console.log('Response data queryList()');
-			console.log(result);
+			// console.log('Response data queryList()');
+			// console.log(result);
 			if (result.status === 'ok') {
 				callback(result.data);
 			} else {
 				if  (typeof errorcallback === 'function') {
 					errorcallback(result.message);
 				}
-				console.log('Data request error (server side): ' + result.message);
+				// console.log('Data request error (server side): ' + result.message);
 			}
 
 		}, function(err) {
 			if  (typeof errorcallback === 'function') {
 				errorcallback(err);
 			}
-			console.log('Data request error (client side): ' + err);
+			// console.log('Data request error (client side): ' + err);
 		});
 	}
 };
@@ -321,7 +321,7 @@ UWAP.logs = {
 	get: function(after, filters, callback, errorcallback) {
 
 		filters = filters || [];
-		console.log("Fitlers", filters);
+		// console.log("Fitlers", filters);
 		UWAP._request(
 		 	'GET', 
 		 	'/_/api/logs.php?after=' + after + '&filters=' + encodeURIComponent(JSON.stringify(filters)),
@@ -341,15 +341,15 @@ UWAP.appconfig = {
 			// data: JSON.stringify({ "command": "on" }),
 			// processData: false,
 			success: function(result, textStatus, jqXHR) {
-				console.log('Response appconfig get()');
-				console.log(result);
+				// console.log('Response appconfig get()');
+				// console.log(result);
 				if (result.status === 'ok') {
 					callback(result.data);
 				} else {
 					if  (typeof errorcallback === 'function') {
 						errorcallback(result.message);
 					}
-					console.log('Data request error (server side): ' + result.message);
+					// console.log('Data request error (server side): ' + result.message);
 				}
 
 			},
@@ -357,7 +357,7 @@ UWAP.appconfig = {
 				if  (typeof errorcallback === 'function') {
 					errorcallback(err);
 				}
-				console.log('Data request error (client side): ' + err);
+				// console.log('Data request error (client side): ' + err);
 			}
 		});
 
@@ -373,15 +373,15 @@ UWAP.appconfig = {
 			data: JSON.stringify(object),
 			processData: false,
 			success: function(result, textStatus, jqXHR) {
-				console.log('Response data save()');
-				console.log(result);
+				// console.log('Response data save()');
+				// console.log(result);
 				if (result.status === 'ok') {
 					callback(result.data);
 				} else {
 					if  (typeof errorcallback === 'function') {
 						errorcallback(result.message);
 					}
-					console.log('Data request error (server side): ' + result.message);
+					// console.log('Data request error (server side): ' + result.message);
 				}
 
 			},
@@ -389,7 +389,7 @@ UWAP.appconfig = {
 				if  (typeof errorcallback === 'function') {
 					errorcallback(err);
 				}
-				console.log('Data request error (client side): ' + err);
+				// console.log('Data request error (client side): ' + err);
 			}
 		});
 
@@ -418,15 +418,15 @@ UWAP.appconfig = {
 			data: JSON.stringify(object),
 			processData: false,
 			success: function(result, textStatus, jqXHR) {
-				console.log('Response data save()');
-				console.log(result);
+				// console.log('Response data save()');
+				// console.log(result);
 				if (result.status === 'ok') {
 					callback(result.data);
 				} else {
 					if  (typeof errorcallback === 'function') {
 						errorcallback(result.message);
 					}
-					console.log('Data request error (server side): ' + result.message);
+					// console.log('Data request error (server side): ' + result.message);
 				}
 
 			},
@@ -434,7 +434,7 @@ UWAP.appconfig = {
 				if  (typeof errorcallback === 'function') {
 					errorcallback(err);
 				}
-				console.log('Data request error (client side): ' + err);
+				// console.log('Data request error (client side): ' + err);
 			}
 		});
 
@@ -449,15 +449,15 @@ UWAP.appconfig = {
 			// data: JSON.stringify(object),
 			// processData: false,
 			success: function(result, textStatus, jqXHR) {
-				console.log('Response data save()');
-				console.log(result);
+				// console.log('Response data save()');
+				// console.log(result);
 				if (result.status === 'ok') {
 					callback(result.data);
 				} else {
 					if  (typeof errorcallback === 'function') {
 						errorcallback(result.message);
 					}
-					console.log('Data request error (server side): ' + result.message);
+					// console.log('Data request error (server side): ' + result.message);
 				}
 
 			},
@@ -465,7 +465,7 @@ UWAP.appconfig = {
 				if  (typeof errorcallback === 'function') {
 					errorcallback(err);
 				}
-				console.log('Data request error (client side): ' + err);
+				// console.log('Data request error (client side): ' + err);
 			}
 		});
 
@@ -473,43 +473,43 @@ UWAP.appconfig = {
 	check: function(id, callback, errorcallback) {
 
 		$.getJSON('/_/api/appconfig.php/check/' + id, null, function(result, textStatus, jqXHR) {
-			console.log('Response apiconfig check');
-			console.log(result);
+			// console.log('Response apiconfig check');
+			// console.log(result);
 			if (result.status === 'ok') {
 				callback(result.data);
 			} else {
 				if  (typeof errorcallback === 'function') {
 					errorcallback(result.message);
 				}
-				console.log('Data request error (server side): ' + result.message);
+				// console.log('Data request error (server side): ' + result.message);
 			}
 
 		}, function(err) {
 			if  (typeof errorcallback === 'function') {
 				errorcallback(err);
 			}
-			console.log('Data request error (client side): ' + err);
+			// console.log('Data request error (client side): ' + err);
 		});
 	},
 	get: function(id, callback, errorcallback) {
 
 		$.getJSON('/_/api/appconfig.php/app/' + id, null, function(result, textStatus, jqXHR) {
-			console.log('Response data queryOne()');
-			console.log(result);
+			// console.log('Response data queryOne()');
+			// console.log(result);
 			if (result.status === 'ok') {
 				callback(result.data);
 			} else {
 				if  (typeof errorcallback === 'function') {
 					errorcallback(result.message);
 				}
-				console.log('Data request error (server side): ' + result.message);
+				// console.log('Data request error (server side): ' + result.message);
 			}
 
 		}, function(err) {
 			if  (typeof errorcallback === 'function') {
 				errorcallback(err);
 			}
-			console.log('Data request error (client side): ' + err);
+			// console.log('Data request error (client side): ' + err);
 		});
 	}
 };
@@ -518,22 +518,22 @@ UWAP.applisting = {
 	list: function(callback, errorcallback) {
 
 		$.getJSON('/_/api/applisting.php', {}, function(result, textStatus, jqXHR) {
-			console.log('Response applisting get()');
-			console.log(result);
+			// console.log('Response applisting get()');
+			// console.log(result);
 			if (result.status === 'ok') {
 				callback(result.data);
 			} else {
 				if  (typeof errorcallback === 'function') {
 					errorcallback(result.message);
 				}
-				console.log('Data request error (server side): ' + result.message);
+				// console.log('Data request error (server side): ' + result.message);
 			}
 
 		}, function(err) {
 			if  (typeof errorcallback === 'function') {
 				errorcallback(err);
 			}
-			console.log('Data request error (client side): ' + err);
+			// console.log('Data request error (client side): ' + err);
 		});
 	}
 };
@@ -559,13 +559,13 @@ UWAP.data = {
 		// 	parameters.xml = (options.xml ? '1' : '0');
 		// }
 
-		console.log("Performing GET request to " + url);
-		console.log("Parameters");
-		console.log(options);
+		// console.log("Performing GET request to " + url);
+		// console.log("Parameters");
+		// console.log(options);
 
 		$.getJSON('/_/api/data.php', {args: JSON.stringify(options)}, function(result, textStatus, jqXHR) {
-			console.log('Response data get()');
-			console.log(result);
+			// console.log('Response data get()');
+			// console.log(result);
 			if (result.status === 'ok') {
 				callback(result.data);
 			} else if (result.status === 'redirect') {
@@ -574,14 +574,14 @@ UWAP.data = {
 				if  (typeof errorcallback === 'function') {
 					errorcallback(result.message);
 				}
-				console.log('Data request error (server side): ' + result.message);
+				// console.log('Data request error (server side): ' + result.message);
 			}
 
 		}, function(err) {
 			if  (typeof errorcallback === 'function') {
 				errorcallback(err);
 			}
-			console.log('Data request error (client side): ' + err);
+			// console.log('Data request error (client side): ' + err);
 		});
 	},
 
@@ -590,35 +590,35 @@ UWAP.data = {
 
 	hget: function (url, options, callback) {
 		$.getJSON('/_/api/hdata.php?url=' + encodeURIComponent(url) + '&xml=1', function(result, textStatus, jqXHR) {
-			console.log('Response data get()');
-			console.log(result);
+			// console.log('Response data get()');
+			// console.log(result);
 			if (result.status === 'ok') {
 				callback(result.data);
 			} else {
-				console.log('Error');
+				// console.log('Error');
 			}
 
 		}, function() {
-			console.log('Error 2');
+			// console.log('Error 2');
 		});
 	},
 	oget: function (url, options, callback) {
-		console.log('oget to ' + url);
+		// console.log('oget to ' + url);
 		$.getJSON('/_/api/dataoauth.php?url=' + encodeURIComponent(url) + '&return=' + encodeURIComponent(window.location) + '&xml=1', 
 				function(result, textStatus, jqXHR) {
 				
-			console.log('Response data get()');
-			console.log(result);
+			// console.log('Response data get()');
+			// console.log(result);
 			if (result.status === 'ok') {
 				callback(result.data);
 			} else if (result.status === 'redirect') {
 				window.location = result.url;
 			} else {
-				console.log('Error getting data from ' + url);
+				// console.log('Error getting data from ' + url);
 			}
 
 		}, function() {
-			console.log('Error 2');
+			// console.log('Error 2');
 		});
 	}
 	
