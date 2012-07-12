@@ -1,0 +1,8 @@
+div#adressa {
+	width: 294px; height: 720px; overflow: hidden;
+	padding: 0px; margin: 0px;
+}
+iframe.adressa {
+	width: 294px; height: 720px; overflow: hidden;
+	padding: 0px; margin: 0px;
+}

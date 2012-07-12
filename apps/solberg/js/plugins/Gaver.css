@@ -1,0 +1,18 @@
+div.gaveentry {
+	border-top: 1px solid #eee;
+	
+	padding: 0px;
+	margin: 0px;
+	clear: both;
+}
+
+div.gaveentry div.name {
+	color: #555;
+	font-size: 10pt;
+
+}
+div.gaveentry div.until {
+	
+	color: #080;
+		font-size: 11pt;
+}

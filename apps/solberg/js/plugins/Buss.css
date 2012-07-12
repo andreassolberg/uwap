@@ -1,0 +1,43 @@
+div#buss  {
+	font-size: 90%;
+}
+div#buss div.bussentry {
+	border-top: 1px solid #eee;
+	
+	padding: 0px;
+	margin: 0px;
+	clear: both;
+}
+div#buss div.bussentry.toolate {
+	background: #ddd;
+	color: #bbb;
+}
+div#buss div.bussentry.soon {
+	background: #FEF1B5;
+	
+}
+
+
+div#buss div.bussentry.rute {}
+div#buss div.bussentry.sanntid {}
+div#buss div.bussentry span.line {
+	font-size: 24pt;
+	float: left;
+	margin: 1px 5px 0px 2px;
+	padding: 0px;
+}
+div#buss div.bussentry span.destination {
+	font-size: 8pt;
+}
+div#buss div.bussentry span.tid {
+	display: block;
+}
+div#buss div.bussentry span.diff {}
+div#buss div.bussentry span.count span.minutes {
+color: #000;
+	font-weight: bold;
+}
+div#buss div.bussentry span.count {
+	float: right;
+	color: #888;
+}

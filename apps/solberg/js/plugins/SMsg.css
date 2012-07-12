@@ -1,0 +1,13 @@
+div#messages div.msgentry {
+	font-family: "Noteworthy-Light";
+	font-size: 14pt;
+	border: 1px solid #777;
+	padding: 3px 10px 3px 10px;
+	margin: 5px;
+	border-radius: 10px;
+	background: #ccc;
+	color: #222;
+}
+div.msgentry img {
+	width: 24px; margin: 3px;
+}

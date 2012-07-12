@@ -1,0 +1,419 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!-- Consider adding a manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/i/378 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Solberg</title>
+  <meta name="description" content="">
+
+  <!-- Mobile viewport optimized: h5bp.com/viewport -->
+  <meta name="viewport" content="width=device-width">
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />  
+
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style2.css">
+
+  <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
+
+  <!-- All JavaScript at the bottom, except this Modernizr build.
+       Modernizr enables HTML5 elements & feature detects for optimal performance.
+       Create your own custom Modernizr build: www.modernizr.com/download/ -->
+	<script src="js/libs/modernizr-2.5.3.min.js"></script>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+
+	<!-- Core API to UNINETT WebApp Park -->
+	<script type="text/javascript" src="/_/js/core.js"></script>
+
+	<script>
+
+
+
+		function weatherRefresh() {
+			var url = "http://www.yr.no/sted/Norge/Sør-Trøndelag/Trondheim/Trondheim/meteogram.png?random=" + 
+				Math.floor(Math.random()*1000);
+			$("div#weather img").attr("src", url);
+		}
+
+		function middagResult(r) {
+			console.log(r);
+			$("div#middagl").empty();
+			$.each(r, function(i, item) {
+				var el = $('<div class="middag"></div>');
+				el.append('<div class="name">' + item.name + '</div>');
+				if (item.prettydue) {
+					el.append('<div class="day">' + item.prettydue + '</div>');	
+				}
+				
+				$("div#middagl").append(el);
+			});
+			var currentTime = new Date()
+			var hours = currentTime.getHours()
+			var minutes = currentTime.getMinutes()
+			var seconds = currentTime.getSeconds()
+
+			$("div#middagl").append('<p class="updated">Sist oppdatert ' + hours + ':' + minutes +  ':' + seconds + "</p>");
+		}
+		function middagRequest() {
+			var middagurl = "http://app.solweb.no/sdash/middag.php";
+			UWAP.data.get(middagurl, {handler: "solberg"}, middagResult);
+		}
+
+
+		function gaverResult(r) {
+			console.log(r);
+			$("div#gaveliste").empty();
+
+			for(var i = 0; i < r.length; i++) {
+				var item = r[i];
+				if (i > 5) break;
+
+				var el = $('<div class="gaveentry"></div>');
+				el.addClass(item.completed);
+				el.append('<div class="name">' + item.name + '</div>');
+				if (item.prettydue) {
+					el.append('<div class="until">' + item.prettydue + '</div>');	
+				}
+				
+				$("div#gaveliste").append(el);
+			}
+
+
+			// var currentTime = new Date()
+			// var hours = currentTime.getHours()
+			// var minutes = currentTime.getMinutes()
+			// var seconds = currentTime.getSeconds()
+
+			// $("div#gaveliste").append('<p class="updated">Sist oppdatert ' + hours + ':' + minutes +  ':' + seconds + "</p>");
+		}
+		function gaverRequest() {
+			var middagurl = "http://app.solweb.no/sdash/gaver.php";
+			UWAP.data.get(middagurl, {handler: "solberg"}, gaverResult);
+		}
+
+		function bussResult(r) {
+			console.log(r);
+
+		}
+		function bussRequest() {
+			var bussurl = "http://api.busbuddy.no:8080/api/1.3/departures/16011125";
+			UWAP.data.get(bussurl, {handler: "buss", followRedirects: false, curl: true}, bussResult);
+		}
+
+
+		function secondsT(sec) {
+			var minutes = 0;
+
+			if (sec <= 60) {
+				return Math.floor(sec) + 's';
+			} else {
+				minutes = Math.floor(sec/60);
+				sec = sec - (minutes*60);
+				return '<span class="minutes">' + minutes + '</span>m' + Math.floor(sec) + '';
+			}
+		} 
+
+
+		function bussResult(r) {
+			console.log(r);
+
+			$("div#bussl").empty();
+			$.each(r.departures, function(i, item) {
+				var now = new Date(); 
+				var rdt = new Date(); 
+				rdt.setHours(item.registeredDepartureTime.substr(11,2));
+				rdt.setMinutes(item.registeredDepartureTime.substr(14,2));
+				rdt.setSeconds(0);
+
+				var sdt = new Date();
+				sdt.setHours(item.scheduledDepartureTime.substr(11,2));
+				sdt.setMinutes(item.scheduledDepartureTime.substr(14,2));
+				sdt.setSeconds(0);
+
+				var diff = Math.floor((rdt - sdt) / (60*1000));
+				var until = (rdt - now) / 1000;
+
+
+
+				console.log(rdt);
+				console.log(sdt);
+				console.log("-----");
+				console.log(item.registeredDepartureTime.substr(11,5));
+				console.log(item.scheduledDepartureTime.substr(11,5));
+
+				var tid = item.registeredDepartureTime.substr(11,5);
+
+				
+				var real = (item.isRealtimeData ? 'sanntid' : 'rute');
+				var toolate = ''; //(until < (60*4) ? 'toolate' : '');
+
+
+				$("div#out").append('<p><span class="line">' + item.line + " " + item.destination + "</span> " + tid + " " + real +  " " + diff  + " forsinket " + secondsT(until) + " sekunder til avgang</p>");
+				var nel = $('<div></div>');
+				nel.attr('class', 'bussentry ' + real + ' ' + toolate);
+
+				var countel = $('<span class="count">' + secondsT(until) + '</span>')
+				countel.data("eta", rdt);
+				nel.append(countel);
+				nel.append('<span class="line">' + item.line + '</span>');
+				nel.append('<span class="destination">' + item.destination + '</span>');
+				nel.append('<span class="tid">' + tid + '</span>');
+				// nel.append('<span class="diff">' + diff + '</span>');
+				
+				// nel.append('<span class="clear" style="clear: both" >&nbsp;</span')
+
+				$("div#bussl").append(nel);
+			});
+
+		}
+
+		function updateCount() {
+			$("div#bussl span.count").each(function(i, item) {
+				
+
+				var rdt = $(this).data("eta");
+				var now = new Date(); 
+				var until = (rdt - now) / 1000;
+				// console.log("Until is " + until);
+				if (until < (60*3)) {
+					$(this).closest(".bussentry").addClass("toolate");
+					$(this).closest(".bussentry").removeClass("soon");
+				} else if (until < (60*20)) {
+					$(this).closest(".bussentry").removeClass("toolate");
+					$(this).closest(".bussentry").addClass("soon");
+				}
+				$(this).html(secondsT(until));
+			})
+		}
+
+		// function bussRequest() {
+		// 	var bussurl = "http://api.busbuddy.no:8080/api/1.3/departures/16011125";
+		// 	UWAP.data.get(bussurl, {handler: "buss"}, bussResult);
+		// }
+
+		function calResponse(c) {
+			var 
+				key, i, 
+				dayel, entryel, cur;
+
+			console.log("Cal response");
+			console.log(c);
+			$("#call").empty();
+			// $("#call").append('<div class="calentry">AAA</div>');
+			// $("#call").append('<p>sldkjfldskf</p>');
+
+			for(key in c) {
+				dayel = $('<div class="day"></div>');
+				dayel.append('<div class="dayheader">' + c[key].text + '</div>');
+
+
+				console.log(c[key].middag);
+				for(i = 0; i < c[key].middag.length; i++) {
+					entryel = $('<div class="calentry middag">' + c[key].middag[i].name + '</div>');
+					entryel.prepend('<img src="/img/dinner2.png" style="" />');
+					dayel.append(entryel);
+				}
+				for(i = 0; i < c[key].events.length; i++) {
+					cur = c[key].events[i];
+					entryel = $('<div class="calentry"><span class="caltype">' + cur.calendar[0].toUpperCase() + '</span> ' + 
+						cur["summary"]["value"] + '</div>');
+					entryel.addClass(cur.calendar);
+
+					if (cur.caltype === 'singleday') {
+						entryel.append('<span class="timerange">' + cur.timerange + '</div>');
+					}
+
+					dayel.append(entryel);
+				}
+				$("#call").append(dayel);
+			}
+
+
+			// for(key in c) {
+			// 	for(i = 0; i < c[key].length; i++) {
+			// 		cur = c[key][i];
+			// 		console.log("CAlendar entry"); console.log(cur);
+			// 		el = $('<div class="calentry"><span class="caltype ' + key + '">' + key + '</span> ' + cur["summary"]["value"] + '</div>');
+			// 		// el.html( + ' (' + key + ')');
+			// 		$("#call").append(el);
+			// 	}
+			// }
+		}
+
+		function calRequest() {
+			var calurl = "http://app.solweb.no/solberg/index.php";
+			UWAP.data.get(calurl, {handler: "solberg"}, calResponse);
+		}
+
+		function todoResponse(c) {
+			var 
+				i, el;
+
+			console.log("Todo response");
+			console.log(c);
+			$("#todol").empty();
+
+			for(i = 0; i < c.length; i++) {
+				console.log("entry", c[i]);
+				var priority = ' <span class="priority priority' + c[i].task.priority + '">' + c[i].task.priority + '</span> ';
+				el = $('<div class="todoentry">' + priority + c[i].name + '</div>');
+				el.prepend('<img src="/img/todo.png" style=" margin-top: -2px" />');
+				$("#todol").append(el);
+			}
+
+		}
+
+		function todoRequest() {
+			var url = "http://app.solweb.no/solberg/todo.php";
+			UWAP.data.get(url, {handler: "solberg"}, todoResponse);
+		}
+
+		function msgResponse(c) {
+			var 
+				i, el;
+
+			console.log("msg response");
+			console.log(c);
+			$("#msgl").empty();
+
+			for(i = 0; i < c.length; i++) {
+				console.log("entry", c[i]);
+				el = $('<div class="msgentry">' + c[i].name + '</div>');
+				el.prepend('<img src="/img/note.png" style="" />');
+				$("#msgl").append(el);
+			}
+
+		}
+
+		function msgRequest() {
+			var url = "http://app.solweb.no/solberg/msg.php";
+			UWAP.data.get(url, {handler: "solberg"}, msgResponse);
+		}
+
+
+
+		function setup() {
+			weatherRefresh();
+			// middagRequest();
+			bussRequest();
+			gaverRequest();
+			calRequest();
+			todoRequest();
+			msgRequest();
+
+			$("iframe#adressa").attr("src", "http://m.adressa.no?rand=" + Math.random());
+		}
+
+
+		setInterval(updateCount, 1000);
+
+		$(document).ready(function() {
+
+
+			setTimeout(function() {
+				// $("iframe").width("394px");
+				// $("iframe").height("720px");
+
+			}, 3000);
+
+			setup();
+			setInterval(setup, 1000*60*3); // every 3 minutes
+
+		});
+
+
+
+	</script>
+</head>
+<body>
+
+
+
+
+<div role="main">
+
+
+	<table style="width: 1214px">
+		<tr>
+			<td style="width: 414px; height: 720px; vertical-align: top">
+				<div id="weather">
+					<img src="http://www.yr.no/sted/Norge/Sør-Trøndelag/Trondheim/Trondheim/meteogram.png" style="height: 272px; width: 828px" />
+				</div>
+
+				<table style="width: 100%" class="innert">
+					<tr>
+						<td style="width: 30%">
+							<div id="buss">
+								<!-- <h2>Buss</h2> -->
+								<div id="bussl"></div>
+							</div>
+							<div id="msg" style="margin-top: 40px; padding-left: 2px">
+								<!-- <h2>Buss</h2> -->
+								<div id="msgl"></div>
+							</div>
+
+
+						</td>
+						<td style="width: 30%">
+							<div id="gaver">
+								<!-- <h2>Gaver</h2> -->
+								<div id="gaveliste"></div>
+							</div>
+
+							<div id="todo" style="margin-top: 40px; padding-left: 2px">
+								<!-- <h2>Buss</h2> -->
+								<div id="todol"></div>
+							</div>
+						</td>
+
+						<td style="width: 40%">
+							<div id="cal">
+								<div id="call"></div>
+							</div>
+						</td>
+
+					</tr>
+				</table>
+			</td>
+
+
+
+			<td style="width: 271px; height: 720px">
+				<iframe id="adressa" style="width: 394px; height: 720px; overflow: hidden" src="http://m.adressa.no" />
+			</td>
+
+		</tr>
+
+
+
+
+	</table>
+
+</div>
+
+
+
+
+  <!-- JavaScript at the bottom for fast page loading -->
+
+  <!-- scripts concatenated and minified via build script -->
+  <script src="js/plugins.js"></script>
+  <script src="js/script.js"></script>
+  <!-- end scripts -->
+
+
+</body>
+</html>

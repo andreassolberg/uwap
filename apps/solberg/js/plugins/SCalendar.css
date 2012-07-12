@@ -1,0 +1,48 @@
+
+div#calendar div.day {
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 25px 0px;
+	border-bottom: 1px solid #999;
+}
+div#calendar div.day div.dayheader {
+	margin: 0px 0px 5px 0px;
+	padding: 0px;
+	font-weight: bold;
+	background: #eee;
+	color: #555;
+}
+
+div#calendar div.day div.calentry {
+	margin: 2px;
+	padding: 2px;
+	font-size: 10pt;
+	/*border-top: 1px solid #ccc;*/
+}
+
+div#calendar div.day div.calentry span.timerange {
+	font-size: 9pt;
+	font-weight: bold;
+	margin-left: 10px;
+}
+div#calendar div.day div.calentry.middag {
+	border-radius: 5px;
+	border: 1px solid #eee;
+	background: #fafafa;
+	font-size: 12pt;
+}
+
+div#calendar div.calentry.andreas span.caltype { background: #f8ecb3; color: #444; }
+div#calendar div.calentry.andreasjobb span.caltype { background: #b7ebef; }
+div#calendar div.calentry.solberg span.caltype { background: #e0c7bc; }
+div#calendar div.calentry.vigdis span.caltype { background: #c6e2b3; }
+div#calendar div.calentry.linnea span.caltype { background: #9d5ba0; }
+div#calendar div.calentry.helligdager span.caltype { background: #f7b8b7; }
+div#calendar div.calentry.helligdager2 span.caltype { background: #a00; }
+div#calendar div.calentry.barnehage span.caltype {background: #fcc9b2; }
+div#calendar div.calentry.uninett span.caltype {background: #8FD1DB; }
+div#calendar div.calentry span.caltype {
+	border-radius: 6px;
+	background: #800;
+	color: white;
+	padding: 2px 4px;
+}
