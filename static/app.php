@@ -7,9 +7,9 @@
 
 require_once(dirname(dirname(__FILE__)) . '/lib/autoload.php');
 
-$config = new Config();
+$config = Config::getInstance();
 
-$url = 'https://' . $config->getID() . '.' . Config::hostname() . '/';
+$url = 'https://' . $config->getID() . '.' . GlobalConfig::hostname() . '/';
 
 Utils::redirect($url);
 
