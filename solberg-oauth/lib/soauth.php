@@ -496,6 +496,8 @@ class So_Client {
 		error_log("Storing a new state object: " . $state . "  " . json_encode($stateobj));
 		$this->store->putState($state, $stateobj);
 
+		UWAPLogger::debug('oauth2', 'Provider data loaded', $providerconfig);
+
 		$requestdata = array(
 			'response_type' => 'code',
 			'client_id' => $providerconfig['client_id'],
