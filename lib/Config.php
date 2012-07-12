@@ -335,7 +335,7 @@ class Config {
 
 		$pc = $this->config["handlers"][$handler];
 
-		if (isset($handler['type']) && $handler['type'] === 'oauth2') {
+		if (isset($pc['type']) && $pc['type'] === 'oauth2') {
 			$pc['redirect_uri'] = self::oauth2callback($this->getID(), $handler);
 		}
 
