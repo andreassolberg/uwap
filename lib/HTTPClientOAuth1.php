@@ -34,7 +34,18 @@ class HTTPClientOauth1 extends HTTPClient {
 			error_log("Accessing signed URL endpoint " . $url);
 
 			$result = array("status" => 'ok');
-			$result['data'] = $consumer->getUserInfo($url, $accessToken);
+
+			$method = 'get'; $data = null;
+			if (isset($options['method'])) {
+				$method = $options['method'];
+			}
+			if (isset($options['data'])) {
+				$data = $options['data'];
+			}
+
+			// getHTTPsigned($url, $accessToken, $method = 'GET', $data = null) {
+			$result['data'] = $consumer->getHTTPsigned($url, $accessToken, $method, $data);
+
 			return $result;			
 		}
 
