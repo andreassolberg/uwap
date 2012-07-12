@@ -30,6 +30,15 @@ class UWAPStore {
 	// the field field1 with value2. This operator will add the specified field or fields if they do not exist in 
 	// this document or replace the existing value of the specified field(s) if they already exist.
 	public function update($collection, $userid, $criteria, $updates) {
+
+
+		UWAPLogger::debug('store', 'Updating an object in [' . $collection . ']', array(
+			'collection' => $collection,
+			'userid' => $userid,
+			'criteria' => $criteria,
+			'updates' => $updates,
+		));
+
 		if (isset($userid)) {
 			$criteria["uwap-userid"] = $userid;	
 		}
@@ -43,6 +52,10 @@ class UWAPStore {
 
 	public function store($collection, $userid = null, $obj, $expiresin = null) {
 		
+		if ($collection !== 'log') {
+			UWAPLogger::debug('store', 'Storing a object in [' . $collection . ']', $obj);
+		}
+
 		if (isset($userid)) {
 			$obj["uwap-userid"] = $userid;	
 		}
@@ -71,6 +84,14 @@ class UWAPStore {
 
 
 	public function remove($collection, $userid, $obj) {
+
+
+		UWAPLogger::debug('store', 'Removing an object in [' . $collection . ']', array(
+			'collection' => $collection,
+			'userid' => $userid,
+			'object' => $obj,
+		));
+
 		if (isset($obj["_id"]) && !is_object($obj["_id"]) && isset($obj["_id"]['$id'])) {
 			$obj["_id"] = new MongoId($obj["_id"]['$id']);
 		}
@@ -112,6 +133,14 @@ class UWAPStore {
 			$criteria['$or'] = $this->getACL($userid, $groups);
 		}
 		
+		if ($collection !== 'log') {
+			UWAPLogger::debug('store', 'Query one userobject in [' . $collection . ']', array(
+				'collection' => $collection,
+				'userid' => $userid,
+				'criteria' => $criteria,
+			));
+		}
+
 		return $this->queryOne($collection, $criteria, $fields);
 	}
 	public function queryListUser($collection, $userid, $groups, $criteria = array(), $fields = array()) {
@@ -121,10 +150,13 @@ class UWAPStore {
 		} else {
 			$criteria['$or'] = $this->getACL($userid, $groups);
 		}
-
-		error_log("Collection " . var_export($collection, true));
-		error_log("userid     " . var_export($userid, true));
-		error_log("fields     " . var_export($fields, true));
+		if ($collection !== 'log') {
+			UWAPLogger::debug('store', 'Query list userobject in [' . $collection . ']', array(
+				'collection' => $collection,
+				'userid' => $userid,
+				'criteria' => $criteria,
+			));
+		}
 
 		$ret = $this->queryList($collection, $criteria, $fields);
 		// echo 'Result'; print_r($ret); exit;
@@ -138,13 +170,28 @@ class UWAPStore {
 	public function queryOne($collection, $criteria = array(), $fields = array()) {
 		// error_log("queryOne: (" . $collection . ") " . var_export($criteria, true));
 
+		if ($collection !== 'log') {
+			UWAPLogger::debug('store', 'Query one in [' . $collection . ']', array(
+				'collection' => $collection,
+				'criteria' => $criteria,
+			));
+		}
+
 		$cursor = $this->db->{$collection}->find($criteria, $fields);
 		if ($cursor->count() < 1) return null;
 		return $cursor->getNext();
 	}
 
 	public function queryList($collection, $criteria, $fields = array(), $options = array()) {
-		// echo "\n\n"; print_r($criteria); exit;
+
+		if ($collection !== 'log') {
+			UWAPLogger::debug('store', 'Query list in [' . $collection . ']', array(
+				'collection' => $collection,
+				'criteria' => $criteria,
+				'options'  => $options,
+			));
+		}
+
 		$cursor = $this->db->{$collection}->find($criteria, $fields);
 		if ($cursor->count() < 1) return null;
 

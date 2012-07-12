@@ -13,7 +13,7 @@ class UWAPLogger {
 	protected $stacktrace = true;
 
 	// Private constructor, called by init()
-	protected function __construct() {
+	protected function __construct($options = array()) {
 
 		$this->store = new UWAPStore();
 
@@ -24,6 +24,15 @@ class UWAPLogger {
 
 		$this->logLevel   = 4; // Debug and more
 		$this->stacktrace = false;
+
+		if (isset($this->config['logLevel'])) {
+			$this->logLevel = $this->config['logLevel'];
+		}
+
+		if (isset($options['logLevel'])) {
+			$this->logLevel = $options['logLevel'];
+		}
+
 
 		if (!empty($_SERVER['REQUEST_URI'])) {
 			$object = array(
@@ -38,9 +47,9 @@ class UWAPLogger {
 	}
 
 
-	public static function init() {
+	public static function init($options = array()) {
 		if (is_null(self::$instance)){
-			self::$instance = new self();	
+			self::$instance = new self($options);	
 		}
 		
 		return self::$instance;
@@ -51,7 +60,7 @@ class UWAPLogger {
 
 	public function _log($level, $module, $message, $obj = null) {
 
-		if ($level > $this->logLevel) continue;
+		if ($level > $this->logLevel) return;
 
 		$logmessage = array(
 			'message' => $message,
