@@ -46,7 +46,7 @@ class HTTPClientOauth1 extends HTTPClient {
 
 		// Authorize the request token
 		$url = $consumer->getAuthorizeRequest($this->config['authorize'], $requestToken, FALSE, 
-			'httsp://' . $this->config["subhost"] . '.' . Config::hostname() . '/_/oauth1callback/' . $options['handler']
+			'httsp://' . $this->config["subhost"] . '.' . GlobalConfig::hostname() . '/_/oauth1callback/' . $options['handler']
 		);
 		
 		$state = array(
