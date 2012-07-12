@@ -19,7 +19,7 @@ class LogStore {
 
 				foreach($def AS $value => $include) {
 
-					error_log("Processing [" . $attr . ", " . var_export($value, true) . ", " . $include) ;
+					// error_log("Processing [" . $attr . ", " . var_export($value, true) . ", " . $include) ;
 
 					if (!array_key_exists($attr, $query)) $query[$attr] = array();
 
@@ -34,7 +34,7 @@ class LogStore {
 						}
 						$query[$attr]['$nin'][] = $value;
 					} else {
-						error_log("Invalid value : " . var_export($value, true));
+						// error_log("Invalid value : " . var_export($value, true));
 					}
 
 				}
@@ -49,8 +49,8 @@ class LogStore {
 		);
 
 
-		error_log(">>>>> Incomming filter: " . json_encode($filters));
-		error_log(">>>>> Genereated query  " . json_encode($query));
+		// error_log(">>>>> Incomming filter: " . json_encode($filters));
+		// error_log(">>>>> Genereated query  " . json_encode($query));
 
 		$options = array(
 			'limit' => $max,
@@ -72,9 +72,9 @@ class LogStore {
 				}
 			}
  
-			error_log('From time ' . number_format($res[0]['time'], 6, '.', ''));
-			error_log('To   time ' . number_format($res[count($res)-1]['time'], 6, '.', ''));
-			error_log('To2  time ' . number_format($res2[count($res2)-1]['time'], 6, '.', ''));
+			// error_log('From time ' . number_format($res[0]['time'], 6, '.', ''));
+			// error_log('To   time ' . number_format($res[count($res)-1]['time'], 6, '.', ''));
+			// error_log('To2  time ' . number_format($res2[count($res2)-1]['time'], 6, '.', ''));
 
 			$result['to'] = number_format($res2[0]['time'], 6, '.', '');
 			$result['from'] = number_format($res2[count($res2)-1]['time'], 6, '.', '');

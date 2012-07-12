@@ -38,7 +38,7 @@ try {
 
 	$secondsAgo = (microtime(true) - $after);
 
-	error_log("Requesting logs from staring (seconds ago) " . $secondsAgo);
+	// error_log("Requesting logs from staring (seconds ago) " . $secondsAgo);
 	
 	$max = 100;
 
