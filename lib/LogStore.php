@@ -17,25 +17,25 @@ class LogStore {
 
 			foreach($filter AS $attr => $def) {
 
-
 				foreach($def AS $value => $include) {
 
 					error_log("Processing [" . $attr . ", " . var_export($value, true) . ", " . $include) ;
 
 					if (!array_key_exists($attr, $query)) $query[$attr] = array();
 
-					if ($value == 1) {
+					if ($include == 1) {
 						if (!array_key_exists('$in', $query[$attr])) {
 							$query[$attr]['$in'] = array();
 						}
 						$query[$attr]['$in'][] = $value;
-					} else if ($value == 0) {
+					} else if ($include == 0) {
 						if (!array_key_exists('$nin', $query[$attr])) {
 							$query[$attr]['$nin'] = array();
 						}
 						$query[$attr]['$nin'][] = $value;
+					} else {
+						error_log("Invalid value : " . var_export($value, true));
 					}
-
 
 				}
 
