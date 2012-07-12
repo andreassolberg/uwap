@@ -333,14 +333,14 @@ class Config {
 		if (empty($this->config["handlers"])) return null;
 		if (!isset($this->config["handlers"][$handler])) return null;
 
-		$handler = $this->config["handlers"][$handler];
+		$pc = $this->config["handlers"][$handler];
 
 		if (isset($handler['type']) && $handler['type'] === 'oauth2') {
-			$handler['redirect_uri'] = self::oauth2callback($this->getID(), $handler);
+			$pc['redirect_uri'] = self::oauth2callback($this->getID(), $handler);
 		}
 
 		// $pc = $this->config["handlers"][$handler];
-		return $handler;
+		return $pc;
 	}
 
 
