@@ -20,6 +20,7 @@ class Config {
 		$this->store = new UWAPStore();
 		$this->subid = $id;
 		$this->config = $this->store->queryOne('appconfig', array("id" => $this->subid));
+
 		if(empty($this->config)) {
 			throw new Exception("Could not find configuration for app [" . $id . "]");
 		}
@@ -303,14 +304,26 @@ class Config {
 		$current = $this->config;
 		$current['url'] = GlobalConfig::scheme() . '://' . $this->subid . '.' . GlobalConfig::hostname();
 
+		if (!empty($current['handlers'])) {
+			foreach($current['handlers'] AS $key => $handler) {
+				if (isset($handler['type']) && $handler['type'] === 'oauth2') {
+					$current['handlers'][$key]['redirect_uri'] = self::oauth2callback($this->getID(), $key);
+				}
+			}
+		}
 
 		if (empty($current['status'])) {
 			$current['status'] = array();
 		}
 
+		UWAPLogger::debug('config', 'Loaded configuration', $current);
+
 		return $current;
 	}
 
+	public static function oauth2callback($id, $handler) {
+		return GlobalConfig::scheme() . '://' . $id . '.' . GlobalConfig::hostname() . '/_/oauth2callback/' . $handler;
+	} 
 
 
 
@@ -320,8 +333,14 @@ class Config {
 		if (empty($this->config["handlers"])) return null;
 		if (!isset($this->config["handlers"][$handler])) return null;
 
-		$pc = $this->config["handlers"][$handler];
-		return $pc;
+		$handler = $this->config["handlers"][$handler];
+
+		if (isset($handler['type']) && $handler['type'] === 'oauth2') {
+			$handler['redirect_uri'] = self::oauth2callback($this->getID(), $handler);
+		}
+
+		// $pc = $this->config["handlers"][$handler];
+		return $handler;
 	}
 
 

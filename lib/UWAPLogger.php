@@ -11,6 +11,7 @@ class UWAPLogger {
 
 	protected $logLevel = 4;
 	protected $stacktrace = true;
+	protected $toFile = false;
 
 	// Private constructor, called by init()
 	protected function __construct($options = array()) {
@@ -32,7 +33,9 @@ class UWAPLogger {
 		if (isset($options['logLevel'])) {
 			$this->logLevel = $options['logLevel'];
 		}
-
+		if (isset($options['logging.toFile'])) {
+			$this->toFile = $options['logging.toFile'];
+		}
 
 		if (!empty($_SERVER['REQUEST_URI'])) {
 			$object = array(
@@ -61,6 +64,10 @@ class UWAPLogger {
 	public function _log($level, $module, $message, $obj = null) {
 
 		if ($level > $this->logLevel) return;
+
+		if ($this->toFile) {
+			error_log("Static logger [level " . $level . "] module [" . $module . "]: " . $message);	
+		}
 
 		$logmessage = array(
 			'message' => $message,
@@ -93,7 +100,7 @@ class UWAPLogger {
 	// ----- ----- ----- ----- Static methods
 
 	protected static function log($level, $module, $message, $obj = null) { 
-		error_log("Static logger [level " . $level . "] module [" . $module . "]: " . $message);
+
 		$l = self::init();
 		$l->_log($level, $module, $message, $obj); 
 	}

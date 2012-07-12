@@ -9,7 +9,7 @@ class HTTPClientOauth1 extends HTTPClient {
 
 		$session = SimpleSAML_Session::getInstance();
 
-		$config = new Config();
+		$config = Config::getInstance();
 		$store = new UWAPStore();
 		$auth = new Auth();
 		$auth->req();
