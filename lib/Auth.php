@@ -73,12 +73,16 @@ class Auth {
 			}
 		}
 
-
 		if (in_array($this->getRealUserID(), GlobalConfig::getValue('admins', array()))) {
 			$groups['uwapadmin'] = 'UWAP System Administrators';
 		}
 
 		return $groups;
+	}
+
+	public function memberOf($group) {
+		$groups = $this->getGroups();
+		return array_key_exists($group, $groups);
 	}
 
 	public function getVerifier() {
