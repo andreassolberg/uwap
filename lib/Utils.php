@@ -42,25 +42,25 @@ class Utils {
 
 	public static function genID() {
 		// http://www.php.net/manual/en/function.uniqid.php#94959
-	    return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-	        // 32 bits for "time_low"
-	        mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
+		return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+			// 32 bits for "time_low"
+			mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
 
-	        // 16 bits for "time_mid"
-	        mt_rand( 0, 0xffff ),
+			// 16 bits for "time_mid"
+			mt_rand( 0, 0xffff ),
 
-	        // 16 bits for "time_hi_and_version",
-	        // four most significant bits holds version number 4
-	        mt_rand( 0, 0x0fff ) | 0x4000,
+			// 16 bits for "time_hi_and_version",
+			// four most significant bits holds version number 4
+			mt_rand( 0, 0x0fff ) | 0x4000,
 
-	        // 16 bits, 8 bits for "clk_seq_hi_res",
-	        // 8 bits for "clk_seq_low",
-	        // two most significant bits holds zero and one for variant DCE1.1
-	        mt_rand( 0, 0x3fff ) | 0x8000,
+			// 16 bits, 8 bits for "clk_seq_hi_res",
+			// 8 bits for "clk_seq_low",
+			// two most significant bits holds zero and one for variant DCE1.1
+			mt_rand( 0, 0x3fff ) | 0x8000,
 
-	        // 48 bits for "node"
-	        mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
-	    );
+			// 48 bits for "node"
+			mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
+		);
 	}
 
 	public static function validateGroupID($id) {
@@ -102,33 +102,33 @@ class Utils {
 	 * @var integer
 	 */
 	public static function  generateRandpassword($size=12, $power=7) {
-	    $vowels = 'aeuy';
-	    $randconstant = 'bdghjmnpqrstvz';
-	    if ($power & 1) {
-	        $randconstant .= 'BDGHJLMNPQRSTVWXZ';
-	    }
-	    if ($power & 2) {
-	        $vowels .= "AEUY";
-	    }
-	    if ($power & 4) {
-	        $randconstant .= '23456789';
-	    }
-	    if ($power & 8) {
-	        $randconstant .= '@#$%';
-	    }
+		$vowels = 'aeuy';
+		$randconstant = 'bdghjmnpqrstvz';
+		if ($power & 1) {
+			$randconstant .= 'BDGHJLMNPQRSTVWXZ';
+		}
+		if ($power & 2) {
+			$vowels .= "AEUY";
+		}
+		if ($power & 4) {
+			$randconstant .= '23456789';
+		}
+		if ($power & 8) {
+			$randconstant .= '@#$%';
+		}
 
-	    $Randpassword = '';
-	    $alt = time() % 2;
-	    for ($i = 0; $i < $size; $i++) {
-	        if ($alt == 1) {
-	            $Randpassword .= $randconstant[(rand() % strlen($randconstant))];
-	            $alt = 0;
-	        } else {
-	            $Randpassword .= $vowels[(rand() % strlen($vowels))];
-	            $alt = 1;
-	        }
-	    }
-	    return $Randpassword;
+		$Randpassword = '';
+		$alt = time() % 2;
+		for ($i = 0; $i < $size; $i++) {
+			if ($alt == 1) {
+				$Randpassword .= $randconstant[(rand() % strlen($randconstant))];
+				$alt = 0;
+			} else {
+				$Randpassword .= $vowels[(rand() % strlen($vowels))];
+				$alt = 1;
+			}
+		}
+		return $Randpassword;
 	}
 
 
@@ -268,6 +268,66 @@ class Utils {
 
 		/* End script execution. */
 		exit;
+	}
+
+
+	public static function crypt_apr1_md5($plainpasswd) {
+		$salt = substr(str_shuffle("abcdefghijklmnopqrstuvwxyz0123456789"), 0, 8);
+		$len = strlen($plainpasswd);
+		$text = $plainpasswd.'$apr1$'.$salt;
+		$bin = pack("H32", md5($plainpasswd.$salt.$plainpasswd));
+		for($i = $len; $i > 0; $i -= 16) { $text .= substr($bin, 0, min(16, $i)); }
+		for($i = $len; $i > 0; $i >>= 1) { $text .= ($i & 1) ? chr(0) : $plainpasswd{0}; }
+		$bin = pack("H32", md5($text));
+		for($i = 0; $i < 1000; $i++) {
+			$new = ($i & 1) ? $plainpasswd : $bin;
+			if ($i % 3) $new .= $salt;
+			if ($i % 7) $new .= $plainpasswd;
+			$new .= ($i & 1) ? $bin : $plainpasswd;
+			$bin = pack("H32", md5($new));
+		}
+		for ($i = 0; $i < 5; $i++) {
+			$k = $i + 6;
+			$j = $i + 12;
+			if ($j == 16) $j = 5;
+			$tmp = $bin[$i].$bin[$k].$bin[$j].$tmp;
+		}
+		$tmp = chr(0).chr(0).$bin[11].$tmp;
+		$tmp = strtr(strrev(substr(base64_encode($tmp), 2)),
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+		"./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+		return "$"."apr1"."$".$salt."$".$tmp;
+	}
+
+
+	/**
+	 * Command line log function
+	 * @param  string $header A colored header to show first
+	 * @param  string $str    The rest of the string
+	 * @return string         The encoded for terminal / CLI string
+	 */
+	public static function cliLog($header, $str) {
+
+		$tag = "\033[0;35m" . sprintf("%18s ", $header) . "\033[0m";
+		echo($tag . $str . "\n");
+	}
+
+	/**
+	 * Encode username and password for use in .htpassword file.
+	 * The latest version is prepared to be supported with the HTTP Digest
+	 * Authentication method.
+	 * @param  string $u Username
+	 * @param  string $p Password
+	 * @return string    Encoded string, representing one line in the .htpasswd file.
+	 */
+	public static function encodeUserPass($u, $p) {
+		$hash = base64_encode(sha1($p, true));
+		// return crypt(crypt($p, base64_encode($p)));
+		// return crypt($p,rand(10000, 99999));
+		$realm = 'UWAP';
+		return $realm . ':' . md5($u . ':' . $realm . ':' .$p);
+		// return Utils::crypt_apr1_md5($p);
+		// return '{SHA}'.$hash;
 	}
 
 	
