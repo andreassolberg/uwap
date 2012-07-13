@@ -10,7 +10,7 @@
 
 		function run() {
 			var msg = <?php echo json_encode($message)  ?>;
-			console.log("Sending message ", msg);
+			// console.log("Sending message ", msg);
 
 			if (window.parent && window.parent.UWAP && window.parent.UWAP.messenger) {
 
@@ -19,7 +19,7 @@
 
 
 			} else {
-				console.error("ERROR: Could not send to parent frame ");
+				// console.error("ERROR: Could not send to parent frame ");
 				// alert("Could not send message to parent frame.");
 			}
 
