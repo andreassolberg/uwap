@@ -1,3 +1,15 @@
+// if (! ("console" in window) || !("firebug" in console)) {
+// 	var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml", "group"
+// 	, "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
+// 	window.console = {};
+// 	var EmptyFn = function() {};
+// 	for (var i = 0; i <names.length; ++i) window.console[names[i]] = EmptyFn;
+// }
+
+if (typeof window.console == "undefined") {
+    window.console = {log: function() {}};
+}
+
 /*
  * JavaScript Pretty Date
  * Copyright (c) 2011 John Resig (ejohn.org)
@@ -359,6 +371,7 @@ var MRController = Spine.Class.sub({
 			
 			$("div#modalContainer").append(element);
 			element.modal('show');
+			console.log("About to show modal!")
 			return false;
 		});
 
