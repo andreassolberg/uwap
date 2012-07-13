@@ -47,7 +47,18 @@ try {
 		$filters = json_decode($_REQUEST['filters'], true);
 	}
 
-	$result['data'] = $logstore->getLogs($after, $filters, $max);
+	$appdir = new AppDirectory();
+	$apps = null;
+
+	if (!$auth->memberOf('uwapadmin')) {
+		$apps = $appdir->getMyAppIDs($auth->getRealUserID());
+
+	}
+	// error_log('My apps ' . json_encode($apps));
+
+	$query = LogStore::processFilter($filters, $apps);
+
+	$result['data'] = $logstore->getLogs($after, $query, $max);
 
 
 	header('Content-Type: application/json; charset=utf-8');
