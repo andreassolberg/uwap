@@ -75,6 +75,27 @@ class AppDirectory {
 		return $sorted;
 	}
 
+	public function getMyAppIDs($userid) {
+		$fields = array(
+			'id' => true
+		);
+
+		$query = array(
+			"uwap-userid" => $userid,
+			"status" => array(
+				'$ne' => "pendingDelete"
+			),
+		);
+
+		$listing = $this->store->queryList('appconfig',$query, $fields);
+
+		$res = array();
+		foreach($listing AS $e) {
+			$res[] = $e['id'];
+		}
+		return $res;
+	}
+
 	public function getAllApps() {
 		$fields = array(
 			'id' => true,
