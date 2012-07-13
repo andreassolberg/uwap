@@ -10,6 +10,7 @@ define(['./libs/moment', './LogRetriever'], function(moment, LogRetriever) {
 		this.from = null;
 		this.to = null;
 
+
 		this.eloutput.on("click", "div.logMain", function(event) {
 			$(event.currentTarget).closest(".logentry").toggleClass("active");
 			return false;
@@ -26,6 +27,7 @@ define(['./libs/moment', './LogRetriever'], function(moment, LogRetriever) {
 
 			$(that.eloutput).empty();
 
+			console.log("About to reset from ", that.from)
 			that.logr.resetFrom(that.from);
 			that.from = null;
 		}, that));
@@ -34,8 +36,11 @@ define(['./libs/moment', './LogRetriever'], function(moment, LogRetriever) {
 			// that.logr.removeFilters();
 			
 			that.filters = [];
-
+			that.logr.setFilter(that.filters);
+			
 			$(that.eloutput).empty();
+
+			console.log("About to reset from ", that.from)
 			that.logr.resetFrom(that.from);
 			that.from = null;
 
@@ -44,6 +49,20 @@ define(['./libs/moment', './LogRetriever'], function(moment, LogRetriever) {
 
 
 		this.logr = new LogRetriever($.proxy(this.logresult, this));
+
+
+		$(".tailcontrol").button()
+			.on("click", "button.play", function() {
+
+				console.log("Play");
+				that.logr.play();
+			})
+			.on("click", "button.pause", function() {
+
+				console.log("Pause");
+				that.logr.pause();
+			});
+
 		// this.logr = new LogRetriever(this.logresult);
 	};
 
