@@ -280,8 +280,6 @@ var MRController = Spine.Class.sub({
 		this.mainRoom = null;
 		this.loaded = false;
 
-
-
 		if (location.hash) {
 			
 			this.mainRoom = location.hash.substring(1);
