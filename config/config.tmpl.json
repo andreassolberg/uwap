@@ -1,6 +1,7 @@
 {
 	"mainhost": "uwap.org",
 	"instance": "main",
+	"admins": ["andreas@uninett.no"],
 	"logging": {
 		"logLevel": 4
 	}

@@ -9,8 +9,18 @@ define(['libs/moment'], function(moment) {
 		this.filters = [];
 		this.callback = callback;
 		this.cursor = ((new Date()).getTime() / 1000.0) - 1.0;
-		this.getLogs();
+		
+		this.running = false;
 	};
+
+	LogRetriever.prototype.play = function() {
+		this.running = true;
+		this.getLogs();
+	}
+	LogRetriever.prototype.pause = function() {
+		this.running = false;
+		if(this.timer) clearTimeout(this.timer);
+	}
 
 	LogRetriever.prototype.updateCursor = function(time) {
 		// console.log("Updating cursor from " + moment.unix(this.cursor).format('HH:mm:ss.SSS') + ' to ' + moment.unix(time).format('HH:mm:ss.SSS'));
@@ -20,7 +30,7 @@ define(['libs/moment'], function(moment) {
 
 	LogRetriever.prototype.getLogs = function() {
 
-		// console.log("About to request logs from " + moment.unix(this.cursor).format('HH:mm:ss.SSS') + '  cursor in ms ' + this.cursor);
+		console.log("About to request logs from " + moment.unix(this.cursor).format('HH:mm:ss.SSS') + '  cursor in ms ' + this.cursor);
 
 		var that = this;
 		UWAP.logs.get(this.cursor, this.filters, function(logs) {
@@ -30,8 +40,12 @@ define(['libs/moment'], function(moment) {
 			} else {
 				// console.log("Empty log result");
 			}
-
-			that.timer = setTimeout($.proxy(that.getLogs, that), 1000);
+			if (that.running) {
+				that.timer = setTimeout($.proxy(that.getLogs, that), 1000);	
+			} else {
+				console.log("Not scheduling new log retrieval, because paued.");
+			}
+			
 
 		}, function(err) {
 			console.error("Error occured fetching logs. Stopping.");

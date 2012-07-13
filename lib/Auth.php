@@ -48,8 +48,7 @@ class Auth {
 		$attributes = $this->as->getAttributes();
 
 		$groups = array();
-		// echo '<pre></pre>' . "\n";
-		// print_r($attributes);
+
 		$realm = 'na.feide.no';
 		if (!empty($attributes['eduPersonPrincipalName']) && !empty($attributes['eduPersonOrgDN:o'])) {
 			if (preg_match('/^(.*?)@(.*?)$/', $attributes['eduPersonPrincipalName'][0], $matches)) {
@@ -74,10 +73,16 @@ class Auth {
 			}
 		}
 
-		// print_r($groups);
-		// exit;
+		if (in_array($this->getRealUserID(), GlobalConfig::getValue('admins', array()))) {
+			$groups['uwapadmin'] = 'UWAP System Administrators';
+		}
 
 		return $groups;
+	}
+
+	public function memberOf($group) {
+		$groups = $this->getGroups();
+		return array_key_exists($group, $groups);
 	}
 
 	public function getVerifier() {
