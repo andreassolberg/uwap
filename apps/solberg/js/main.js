@@ -15,6 +15,7 @@ $(document).ready(function() {
 		var msg = new SMsg($("div#messages"));
 		var buss = new Buss($("div#buss"));
 		var gaver = new Gaver($("div#gaver"));
+		
 		// var todo = new Todo($("div#todo"));
 		
 	});	
