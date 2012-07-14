@@ -10,7 +10,7 @@ $(document).ready(function() {
 
 		var tracker = new Tracker(locationconfig, $("div#locations"));
 		var scalendar = new SCalendar($("div#calendar"));
-		var adressa = new Adressa($("div#adressa"));
+		// var adressa = new Adressa($("div#adressa"));
 		var yr = new Yr($("div#yr"));
 		var msg = new SMsg($("div#messages"));
 		var buss = new Buss($("div#buss"));
