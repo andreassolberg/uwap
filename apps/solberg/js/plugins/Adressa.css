@@ -1,8 +1,40 @@
-div#adressa {
+/*div#adressa {
 	width: 294px; height: 720px; overflow: hidden;
 	padding: 0px; margin: 0px;
 }
 iframe.adressa {
 	width: 294px; height: 720px; overflow: hidden;
 	padding: 0px; margin: 0px;
+}*/
+
+
+div#adressa div.article {
+	clear: right;
+	line-height: 100% !important;
+	border-bottom: 1px solid #eee;
+	border-left: 1px solid #eee;
+	font-size: 80% !important;
+}
+div#adressa div.article span.time{
+	font-size: 18pt !important;
+	margin-right: 5px;
+	color: #aaa;
+	float: left;
+}
+div#adressa div.article p.lead {
+	line-height: 100% !important;
+	color: #444;
+	font-size: 10pt !important;
+}
+div#adressa div.article  p.storyLinks{ display: none; }
+div#adressa div.article h3,div#adressa div.article a{
+	line-height: 100% !important;
+	color: #666;
+	font-size: 12pt !important;
+
+	font-weight: normal;
+}
+div#adressa div.article img {
+	float: right;
+	border: 1px solid #aaa;
 }
