@@ -39,6 +39,11 @@ define(function() {
 		return res;
 	};
 	
+	var multip = function(num, sing, mult) {
+		if (num === 1) return num + ' ' + sing; 
+		return num + ' ' + mult;
+	}
+
 	var humdur = function(seconds) {
 
 		var 
@@ -50,26 +55,26 @@ define(function() {
 
 		if (res.years) {
 			str = res.years + ' år ';
-			if (res.months) str += ' og ' + res.months + ' måneder';
-			if (res.weeks) str += ' og ' + res.weeks + ' uker';
+			if (res.months) str += ' og ' + multip(res.months, 'måned', 'måneder');
+			if (res.weeks) str += ' og ' + multip(res.weeks, 'uke', 'uker');
 			return str;
 		}
 		if (res.months) {
-			return res.months + ' måneder og ' + res.days + ' dager';
+			return multip(res.months, 'måned', 'måneder') + ' og ' + multip(res.days, 'dag', 'dager');
 		}
 		if (res.weeks) {
-			return res.weeks + ' uker og ' + res.days + ' dager';
+			return multip(res.weeks, 'uke', 'uker') + ' og ' + multip(res.days, 'dag', 'dager');
 		}
 		if (res.days) {
-			return res.days + ' dager og ' + res.hours + ' timer';
+			return munltip(res.days, 'dag', 'dager') + ' og ' + multip(res.hours, 'time', 'timer');
 		}
 		if  (res.hours) {
-			return res.hours + ' timer og ' + res.minutes + ' minutes';
+			return multip(res.hours, 'time', 'timer') + ' og ' + multip(res.minutes, 'minutt', 'minutter');
 		}
 		if (res.minutes) {
-			return res.minutes + ' minutter og ' + res.seconds + ' sekunder';
+			return multip(res.minutes, 'minutt', 'minutter') + ' og ' + multip(res.seconds, 'sekund', 'sekunder');
 		}
-		return res.seconds + ' sekunder';
+		return mnultip(res.seconds, 'sekund', 'sekunder');
 
 
 	};
