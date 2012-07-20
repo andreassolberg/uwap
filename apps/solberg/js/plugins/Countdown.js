@@ -14,8 +14,9 @@ define(['../libs/moment', '../libs/humdur'], function(moment, humdur) {
 
 	Countdown.prototype.diff = function() {
 		var sec = Math.abs(this.ts - (new Date()).getTime())/1000.0;
+		console.log("diff is ", sec);
 		var str = humdur(sec);
-		// console.log("Now", (new Date()).getTime(), ' then ', this.ts);
+		console.log("Now", (new Date()).getTime(), ' then ', this.ts);
 		// console.log("RESULT", this.text, sec, str);
 		return str;
 	}
