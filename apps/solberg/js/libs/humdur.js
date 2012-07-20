@@ -74,7 +74,7 @@ define(function() {
 		if (res.minutes) {
 			return multip(res.minutes, 'minutt', 'minutter') + ' og ' + multip(res.seconds, 'sekund', 'sekunder');
 		}
-		return mnultip(res.seconds, 'sekund', 'sekunder');
+		return multip(res.seconds, 'sekund', 'sekunder');
 
 
 	};
