@@ -10,11 +10,10 @@ $(document).ready(function() {
 	var dataurl = 'http://location.app.bridge.uninett.no/js/locations.js';
 
 	// console.log("Loaded data", locationconfig);
-	requirejs(['Tracker', 'locations', 'plugins/SCalendar', 'plugins/Adressa', 'plugins/Yr', 'plugins/SMsg', 'plugins/Buss', 'plugins/Gaver', 'plugins/Todo'], function(Tracker, locationconfig, SCalendar, Adressa, Yr, SMsg, Buss, Gaver, Todo) {
+	requirejs(['Tracker', 'locations', 'plugins/SCalendar', 'plugins/Adressa', 'plugins/Yr', 'plugins/SMsg', 'plugins/Buss', 'plugins/Gaver', 'plugins/Todo', 'plugins/Countdown'], function(Tracker, locationconfig, SCalendar, Adressa, Yr, SMsg, Buss, Gaver, Todo, Countdown) {
 
 		console.log("Loaded all set go.")
 		console.log(locationconfig); 
-
 
 		var adressa = new Adressa($("div#adressa"));
 		var tracker = new Tracker(locationconfig, $("div#locations"));
@@ -23,6 +22,14 @@ $(document).ready(function() {
 		var msg = new SMsg($("div#messages"));
 		var buss = new Buss($("div#buss"));
 		var gaver = new Gaver($("div#gaver"));
+		
+		// var andreas = new Countdown($("div#countdowns"), 'Andreas', '1980-10-10 04:00');
+		// var vigdis = new Countdown($("div#countdowns"), 'Vigdis', '1980-03-30 12:00');
+		var linnea = new Countdown($("div#countdowns"), 'Linnéa', '2009-03-27 01:00');
+
+		var linus = new Countdown($("div#countdowns"), 'Linus Termin', '2012-07-29 21:00');
+		var lukas = new Countdown($("div#countdowns"), 'Lukas', '2012-03-20 03:00');
+		var frida = new Countdown($("div#countdowns"), 'Frida', '2012-07-08 05:00');
 
 		// UWAP.data.get('http://www.adressa.no/nyheter/',  null, function(data) {
 		// 	console.log("Got addreasa");

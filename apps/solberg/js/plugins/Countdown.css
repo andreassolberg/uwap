@@ -1,0 +1,9 @@
+div#countdowns div.countdown p {
+	margin: 0px;
+	font-family: "Arial Narrow";
+}
+
+div#countdowns div.countdown span.text {
+	color: #999;
+	font-weight: bold;
+}
