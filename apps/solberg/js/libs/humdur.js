@@ -66,7 +66,7 @@ define(function() {
 			return multip(res.weeks, 'uke', 'uker') + ' og ' + multip(res.days, 'dag', 'dager');
 		}
 		if (res.days) {
-			return munltip(res.days, 'dag', 'dager') + ' og ' + multip(res.hours, 'time', 'timer');
+			return multip(res.days, 'dag', 'dager') + ' og ' + multip(res.hours, 'time', 'timer');
 		}
 		if  (res.hours) {
 			return multip(res.hours, 'time', 'timer') + ' og ' + multip(res.minutes, 'minutt', 'minutter');
