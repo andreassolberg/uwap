@@ -27,22 +27,29 @@ try {
 	
 	$store = new UWAPStore();
 
-	if (empty($_REQUEST['op'])) throw new Exception("Missing required parameter [op] operation");
 
-	switch($_REQUEST['op']) {
+	$inputraw = file_get_contents("php://input");
+	if ($inputraw) {
+		$input = json_decode($inputraw, true);
+	}
+
+	if (empty($input['op'])) throw new Exception("Missing required parameter [op] operation");
+
+	switch($input['op']) {
 
 
 		case 'remove':
-			if (empty($_REQUEST['object'])) throw new Exception("Missing required parameter [object] object to save");
-			$parsed = json_decode($_REQUEST['object'], true);
+			if (empty($input['object'])) throw new Exception("Missing required parameter [object] object to save");
+			$parsed = json_decode($input['object'], true);
 
 			// echo "Is about to store object:"; print_r($parsed); exit;
 			$store->remove("appdata-" . $subhost, $auth->getRealUserID(), $parsed);
 			break;
 
 		case 'save':
-			if (empty($_REQUEST['object'])) throw new Exception("Missing required parameter [object] object to save");
-			$parsed = json_decode($_REQUEST['object'], true);
+
+			if (empty($input['object'])) throw new Exception("Missing required parameter [object] object to save");
+			$parsed = json_decode($input['object'], true);
 
 			// echo "Is about to store object:"; print_r($parsed); exit;
 			$store->store("appdata-" . $subhost, $auth->getRealUserID(), $parsed);
@@ -50,8 +57,8 @@ try {
 
 			// TODO: Clean output before returning. In example remove uwap- namespace attributes...
 		case 'queryOne':
-			if (empty($_REQUEST['query'])) throw new Exception("Missing required parameter [query] query");
-			$query = json_decode($_REQUEST['query'], true);
+			if (empty($input['query'])) throw new Exception("Missing required parameter [query] query");
+			$query = json_decode($input['query'], true);
 			$result['data'] = $store->queryOneUser("appdata-" . $subhost, $auth->getRealUserID(), $auth->getGroups(), $query);
 			if (is_null($result['data'])) {
 				throw new Exception("Query did not return any results");
@@ -59,8 +66,8 @@ try {
 			break;
 
 		case 'queryList':
-			if (empty($_REQUEST['query'])) throw new Exception("Missing required parameter [query] query");
-			$query = json_decode($_REQUEST['query'], true);
+			if (empty($input['query'])) throw new Exception("Missing required parameter [query] query");
+			$query = json_decode($input['query'], true);
 			$result['data'] = $store->queryListUser("appdata-" . $subhost, $auth->getRealUserID(), $auth->getGroups(), $query);
 			if (is_null($result['data'])) {
 				throw new Exception("Query did not return any results");

@@ -171,96 +171,44 @@ UWAP.store = {
 		parameters.op = "save";
 		parameters.object = JSON.stringify(object);
 
-		$.getJSON('/_/api/storage.php', parameters, function(result, textStatus, jqXHR) {
-			// console.log('Response data save()');
-			// console.log(result);
-			if (result.status === 'ok') {
-				callback(result.data);
-			} else {
-				if  (typeof errorcallback === 'function') {
-					errorcallback(result.message);
-				}
-				// console.log('Data request error (server side): ' + result.message);
-			}
-
-		}, function(err) {
-			if  (typeof errorcallback === 'function') {
-				errorcallback(err);
-			}
-			// console.log('Data request error (client side): ' + err);
-		});
+		UWAP._request(
+			'POST', 
+			'/_/api/storage.php',
+			parameters, 
+			null, callback, errorcallback);
 	},
 	remove: function(object, callback, errorcallback) {
 		var parameters = {};
 		parameters.op = "remove";
 		parameters.object = JSON.stringify(object);
 
-		$.getJSON('/_/api/storage.php', parameters, function(result, textStatus, jqXHR) {
-			// console.log('Response data remove()');
-			// console.log(result);
-			if (result.status === 'ok') {
-				callback();
-			} else {
-				if  (typeof errorcallback === 'function') {
-					errorcallback(result.message);
-				}
-				// console.log('Data request error (server side): ' + result.message);
-			}
-
-		}, function(err) {
-			if  (typeof errorcallback === 'function') {
-				errorcallback(err);
-			}
-			// console.log('Data request error (client side): ' + err);
-		});
+		UWAP._request(
+			'POST', 
+			'/_/api/storage.php',
+			parameters, 
+			null, callback, errorcallback);
 	},
 	queryOne: function(query, callback, errorcallback) {
 		var parameters = {};
 		parameters.op = "queryOne";
 		parameters.query = JSON.stringify(query);
 
-		$.getJSON('/_/api/storage.php', parameters, function(result, textStatus, jqXHR) {
-			// console.log('Response data queryOne()');
-			// console.log(result);
-			if (result.status === 'ok') {
-				callback(result.data);
-			} else {
-				if  (typeof errorcallback === 'function') {
-					errorcallback(result.message);
-				}
-				// console.log('Data request error (server side): ' + result.message);
-			}
-
-		}, function(err) {
-			if  (typeof errorcallback === 'function') {
-				errorcallback(err);
-			}
-			// console.log('Data request error (client side): ' + err);
-		});
+		UWAP._request(
+			'POST', 
+			'/_/api/storage.php',
+			parameters, 
+			null, callback, errorcallback);
 	},
 	queryList: function(query, callback, errorcallback) {
 		var parameters = {};
 		parameters.op = "queryList";
 		parameters.query = JSON.stringify(query);
 
-		$.getJSON('/_/api/storage.php', parameters, function(result, textStatus, jqXHR) {
-			// console.log('Response data queryList()');
-			// console.log(result);
-			if (result.status === 'ok') {
-				callback(result.data);
-			} else {
-				if  (typeof errorcallback === 'function') {
-					errorcallback(result.message);
-				}
-				// console.log('Data request error (server side): ' + result.message);
-			}
-
-		}, function(err) {
-			if  (typeof errorcallback === 'function') {
-				errorcallback(err);
-			}
-			// console.log('Data request error (client side): ' + err);
-		});
+		UWAP._request(
+			'POST', 
+			'/_/api/storage.php',
+			parameters, 
+			null, callback, errorcallback);
 	}
 };
 
@@ -364,6 +312,8 @@ UWAP.appconfig = {
 	},
 
 	store: function(object, callback, errorcallback) {
+
+
 
 		$.ajax({
 			type: 'POST',
