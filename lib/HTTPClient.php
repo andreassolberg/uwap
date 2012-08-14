@@ -162,7 +162,7 @@ class HTTPClient {
 		error_log("Got data: " . var_export($result["data"], true)) ;
 
 		$result = $this->decode($result, $options);
-		q
+		
 		return $result;
 	}
 
