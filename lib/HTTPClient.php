@@ -140,7 +140,15 @@ class HTTPClient {
 		} else {
 			error_log("Retrieved data is in format: text");
 			$result['type'] = 'text';
+
 			// $result['data'] = (string) $result['data'];
+			
+			// Detect whether the text is UTF-8 or not, if not then try to encode it as
+			// UTF-8. This is needed in order to proper json encode, later on.
+			if (mb_detect_encoding($result['data'], "UTF-8", true) === false) {
+				$result['data'] = utf8_encode($result['data']);
+			}
+
 		}
 		return $result;
 	}
@@ -154,9 +162,7 @@ class HTTPClient {
 		error_log("Got data: " . var_export($result["data"], true)) ;
 
 		$result = $this->decode($result, $options);
-
-
-
+		q
 		return $result;
 	}
 
