@@ -27,7 +27,7 @@ class Static_File {
 	function authz() {
 		$acl = $this->config->getValue("access");
 		if ($acl["ip"]) {
-			// echo '<PRE>'; print_r($_SERVER); exit;
+			// echo '<PRE>'; print_r($_SERVER); echo '</PRE>' exit;
 			if (!in_array($_SERVER["REMOTE_ADDR"], $acl["ip"])) {
 				header("X-UWAP-ACCESS: Blocked by IP", true, 403);
 				header("Content-type: text/plain; charset: utf-8");
