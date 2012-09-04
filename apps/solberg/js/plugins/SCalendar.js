@@ -35,18 +35,21 @@ define(['../libs/moment'], function(moment) {
 				}
 
 			}
-			for(i = 0; i < c[key].events.length; i++) {
-				cur = c[key].events[i];
-				entryel = $('<div class="calentry"><span class="caltype">' + cur.calendar[0].toUpperCase() + '</span> ' + 
-					cur["summary"]["value"] + '</div>');
-				entryel.addClass(cur.calendar);
+			if (c[key].hasOwnProperty('events')) {
+				for(i = 0; i < c[key].events.length; i++) {
+					cur = c[key].events[i];
+					entryel = $('<div class="calentry"><span class="caltype">' + cur.calendar[0].toUpperCase() + '</span> ' + 
+						cur["summary"]["value"] + '</div>');
+					entryel.addClass(cur.calendar);
 
-				if (cur.caltype === 'singleday') {
-					entryel.append('<span class="timerange">' + cur.timerange + '</div>');
+					if (cur.caltype === 'singleday') {
+						entryel.append('<span class="timerange">' + cur.timerange + '</div>');
+					}
+
+					dayel.append(entryel);
 				}
-
-				dayel.append(entryel);
 			}
+
 			$(this.container).append(dayel);
 		}
 	}
