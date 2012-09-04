@@ -7,7 +7,7 @@
  *
  */
 
-require_once('../lib/autoload.php');
+require_once('../../lib/autoload.php');
 
 UWAPLogger::info('auth', 'User is accessing core authentication endpint core.uwap.org/login .');
 
