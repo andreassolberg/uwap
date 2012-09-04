@@ -187,7 +187,10 @@ class So_StorageUWAP extends So_Storage {
 		$query = array(
 			"state" => $state
 		);
-		$result = $this->store->queryOneUser("oauth2-client-states", $this->userid, $query);
+
+		// echo "Query getState: " . var_export($query, true);
+
+		$result = $this->store->queryOneUser("oauth2-client-states", $this->userid, array(), $query);
 		if ($result === null) throw new Exception('Could not retrieve state from storage, maybe it has expired? lasts for one hour.');
 
 		$this->store->remove("oauth2-client-states", $this->userid, $result);
