@@ -37,7 +37,7 @@ if (!$auth->authenticated() ) {
 			));
 		}
 
-		UWAPLogger::info('auth', "Initating a passive authenticatino request using SAML.");
+		UWAPLogger::info('auth', "Initating a passive authentication request using SAML.");
 		$auth->authenticatePassive();
 	} else {
 		UWAPLogger::info('auth', "Initating a normal authentication request using SAML.");
