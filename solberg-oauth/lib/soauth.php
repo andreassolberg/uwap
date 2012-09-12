@@ -34,8 +34,9 @@ function http_parse_headers( $header, $hdrs ) {
 
 
 class So_ExpiredToken extends Exception {}
-class So_AuthorizationRequied extends Exception {
+class So_AuthorizationRequired extends Exception {
 	public $scopes;
+	public $client_id;
 }
 class So_InsufficientScope extends Exception {}
 
@@ -532,7 +533,7 @@ class So_Server {
 	}
 
 	
-	private function info() {
+	public function info() {
 		
 		$base =(!empty($_SERVER['HTTPS'])) ? 
 			"https://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'] : 
@@ -592,6 +593,12 @@ class So_Server {
 	}
 	
 	
+	public function getToken() {
+		$tokenstr = $this->getProvidedToken();
+		$token = $this->store->getToken($tokenstr);
+		return $token;
+	}
+
 	/*
 	 * Check a token provided by a user, through the authorization header.
 	 */
@@ -605,6 +612,8 @@ class So_Server {
 	
 	
 	private function validateRedirectURI(So_AuthRequest $request, $clientconfig) {
+
+
 		if (is_array($clientconfig['redirect_uri'])) {
 			if (empty($request->redirect_uri)) {
 				// url not specified in request, returning first entry from config
@@ -616,7 +625,7 @@ class So_Server {
 					if (strpos($request->redirect_uri, $su) === 0) {
 						return $request->redirect_uri;
 					}
-				}				
+				}
 			}
 		} else if (!empty($clientconfig['redirect_uri'])) {
 			if (empty($request->redirect_uri)) {
@@ -638,16 +647,22 @@ class So_Server {
 	public function setAuthorization($client_id, $userid, $scopes) {
 
 		error_log('setAuthorization($client_id, $userid, $scopes) ' . "($client_id, $userid, $scopes)");
+		$clientconfig = $this->store->getClient($client_id);
+		$acceptedScopes = array_intersect($scopes, $clientconfig['scopes']);
 
 		$authorization = $this->store->getAuthorization($client_id, $userid);
 		if ($authorization === null) {
 			$authorization = new So_Authorization($userid, $client_id, $scopes);	
 		}
-		$authorization->scope = $scopes;
+
+		if (!empty($scopes)) {
+			$authorization->addScopes($scopes);
+		}
 		$this->store->setAuthorization($authorization);
 	}
 
-	private function authorization($userid) {
+
+	public function authorization($userid, $userdata = null) {
 		
 		$request = new So_AuthRequest($_REQUEST);
 		$clientconfig = $this->store->getClient($request->client_id);
@@ -655,43 +670,48 @@ class So_Server {
 		
 		$authorization = $this->store->getAuthorization($request->client_id, $userid);
 
+		$scopes = $clientconfig['scopes'];
+		if (!empty($request->scope)) {
+			// Only consider scopes that the client is authorized to ask for.
+			$scopes = array_intersect($request->scope, $clientconfig['scopes']);
+		}
 
-		// if ($authorization === null) {
-		// 	error_log('Authz: Need to obtain authorization from the user');
-		// 	// Need to obtain authorization from the user.
-		// 	// For now we do this automatically. Typically, we would like to display and request 
-		// 	// confirmation from the user.
-		// 	$authorization = new So_Authorization($userid, $request->client_id, $request->scope);
-		// 	$this->store->setAuthorization($authorization);
-		// }
-		// if (!$authorization->includeScopes($request->scope)) {
-		// 	error_log('Authz: Missing scopes from what is required. Obtain additional scopes');
-		// 	// Missing scopes from what is requied. OBtain additional scopes...
-		// 	$authorization->scope = $request->scope;
-		// 	$this->store->setAuthorization($authorization);			
-		// }
+		// echo '<pre>';
+		// print_r($request); print_r($clientconfig['scopes']);
 
 
-		if ($authorization === null || !$authorization->includeScopes($request->scope)) {
 
+
+
+		if ($authorization === null || !$authorization->includeScopes($scopes)) {
+
+			$remainingScopes = $scopes;
 			if ($authorization === null) {
 				error_log("Authorization object not found,");
-			} else if  (!$authorization->includeScopes($request->scope)) {
+			} else if  (!$authorization->includeScopes($scopes)) {
 				error_log("scope not satisfied.,");
+				$remainingScopes = $authorization->remainingScopes($scopes);
 			}
 
-			$e = new So_AuthorizationRequied();
-			$e->scopes = $request->scope;
+			$e = new So_AuthorizationRequired();
+			// echo '<pre>Remaiing scopes: '; print_r($scopes); print_r($remainingScopes); exit;
+			$e->scopes = $remainingScopes;
+			$e->client_id = $request->client_id;
 			throw $e;
 		}
 
+
+		$expires_in = 3600*8; // 8 hours
+		if (in_array('longterm', $scopes)) {
+			$expires_in = 3600*24*680; // 180 days
+		}
 
 
 		// Handle the various response types. code or token
 		if ($request->response_type === 'token') {
 
 
-			$accesstoken = So_AccessToken::generate($clientconfig['client_id'], $userid, null, false);
+			$accesstoken = So_AccessToken::generate($clientconfig['client_id'], $userid, $userdata, $scopes, false, $expires_in);
 			$this->store->putAccessToken($request->client_id, $userid, $accesstoken);
 			error_log('Ive generated a token: ' . var_export($accesstoken->getToken(), true));
 			$tokenresponse = new So_TokenResponse($accesstoken->getToken());
@@ -705,7 +725,7 @@ class So_Server {
 
 		} else if ($request->response_type === 'code') {
 
-			$authcode = So_AuthorizationCode::generate($request->client_id, $userid);
+			$authcode = So_AuthorizationCode::generate($request->client_id, $userid, $userdata, $scopes, $expires_in);
 			$this->store->putCode($authcode);
 			
 			$response = $request->getResponse(array('code' => $authcode->code));
@@ -718,7 +738,7 @@ class So_Server {
 
 	}
 	
-	private function token() {
+	public function token() {
 		$tokenrequest = new So_TokenRequest($_REQUEST);
 		$tokenrequest->parseServer($_SERVER);
 
@@ -731,7 +751,7 @@ class So_Server {
 			$clientconfig = $this->store->getClient($tokenrequest->client_id);
 			$tokenrequest->checkCredentials($clientconfig['client_id'], $clientconfig['client_secret']);
 			$code = $this->store->getCode($clientconfig['client_id'], $tokenrequest->code);
-			$accesstoken = So_AccessToken::generate($clientconfig['client_id'], $code->userid);
+			$accesstoken = So_AccessToken::generate($clientconfig['client_id'], $code->userid, $code->userdata, $code->scopes, $code->tokenexpiresin);
 			$this->store->putAccessToken($clientconfig['client_id'], $code->userid, $accesstoken);
 			error_log('Ive generated a token: ' . var_export($accesstoken->getToken(), true));
 			$tokenresponse = new So_TokenResponse($accesstoken->getToken());
@@ -788,6 +808,11 @@ class So_Authorization {
 		
 		if ($this->issued === null && $this->stored === false) $this->issued = time();
 	}
+	public function addScopes($scopes) {
+		foreach($scopes AS $scope) {
+			if (!in_array($scope, $this->scope)) $this->scope[] = $scope;
+		}
+	}
 	static function fromObj($obj) {
 		$n = new So_Authorization();
 		if (isset($obj['userid'])) $n->userid = $obj['userid'];
@@ -818,10 +843,13 @@ class So_Authorization {
 		}
 		return true;
 	}
+	public function remainingScopes($requiredscopes) {
+		return array_diff($requiredscopes, $this->scope);
+	}
 }
 
 class So_AuthorizationCode {
-	public $issued, $validuntil, $code, $userid, $client_id;
+	public $issued, $validuntil, $tokenexpiresin, $code, $userid, $userdata, $client_id, $scope;
 	function __construct() {
 	}
 	
@@ -839,35 +867,40 @@ class So_AuthorizationCode {
 		$n = new So_AuthorizationCode();
 		if (isset($obj['issued'])) $n->issued = $obj['issued'];
 		if (isset($obj['validuntil'])) $n->validuntil = $obj['validuntil'];
+		if (isset($obj['tokenexpiresin'])) $n->tokenexpiresin = $obj['tokenexpiresin'];
 		if (isset($obj['code'])) $n->code = $obj['code'];
 		if (isset($obj['userid'])) $n->userid = $obj['userid'];
+		if (isset($obj['userdata'])) $n->userid = $obj['userdata'];
 		if (isset($obj['client_id'])) $n->client_id = $obj['client_id'];
 		return $n;
 	}
 	
-	static function generate($client_id, $userid) {
+	static function generate($client_id, $userid, $userdata, $scope, $expires_in = 3600) {
 		$n = new So_AuthorizationCode();
 		$n->userid = $userid;
 		$n->client_id = $client_id;
 		$n->issued = time();
-		$n->validuntil = time() + 600;
+		$n->validuntil = time() + 3600;
+		$n->tokenexpiresin = $expires_in;
 		$n->code = So_Utils::gen_uuid();
+		$n->scope = $scope;
 		return $n;
 	}
 }
 
 class So_AccessToken {
-	public $issued, $validuntil, $client_id, $userid, $access_token, $token_type, $refresh_token, $scope;
+	public $issued, $validuntil, $client_id, $userid, $access_token, $token_type, $refresh_token, $scope, $userdata;
 	
 	function __construct() {
 	}
-	static function generate($client_id, $userid, $scope = null, $refreshtoken = true) {
+	static function generate($client_id, $userid, $userdata, $scope = null, $refreshtoken = true, $expires_in = 3600) {
 		$n = new So_AccessToken();
 		$n->userid = $userid;
 		$n->client_id = $client_id;
 		$n->issued = time();
-		$n->validuntil = time() + 600;
+		$n->validuntil = time() + $expires_in;
 		$n->access_token = So_Utils::gen_uuid();
+		$n->userdata = $userdata;
 		if ($refreshtoken) {
 			$n->refresh_token = So_Utils::gen_uuid();			
 		}
@@ -929,10 +962,12 @@ class So_AccessToken {
 		if (isset($obj['validuntil'])) $n->validuntil = $obj['validuntil'];
 		if (isset($obj['client_id'])) $n->client_id = $obj['client_id'];
 		if (isset($obj['userid'])) $n->userid = $obj['userid'];
+		if (isset($obj['userdata'])) $n->userdata = $obj['userdata'];
 		if (isset($obj['access_token'])) $n->access_token = $obj['access_token'];
 		if (isset($obj['token_type'])) $n->token_type = $obj['token_type'];
 		if (isset($obj['refresh_token'])) $n->refresh_token = $obj['refresh_token'];
 		if (isset($obj['scope'])) $n->scope = $obj['scope'];
+
 
 		return $n;
 	}

@@ -21,7 +21,7 @@ try {
 	$server->runInfo();
 	$server->runToken();
 
-	// echo '<pre>'; print_r($auth->getRealUserID());
+	// echo '<pre>'; print_r($auth->getRealUserID()); echo '</pre>';
 	
 	error_log('Starting authentication... The user might be redirected away for authentication.');
 

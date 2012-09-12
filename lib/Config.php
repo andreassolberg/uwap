@@ -26,6 +26,35 @@ class Config {
 		}
 	}
 
+	/**
+	 * Public static function get to get an config instance for a specific app.
+	 * @var [type]
+	 */
+	public static function getInstance($id = null) {
+
+		if ($id === false) throw new Exception('Deprecated use of Config object.');
+		if ($id === null) {
+			$id = Utils::getSubID();	
+			if ($id === false) {
+				$host = Utils::getHost();
+				$id = self::getSubIDfromHost($host);
+			}
+		}
+
+		if (!array_key_exists($id, self::$instances)) {
+			self::$instances[$id] = new self($id);
+		}
+		return self::$instances[$id];
+	}
+
+	public static function getSubIDfromHost($host) {
+		$store = new UWAPStore();
+		$res = $store->queryOne('appconfig', array('externalhost' => $host));
+		if (!empty($res)) {
+			return $res['id'];
+		}
+		throw new Exception('Application configuration does not yet exists for this domain.');
+	}
 
 
 	public function getAppPath($path = '/') {
@@ -69,6 +98,26 @@ class Config {
 		);
 		UWAPLogger::info('core-dev', 'Generating new DAV credentials for ' . $username);
 		$this->store->store('davcredentials', null, $credentials);
+	}
+
+	public function getOAuthClientConfig() {
+	 
+		$id = $this->config['id'];
+
+		$redirect_uri = GlobalConfig::scheme() . '://' . $id . '.' . GlobalConfig::hostname() . '/';
+		if ($this->config['externalhost']) {
+			$redirect_uri = GlobalConfig::scheme() . '://' . $this->config['externalhost'] . '/';
+		} 
+
+		// echo "REDIRECT URL"  . $redirect_uri; exit;
+		
+		return array(
+			"client_id" => "app_" . $id,
+			"client_name" => $this->config['name'],
+			"owner" => $this->config['owner'],
+			"redirect_uri" => $redirect_uri,
+			"scopes" => array("app_" . $this->config['id'] . "_user"),
+		);
 	}
 
 
@@ -356,22 +405,7 @@ class Config {
 	}
 
 
-	/**
-	 * Public static function get to get an config instance for a specific app.
-	 * @var [type]
-	 */
-	public static function getInstance($id = null) {
 
-		if ($id === false) throw new Exception('Deprecated use of Config object.');
-		if ($id === null) {
-			$id = Utils::getSubID();			
-		}
-
-		if (!array_key_exists($id, self::$instances)) {
-			self::$instances[$id] = new self($id);
-		}
-		return self::$instances[$id];
-	}
 
 
 	

@@ -1,5 +1,9 @@
 <?php
 
+
+// DEPRECATED: Will be deleted when completely migrated to OAuth implcit flow for user authentication.
+
+
 /*
  * This endpoint is where the user is redirected to perform authentication.
  * 

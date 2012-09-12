@@ -32,12 +32,18 @@ try {
 	$client = HTTPClient::getClient($handler);
 	$result = $client->get($url, $args);
 
-	// echo "result was"; print_r(json_encode($result));
+	 // echo "result was"; print_r(json_encode($result));
 
 	header('Content-Type: application/json; charset=utf-8');
 	echo json_encode($result);
+	
+	// echo json_encode(array('status' => 'ok', 'data' => 
+	// 	utf8_encode((string)file_get_contents("http://google.no"))
+	// ));
 
-} catch(Exception $error) {
+} catch(Exception $error)
+
+ {
 
 	$result = array();
 	$result['status'] = 'error';

@@ -1,49 +1,72 @@
 <?php
 
-// DEPRECATED: Will be deleted when completely migrated to OAuth implcit flow for user authentication.
 
-
-class Auth {
+class AuthBase {
 	
 	protected $config;
 	protected $as;
-	protected $salt = 'sldkfjsdfsdf87sd6f87sd6f';
 
-	public function __construct($appid = null) {
+	public function __construct() {
 
-		$this->config = Config::getInstance($appid);
 		$this->store = new UWAPStore();
 		$this->as = new SimpleSAML_Auth_Simple('default-sp');
 
 	}
 
-	function authorized() {
+
+	/*
+		Authorization objects are stored in 'consent'
+
+		{
+			"client_id": "appname",
+			"uwap-userid": "andreas@uninett.no",
+			"scopes": ["app_name_user"] // verified and consented scopes.
+		}
+
+	 */
+
+
+
+	/**
+	 * Check if user has authorized client to a set of scopes.
+	 * @param  [type] $cliend_id The client id
+	 * @param  [type] $scopes    An optional arrray of scopes to verify.
+	 * @return [type]            Returns an array of remaining scopes, returns true if all scopes are authorized.
+	 */
+	function authorized($cliend_id, $scopes = array()) {
+
 		$query = array(
-			"app" => $this->config->getID(),
+			"client_id"   => $cliend_id,
 			"uwap-userid" => $this->getRealUserID(),
 		);
 		$result = $this->store->queryOne("consent", $query);
 
 		UWAPLogger::debug('auth', 
-			'Checking if authenticated user [' . $this->getRealUserID() . '] is also authorized to use app [' . $this->config->getID() . ']', 
+			'Checking if authenticated user [' . $this->getRealUserID() . '] is also authorized to use client [' . $cliend_id . ']', 
 			$result);
 
-		if (empty($result)) return false;
-		if (isset($result["ok"]) && $result["ok"] === true) return true;
-		return false;
+		if (empty($result)) return $scopes;
+
+		if (is_array($result['scopes'])) {
+			$remaining = array_diff($scopes, $result['scopes']);
+			if (empty($remaining)) return true;
+			return $remaining;
+		}
+		return $scopes;
 	}
 
-	function authorize() {
-		$this->req();
-		$query = array(
-			"app" => $this->config->getID(),
-			"uwap-userid" => $this->getRealUserID(),
-		);
-		$result = $this->store->queryOne("consent", $query);
-		if (empty($result)) $result = array("app" => $this->config->getID());
-		$result["ok"] = true;
-		$this->store->store("consent", $this->getRealUserID(), $result);
-	}
+
+	// function authorize() {
+	// 	$this->req();
+	// 	$query = array(
+	// 		"app" => $this->config->getID(),
+	// 		"uwap-userid" => $this->getRealUserID(),
+	// 	);
+	// 	$result = $this->store->queryOne("consent", $query);
+	// 	if (empty($result)) $result = array("app" => $this->config->getID());
+	// 	$result["ok"] = true;
+	// 	$this->store->store("consent", $this->getRealUserID(), $result);
+	// }
 
 	public function getGroups() {
 
@@ -93,7 +116,10 @@ class Auth {
 		if (empty($attributes['displayName'])) throw new Exception("Can not obtain displayName from authenticated user");
 		if (empty($attributes['eduPersonPrincipalName'])) throw new Exception("Can not obtain eduPersonPrincipalName from authenticated user");
 		if (empty($attributes['mail'])) throw new Exception("Can not obtain mail from authenticated user");
-		return sha1('consent' . '|' . $this->salt . '|' . $attributes['eduPersonPrincipalName'][0] . '|' . $this->config->getID());
+
+		$salt = GlobalConfig::getValue('salt', null, true);
+
+		return sha1('consent' . '|' . $salt . '|' . $attributes['eduPersonPrincipalName'][0]);
 	}
 
 	public function authenticated() {
@@ -101,11 +127,11 @@ class Auth {
 	}
 
 
-	public function check() {
-		if (!$this->authenticated()) return false;
-		if (!$this->authorized()) return false;
-		return true;
-	}
+	// public function check() {
+	// 	if (!$this->authenticated()) return false;
+	// 	if (!$this->authorized()) return false;
+	// 	return true;
+	// }
 
 	public function checkPassive() {
 		if (!$this->authenticated()) {
@@ -163,7 +189,7 @@ class Auth {
 	}
 
 
-	public function getUserdata() {
+	public function getUserdata($appid = null) {
 
 		$attributes = $this->as->getAttributes();
 
@@ -173,10 +199,15 @@ class Auth {
 
 		$data = array(
 			'name' => $attributes['displayName'][0],	
-			'userid' => sha1($this->salt . '|' . $attributes['eduPersonPrincipalName'][0] . '|' . $this->config->getID()),
+			'userid' => $attributes['eduPersonPrincipalName'][0],
 			'mail' => $attributes['mail'][0],
 			'groups' => $this->getGroups(),
 		);
+
+		if (isset($appid)) {
+			$salt = GlobalConfig::getValue('salt', null, true);
+			$data['appuserid'] = sha1($salt . '|' . $attributes['eduPersonPrincipalName'][0] . '|' . $appid);
+		}
 
 		return $data;
 

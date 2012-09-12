@@ -37,7 +37,7 @@ UWAP.utils.getURL = function(sub, path) {
 	return base + path;
 }
 
-
+UWAP.token = null;
 
 UWAP.messenger = {};
 UWAP.messenger.send = function(msg) {
@@ -48,6 +48,28 @@ UWAP.messenger.send = function(msg) {
 	}
 
 };
+
+
+var redirect_uri = window.location.protocol + '//' + window.location.hostname + 
+	window.location.pathname;
+
+
+console.log("REdirect URI is " + redirect_uri);
+
+jso_configure({
+	"uwap": {
+		client_id: "app_test",
+		authorization: "http://core.app.bridge.uninett.no/api/oauth/authorization",
+		redirect_uri: redirect_uri,
+	},
+	"uwapvoot": {
+		client_id: "voottest1",
+		authorization: "http://core.app.bridge.uninett.no/api/oauth/authorization",
+		redirect_uri: redirect_uri
+	}
+});
+
+
 
 /**
  * A generic protocol request wrapper function.
@@ -66,6 +88,8 @@ UWAP._request = function(method, url, data, options, callback, errorcallback) {
 		type: method,
 		url: url,
 		dataType: 'json',
+		jso_provider: "uwap",
+		jso_allowia: true,
 		success: function(result, textStatus, jqXHR) {
 			// console.log('Response _request response reviced()');
 			// console.log(result);
@@ -94,7 +118,19 @@ UWAP._request = function(method, url, data, options, callback, errorcallback) {
 		ar.processData = false;
 		ar.dataType = 'json';
 	}
-	$.ajax(ar);
+
+	if (typeof options === 'object') {
+		for(var key in options) {
+			if (options.hasOwnProperty(key)) {
+				ar[key] = options[key];
+			}
+		}
+	}
+	try {
+		$.oajax(ar);
+	} catch(exception) {
+		errorcallback(exception);
+	}
 
 };
 
@@ -102,21 +138,21 @@ UWAP._request = function(method, url, data, options, callback, errorcallback) {
 UWAP.auth = {
 
 	require: function (callbackSuccess) {
-		
-		$.getJSON('/_/api/auth.php', function(data, textStatus, jqXHR) {
-			// console.log('Response auth require()');
-			console.log(data);
-			if (data.status === 'ok') {
-				callbackSuccess(data.user);
-			} else {
-				// console.log("goAndReturn");
-				UWAP.utils.goAndReturn('/_/login');
-			}
-
-		});
-		
+		UWAP._request(
+			'GET', 
+			UWAP.utils.getURL("core", "/api/userinfo"),
+			null, null, callbackSuccess);		
+	},
+	check: function (callbackSuccess, callbackNo) {
+		UWAP._request(
+			'GET', 
+			UWAP.utils.getURL("core", "/api/userinfo"),
+			null, {
+				"jso_allowia": false
+			}, callbackSuccess, callbackNo);
 	},
 
+	// TODO: Upgrade to support OAUTH
 	checkPassive: function (callbackSuccess, callbackNo) {
 
 		$.getJSON('/_/api/auth.php', function(data, textStatus, jqXHR) {
@@ -147,70 +183,50 @@ UWAP.auth = {
 
 		});
 
-	},
-
-	check: function (callbackSuccess, callbackNo) {
-		
-		$.getJSON('/_/api/auth.php', function(data, textStatus, jqXHR) {
-			// console.log('Response auth check()');
-			// console.log(data);
-			if (data.status === 'ok') {
-				callbackSuccess(data.user);
-			} else {
-				callbackNo();
-			}
-		});
-		
 	}
-	
+
 };
 
 UWAP.store = {
 	save: function(object, callback, errorcallback) {
-		var parameters = {};
-		parameters.op = "save";
-		parameters.object = JSON.stringify(object);
-
 		UWAP._request(
-			'POST', 
-			'/_/api/storage.php',
-			parameters, 
+			'POST', UWAP.utils.getURL("core", "/api/store"),
+			{
+				op: "save",
+				object: object
+			}, 
 			null, callback, errorcallback);
 	},
 	remove: function(object, callback, errorcallback) {
-		var parameters = {};
-		parameters.op = "remove";
-		parameters.object = JSON.stringify(object);
-
 		UWAP._request(
-			'POST', 
-			'/_/api/storage.php',
-			parameters, 
+			'POST', UWAP.utils.getURL("core", "/api/store"),
+			{
+				op: "remove",
+				object: object
+			}, 
 			null, callback, errorcallback);
 	},
 	queryOne: function(query, callback, errorcallback) {
-		var parameters = {};
-		parameters.op = "queryOne";
-		parameters.query = JSON.stringify(query);
-
 		UWAP._request(
-			'POST', 
-			'/_/api/storage.php',
-			parameters, 
+			'POST', UWAP.utils.getURL("core", "/api/store"),
+			{
+				op: "queryOne",
+				query: query
+			}, 
 			null, callback, errorcallback);
 	},
 	queryList: function(query, callback, errorcallback) {
-		var parameters = {};
-		parameters.op = "queryList";
-		parameters.query = JSON.stringify(query);
-
 		UWAP._request(
-			'POST', 
-			'/_/api/storage.php',
-			parameters, 
+			'POST', UWAP.utils.getURL("core", "/api/store"),
+			{
+				op: "queryList",
+				query: query
+			}, 
 			null, callback, errorcallback);
 	}
 };
+
+
 
 UWAP.groups = {
 	listMyOwnGroups: function(callback, errorcallback) {
@@ -312,8 +328,6 @@ UWAP.appconfig = {
 	},
 
 	store: function(object, callback, errorcallback) {
-
-
 
 		$.ajax({
 			type: 'POST',
@@ -496,22 +510,7 @@ UWAP.data = {
 		options.url = url;
 		options.returnTo = window.location.href;
 
-		// var parameters = {};
-		// parameters.url = url;
-		// parameters.returnTo = window.location.href;
 
-		// options = options || {};
-
-		// if (options.handler) {
-		// 	parameters.handler = options.handler;
-		// }
-		// if (options.xml) {
-		// 	parameters.xml = (options.xml ? '1' : '0');
-		// }
-
-		// console.log("Performing GET request to " + url);
-		// console.log("Parameters");
-		// console.log(options);
 
 		$.getJSON('/_/api/data.php', {args: JSON.stringify(options)}, function(result, textStatus, jqXHR) {
 			// console.log('Response data get()');
@@ -533,44 +532,8 @@ UWAP.data = {
 			}
 			// console.log('Data request error (client side): ' + err);
 		});
-	},
-
-
-
-
-	hget: function (url, options, callback) {
-		$.getJSON('/_/api/hdata.php?url=' + encodeURIComponent(url) + '&xml=1', function(result, textStatus, jqXHR) {
-			// console.log('Response data get()');
-			// console.log(result);
-			if (result.status === 'ok') {
-				callback(result.data);
-			} else {
-				// console.log('Error');
-			}
-
-		}, function() {
-			// console.log('Error 2');
-		});
-	},
-	oget: function (url, options, callback) {
-		// console.log('oget to ' + url);
-		$.getJSON('/_/api/dataoauth.php?url=' + encodeURIComponent(url) + '&return=' + encodeURIComponent(window.location) + '&xml=1', 
-				function(result, textStatus, jqXHR) {
-				
-			// console.log('Response data get()');
-			// console.log(result);
-			if (result.status === 'ok') {
-				callback(result.data);
-			} else if (result.status === 'redirect') {
-				window.location = result.url;
-			} else {
-				// console.log('Error getting data from ' + url);
-			}
-
-		}, function() {
-			// console.log('Error 2');
-		});
 	}
+
 	
 };
 

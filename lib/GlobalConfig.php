@@ -3,11 +3,8 @@
 
 class GlobalConfig {
 
-
 	protected static $instance = null;
-
 	protected $config;
-	
 
 	private function __construct() {
 		global $UWAP_BASEDIR;
@@ -61,7 +58,6 @@ class GlobalConfig {
 		}
 		return 'http';
 	}
-
 
 	
 }

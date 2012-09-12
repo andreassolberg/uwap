@@ -26,592 +26,54 @@
 	<!-- JQuery hosted by Google -->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
 	<!-- Core API to UNINETT WebApp Park -->
+	<script type="text/javascript" src="/_/js/oauth.js"></script>
 	<script type="text/javascript" src="/_/js/core.js"></script>
+
 	<script type="text/javascript" src="/js/geo.js"></script>
 	<script type="text/javascript" src="/js/moment.js"></script>
 
+
 	<script type="text/javascript">
 
-
-		var groups = {};
-		function getGroup(id) {
-			if (id === '!public') return 'Public';
-			if (groups[id]) return groups[id];
-			return 'unknown group (' + id + ')';
-		}
-
-		function loggedin(user) {
-			$("div#out").prepend('<p>Logged in as <strong>' + user.name + '</strong> (<tt>' + user.userid + '</tt>)</p>');
-			$("input#smt").attr('disabled', 'disabled');
-
-			console.log(JSON.stringify(user));
-
-			var gr = $('<dl></dl>')
-			if(user.groups) {
-				groups = user.groups;
-				for(var key in user.groups) {
-					gr.append('<dt>' + user.groups[key] + '</dt>');
-					gr.append('<dd><tt>' + key + '</tt></dd>');
-
+		function testVoot() {
+			$.oajax({
+				url: UWAP.utils.getURL("core", "/api/groups/@me"),
+				jso_provider: "uwapvoot",
+				jso_scopes: ["voot"],
+				jso_allowia: true,
+				dataType: 'json',
+				success: function(response) {
+					console.log(response);
+					$("div#out").append('<pre>' + JSON.stringify(response, null, 4) + '</pre>');
+					
 				}
-			}
-			$("div#out").append('<p>Groups:</p>').append(gr);
-
-			// UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook", requestedScopes: ["read_stream"], requiredScopes: ["read_stream"]}, showfacebook);
-			// UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook"}, showfacebook);
-		}
-		function notloggedin() {
-			$("div#out").prepend('<p>Not logged in</p>');
-		}
-
-		function weatherresult(w) {
-			console.log(w);
-		}
-		
-		function vegmelding(v) {
-			$(v['result-array'].result.messages.message).each(function(c, i) {
-				console.log(i);
-				$("div#out").append('<h2>' + i.heading + '</h2><p>' + i.ingress + '</p>');
 			});
 		}
-		
-		function generic(o) {
-			var k;
-			for (k in o) {
-				
-				$("div#out").append('<p>' + k + ' :  ' + o[k] + '</p>');
-			}
-		}
-
-
-		function showfacebook(o) {
-			var k;
-			// console.log(o);
-			for (k in o.data) {
-				console.log(o.data[k]);
-				var entry = $('<p>[' + o.data[k].type + '] :  ' + o.data[k].message + '</p>');
-				for(var i = 0; i < o.data[k].actions.length; i++) {
-					entry.append(' <a href="' + o.data[k].actions[i].link + '">' + o.data[k].actions[i].name + '</a>' );
-				}
-				$("div#out").append(entry);
-			}
-			$("input#facebook").attr('disabled', 'disabled');
-	
-		}
-
-
-		function activity(as) {
-			console.log('Got activity');
-			$(as.data).each(function(i, a) {
-				var html = '<h2 style="font-size: 110%; color: #222"><a style="color: #333" href="https://foodl.org/foodle/' + a.foodle.id + '">' + a.foodle.name + '</a></h2>';
-				if (a.ago) {
-					html += '<p style="color: #944">Updated ' + a.ago + '</p>';
-				}
-				if (a.foodle.summary) {
-					html += '<p>' + a.foodle.summary + '</p>';
-				}
-				$("div#out").append(html);
-			});
-			console.log(as);
-		}
-
-		function secondsT(sec) {
-			var minutes = 0;
-
-			if (sec <= 60) {
-				return sec + ' sekunder';
-			} else {
-				minutes = Math.floor(sec/60);
-				sec = sec - (minutes*60);
-				return minutes + ' min ' + sec + ' sek';
-			}
-		} 
-
-		function bussResult(r) {
-			console.log(r);
-
-			$.each(r.departures, function(i, item) {
-
-				// var sanntid = Date.parse(item.registeredDepartureTime);
-
-
-				// var until = (sanntid - now) / 1000;
-
-				// var rdt = Date.parse("2012-04-20T" + item.registeredDepartureTime.substr(11,5));
-				// var sdt = Date.parse("2012-04-20T" + item.scheduledDepartureTime.substr(11,5));
-
-				var now = new Date(); 
-				var rdt = new Date(); 
-				rdt.setHours(item.registeredDepartureTime.substr(11,2));
-				rdt.setMinutes(item.registeredDepartureTime.substr(14,2));
-				rdt.setSeconds(0);
-
-				var sdt = new Date();
-				sdt.setHours(item.scheduledDepartureTime.substr(11,2));
-				sdt.setMinutes(item.scheduledDepartureTime.substr(14,2));
-				sdt.setSeconds(0);
-
-				var diff = Math.floor((rdt - sdt) / (60*1000));
-				var until = (rdt - now) / 1000;
-
-
-				console.log(rdt);
-				console.log(sdt);
-				console.log("-----");
-				console.log(item.registeredDepartureTime.substr(11,5));
-				console.log(item.scheduledDepartureTime.substr(11,5));
-
-				var tid = item.registeredDepartureTime.substr(11,5);
-
-				
-				var real = (item.isRealtimeData ? 'Sanntid' : 'Rute');
-				$("div#out").append('<p><span class="line">' + item.line + " " + item.destination + "</span> " + tid + " " + real +  " " + diff  + " forsinket " + secondsT(until) + " sekunder til avgang</p>");
-			});
-
-		}
-		function bussRequest() {
-			var bussurl = "http://api.busbuddy.no:8080/api/1.3/departures/16011125";
-			UWAP.data.get(bussurl, {handler: "buss"}, bussResult);
-		}
-
 
 
 		$("document").ready(function() {
 
+			UWAP.auth.require(function(data) {
+				$("div#out").append("<h2>You are logged in as <i>" + data.name + "</i></h2>");
 
-			
-			// UWAP.data.get('http://www.ntnu.no/studieinformasjon/rom/?sok=EL5&gr=1', null, function(data) {
-			// 	console.log("Got data", data);
-			// });
-			
 
-			// UWAP.auth.check(loggedin, notloggedin);
-			// // 
-			// $("input#smt").click(function() {
-			// 	UWAP.auth.require(loggedin);
-			// });
-			
-			// $("input#facebook").click(function() {
-			// 	UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook", requestedScopes: ["read_stream"], requiredScopes: ["read_stream"]}, showfacebook);
-			// });
+				UWAP.store.save({"name": "Andreas", "number": Math.random()}, function() {
+					console.log("Object saved");
+				});
+				UWAP.store.queryOne({"name": "Andreas"}, function(data) {
+					console.log("queryOne()", data);
+				});
+				UWAP.store.queryList({"name": "Andreas"}, function(data) {
+					console.log("queryList()", data);
+				});
 
-			UWAP.auth.check(loggedin, notloggedin);
 
-			$("input#smt").click(function() {
-				UWAP.auth.require(loggedin);
+			}, function(response) {
+				console.log("Not logged in");
+				$("div#out").append('<pre>Not logged in: ' + JSON.stringify(response, null, 4) + '</pre>');
 			});
 
 
-			// function displayAdHocGroup(i, group) {
-			// 	$("div#out").append('<p>' + group.title + ' <tt>' + group.id + '</tt></p>');
-			// 	if (group.description) {
-			// 		$("div#out").append('<p><small>' + group.description + '</small></p>');	
-			// 	}
-			// 	$("div#out").append('<p>Members</p>');
-			// 	var list = $('<ul></ul>');
-			// 	$.each(group.members, function(i, member) {
-			// 		console.log(member);
-			// 		list.append('<li>' + member + '</li>');
-			// 	});
-			// 	$("div#out").append(list);
-			// 	console.log(JSON.stringify(group));
-			// }
-
-			//  UWAP.groups.removeMember('7aaf41df-27e2-4bc3-a810-6d2631874f5c', 'olavmo@uninett.no', function(group) {
-			//  	console.log("Successfully removed member from group.");
-			//  }, function(err) {
-			// 	console.error("Eror removing group", err);
-			//  });
-
-
-
-			// // UWAP.groups.listMyGroups(function(data) {
-			// // 	console.log("Groups that I am member of");
-			// // 	console.log(data);
-			// // 	$("div#out").append('<h2>Groups that I am member of</h2>')
-			// // 	$.each(data, displayAdHocGroup);
-			// // });
-			// UWAP.groups.listMyOwnGroups(function(data) {
-			// 	console.log("Groups that I have created");
-			// 	console.log(data);
-			// 	$("div#out").append('<h2>Groups that I have created</h2>')
-			// 	$.each(data, displayAdHocGroup);
-			// });
-
-
-
-
-			// UWAP.groups.get('7aaf41df-27e2-4bc3-a810-6d2631874f5c', function(group) {
-			// 	$("div#out").append('<h2>' + group.title + '</h2><p><tt>' + group.id + '</tt></p>');
-			// 	if (group.description) {
-			// 		$("div#out").append('<p><small>' + group.description + '</small></p>');	
-			// 	}
-			// 	$("div#out").append('<p>Members</p>');
-			// 	var list = $('<ul></ul>');
-			// 	$.each(group.userlist, function(i, member) {
-			// 		console.log(member);
-			// 		list.append('<li>' + member.name + ' (' + member.userid + ')</li>');
-			// 	});
-			// 	$("div#out").append(list);
-
-			// 	console.log(JSON.stringify(group));
-			// }, function(err) {
-			// 	console.error("Eror removing group", err);
-			// });
-
-
-
-
-			// UWAP.groups.removeGroup('45eebcdc-2a1c-48e9-8ff2-05b89a591857', function() {
-			// 	console.log("Successfully removed the group.");
-			// }, function(err) {
-			// 	console.error("Eror removing group", err);
-			// });
-
-
-			// UWAP.groups.addMember("7aaf41df-27e2-4bc3-a810-6d2631874f5c", olav, function() {
-			// 	console.log("Successfully added a member");
-			// }, function(err) {
-			// 	console.error("Error adding a member", err);
-			// });
-
-
-			// var newGroup = {
-			// 	title: "UWAP Developers",
-			// 	description: "The developers of UNINETT WebApp Park"
-			// };
-			// UWAP.groups.addGroup(newGroup, function(res) {
-			// 	console.log("Group successfully added.", res);
-			// }, function(err) {
-			// 	console.error("Error creating new group", err);
-			// });
-
-			// var olav = {
-			// 	'userid': 'olavmo@uninett.no',
-			// 	'mail': 'olav.morken@uninett.no',
-			// 	'name': 'Olav Morken'
-			// };
-			// var terje = {
-			// 	'userid': 'navjord@uninett.no',
-			// 	'mail': 'terje.navjord@uninett.no',
-			// 	'name': 'Terje Navjord'
-			// };
-
-			// UWAP.groups.addMember("7aaf41df-27e2-4bc3-a810-6d2631874f5c", olav, function() {
-			// 	console.log("Successfully added a member");
-			// }, function(err) {
-			// 	console.error("Error adding a member", err);
-			// });
-			// UWAP.groups.addMember("7aaf41df-27e2-4bc3-a810-6d2631874f5c", terje, function() {
-			// 	console.log("Successfully added a member");
-			// }, function(err) {
-			// 	console.error("Error adding a member", err);
-			// });
-
-
-			// UWAP.groups.addGroup(newGroup, function() {
-			// 	console.log("group successfully added.");
-			// }, function() {
-			// 	console.error("Error creating new group");
-			// });
-
-			
-			// // $("input#facebook").click(function() {
-			// // 	UWAP.data.get('https://graph.facebook.com/me/home', {handler: "facebook", requestedScopes: ["read_stream"], requiredScopes: ["read_stream"]}, showfacebook);
-			// // });
-
-
-			// function showemner(emner) {
-			// 	console.log('Emner', emner);
-			// }
-
-
-			// UWAP.data.get('http://bridge.uninett.no/rest.php', {handler: "basic"}, function(data) {
-			// 	console.log("Data response headers", data);
-			// });
-
-
-			UWAP.data.get('http://www.ntnu.no/studieinformasjon/rom/?sok=EL5&gr=1', null, function(data) {
-				console.log("Got data", data);
-			});
-
-			// // UWAP.data.get('http://bridge.uninett.no/rest.php', {handler: "basic"}, function(data) {
-			// 	console.log("Data response headers", data);
-			// });
-			
-			
-			// var Position = function(obj) {
-			// 	if (obj.latitude) this.latitude = parseFloat(obj.latitude);
-			// 	if (obj.longitude) this.longitude = parseFloat(obj.longitude);
-			// 	if (obj.timestampMs) this.time = moment(parseInt(obj.timestampMs, 10));
-			// 	if (obj.accuracy) this.accuracy = parseFloat(obj.accuracy);
-
-
-			// 	var getDistance = function(l1, l2) {
-			// 		var p1 = new LatLon(l1.latitude, l1.longitude);
-			// 		var p2 = new LatLon(l2.latitude, l2.longitude);
-			// 		return p1.distanceTo(p2);
-			// 	};
-
-			// 	var getLocation = function(obj) {
-			// 		var i, loc, d;
-
-			// 		for(i = 0; i < Position.locations.length; i++) {
-			// 			Position.locations[i];
-
-			// 			d = getDistance(Position.locations[i], obj);
-			// 			if (d < Position.locations[i].radius) {
-			// 				loc = jQuery.extend(true, {}, Position.locations[i]);
-			// 				loc.distance = d;
-			// 				return loc;
-			// 			}
-			// 		}
-			// 		return null;
-			// 	}
-
-			// 	this.location = getLocation(this);
-			// };
-
-			// Position.locations = [
-			// 	{
-			// 		title: "Jan Voigts vei 10",
-			// 		latitude: 63.450193,
-			// 		longitude: 10.463450800000032,
-			// 		radius: 0.200
-			// 	},
-			// 	{
-			// 		title: "Rødberg",
-			// 		latitude: 60.2685268,
-			// 		longitude: 8.937852900000053,
-			// 		radius: 3.000
-			// 	},
-			// 	{
-			// 		title: "UNINETT",
-			// 		latitude: 63.4149254,
-   // 					longitude: 10.395208000000025,
-			// 		radius: 0.600
-			// 	},
-			// 	{
-			// 		title: "Leistad Barnehage",
-			// 		latitude: 63.4160773,
-			// 		longitude: 10.486101100000042,
-			// 		radius: 0.400
-			// 	},
-			// 	{
-			// 		title: "Trondheim",
-			// 		latitude: 63.4418913,
-			// 		longitude: 10.5236146,
-			// 		radius: 20
-			// 	}
-			// ];
-			
-			// Position.prototype.since = function() {
-			// 	return this.time.fromNow();
-			// }
-			// Position.prototype.when = function() {
-			// 	return this.time.format('HH:mm');
-			// }
-
-			// var httpconfig = {
-			// 	handler: "latitude", 
-			// 	requestedScopes: [
-			// 		"https://www.googleapis.com/auth/latitude.all.best",
-			// 		"https://www.googleapis.com/auth/latitude.current.best"
-			// 	],
-			// 	requiredScopes: [
-			// 		"https://www.googleapis.com/auth/latitude.all.best"
-			// 	]
-			// };
-
-			
-			// // UWAP.data.get('https://www.googleapis.com/latitude/v1/currentLocation?granularity=best', httpconfig, 
-			// // 	function(data) {
-			// // 		console.log("Latitude Data response Current");
-			// // 		console.log(data);
-			// // 		var l = new Latitude(data.data);
-			// // 		var loc = l.getLocation();
-			// // 		console.log("Location " + loc.title +  " at " + l.when() + " : " + loc.distance );
-			// // 	}
-			// // );
-
-			// var PTracker = function(trackpoints) {
-			// 	var 
-			// 		i,
-			// 		current = null,
-			// 		candidate;
-
-			// 	this.trackpoints = trackpoints;
-			// 	this.locations = [];
-
-			// 	console.log("Trackpoints", this.trackpoints);
-				
-			// 	for(i = 0; i < this.trackpoints.length; i++) {
-			// 		candidate = this.trackpoints[i];
-
-			// 		console.log("Processing " + candidate.location.title + ' ' + candidate.time.format('HH:mm'));
-			// 		// continue;
-
-			// 		if (current === null) {
-			// 			current = candidate;
-			// 			current.from = candidate.time;
-			// 			current.to = candidate.time;
-			// 			continue;
-			// 		}
-
-			// 		if (current.location.title !== candidate.location.title) {
-			// 			this.locations.push(current);
-
-			// 			current = candidate;
-			// 			current.from = candidate.time;
-			// 			current.to = candidate.time;
-			// 			continue;
-			// 		} else {
-			// 			console.log("Candidate is the same ", current, candidate);
-			// 			if (candidate.time < current.from) {
-			// 				current.from = candidate.time;
-			// 			}
-			// 			if (candidate.time > current.to) {
-			// 				current.to = candidate.time;
-			// 			}
-			// 		}
-			// 	}
-			// 	if (current !== null) {
-			// 		this.locations.push(current);
-
-			// 	}
-
-			// };
-
-			// PTracker.prototype.list = function() {
-			// 	var i, l;
-			// 	for(i = 0; i < this.locations.length; i++) {
-			// 		l = this.locations[i];
-			// 		console.log(l.location.title + ' ' + l.from.format('HH:mm') + '-' + l.to.format('HH:mm'));
-			// 	}
-			// };
-
-			// var now = new Date().getTime();
-			// var begin = now - (20*3600*1000); // 20 hours back
-
-			// var url = 'https://www.googleapis.com/latitude/v1/location?';
-			// url += 'granularity=best';
-			// url += '&max-time=' + now;
-			// url += '&min-time=' + begin;
-			// console.log('Accessing url ' + url);
-
-			// UWAP.data.get(url, httpconfig, 
-			// 	function(data) {
-			// 		console.log("Latitude Data response History");
-			// 		console.log(data);
-			// 		if (!data.data.items) return;
-
-			// 		var trackpoints = [];
-
-			// 		$.each(data.data.items, function(i, item) {
-			// 			var l = new Position(item);
-
-			// 			if (l.accuracy >= 200) {
-			// 				// console.log("Skipping " + loc.title + " because of bad accuracy.");
-			// 				return;
-			// 			}
-			// 			if (l.location) {
-			// 				trackpoints.push(l);
-			// 				console.log("Location " + l.location.title +  " at " + l.when() +  " ",
-			// 					l, " : " + l.location.distance + "   (" + l.accuracy + ")");
-			// 			} else {
-			// 				console.log("Location NA at " + l.when() + "  " );
-			// 			}
-						
-			// 		});
-
-			// 		var tracker = new PTracker(trackpoints);
-			// 		tracker.list();
-			// 	}
-			// );
-
-
-
-			// var emneapi = 'http://www.ime.ntnu.no/api/course/-';
-			// UWAP.data.get(emneapi, {}, showemner);
-
-
-			// UWAP.data.get('http://www.vegvesen.no/trafikk/xml/savedsearch.xml?id=600', 
-			// 	{'xml': 1},
-			// 	vegmelding);
-			
-			// UWAP.data.get('https://foodl.org/api/activity', {handler: "foodle"}, activity);
-			
-
-			// 
-
-			// bussRequest();
-
-			// UWAP.store.save(
-			// 	{
-			// 		"test": "value",
-			// 		"size": Math.floor(Math.random()*1000),
-			// 		"bool": true
-			// 		// "speed": 1.2333,
-			// 		// "geolocation": {
-			// 		// 	"city": "Trondheim",
-			// 		// 	"code": "7040"
-			// 		// }
-			// 	}, function() {
-			// 		console.log("Successfully stored object.")
-			// 	}, function(err) {
-			// 		console.log("Error storing object: " + err.message)
-			// 	}
-			// );
-
-			// UWAP.store.queryList(
-			// 	{"bool": true},
-			// 	function(res) {
-			// 		console.log(res);
-
-			// 		UWAP.store.remove(
-			// 			{"bool": true},
-			// 			function(res) {
-			// 				console.log(res);
-			// 			}, function(err) {
-			// 				console.log(err);
-			// 			}
-			// 		);
-					
-			// 	}, function(err) {
-			// 		console.log(err);
-			// 	}
-			// );
-
-
-
-
-
-			// UWAP.store.queryOne(
-			// 	{"bool": true},
-			// 	function(res) {
-			// 		console.log("Query one returned result:");
-			// 		console.log(res);
-			// 		res.text = "Modified2";
-
-			// 		console.log("Is about to save entry with id: " + res["_id"]["$id"]);
-					
-
-			// 		UWAP.store.save(res, function() {
-			// 			console.log("Successfully stored modified attribute");
-			// 		});
-			// 	}
-			// );
-			
-			// if (navigator.geolocation) {
-			// 	console.log('s1');
-			// 	navigator.geolocation.getCurrentPosition(function(position) {
-			// 	console.log('s2');					
-			// 		UWAP.data.get('http://api.yr.no/weatherapi/oceanforecast/0.9/?lat=' + position.coords.latitude  + ';lon=' + position.coords.longitude  + '', 
-			// 			{'xml': 1},
-			// 			weatherresult);
-			// 		
-			// 	});
-			// }
 		});
 
 	</script>
@@ -623,14 +85,9 @@
 <body style="">
 
 
-	<img src="https://www.uninett.no/sites/drupal.uninett.no.uninett/themes/uninett_2012/images/logo.png" style="" />	
-
-	<p style="">UNINETT WebAPP Demo</p>
-
-	<p><a href="https://store.uwap.org">App store</a></p>
 
 	<input type="submit" id="smt" name="smt" value="Require login" />
-	<input type="submit" id="facebook" name="facebook" value="Load facebook" />
+	<!-- <input type="submit" id="facebook" name="facebook" value="Load facebook" /> -->
 
 
 

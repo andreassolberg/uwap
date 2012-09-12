@@ -1,5 +1,18 @@
 <?php
 
+/*
+Example configurations:
+
+App: 
+
+	{
+		client_id: "app_appname",
+		client_name: "Name of app",
+		redirect_uri: "http://appname.uwap.org/_/oauth/callback",
+		scopes: ["app_"]
+	}
+ */
+
 
 class So_StorageServerUWAP extends So_Storage {
 
@@ -10,8 +23,8 @@ class So_StorageServerUWAP extends So_Storage {
 
 		$this->store = new UWAPStore();
 
-		$this->config = new Config($subid);
-		$this->subid = $this->config->getID();
+		// $this->config = new Config($subid);
+		// $this->subid = $this->config->getID();
 	}
 
 	/*
@@ -19,6 +32,16 @@ class So_StorageServerUWAP extends So_Storage {
 	 */
 	public function getClient($client_id) {
 		// notimplemented();
+
+		// TODO: Add impliccit app clients, with redirect_uri...
+		if (preg_match('/^app_([a-z]+)/', $client_id, $matches)) {
+			$app = $matches[1];
+			$config = Config::getInstance($app);
+
+
+			return $config->getOAuthClientConfig();
+			// echo "app was " . $app; exit;
+		}
 
 		$query = array(
 			"client_id" => $client_id,
@@ -37,7 +60,6 @@ class So_StorageServerUWAP extends So_Storage {
 
 		$query = array(
 			"client_id" => $client_id,
-			"app" => $this->subid,
 			"userid" => $userid
 		);
 		$result = $this->store->queryOne('oauth2-server-authorization', $query);
@@ -54,7 +76,6 @@ class So_StorageServerUWAP extends So_Storage {
 		$obj["app"] = $this->subid;
 
 
-
 		$query = array(
 			"client_id" => $obj["client_id"],
 			"app" => $this->subid,
@@ -68,8 +89,8 @@ class So_StorageServerUWAP extends So_Storage {
 			
 			foreach($obj AS $k => $v) {
 				$oldone[$k] = $v;
-			}
-			echo '<pre>About to update an object: '; print_r($oldone);
+			} 
+			// echo '<pre>About to update an object: '; print_r($oldone); echo '</pre>';
 
 			$this->store->store("oauth2-server-authorization", null, $oldone);
 		}
@@ -99,7 +120,7 @@ class So_StorageServerUWAP extends So_Storage {
 	public function getProviderConfig($provider_id) {
 		notimplemented();
 
-		$result = $this->config->getHandlerConfig($provider_id);
+		// $result = $this->config->getHandlerConfig($provider_id);
 
 		error_log("Handler config for Oauth 2.0 server is: " . var_export($result, true));
 
@@ -117,13 +138,15 @@ class So_StorageServerUWAP extends So_Storage {
 	public function putAccessToken($client_id, $userid, So_AccessToken $accesstoken) {
 		// notimplemented();
 
+		// echo "<pre>About to put accesstoken "; print_r($accesstoken); 
+		// exit;
+
 		$obj = $accesstoken->getObj();
 		// $obj['provider_id'] = $provider_id;
-		$obj['app'] = $this->subid;
+		// $obj['app'] = $this->subid;
 		// $obj['userid'] = $userid;
 		// $this->db->tokens->insert($obj);
 
-		// echo '<pre>'; print_r($obj); exit;
 
 		$this->store->store("oauth2-server-tokens", null, $obj);
 
