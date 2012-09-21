@@ -118,12 +118,18 @@ class Config {
 
 		// echo "REDIRECT URL"  . $redirect_uri; exit;
 		
+		$scopes = array("app_" . $this->config['id'] . "_user");
+
+		if(!empty($this->config['scopes'])) {
+			$scopes = array_merge($scopes, $this->config['scopes']);
+		}
+		
 		return array(
 			"client_id" => "app_" . $id,
 			"client_name" => $this->config['name'],
 			"owner" => $this->config['owner'],
 			"redirect_uri" => $redirect_uri,
-			"scopes" => array("app_" . $this->config['id'] . "_user"),
+			"scopes" => $scopes,
 		);
 	}
 
