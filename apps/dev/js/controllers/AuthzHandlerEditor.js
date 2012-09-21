@@ -7,8 +7,8 @@ define(function() {
 			this.isnew = isnew;
 			this.appconfig = appconfig;
 
-			this.handler.redirect_uri2 = UWAP.utils.getURL(this.appconfig.id, '/_/oauth2callback');
-			this.handler.redirect_uri1 = UWAP.utils.getURL(this.appconfig.id, '/_/oauth1callback');
+			this.handler.redirect_uri2 = UWAP.utils.getEngineURL('/_/oauth2callback');
+			this.handler.redirect_uri1 = UWAP.utils.getEngineURL('/_/oauth1callback');
 
 			this.element = $("#authhandlereditortmpl").tmpl(this.handler);
 

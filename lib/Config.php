@@ -95,8 +95,8 @@ class Config {
 
 
 	public function generateDavCredentials($userid) {
-		$username = self::generateCleanUsername($userid);
-		$password = self::generateRandpassword();
+		$username = Utils::generateCleanUsername($userid);
+		$password = Utils::generateRandpassword();
 		// echo 'password: ' . $password; exit;
 		$credentials = array(
 			'uwap-userid' => $userid,
@@ -112,7 +112,7 @@ class Config {
 		$id = $this->config['id'];
 
 		$redirect_uri = GlobalConfig::scheme() . '://' . $id . '.' . GlobalConfig::hostname() . '/';
-		if ($this->config['externalhost']) {
+		if (!empty($this->config['externalhost'])) {
 			$redirect_uri = GlobalConfig::scheme() . '://' . $this->config['externalhost'] . '/';
 		} 
 
