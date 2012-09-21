@@ -8,6 +8,11 @@ abstract class HTTPClientUserAuth extends HTTPClient {
 		return "Basic " . base64_encode($u . ':' . $p);
 	}
 
+	protected function groups() {
+		$groups = array('testgroups');
+		return join(',', $groups);
+	}
+
 	protected function userauth() {
 
 		// require_once('../simplesamlphp/lib/_autoload.php');

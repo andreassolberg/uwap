@@ -15,8 +15,6 @@ require_once('../../lib/autoload.php');
 // 	UWAPLogger::error('auth', "missing required query string parameter: app");	
 // 	throw new Exception("missing required query string parameter: app");
 // }
-
-
 // $auth = new Auth($app);
 
 
@@ -143,7 +141,6 @@ try {
 				break;
 
 			case 'save':
-
 				if (empty($parameters['object'])) throw new Exception("Missing required parameter [object] object to save");
 				$store->store("appdata-" . $targetapp, $userid, $parameters['object']);
 				break;
@@ -152,21 +149,59 @@ try {
 			case 'queryOne':
 				if (empty($parameters['query'])) throw new Exception("Missing required parameter [query] query");
 				$response['data'] = $store->queryOneUser("appdata-" . $targetapp, $userid, $groups, $parameters['query']);
-				// if (is_null($response['data'])) {
-				// 	throw new Exception("Query did not return any results");
-				// }
 				break;
 
 			case 'queryList':
 				if (empty($parameters['query'])) throw new Exception("Missing required parameter [query] query");
 				$response['data'] = $store->queryListUser("appdata-" . $targetapp, $userid, $groups, $parameters['query']);
-				// if (is_null($response['data'])) {
-				// 	throw new Exception("Query did not return any results");
-				// }
 				break;
 
 		}
 
+
+
+	/**
+	 *  The REST data API.
+	 */
+	} else if (Utils::route('post', '^/rest$', &$qs, &$args)) {
+
+
+		if (empty($args['url'])) {
+			throw new Exception("Missing parameter [url]");
+		}
+
+		if (empty($args['appid'])) {
+			throw new Exception("Missing parameter [appid]");
+		}
+
+		$url = $args["url"];
+		$handler = "plain";
+
+		/*
+		 * Try to figure out on behalf of which app to perform the request.
+		 * This will be used to lookup HTTP REST handler configurations.
+		 */
+		$targetapp = $args['appid'];
+
+		if (!empty($args["handler"])) $handler = $args["handler"];
+
+
+
+		// Initiate an Oauth server handler
+		$oauth = new OAuth();
+
+		// Get provided Token on this request, if present.
+		$token = $oauth->getProvidedToken();
+
+		$client = HTTPClient::getClient($handler, $targetapp);
+
+		if ($token) {
+			$oauth->check(null, array('app_' . $targetapp . '_user'));
+			$userid = $token->userdata['userid'];
+			$client->setAuthenticated($userid);
+		}
+
+		$response = $client->get($url, $args);
 
 
 	} else if (Utils::route('post', '^/apps$', &$parameters, &$object)) {
@@ -176,7 +211,7 @@ try {
 		$config->store($object, $auth->getRealUserID());
 
 		$ac = Config::getInstance($id);
-		$result['data'] = $ac->getConfig();
+		$response['data'] = $ac->getConfig();
 
 	} else {
 

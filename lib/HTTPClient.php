@@ -4,9 +4,15 @@
 class HTTPClient {
 	
 	protected $config;
-
-	public function __construct($config) {
+	protected $userid = null;
+	protected $appid = null;
+	public function __construct($config, $appid) {
 		$this->config = $config;
+		$this->appid = $appid;
+	}
+
+	public function setAuthenticated($userid) {
+		$this->userid = $userid;
 	}
 
 	// TODO: Security check on URL to not refer to local file system
@@ -130,8 +136,16 @@ class HTTPClient {
 		// error_log("About to decode " . $result['data']);
 
 		if (isset($options['xml']) && $options['xml'] == 1) {
-			error_log("Retrieved data is in format: XML");
-			$result['data'] = json_decode(json_encode(new SimpleXMLElement($result["data"]), true));
+			
+			
+
+			$json = xmlToArray(new SimpleXMLElement($result["data"]));
+
+			// echo '<pre>'; print_r($json); exit;
+
+			error_log("Retrieved data is in format: XML ----------->>>> ". $json);
+			$result['data'] = $json;
+			// $result['data'] = json_decode(json_encode(new SimpleXMLElement($result["data"]), true));
 			$result['type'] = 'xml2json';
 		} else if ($this->isJson($result["data"])) {
 			error_log("Retrieved data is in format: json");
@@ -166,12 +180,11 @@ class HTTPClient {
 		return $result;
 	}
 
-	static function getClient($handler) {
+	static function getClient($handler, $appid = null) {
 
-		$subconfigobj = Config::getInstance();
+		$subconfigobj = Config::getInstance($appid);
 		$subhost = $subconfigobj->getID();
 		$subconfig = $subconfigobj->getConfig();
-
 
 		$config = array("type" => "plain");
 		if ($handler !== 'plain') {
@@ -192,20 +205,20 @@ class HTTPClient {
 		switch($config['type']) {
 
 			case "basic":
-				return new HTTPClientBasic($config);
+				return new HTTPClientBasic($config, $appid);
 
 			case "token":
-				return new HTTPClientToken($config);
+				return new HTTPClientToken($config, $appid);
 
 			case "oauth2":
-				return new HTTPClientOAuth2($config);
+				return new HTTPClientOAuth2($config, $appid);
 
 			case "oauth1":
-				return new HTTPClientOAuth1($config);
+				return new HTTPClientOAuth1($config, $appid);
 
 			case "plain":
 			default:
-				return new HTTPClient($config);
+				return new HTTPClient($config, $appid);
 		}
 
 

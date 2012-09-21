@@ -22,6 +22,21 @@ class GlobalConfig {
 		return $default;
 	}
 
+	public static function getAppHost() {
+		
+	}
+
+
+	public static function getAppID() {
+
+		$id = Utils::getSubID();
+		// echo "ID is " . var_export($id, true); exit;
+		if ($id !== false) return $id;
+
+		$host = Utils::getHost();
+		return Config::getSubIDfromHost($host);
+	}
+
 
 	// ------ ------ ------ ------ Class methods
 	public static function getInstance() {

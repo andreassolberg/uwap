@@ -30,13 +30,15 @@ class Config {
 	 * Public static function get to get an config instance for a specific app.
 	 * @var [type]
 	 */
-	public static function getInstance($id = null) {
+	public static function getInstance($id = null, $host = null) {
 
+		if ($host === null) {
+			$host = Utils::getHost();
+		}
 		if ($id === false) throw new Exception('Deprecated use of Config object.');
 		if ($id === null) {
 			$id = Utils::getSubID();	
 			if ($id === false) {
-				$host = Utils::getHost();
 				$id = self::getSubIDfromHost($host);
 			}
 		}
@@ -47,6 +49,9 @@ class Config {
 		return self::$instances[$id];
 	}
 
+
+
+
 	public static function getSubIDfromHost($host) {
 		$store = new UWAPStore();
 		$res = $store->queryOne('appconfig', array('externalhost' => $host));
@@ -55,6 +60,8 @@ class Config {
 		}
 		throw new Exception('Application configuration does not yet exists for this domain.');
 	}
+
+
 
 
 	public function getAppPath($path = '/') {
@@ -349,9 +356,17 @@ class Config {
 		return $this->subid;
 	}
 	
+	public function getHostname() {
+		if (!empty($this->config['externalhost'])) {
+			return $this->config['externalhost'];
+		}
+		return $this->subid . '.' . GlobalConfig::hostname();
+	}
+
 	public function getConfig() {
 		$current = $this->config;
-		$current['url'] = GlobalConfig::scheme() . '://' . $this->subid . '.' . GlobalConfig::hostname();
+		$hostname = $this->getHostname();
+		$current['url'] = GlobalConfig::scheme() . '://' . $hostname;
 
 		if (!empty($current['handlers'])) {
 			foreach($current['handlers'] AS $key => $handler) {

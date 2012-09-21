@@ -16,15 +16,19 @@ class So_StorageUWAP extends So_Storage {
 
 	protected $store, $userid, $subid, $config;
 
-	function __construct($userid, $subid = null) {
+	function __construct($userid, $appid = null) {
 		parent::__construct();
 
 		$this->store = new UWAPStore();
 		$this->userid = $userid;
 		// $this->handler = $handler;
 
-		$this->config = Config::getInstance($subid);
+		$this->config = Config::getInstance($appid);
 		$this->subid = $this->config->getID();
+	}
+
+	public function getAppID() {
+		return $this->subid;
 	}
 
 	/*
@@ -175,15 +179,25 @@ class So_StorageUWAP extends So_Storage {
 	}
 	
 	public function putState($state, $obj) {
-		// notimplemented();
+
 		$obj['state'] = $state;
 		// store($collection, $userid, $obj, $expiresin = null) {
 		$this->store->store("oauth2-client-states", $this->userid, $obj, 3600);
 
 		// $this->db->states->insert($obj);
 	}
+
+	public static function getStateStatic($state) {
+		$store = new UWAPStore();
+		$query = array(
+			"state" => $state
+		);
+		$result = $store->queryOne("oauth2-client-states", $query);
+		return $result;
+	}
+
 	public function getState($state) {
-		// notimplemented();
+
 		$query = array(
 			"state" => $state
 		);

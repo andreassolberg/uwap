@@ -138,7 +138,7 @@ class So_StorageServerUWAP extends So_Storage {
 	public function putAccessToken($client_id, $userid, So_AccessToken $accesstoken) {
 		// notimplemented();
 
-		// echo "<pre>About to put accesstoken "; print_r($accesstoken); 
+		// echo "<pre>About to put accesstoken "; print_r($accesstoken); echo '</pre>';
 		// exit;
 
 		$obj = $accesstoken->getObj();

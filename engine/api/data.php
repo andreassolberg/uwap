@@ -41,9 +41,7 @@ try {
 	// 	utf8_encode((string)file_get_contents("http://google.no"))
 	// ));
 
-} catch(Exception $error)
-
- {
+} catch(Exception $error) {
 
 	$result = array();
 	$result['status'] = 'error';

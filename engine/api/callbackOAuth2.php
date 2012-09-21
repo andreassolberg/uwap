@@ -5,6 +5,9 @@
  * 
  * 		appid.uwap.org/_/api/callbackOAuth.php
  *
+ * We'll migrate to start using:
+ * 		core.uwap.org/_/callbackoauth2...
+ *
  * The user should never stop and see here, it will be redirected back to the 'redirect'
  * parameter, after the access token has been stored in the user token storage.
  * 
@@ -15,51 +18,25 @@ require_once('../../lib/autoload.php');
 
 try {
 
-	$subconfigobj = Config::getInstance();
-	$subhost = $subconfigobj->getID();
-	$subconfig = $subconfigobj->getConfig();
+
+	/*
+	 * Make sure the user is authenticated. Check the token.
+	 */
+
+	$authresponse = new So_AuthResponse($_REQUEST);
+	$stateobj = So_StorageUWAP::getStateStatic($authresponse->state);
+
+	// echo '<pre>';
+	// print_r($stateobj);
+	// echo '</pre>';
+	// exit;
+
+	$provider_id = $stateobj["provider_id"];
+	$userid = $stateobj['uwap-userid'];
+	$appid = $stateobj['appid'];
 
 
-	$parameters = null;
-	$object = null;
-	$handler = null;
-
-	// echo $_SERVER['PATH_INFO']; exit;
-
-	if (Utils::route('get', '/([a-zA-Z0-9-_]+)$', &$parameters)) {
-		$handler = $parameters[1];
-	} else {
-		throw new Exception('Missing handler parameter.');
-	}
-
-	$handlerconfig = array("type" => "plain");
-	if ($handler !== 'plain') {
-
-		if (empty($subconfig["handlers"]) || empty($subconfig["handlers"][$handler])) {
-			throw new Exception("Cannot find a authentication handler for [" . $handler . "]");
-		}
-		$handlerconfig = $subconfig["handlers"][$handler];			
-	}
-
-	
-	$store = new UWAPStore();
-	$auth = new Auth();
-
-
-	error_log("Config " . json_encode($handlerconfig));
-
-	if (isset($handlerconfig["sharedtokens"]) && $handlerconfig["sharedtokens"] === true) {
-		error_log("SHARED Tokens: true");
-		$userid = '_sharedtokens';
-	} else {
-		error_log("SHARED Tokens: false");
-		$auth->req();
-		// $userdata = $auth->getUserdata();
-		$userid = $auth->getRealUserID();
-	}
-
-
-	$client = new So_Client(new So_StorageUWAP($userid));
+	$client = new So_Client(new So_StorageUWAP($userid, $appid));
 	$client->callback($userid);
 
 
@@ -70,11 +47,5 @@ try {
 	print_r($e);
 	echo '</pre>';
 }
-
-
-
-
-
-
 
 

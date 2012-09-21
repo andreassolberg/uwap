@@ -320,9 +320,7 @@ class So_Client {
 		// $url .= '?access_token=' . $token->access_token ;
 		error_log("Getting data from url: " . $url);
 		error_log("   Using header:  " . $token->getAuthorizationHeader());
-		$result = file_get_contents($url, false, $context);
-
-
+		$result = @file_get_contents($url, false, $context);
 
 
 		if ($result === false) {
@@ -366,7 +364,7 @@ class So_Client {
 						'"invalid_token"'
 						) !== false) {
 
-						$this->wipeToken($token);
+						$this->wipeToken($provider_id, $token);
 
 						// Not facebook. Standard compliant. 
 						throw new So_ExpiredToken("Access Token seems to be expired.");
@@ -398,17 +396,13 @@ class So_Client {
 		
 		So_log::debug('Access callback page');
 		
-		
 		if (!isset($_REQUEST['code'])) {
 			throw new Exception('Did not get [code] parameter in response as expeted');
 		}
 		
 		$authresponse = new So_AuthResponse($_REQUEST);
-
 		$stateobj = $this->store->getState($authresponse->state);
 		$provider_id = $stateobj["provider_id"];
-
-
 
 
 		if (empty($provider_id)) throw new Exception("could not find provider_id in state array. Internal error. should not happen.");
@@ -431,7 +425,6 @@ class So_Client {
 		$tokenrequest->setClientCredentials($providerconfig['client_id'], $providerconfig['client_secret']);
 		
 		$tokenresponseraw = $tokenrequest->post($providerconfig['token']);
-//		echo '<pre>'; print_r($tokenresponseraw); 
 		
 		
 		$tokenresponse = new So_TokenResponse($tokenresponseraw);
@@ -439,7 +432,6 @@ class So_Client {
 		// Todo check for error response.
 
 		$accesstoken = So_AccessToken::fromObj($tokenresponseraw);
-//		echo '<pre>'; print_r($accesstoken); 
 
 		if (empty($accesstoken->scope)) {
 			if (!empty($stateobj['requestedScopes'])) {
@@ -469,12 +461,13 @@ class So_Client {
 		// print_r($providerconfig);
 		// echo 'tokenresponse';
 		// print_r($accesstoken);
+		// echo '</pre>';
 		// exit;
 		
 		$this->store->putAccessToken($provider_id, $userid, $accesstoken);
 		
 		if (!empty($stateobj['redirect_uri'])) {
-			// echo '<pre>Ready to redirect back to ' . $stateobj['redirect_uri']; exit;
+			// echo '<pre>Ready to redirect back to ' . $stateobj['redirect_uri']; exit; echo '</pre>';
 			header('Location: ' . $stateobj['redirect_uri']);
 			exit;
 		}
@@ -493,6 +486,7 @@ class So_Client {
 			'provider_id' => $providerID,
 			'requestedScopes' => $scope,
 			'client_id' => $providerconfig['client_id'],
+			'appid' => $this->store->getAppID(),
 		);
 		error_log("Storing a new state object: " . $state . "  " . json_encode($stateobj));
 		$this->store->putState($state, $stateobj);

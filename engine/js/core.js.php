@@ -12,12 +12,18 @@
 require_once(dirname(dirname(dirname(__FILE__))) . '/lib/autoload.php');
 header('Content-Type: application/javascript');
 
+$config = Config::getInstance();
+$hostname = $config->getHostname();
+
+
 ?>
 
 UWAP = {};
 UWAP.utils = {};
-UWAP.utils.hostname = '<?php echo GlobalConfig::hostname(); ?>';
+UWAP.utils.enginehostname = '<?php echo GlobalConfig::hostname(); ?>';
+UWAP.utils.hostname = '<?php echo $hostname; ?>';
 UWAP.utils.scheme = '<?php echo GlobalConfig::scheme(); ?>';
+UWAP.utils.appid = '<?php echo GlobalConfig::getAppID(); ?>';
 
 UWAP.utils.addQueryParam = function (url, key, value) {
 	var delimiter = ((url.indexOf('?') != -1) ? '&' : '?');
@@ -32,8 +38,13 @@ UWAP.utils.goAndReturn = function(url) {
 	window.location = UWAP.utils.addQueryParam(url, 'return', document.URL);	
 }
 
-UWAP.utils.getURL = function(sub, path) {
-	var base = UWAP.utils.scheme + '://' + sub + '.' + UWAP.utils.hostname + '';
+UWAP.utils.getEngineURL = function(path) {
+	var base = UWAP.utils.scheme + '://core.' + UWAP.utils.enginehostname + '';
+	return base + path;
+}
+
+UWAP.utils.getAppURL = function(path) {
+	var base = UWAP.utils.scheme + '://' + UWAP.utils.hostname + '';
 	return base + path;
 }
 
@@ -91,19 +102,23 @@ UWAP._request = function(method, url, data, options, callback, errorcallback) {
 		jso_provider: "uwap",
 		jso_allowia: true,
 		success: function(result, textStatus, jqXHR) {
-			// console.log('Response _request response reviced()');
-			// console.log(result);
+			console.log('Response _request response reviced()');
+			console.log(result);
+
 			if (result.status === 'ok') {
-				if  (typeof callback === 'function') {
+				if (typeof callback === 'function') {
 					callback(result.data);
 				}
+			} else if (result.status === 'redirect') {
+				console.log("Redirecting user to " + result.url);
+				window.location.href = result.url;
 			} else {
 				if  (typeof errorcallback === 'function') {
 					errorcallback(result.message);
 				}
 				console.error('Data request error (server side): ' + result.message);
 			}
-
+			
 		},
 		error: function(err) {
 			if  (typeof errorcallback === 'function') {
@@ -116,7 +131,7 @@ UWAP._request = function(method, url, data, options, callback, errorcallback) {
 	if (data) {
 		ar.data = JSON.stringify(data);
 		ar.processData = false;
-		ar.dataType = 'json';
+		ar.contentType = 'application/json; charset=UTF-8';
 	}
 
 	if (typeof options === 'object') {
@@ -140,13 +155,13 @@ UWAP.auth = {
 	require: function (callbackSuccess) {
 		UWAP._request(
 			'GET', 
-			UWAP.utils.getURL("core", "/api/userinfo"),
+			UWAP.utils.getEngineURL("/api/userinfo"),
 			null, null, callbackSuccess);		
 	},
 	check: function (callbackSuccess, callbackNo) {
 		UWAP._request(
 			'GET', 
-			UWAP.utils.getURL("core", "/api/userinfo"),
+			UWAP.utils.getEngineURL("/api/userinfo"),
 			null, {
 				"jso_allowia": false
 			}, callbackSuccess, callbackNo);
@@ -190,7 +205,7 @@ UWAP.auth = {
 UWAP.store = {
 	save: function(object, callback, errorcallback) {
 		UWAP._request(
-			'POST', UWAP.utils.getURL("core", "/api/store"),
+			'POST', UWAP.utils.getEngineURL("/api/store"),
 			{
 				op: "save",
 				object: object
@@ -199,7 +214,7 @@ UWAP.store = {
 	},
 	remove: function(object, callback, errorcallback) {
 		UWAP._request(
-			'POST', UWAP.utils.getURL("core", "/api/store"),
+			'POST', UWAP.utils.getEngineURL("/api/store"),
 			{
 				op: "remove",
 				object: object
@@ -208,7 +223,7 @@ UWAP.store = {
 	},
 	queryOne: function(query, callback, errorcallback) {
 		UWAP._request(
-			'POST', UWAP.utils.getURL("core", "/api/store"),
+			'POST', UWAP.utils.getEngineURL("/api/store"),
 			{
 				op: "queryOne",
 				query: query
@@ -217,7 +232,7 @@ UWAP.store = {
 	},
 	queryList: function(query, callback, errorcallback) {
 		UWAP._request(
-			'POST', UWAP.utils.getURL("core", "/api/store"),
+			'POST', UWAP.utils.getEngineURL("/api/store"),
 			{
 				op: "queryList",
 				query: query
@@ -226,6 +241,43 @@ UWAP.store = {
 	}
 };
 
+
+
+
+UWAP.data = {
+
+	get: function (url, options, callback, errorcallback) {
+
+		options = options || {};
+		options.url = url;
+		options.returnTo = window.location.href;
+
+		options.appid = UWAP.utils.appid;
+
+		UWAP._request(
+			'POST', UWAP.utils.getEngineURL("/api/rest"),
+			options, 
+			null,
+			callback, errorcallback);
+	}
+	
+};
+
+
+
+
+
+
+
+
+
+
+
+/*
+ * ------- ------- ------- ------- ------- --------
+ * The rest is used only by internal built-in apps!
+ * ------- ------- ------- ------- ------- -------- 
+ */
 
 
 UWAP.groups = {
@@ -502,39 +554,5 @@ UWAP.applisting = {
 	}
 };
 
-UWAP.data = {
-
-	get: function (url, options, callback, errorcallback) {
-
-		options = options || {};
-		options.url = url;
-		options.returnTo = window.location.href;
-
-
-
-		$.getJSON('/_/api/data.php', {args: JSON.stringify(options)}, function(result, textStatus, jqXHR) {
-			// console.log('Response data get()');
-			// console.log(result);
-			if (result.status === 'ok') {
-				callback(result.data);
-			} else if (result.status === 'redirect') {
-				window.location.href = result.url;
-			} else {
-				if  (typeof errorcallback === 'function') {
-					errorcallback(result.message);
-				}
-				// console.log('Data request error (server side): ' + result.message);
-			}
-
-		}, function(err) {
-			if  (typeof errorcallback === 'function') {
-				errorcallback(err);
-			}
-			// console.log('Data request error (client side): ' + err);
-		});
-	}
-
-	
-};
 
 

@@ -89,14 +89,14 @@ if (!$auth->authorized()) {
 
 if (!$auth->authorized()) {
 	UWAPLogger::error('auth', "User is not authorizated.");
-	echo '<h1>FAILED TO AUTHROIZE</h1><pre>';
+	echo '<h1>FAILED TO AUTHROIZE</h1><pre></pre>';
 	echo htmlspecialchars($_REQUEST['return']); 
 	exit;
 }
 
 if (!$auth->authenticated()) {
 	UWAPLogger::error('auth', "User is not authenticated.");
-	echo '<h1>FAILED TO authenticated</h1><pre>';
+	echo '<h1>FAILED TO authenticated</h1><pre></pre>';
 	echo htmlspecialchars($_REQUEST['return']); 
 	exit;
 }

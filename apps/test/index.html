@@ -50,22 +50,41 @@
 			});
 		}
 
+		function weatherresult(response) {
+			console.log("Weather response", response);
+			$("div#out").append('<pre>' + JSON.stringify(response, null, 4) + '</pre>');
+		}
+
+
 
 		$("document").ready(function() {
 
 			UWAP.auth.require(function(data) {
-				$("div#out").append("<h2>You are logged in as <i>" + data.name + "</i></h2>");
+				$("div#out").append("<h2>You are logged in as - <i>" + data.name + "</i></h2>");
+
+				// if (navigator.geolocation) {
+				// navigator.geolocation.getCurrentPosition(function(position) {
+				// 	UWAP.data.get('http://api.yr.no/weatherapi/oceanforecast/0.9/?lat=' + 
+				// 		position.coords.latitude  + ';lon=' + position.coords.longitude  + '', 
+				// 		{'xml': 1},
+				// 		weatherresult);
+				// });
+				// }
+
+				UWAP.data.get("https://graph.facebook.com/me/home", {handler: "facebook"}, function(res) {
+					console.log("facebook response", res);
+				});
 
 
-				UWAP.store.save({"name": "Andreas", "number": Math.random()}, function() {
-					console.log("Object saved");
-				});
-				UWAP.store.queryOne({"name": "Andreas"}, function(data) {
-					console.log("queryOne()", data);
-				});
-				UWAP.store.queryList({"name": "Andreas"}, function(data) {
-					console.log("queryList()", data);
-				});
+				// UWAP.store.save({"name": "Andreas", "number": Math.random()}, function() {
+				// 	console.log("Object saved");
+				// });
+				// UWAP.store.queryOne({"name": "Andreas"}, function(data) {
+				// 	console.log("queryOne()", data);
+				// });
+				// UWAP.store.queryList({"name": "Andreas"}, function(data) {
+				// 	console.log("queryList()", data);
+				// });
 
 
 			}, function(response) {

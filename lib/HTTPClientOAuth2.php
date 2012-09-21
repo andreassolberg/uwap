@@ -9,18 +9,18 @@ class HTTPClientOAuth2 extends HTTPClient {
 
 		
 		$store = new UWAPStore();
-		$auth = new Auth();
 
-		error_log("Config " . json_encode($this->config));
-		if (isset($this->config["sharedtokens"]) && $this->config["sharedtokens"] === true) {
-			error_log("SHARED Tokens: true");
-			$userid = '_sharedtokens';
-		} else {
-			error_log("SHARED Tokens: false");
-			$auth->req();
-			// $userdata = $auth->getUserdata();
-			$userid = $auth->getRealUserID();
-		}
+		// error_log("Config " . json_encode($this->config));
+		// if (isset($this->config["sharedtokens"]) && $this->config["sharedtokens"] === true) {
+		// 	error_log("SHARED Tokens: true");
+		// 	$userid = '_sharedtokens';
+		// } else {
+			// error_log("SHARED Tokens: false");
+			if (empty($this->userid)) {
+				throw new Exception("REST handler requires an user authenticated token to perform operation.");
+			}
+			$userid = $this->userid;
+		// }
 		$makeMoreAttempts = true;
 
 
@@ -29,8 +29,7 @@ class HTTPClientOAuth2 extends HTTPClient {
 
 
 			// OAuth 2.0 library
-			$client = new So_Client(new So_StorageUWAP($userid));
-			// $token = $client->getToken($options["handler"], 'andreas');
+			$client = new So_Client(new So_StorageUWAP($userid, $this->appid));
 
 			try {
 
