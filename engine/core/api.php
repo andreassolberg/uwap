@@ -108,7 +108,6 @@ try {
 	} else if (Utils::route('post', '^/store$', &$qs, &$parameters)) {
 
 		$oauth = new OAuth();
-
 		$token = $oauth->getProvidedToken();
 
 		if (!empty($parameters['appid'])) {
@@ -156,6 +155,40 @@ try {
 				$response['data'] = $store->queryListUser("appdata-" . $targetapp, $userid, $groups, $parameters['query']);
 				break;
 
+		}
+
+
+
+
+
+	/**
+	 *  The feed API.
+	 */
+	} else if (Utils::route(false, '^/feed', &$qs, &$parameters)) {
+
+		$oauth = new OAuth();
+		$token = $oauth->check(null, array('feedread'));
+		$userid = $token->userdata['userid'];
+		$groups = $token->userdata['groups'];
+
+		$feed = new Feed($userid, $groups);
+
+		if (Utils::route('get', '^/feed', &$qs, &$parameters)) {
+
+			$response['data'] = $feed->read();
+
+		} else if (Utils::route('post', '^/feed/post$', &$qs, &$args)) {
+
+			if (empty($args['msg'])) throw new Exception("missing required [msg] property");
+			$msg = $args['msg'];
+
+			$groups = array();
+			if (!empty($msg['groups'])) $groups = $msg['groups']; unset($msg['groups']);
+			$feed->post($msg, $groups);
+
+		} else {
+
+			throw new Exception('Invalid request');
 		}
 
 

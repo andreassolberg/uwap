@@ -15,7 +15,7 @@ class UWAPStore {
 
 	public function getStats($collection) {
 		$result = $this->db->execute('db["appdata-' . $collection . '"].stats()');
-		// echo '<pre>'; print_r($result); exit;
+		// echo '<pre>'; print_r($result); exit; echo '</pre>';
 		if (!$result['ok']) return null;
 		if (!$result['retval']['ok']) return null;
 		return $result['retval'];
@@ -30,7 +30,6 @@ class UWAPStore {
 	// the field field1 with value2. This operator will add the specified field or fields if they do not exist in 
 	// this document or replace the existing value of the specified field(s) if they already exist.
 	public function update($collection, $userid, $criteria, $updates) {
-
 
 		UWAPLogger::debug('store', 'Updating an object in [' . $collection . ']', array(
 			'collection' => $collection,
@@ -67,7 +66,9 @@ class UWAPStore {
 			$obj["expires"] = time() + $expiresin;
 		}
 
+		// echo 'store'; print_r($obj);
 		// error_log("store() " . var_export($obj, true));
+
 		// try {
 		$this->db->{$collection}->save($obj, array("safe" => true));	
 
@@ -150,6 +151,7 @@ class UWAPStore {
 		} else {
 			$criteria['$or'] = $this->getACL($userid, $groups);
 		}
+		// echo 'query'; print_r($criteria); exit;
 		if ($collection !== 'log') {
 			UWAPLogger::debug('store', 'Query list userobject in [' . $collection . ']', array(
 				'collection' => $collection,

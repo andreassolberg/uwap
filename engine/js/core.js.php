@@ -237,6 +237,22 @@ UWAP.store = {
 	}
 };
 
+UWAP.feed = {
+	post: function(object, callback, errorcallback) {
+		UWAP._request(
+			'POST', UWAP.utils.getEngineURL("/api/feed/post"),
+			{
+				msg: object
+			}, 
+			null, callback, errorcallback);
+	},
+	read: function(object, callback, errorcallback) {
+		UWAP._request(
+			'GET', UWAP.utils.getEngineURL("/api/feed"),
+			null, 
+			null, callback, errorcallback);
+	}
+};
 
 
 UWAP.data = {

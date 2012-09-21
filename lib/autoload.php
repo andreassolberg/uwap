@@ -8,6 +8,7 @@ require_once($base . '/Utils.php');
 require_once($base . '/Config.php');
 require_once($base . '/GlobalConfig.php');
 require_once($base . '/Auth.php');
+require_once($base . '/Feed.php');
 require_once($base . '/AuthBase.php');
 require_once($base . '/OAuth.php');
 require_once($base . '/GroupManager.php');
