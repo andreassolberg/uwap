@@ -57,7 +57,6 @@ UWAP.messenger.send = function(msg) {
 	} else {
 		console.error("Could not deliver message from iframe, because listener was not setup.");
 	}
-
 };
 
 
@@ -65,17 +64,14 @@ var redirect_uri = window.location.protocol + '//' + window.location.hostname +
 	window.location.pathname;
 
 
-console.log("REdirect URI is " + redirect_uri);
+// console.log("Redirect URI is " + redirect_uri);
+
+var client_id = 'app_' + UWAP.utils.appid;
 
 jso_configure({
 	"uwap": {
-		client_id: "app_test",
-		authorization: "http://core.app.bridge.uninett.no/api/oauth/authorization",
-		redirect_uri: redirect_uri,
-	},
-	"uwapvoot": {
-		client_id: "voottest1",
-		authorization: "http://core.app.bridge.uninett.no/api/oauth/authorization",
+		client_id: client_id,
+		authorization: UWAP.utils.getEngineURL('/api/oauth/authorization'),
 		redirect_uri: redirect_uri
 	}
 });
@@ -240,7 +236,6 @@ UWAP.store = {
 			null, callback, errorcallback);
 	}
 };
-
 
 
 
