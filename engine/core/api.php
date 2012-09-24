@@ -9,14 +9,6 @@
 
 require_once('../../lib/autoload.php');
 
-// UWAPLogger::info('auth', 'User is accessing core authentication endpint core.uwap.org/login .');
-
-// if (empty($_REQUEST['app'])) {
-// 	UWAPLogger::error('auth', "missing required query string parameter: app");	
-// 	throw new Exception("missing required query string parameter: app");
-// }
-// $auth = new Auth($app);
-
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true");
@@ -56,6 +48,15 @@ try {
 		}
 
 
+
+	} else if  (Utils::route('get', '^/updateme$', &$parameters)) {
+
+		$auth = new AuthBase();
+		$auth->authenticate();
+		$res = $auth->storeUser();
+
+		header('Content-Type: application/json; chat-set: utf-8');
+		echo json_encode(array('status' => 'ok', 'message' => 'updated user data', 'result' => $res));
 
 
 	/**

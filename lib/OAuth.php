@@ -42,6 +42,9 @@ class OAuth {
 			// TODO Add support for deciding which scope to use...
 			// TODO additional verification that the client_id is not modified by the user.
 			$this->server->setAuthorization($_REQUEST["client_id"], $this->auth->getRealUserID(), $scopes);
+
+			$this->auth->storeUser();
+
 		}
 		$return = $_REQUEST['return'];
 		SimpleSAML_Utilities::redirect($return);
@@ -70,6 +73,12 @@ class OAuth {
 		$userid = $this->auth->getRealUserID();
 		$userdata = $this->auth->getUserdata();
 
+		$search = $this->auth->getUserBasic($userid);
+		if(!empty($search) && !empty($search['a'])) {
+			$userdata['a'] = $search['a'];
+		}
+
+
 		// TODO: Do we need to suport passive requests??
 		// TODO: Check first clients scopes, then check authorization consent.
 
@@ -77,7 +86,7 @@ class OAuth {
 
 
 		try {
-			$this->server->authorization($userid, $userdata);	
+			$this->server->authorization($userid, $userdata);
 		} catch(So_AuthorizationRequired $e) {
 
 

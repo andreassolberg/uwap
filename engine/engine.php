@@ -17,7 +17,6 @@ require_once('../lib/autoload.php');
 
 if (Config::getValue('type') === 'app') {
 
-	
 
 	try {
 
@@ -50,7 +49,9 @@ if (Config::getValue('type') === 'app') {
 
 
 } else {
+
 	UWAPLogger::error('engine', 'Trying to access an WebApp of unknown type.');
 	throw new Exception('Unknown type.');
+	
 }
 

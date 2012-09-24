@@ -6,6 +6,8 @@ class AuthBase {
 	protected $config;
 	protected $as;
 
+	protected static $basicusers = array();
+
 	public function __construct() {
 
 		$this->store = new UWAPStore();
@@ -25,6 +27,52 @@ class AuthBase {
 
 	 */
 
+	function getUser($a) {
+		// echo "getUser(" . $a . ")";
+		$query = array('a' => $a); 
+		$search = $this->store->queryOne('users', array('a' => $a));
+		if (empty($search)) return false;
+
+		return $search;
+	}
+
+	function getUserBasic($userid) {
+
+		if (!empty(self::$basicusers[$userid])) {
+			return self::$basicusers[$userid];
+		}
+
+		$query = array('userid' => $userid);
+		$search = $this->store->queryOne('users', $query, array('name', 'mail', 'a'));
+		if (empty($search)) return false;
+
+		self::$basicusers[$userid] = $search;
+
+		return $search;
+	}
+
+	function storeUser() {
+
+		$user = $this->getUserdata();
+
+		if (empty($user['userid'])) throw new Exception('Missing user attribute [userid]');
+
+		$search = $this->store->queryOne('users', array('userid' => $user['userid']));
+		if (!empty($search)) return false;
+
+		$user['a'] = Utils::genID();
+		$this->store->store('users', null, $user);
+		return true;
+
+		// $data = array(
+		// 	'name' => $attributes['displayName'][0],	
+		// 	'userid' => $attributes['eduPersonPrincipalName'][0],
+		// 	'mail' => $attributes['mail'][0],
+		// 	'groups' => $this->getGroups(),
+		// 	photo
+		// );
+		
+	}
 
 
 	/**
@@ -211,8 +259,12 @@ class AuthBase {
 			'name' => $attributes['displayName'][0],	
 			'userid' => $attributes['eduPersonPrincipalName'][0],
 			'mail' => $attributes['mail'][0],
-			'groups' => $this->getGroups(),
+			'groups' => $this->getGroups()
 		);
+
+		if (!empty($attributes['jpegPhoto'])) {
+			$data['photo'] = $attributes['jpegPhoto'][0];
+		}
 
 		if (isset($appid)) {
 			$salt = GlobalConfig::getValue('salt', null, true);
