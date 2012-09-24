@@ -5,23 +5,15 @@ define([
 	$("document").ready(function() {
 
 
-		var App = function(el) {
+		var App = function(el, user) {
 			var that = this;
 			this.el = el;
-			this.groups = {};
+			this.user = user;
+			this.groups = user.groups;
 			$("div#post").on("click", ".actPost", $.proxy(this.postBox, this));
 			this.load();
 		}
-		App.prototype.setgroups = function(groups) {
-			console.log("groups", groups);
-			this.groups = groups;
-			$("div#post div.groups").empty();
-			$.each(groups, function(i, item) {
-				$("div#post div.groups").append('<label class="checkbox inline"><input type="checkbox" id="grp_' + i + '" value="' + i + '">' + item + '</label>');
-				$("ul#navfilter").append('<li><a id="entr_' + i + '" href="#"><span class="icon icon-folder-open"></span> ' + item + '</a></li>');
-			});
 
-		}
 		App.prototype.postBox = function() {
 			var str = $("div#post textarea").val();
 			var msg = {
@@ -81,8 +73,8 @@ define([
 		UWAP.auth.require(function(user) {
 
 			
-			var app = new App($("body"))
-			app.setgroups(user.groups);
+			var app = new App($("body"), user);
+			
 
 		});
 

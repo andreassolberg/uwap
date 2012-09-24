@@ -15,11 +15,13 @@
 		<style type="text/css">
 
 			body {
-				padding-top: 10px;
+				padding: 0px;
+				margin: 0px;
+				
 			}
 
 			#feed {
-				margin-top: 10px;
+				margin-top: 0px;
 				-webkit-box-shadow: rgb(255, 255, 255) 0px 0px 1px 1px inset, rgba(0, 0, 0, 0.296875) 0px 1px 5px 0px;
 				background-color: 
 					rgb(245, 245, 245);
@@ -47,8 +49,6 @@
 				border-top-right-radius: 5px;
 				border-top-style: none;
 				border-top-width: 0px;
-
-
 			}
 			#feed .item p { margin: 0px; padding: 0px; }
 			#feed .item {
@@ -92,11 +92,6 @@
 				max-width: 48px;
 			}
 
-			img.thumb {
-				max-width: 200px;
-				border: 1px solid #444;
-			}
-
 
 		</style>
 
@@ -111,11 +106,30 @@
 
 		<!-- data-main attribute tells require.js to load
 		scripts/main.js after require.js loads. -->
-		<script data-main="js/main" src="js/require.js"></script>
+		<script data-main="js/feedapp" src="js/require.js"></script>
 
 		
 		<script src="js/jquery.tmpl.js" type="text/javascript" charset="utf-8"></script>
 
+
+		<script id="shareTmpl" type="text/x-jquery-tmpl">
+			<div class="item">
+				{{if user}}
+					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
+				{{/if}}
+				<p>${message}</p>
+				<div class="footer">
+					{{if user}}
+						<span><i class="icon-user"></i> ${user.name}</span>
+					{{/if}}
+					
+					<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}">now</span></span>
+					{{each groupnames}}
+				        <span class="label">${$value}</span>
+				    {{/each}}
+				</p>
+			</div>
+		</script>
 
 
 		<script id="itemTmpl" type="text/x-jquery-tmpl">
@@ -123,28 +137,13 @@
 				{{if user}}
 					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
 				{{/if}}
-
-					{{if title}}
-						<h4>${title}</h4>
-					{{/if}}
-
-					<p>${message}</p>
-
-					{{if thumbnail}}
-						<div><img class="thumb" src="${thumbnail}" /></div>
-					{{/if}}
-
-					{{if links}}
-						{{each links}}
-					        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="${$value.href}">${$value.text}</a></span> 
-					    {{/each}}
-					{{/if}}
+				<p>${message}</p>
 				<div class="footer">
 					{{if user}}
 						<span><i class=" icon-user"></i> ${user.name}</span>
 					{{/if}}
 					
-					<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
+					<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}">now</span></span>
 					{{each groupnames}}
 				        <span class="label">${$value}</span>
 				    {{/each}}
@@ -157,47 +156,18 @@
 
 	<body>
 
-
-	<div class="container-fluid">
-
-		<div class="row-fluid">
-
-			<div  class="span9">
-
-				<div id="post">
-					<textarea style="width: 100%"></textarea>
-					<button class="btn btn-primary actPost">Post</button>
-					<div class="groups"></div>
-				</div>
-				<div id="feed">
-
-				</div>
-
-			</div>
-
-			<div id="sidebar" class="span3">
-
-				<ul id="navfilter" class="nav nav-list">
-					<li class="nav-header">UWAP</li>
-					<li class=""><a href="#"><i class=" icon-globe"></i> Public feed</a></li>
-					<li class="active"><a href="#"><i class=" icon-home"></i> Newsfeed</a></li>
-					<li class=""><a href="#"><i class=" icon-user"></i> Your entries</a></li>
-
-				</ul>
-
-				<h3>Upcoming</h3>
-
-				<p>Todo...</p>
-			</div>
+		<div id="feed">
 
 		</div>
 
+		<div id="noauth" style="display: none; padding: 3em">
 
+			<p>You need to authorize this widget in order to share.</p>
 
+			<button style="margin: 2px" class="btn btn-mini btn-primary actPost">Authorize</button>
 
-	 </div><!--/.fluid-container-->
+		</div>
 
-	 <div id="modalContainer"></div>
 
 	 <!-- Le javascript
 	 ================================================== -->
