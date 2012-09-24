@@ -49,7 +49,24 @@ class OAuth {
 	}
 
 	function authorization() {
-		$this->auth->authenticate();
+
+		$passive = false;
+		if ($_REQUEST["passive"] && $_REQUEST["passive"] === 'true') $passive = true;
+
+		if (!empty($_REQUEST['SimpleSAML_Auth_State_exceptionId'])) {
+
+			// echo "Failed because user was not authenticated..."; exit;
+
+			$this->server->authorizationFailed('access_denied', 'https://core.uwap.org/oauth/noPassiveAuthentication', 'Unable to perform passive authentication');
+
+
+		} else if ($passive) {
+			// echo "about to passive auth"; exit;
+			$this->auth->authenticatePassive();
+		} else {
+			$this->auth->authenticate();	
+		}
+
 		$userid = $this->auth->getRealUserID();
 		$userdata = $this->auth->getUserdata();
 
@@ -63,6 +80,10 @@ class OAuth {
 			$this->server->authorization($userid, $userdata);	
 		} catch(So_AuthorizationRequired $e) {
 
+
+			if ($passive) {
+				$this->server->authorizationFailed('access_denied', 'https://core.uwap.org/oauth/noPassiveAuthorization', 'Unable to perform passive authorization');	
+			}
 
 			$postdata = array();
 			// $postdata = $_REQUEST;

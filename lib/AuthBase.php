@@ -158,10 +158,20 @@ class AuthBase {
 
 	public function authenticatePassive() {
 
-		$this->as->login(array(
-            'isPassive' => true,
-            'ErrorURL' => SimpleSAML_Utilities::selfURL(),
-        ));
+		if (!$this->as->isAuthenticated()) {
+			error_log(' > authenticatePassive() NOT AUTH');
+		} else {
+			error_log(' > authenticatePassive()     AUTH ');
+		}
+
+		if (!$this->as->isAuthenticated()) {
+			$this->as->login(array(
+	            'isPassive' => true,
+	            'ErrorURL' => SimpleSAML_Utilities::addURLparameter(SimpleSAML_Utilities::selfURL(), array(
+	            	"error" => 1,
+	            )),
+	        ));
+		}
 
 	}
 

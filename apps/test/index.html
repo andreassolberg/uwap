@@ -24,7 +24,7 @@
 	</style>
 
 	<!-- JQuery hosted by Google -->
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
 	<!-- Core API to UNINETT WebApp Park -->
 	<script type="text/javascript" src="/_/js/oauth.js"></script>
 	<script type="text/javascript" src="/_/js/core.js"></script>
@@ -59,8 +59,14 @@
 
 		$("document").ready(function() {
 
-			UWAP.auth.require(function(data) {
-				$("div#out").append("<h2>You are logged in as - <i>" + data.name + "</i></h2>");
+			$("input#smt").on("click", function() {
+				UWAP.auth.require(function(data) {
+					$("div#out").append("<h2>You are logged in (required check) as - <i>" + data.name + "</i></h2>");
+				});
+			});
+
+			UWAP.auth.checkPassive(function(data) {
+				$("div#out").append("<h2>You are logged in (passive check) as - <i>" + data.name + "</i></h2>");
 
 				// if (navigator.geolocation) {
 				// navigator.geolocation.getCurrentPosition(function(position) {
@@ -71,9 +77,9 @@
 				// });
 				// }
 
-				UWAP.data.get("https://graph.facebook.com/me/home", {handler: "facebook"}, function(res) {
-					console.log("facebook response", res);
-				});
+				// UWAP.data.get("https://graph.facebook.com/me/home", {handler: "facebook"}, function(res) {
+				// 	console.log("facebook response", res);
+				// });
 
 
 				// UWAP.store.save({"name": "Andreas", "number": Math.random()}, function() {

@@ -62,7 +62,7 @@ UWAP.messenger.send = function(msg) {
 
 var redirect_uri = window.location.protocol + '//' + window.location.hostname + 
 	window.location.pathname;
-
+var passive_redirect_uri = window.location.protocol + '//' + window.location.hostname + '/_/passiveResponse';
 
 // console.log("Redirect URI is " + redirect_uri);
 
@@ -72,9 +72,10 @@ jso_configure({
 	"uwap": {
 		client_id: client_id,
 		authorization: UWAP.utils.getEngineURL('/api/oauth/authorization'),
-		redirect_uri: redirect_uri
+		redirect_uri: redirect_uri,
+		passive_redirect_uri: passive_redirect_uri
 	}
-});
+}, {debug: 1});
 
 
 
@@ -165,34 +166,51 @@ UWAP.auth = {
 
 	// TODO: Upgrade to support OAUTH
 	checkPassive: function (callbackSuccess, callbackNo) {
+		console.log("checkPassive()");
+		UWAP._request(
+			'GET', 
+			UWAP.utils.getEngineURL("/api/userinfo"),
+			null, {
+				"jso_allowia": false
+			}, callbackSuccess, function() {
 
-		$.getJSON('/_/api/auth.php', function(data, textStatus, jqXHR) {
-			// console.log('Response auth check()');
-			// console.log(data);
-			if (data.status === 'ok') {
-				callbackSuccess(data.user);
-			} else {
-				
-				UWAP.messenger.receiver = function(msg) {
+				console.log("callbackFailed passive");
 
-					if (msg.type === "passiveAuth" && msg.status === "success") {
+				jso_ensureTokensPassive({"uwap": false}, function() {
+					console.log("Callback success from jso_ensureTokensPassive() ")
 
-						UWAP.auth.check(callbackSuccess, callbackNo)
+					UWAP._request(
+						'GET', 
+						UWAP.utils.getEngineURL("/api/userinfo"),
+						null, {
+							"jso_allowia": false
+						}, callbackSuccess, callbackNo);
 
-					} else {
-						callbackNo();
-					}
+				}, function(error) {
+					console.log("Callback failed from jso_ensureTokensPassive() ");
+					callbackNo(error);
+				});
 
-					// console.log("Received response. Juhu ", msg);
-					delete UWAP.messenger.receiver;
-					// $("body iframe.uwap_messenger_iframe").remove();
 
-				};
-				$("body").prepend('<iframe class="uwap_messenger_iframe" style="display: none" src="/_/login?passive=true"></iframe>');
+				// UWAP.messenger.receiver = function(msg) {
 
-			}
+				// 	if (msg.type === "passiveAuth" && msg.status === "success") {
 
-		});
+				// 		UWAP.auth.check(callbackSuccess, callbackNo)
+
+				// 	} else {
+				// 		callbackNo();
+				// 	}
+
+				// 	// console.log("Received response. Juhu ", msg);
+				// 	delete UWAP.messenger.receiver;
+				// 	// $("body iframe.uwap_messenger_iframe").remove();
+
+				// };
+				// $("body").prepend('<iframe class="uwap_messenger_iframe" style="display: none" src="/_/login?passive=true"></iframe>');
+
+			});
+
 
 	}
 

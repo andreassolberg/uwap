@@ -107,24 +107,24 @@ class Auth {
 		return true;
 	}
 
-	public function checkPassive() {
-		if (!$this->authenticated()) {
-			// If a passive authnrequest was attempted less than one minute ago, return false
-			if (isset($_SESSION['passiveAttempt']) && $_SESSION['passiveAttempt'] > (time() - 60)) {
-				return false;
-			} else {
-				$_SESSION['passiveAttempt'] = time();
+	// public function checkPassive() {
+	// 	if (!$this->authenticated()) {
+	// 		// If a passive authnrequest was attempted less than one minute ago, return false
+	// 		if (isset($_SESSION['passiveAttempt']) && $_SESSION['passiveAttempt'] > (time() - 60)) {
+	// 			return false;
+	// 		} else {
+	// 			$_SESSION['passiveAttempt'] = time();
 
-				SimpleSAML_Utilities::redirect(GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/login', array(
-					'return' => $return,
-					'app' => $this->config->getID()
-				));
+	// 			SimpleSAML_Utilities::redirect(GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/login', array(
+	// 				'return' => $return,
+	// 				'app' => $this->config->getID()
+	// 			));
 
-			}
-		}
-		if (!$this->authorized()) return false;
-		return true;
-	}
+	// 		}
+	// 	}
+	// 	if (!$this->authorized()) return false;
+	// 	return true;
+	// }
 
 	public function authenticate() {
 		$this->as->requireAuth();
@@ -132,10 +132,21 @@ class Auth {
 
 	public function authenticatePassive() {
 
-		$this->as->login(array(
-            'isPassive' => true,
-            'ErrorURL' => SimpleSAML_Utilities::selfURL(),
-        ));
+		
+		if (!$this->as->isAuthenticated()) {
+			error_log(' > authenticatePassive() NOT AUTH');
+		} else {
+			error_log(' > authenticatePassive()     AUTH ');
+		}
+
+		if (!$this->as->isAuthenticated()) {
+			$this->as->login(array(
+	            'isPassive' => true,
+	            'ErrorURL' => SimpleSAML_Utilities::addURLparameter(SimpleSAML_Utilities::selfURL(), array(
+	            	"error" => 1,
+	            )),
+	        ));
+		}
 
 	}
 

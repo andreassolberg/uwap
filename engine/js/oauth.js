@@ -272,7 +272,7 @@
 	 * childbrowser when the jso context is not receiving the response,
 	 * instead the response is received on a child browser.
 	 */
-	exp.jso_checkfortoken = function(providerID, url, callback) {
+	exp.jso_checkfortoken = function(providerID, url, callback, callbackError) {
 		var 
 			atoken,
 			h = window.location.hash,
@@ -280,7 +280,7 @@
 			state,
 			co;
 
-		log("jso_checkfortoken(" + providerID + ")");
+		log("jso_checkfortoken(" + providerID + ") " + url);
 
 		// If a url is provided 
 		if (url) {
@@ -294,8 +294,15 @@
 		 * Start with checking if there is a token in the hash
 		 */
 		if (h.length < 2) return;
-		if (h.indexOf("access_token") === -1) return;
 		h = h.substring(1);
+
+		if (h.indexOf("error") !== -1) {
+			error = parseQueryString(h);
+			callbackError(error);
+			return;
+		}
+
+		if (h.indexOf("access_token") === -1) return;
 		atoken = parseQueryString(h);
 
 		if (atoken.state) {
@@ -440,6 +447,127 @@
 
 	};
 
+
+	var jso_get_authrequest_url = function(providerid, scopes, callback, passive) {
+
+		var 
+			state,
+			request,
+			authurl,
+			co;
+
+
+		if (!config[providerid]) throw "Could not find configuration for provider " + providerid;
+		co = config[providerid];
+
+		log("About to send an authorization request to [" + providerid + "]. Config:")
+		log("Configuration", co);
+
+		state = uuid();
+		request = {
+			"response_type": "token"
+		};
+		request.state = state;
+
+		if (callback && typeof callback === 'function') {
+			internalStates[state] = callback;
+		}
+
+
+		if (co["redirect_uri"]) {
+			request["redirect_uri"] = co["redirect_uri"];
+		}
+		if (passive && co["passive_redirect_uri"]) {
+			request["redirect_uri"] = co["passive_redirect_uri"];
+		}
+		if (co["client_id"]) {
+			request["client_id"] = co["client_id"];
+		}
+		if (scopes) {
+			request["scope"] = scopes.join(" ");
+		}
+		if (passive) {
+			request["passive"] = "true";
+		}
+
+		authurl = encodeURL(co.authorization, request);
+
+		// We'd like to cache the hash for not loosing Application state. 
+		// With the implciit grant flow, the hash will be replaced with the access
+		// token when we return after authorization.
+		if (window.location.hash) {
+			request["restoreHash"] = window.location.hash;
+		}
+		request["providerID"] = providerid;
+		if (scopes) {
+			request["scopes"] = scopes;
+		}
+
+
+		log("Saving state [" + state+ "]");
+		log(JSON.parse(JSON.stringify(request)));
+
+		api_storage.saveState(state, request);
+		return authurl;
+	};
+
+	var messenger = {};
+	messenger.send = function(msg) {
+		if (messenger.receiver) {
+			messenger.receiver(msg);
+		} else {
+			console.error("Could not deliver message from iframe, because listener was not setup.");
+		}
+	};
+
+	exp.jso_ensureTokensPassive = function (ensure, callbackSuccess, callbackNo) {
+		var providerid, scopes, token;
+		for(providerid in ensure) {
+			scopes = undefined;
+			if (ensure[providerid]) scopes = ensure[providerid];
+			token = api_storage.getToken(providerid, scopes);
+
+			log("Ensure token for provider [" + providerid + "] ");
+			log(token);
+
+			if (token === null) {
+				// jso_authrequest(providerid, scopes);
+				var aru = jso_get_authrequest_url(providerid, scopes, null, true);
+
+				log("Oauth url was: ", aru);
+
+				messenger.receiver = function(msg) {
+
+					if (msg.type === "passiveAuth" && msg.status === "success") {
+
+						UWAP.auth.check(callbackSuccess, callbackNo)
+
+					} else {
+						callbackNo();
+					}
+					delete UWAP.messenger.receiver;
+
+				};
+				var i = $('<iframe class="jso_messenger_iframe" style="display: none;" src="' + aru + '"></iframe>').on('load', function() {
+					jso_checkfortoken(providerid, this.contentWindow.location.href, function() {
+						console.log("Success callback on OAuth response recevied.");
+						callbackSuccess();
+					}, function(error) {
+						console.log("Error callback on OAuth response recevied.", error);
+						callbackNo(error);
+					});
+					// console.log("onload on iframe", this.contentWindow.location.href);
+				});
+				$("body").prepend(i);
+
+			}
+
+
+		}
+
+		return true;
+	}
+
 	exp.jso_ensureTokens = function (ensure) {
 		var providerid, scopes, token;
 		for(providerid in ensure) {
@@ -454,7 +582,6 @@
 				jso_authrequest(providerid, scopes);
 			}
 		}
-
 
 		return true;
 	}

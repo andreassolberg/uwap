@@ -656,6 +656,26 @@ class So_Server {
 	}
 
 
+	public function authorizationFailed($error, $url, $descr) {
+		$request = new So_AuthRequest($_REQUEST);
+		$clientconfig = $this->store->getClient($request->client_id);
+		$url = $this->validateRedirectURI($request, $clientconfig);
+
+		$msg = array(
+			'error' => $error,
+			'error_description' => $url,
+			'error_uri' => $descr
+		);
+		// print_r($msg); 
+
+		$tokenresponse = new So_ErrorResponse($msg);
+		if ($request->state) {
+			$tokenresponse->state = $request->state;
+		}
+		
+		$tokenresponse->sendRedirect($url, true);
+	}
+
 	public function authorization($userid, $userdata = null) {
 		
 		$request = new So_AuthRequest($_REQUEST);
@@ -1261,7 +1281,7 @@ class So_ErrorResponse extends So_Response {
 	function __construct($message) {
 		parent::__construct($message);
 		$this->error 				= So_Utils::prequire($message, 'error', array(
-			'invalid_request', 'invalid_client', 'invalid_grant', 'unauthorized_client', 'unsupported_grant_type', 'invalid_scope'
+			'invalid_request', 'access_denied', 'invalid_client', 'invalid_grant', 'unauthorized_client', 'unsupported_grant_type', 'invalid_scope'
 		));
 		$this->error_description	= So_Utils::optional($message, 'error_description');
 		$this->error_uri			= So_Utils::optional($message, 'error_uri');

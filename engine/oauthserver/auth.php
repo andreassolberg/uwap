@@ -14,6 +14,9 @@ require_once('../../lib/autoload.php');
 try {
 	$config = new Config();
 
+	$passive = false;
+	if ($_REQUEST["passive"] && $_REQUEST["passive"] === 'true') $passive = true;
+
 	error_log('auth.php endpoint');
 	
 	$storage = new So_StorageServerUWAP();
@@ -27,6 +30,11 @@ try {
 
 	$auth = new Auth();
 	if (!$auth->check()) {
+		// SimpleSAML_Utilities::redirect("https://" . Config::hostname() . "/login", array(
+		// 	'return' => SimpleSAML_Utilities::selfURL(),
+		// 	"app" => $config->getID()
+		// ));	
+		print_r("about to login to"); print_r("https://" . Config::hostname() . "/login"); exit;
 		SimpleSAML_Utilities::redirect("https://" . Config::hostname() . "/login", array(
 			'return' => SimpleSAML_Utilities::selfURL(),
 			"app" => $config->getID()
@@ -94,12 +102,14 @@ try {
 
 		// echo '<pre>authenticated:';
 		// echo(var_export($auth->authenticated(), true));
+		// echo '</pre>';
 		// exit;
 
 		// print_r($data);
 
 		// echo "About to show authorization grant page...<pre>";
 		// print_r($postdata);
+		// echo '</pre>';
 		// exit;
 
 
