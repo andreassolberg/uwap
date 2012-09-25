@@ -92,7 +92,8 @@ class UWAPLogger {
 		// 	// $obj['_stacktrace'] = $debug; Generates a lot of data...	
 		// }
 
-		$this->store->store('log', null, $logmessage);
+		error_log("LOG" . json_encode($logmessage));
+		// $this->store->store('log', null, $logmessage);
 	}
 
 
