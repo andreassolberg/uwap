@@ -1,13 +1,13 @@
 <?php
 
-
 class Feed {
-	protected $store, $userid, $groups;
 
+	protected $store, $clientid, $userid, $groups;
 
-	public function __construct($userid, $groups) {
+	public function __construct($userid = null, $clientid = null, $groups = array()) {
 
 		$this->userid = $userid;
+		$this->clientid = $clientid;
 		$this->groups = $groups;
 		$this->store = new UWAPStore();
 
@@ -18,7 +18,12 @@ class Feed {
 		);
 		// echo 'groups'; print_r($this->groups); exit;
 		$auth = new AuthBase();
-		$list = $this->store->queryListUser("feed", $this->userid, $this->groups, $query);
+		if ($this->userid) {
+			$list = $this->store->queryListUser("feed", $this->userid, $this->groups, $query, array(), array('sort' => array('ts' => 1)));	
+		} else {
+			$list = $this->store->queryListClient("feed", $this->clientid, $this->groups, $query, array(), array('sort' => array('ts' => 1)));	
+		}
+		
 		if (empty($list)) return array();
 		foreach($list AS $k => $v) {
 			if (!empty($v['uwap-acl-read'])) {
@@ -26,6 +31,9 @@ class Feed {
 			}
 			if (!empty($v['uwap-userid'])) {
 				$list[$k]['user'] = $auth->getUserBasic($v['uwap-userid']);
+			}
+			if (!empty($v['uwap-clientid'])) {
+				$list[$k]['client'] = $auth->getClientBasic($v['uwap-clientid']);
 			}
 		}
 		return $list;
@@ -36,7 +44,21 @@ class Feed {
 		if (!is_array($groups)) throw new Exception("Provided groups must be an array");
 		$msg['uwap-acl-read'] = $groups;
 		// unset($groups);
-		$msg['ts'] = time();
+
+		if (!empty($msg['oid'])) {
+			if ($this->store->queryOne('feed', array('oid' => $msg['oid']))) {
+				return false;
+			}
+		}
+
+		if (empty($msg['ts'])) {
+			$msg['ts'] = time();	
+		}
+		
+		if (!empty($this->clientid)) {
+			$msg['uwap-clientid'] = $this->clientid;
+		}
+
 		return $this->store->store("feed", $this->userid, $msg);
 		// store($collection, $userid = null, $obj, $expiresin = null) {
 	}
