@@ -753,6 +753,8 @@ class So_Server {
 	}
 	
 	public function token() {
+
+
 		$tokenrequest = new So_TokenRequest($_REQUEST);
 		$tokenrequest->parseServer($_SERVER);
 
@@ -772,6 +774,38 @@ class So_Server {
 			
 			$tokenresponse->sendBody();
 			
+		} else if ($tokenrequest->grant_type === 'client_credentials') {
+
+			$clientconfig = $this->store->getClient($tokenrequest->client_id);
+
+			if ($clientconfig['client_id'] !== $_SERVER['PHP_AUTH_USER']) {
+				throw new So_Exception('invalid_grant', 'Invalid client_id.');
+			}
+			if ($clientconfig['client_secret'] !== $_SERVER['PHP_AUTH_PW']) {
+				throw new So_Exception('invalid_grant', 'Invalid secret.');
+			}
+
+			$expiresin = time() + 3600;
+			$accesstoken = So_AccessToken::generate($clientconfig['client_id'], null, null, $clientconfig['scopes'], $expiresin);
+			$accesstoken->clientdata = $clientconfig;
+
+			// error_log("AT: " . json_encode($accesstoken)); 
+
+			$this->store->putAccessToken($clientconfig['client_id'], null, $accesstoken);
+			error_log('Ive generated a token: ' . var_export($accesstoken->getToken(), true));
+			$tokenresponse = new So_TokenResponse($accesstoken->getToken());
+			
+			$tokenresponse->sendBody();
+
+			// echo "\nu: " . $_SERVER['PHP_AUTH_USER'];
+			// echo "\np: " . $_SERVER['PHP_AUTH_PW'];
+			// echo "\n";
+
+			// echo "request was";
+			// print_r($tokenrequest);
+			// print_r($clientconfig);
+			exit;
+
 		} else {
 			throw new So_Exception('invalid_grant', 'Invalid [grant_type] provided to token endpoint.');
 		}
@@ -903,7 +937,7 @@ class So_AuthorizationCode {
 }
 
 class So_AccessToken {
-	public $issued, $validuntil, $client_id, $userid, $access_token, $token_type, $refresh_token, $scope, $userdata;
+	public $issued, $validuntil, $client_id, $userid, $access_token, $token_type, $refresh_token, $scope, $userdata, $clientdata;
 	
 	function __construct() {
 	}
@@ -977,6 +1011,7 @@ class So_AccessToken {
 		if (isset($obj['client_id'])) $n->client_id = $obj['client_id'];
 		if (isset($obj['userid'])) $n->userid = $obj['userid'];
 		if (isset($obj['userdata'])) $n->userdata = $obj['userdata'];
+		if (isset($obj['clientdata'])) $n->clientdata = $obj['clientdata'];
 		if (isset($obj['access_token'])) $n->access_token = $obj['access_token'];
 		if (isset($obj['token_type'])) $n->token_type = $obj['token_type'];
 		if (isset($obj['refresh_token'])) $n->refresh_token = $obj['refresh_token'];
@@ -1060,7 +1095,14 @@ class So_Message {
 	}
 	public function sendBody() {
 		header('Content-Type: application/json; charset=utf-8');
-		echo json_encode($this);
+
+		$body = array();
+		foreach($this AS $key => $value) {
+			if (empty($value)) continue;
+			$body[$key] = $value;
+		}
+
+		echo json_encode($body);
 		exit;
 	}
 	
@@ -1246,8 +1288,8 @@ class So_TokenRequest extends So_AuthenticatedRequest {
 	public $grant_type, $code, $redirect_uri;
 	function __construct($message) {
 		parent::__construct($message);
-		$this->grant_type		= So_Utils::prequire($message, 'grant_type', array('authorization_code', 'refresh_token'));
-		$this->code 			= So_Utils::prequire($message, 'code');
+		$this->grant_type		= So_Utils::prequire($message, 'grant_type', array('authorization_code', 'refresh_token', 'client_credentials'));
+		$this->code 			= So_Utils::optional($message, 'code');
 		$this->redirect_uri		= So_Utils::optional($message, 'redirect_uri');
 	}
 
