@@ -54,7 +54,7 @@ class OAuth {
 	function authorization() {
 
 		$passive = false;
-		if ($_REQUEST["passive"] && $_REQUEST["passive"] === 'true') $passive = true;
+		if (isset($_REQUEST["passive"]) && $_REQUEST["passive"] === 'true') $passive = true;
 
 		if (!empty($_REQUEST['SimpleSAML_Auth_State_exceptionId'])) {
 
@@ -112,12 +112,17 @@ class OAuth {
 
 			// $data = $config->getConfig();
 			$data = $this->storage->getClient($e->client_id);
+
+			$owner = $this->auth->getUserBasic($data['uwap-userid']);
 			
 			$permissions = $this->getPermissionText($scopes);
 
 			// header("Content-Type: text/plain"); 
-			// print_r($e);
-			// print_r($data); print_r($user); exit;
+			// // print_r($e);
+			// print_r($data); 
+			// print_r($postdata); 
+			// print_r($owner); 
+			// exit;
 
 			header("Content-Type: text/html; charset: utf-8");
 			require_once("../../templates/oauthgrant.php"); exit;
@@ -141,6 +146,10 @@ class OAuth {
 
 		} else if ($scope === 'voot') {
 			return 'Access to your group memberships';
+		} else if ($scope === 'feedread') {
+			return 'Read access to your eduFeed';
+		} else if ($scope === 'feedwrite') {
+			return 'Access to post on the eduFeed on behalf of you';
 		} else {
 			return 'Permission [' . $scope . ']';
 		}

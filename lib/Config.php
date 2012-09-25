@@ -127,7 +127,7 @@ class Config {
 		return array(
 			"client_id" => "app_" . $id,
 			"client_name" => $this->config['name'],
-			"owner" => $this->config['owner'],
+			"uwap-userid" => $this->config['uwap-userid'],
 			"redirect_uri" => $redirect_uri,
 			"scopes" => $scopes,
 		);

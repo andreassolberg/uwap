@@ -71,12 +71,12 @@
 
 
 		<p style="text-align: right">Owner of the application <!-- <?php echo htmlspecialchars($data["client_name"]); ?> -->is: <br />
-		   <!-- <a href="mailto:<?php echo htmlspecialchars($data["owner"]["email"]); ?>">-->
+		   <!-- <a href="mailto:<?php echo htmlspecialchars($owner["email"]); ?>">-->
 				<span class="label ">
 					<i class="icon icon-user icon-white"></i>
-					<?php echo htmlspecialchars($data["owner"]["displayName"]); ?>
+					<?php echo htmlspecialchars($owner["name"]); ?>
 				</span>  <br />
-				<a tabindex="4" style="margin-top: 3px" class="btn btn-mini" href="mailto:<?php echo htmlspecialchars($data["owner"]["email"]); ?>">Send e-mail</a>
+				<a tabindex="4" style="margin-top: 3px" class="btn btn-mini" href="mailto:<?php echo htmlspecialchars($owner["mail"]); ?>">Send e-mail</a>
 			<!-- </a> -->
 		</p>
 
