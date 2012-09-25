@@ -36,6 +36,18 @@ class AuthBase {
 		return $search;
 	}
 
+	function getClientBasic($client_id){
+		
+		$store = new So_StorageServerUWAP();
+		$ac = $store->getClient($client_id);
+
+		$res = array(
+			'client_id' => $ac['client_id'],
+			'client_name' => $ac['client_name'],
+			'logo' => $ac['logo'],
+		);
+		return $res;
+	}
 	function getUserBasic($userid) {
 
 		if (!empty(self::$basicusers[$userid])) {

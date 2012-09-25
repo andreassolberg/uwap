@@ -115,7 +115,22 @@ class UWAPStore {
 		return true;
 	}
 
+	public function getACLclient($clientid, $groups = array()) {
+		if (empty($clientid)) throw new Exception('Clientid is missing');
+		$grps = $groups;
+		$grps[] = '!public';
+		$criteria = array();
+		$criteria[] = array("uwap-clientid" => $clientid);
+		$criteria[] = array(
+			"uwap-acl-read" => array(
+				'$in' => $grps,
+			),
+		);
+		return $criteria;
+	}
+
 	public function getACL($userid, $groups = array()) {
+		if (empty($userid)) throw new Exception('Userid is missing');
 		$grps = array_keys($groups);
 		$grps[] = '!public';
 		$criteria = array();
@@ -144,8 +159,31 @@ class UWAPStore {
 
 		return $this->queryOne($collection, $criteria, $fields);
 	}
-	public function queryListUser($collection, $userid, $groups, $criteria = array(), $fields = array()) {
-		
+
+	public function queryListClient($collection, $clientid, $groups, $criteria = array(), $fields = array(), $options = array() ) {
+
+		if (empty($groups)) {
+			$criteria["uwap-clientid"] = $clientid;
+		} else {
+			$criteria['$or'] = $this->getACLclient($clientid, $groups);
+		}
+		// echo 'query'; print_r($criteria); exit;
+		if ($collection !== 'log') {
+			UWAPLogger::debug('store', 'Query list client object in [' . $collection . ']', array(
+				'collection' => $collection,
+				'clientid' => $clientid,
+				'criteria' => $criteria,
+			));
+		}
+
+		$ret = $this->queryList($collection, $criteria, $fields, $options);
+		// echo 'Result'; print_r($ret); exit;
+		return $ret;
+	}
+
+
+	public function queryListUser($collection, $userid, $groups, $criteria = array(), $fields = array(), $options = array() ) {
+
 		if (empty($groups)) {
 			$criteria["uwap-userid"] = $userid;
 		} else {
@@ -160,7 +198,7 @@ class UWAPStore {
 			));
 		}
 
-		$ret = $this->queryList($collection, $criteria, $fields);
+		$ret = $this->queryList($collection, $criteria, $fields, $options);
 		// echo 'Result'; print_r($ret); exit;
 		return $ret;
 	}
@@ -201,7 +239,10 @@ class UWAPStore {
 			$cursor->limit($options['limit']);
 		}
 		if (isset($options['sort'])) {
+			error_log("SORT Query ");
 			$cursor->sort($options['sort']);
+		} else {
+			error_log("SORT Query NOTTTT ");
 		}
 		
 		$result = array();
