@@ -39,7 +39,7 @@ try {
 			$oauth->processAuthorizationResponse();
 		} else if (Utils::route('get', '^/oauth/authorization$', &$parameters)) {
 			$oauth->authorization();
-		} else if (Utils::route('get', '^/oauth/token$', &$parameters)) {
+		} else if (Utils::route(false, '^/oauth/token$', &$parameters)) {
 			$oauth->token();
 		} else if (Utils::route('get', '^/oauth/info$', &$parameters)) {
 			$oauth->info();
@@ -169,12 +169,22 @@ try {
 
 		$oauth = new OAuth();
 		$token = $oauth->check(null, array('feedread'));
-		$userid = $token->userdata['userid'];
-		$groups = $token->userdata['groups'];
 
-		$feed = new Feed($userid, $groups);
+		if (!empty($token->userdata)) {
+			$clientid = null;
+			$userid = $token->userdata['userid'];
+			$groups = $token->userdata['groups'];
+		} else {
+			$clientid = $token->clientdata['client_id'];
+			$userid = null;
+			$groups = $token->clientdata['groups'];
+		}
 
-		if (Utils::route('get', '^/feed', &$qs, &$parameters)) {
+		// echo "clientdata: \n"; print_r($token); echo "...\n";
+
+		$feed = new Feed($userid, $clientid, $groups);
+
+		if (Utils::route('get', '^/feed$', &$qs, &$parameters)) {
 
 			$response['data'] = $feed->read();
 
@@ -185,11 +195,12 @@ try {
 
 			$groups = array();
 			if (!empty($msg['groups'])) $groups = $msg['groups']; unset($msg['groups']);
-			$feed->post($msg, $groups);
+			$response['data'] = $feed->post($msg, $groups);
 
 		} else {
 
 			throw new Exception('Invalid request');
+
 		}
 
 
