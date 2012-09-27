@@ -49,9 +49,6 @@ class Config {
 		return self::$instances[$id];
 	}
 
-
-
-
 	public static function getSubIDfromHost($host) {
 		$store = new UWAPStore();
 		$res = $store->queryOne('appconfig', array('externalhost' => $host));
@@ -118,7 +115,7 @@ class Config {
 
 		// echo "REDIRECT URL"  . $redirect_uri; exit;
 		
-		$scopes = array("app_" . $this->config['id'] . "_user");
+		$scopes = array("app_" . $this->config['id'] . "_user", "userinfo");
 
 		if(!empty($this->config['scopes'])) {
 			$scopes = array_merge($scopes, $this->config['scopes']);

@@ -65,7 +65,7 @@ try {
 	} else if (Utils::route('get', '^/userinfo$', &$parameters)) {
 
 		$oauth = new OAuth();
-		$token = $oauth->check(array('user'));
+		$token = $oauth->check(array(), array('userinfo'));
 
 		// header('Content-Type: application/json; chat-set: utf-8');
 		$response['data'] = $token->userdata;
