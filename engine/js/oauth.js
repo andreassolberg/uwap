@@ -684,6 +684,20 @@
 
 		var errorOverridden = settings.error || null;
 
+
+		var obtainToken = function() {
+			if (allowia) {
+				log("Perform authrequest");
+				jso_authrequest(providerid, scopes, function() {
+					token = api_storage.getToken(providerid, scopes);
+					performAjax();
+				});
+				return;
+			} else {
+				throw "Could not perform AJAX call because no valid tokens was found.";	
+			}
+		};
+
 		var performAjax = function() {
 			// log("Perform ajax!");
 
@@ -702,38 +716,39 @@
 
 		settings.error = function(jqXHR, textStatus, errorThrown) {
 			log('error(jqXHR, textStatus, errorThrown)');
-			log(jqXHR);
+			log(JSON.stringify(jqXHR));
 			log(textStatus);
 			log(errorThrown);
+			log(jqXHR.status);
 
 			if (jqXHR.status === 401) {
 
 				log("Token expired. About to delete this token");
 				log(token);
 				api_storage.wipeTokens(providerid);
+				try {
+					obtainToken();	
+				} catch(e) {
+					if (errorOverridden && typeof errorOverridden === 'function') {
+						errorOverridden(jqXHR, textStatus, errorThrown);
+					}
+				}
+				
 
-			}
-			if (errorOverridden && typeof errorOverridden === 'function') {
+			} else if (errorOverridden && typeof errorOverridden === 'function') {
 				errorOverridden(jqXHR, textStatus, errorThrown);
 			}
 		}
 
 
 		if (!token) {
-			if (allowia) {
-				log("Perform authrequest");
-				jso_authrequest(providerid, scopes, function() {
-					token = api_storage.getToken(providerid, scopes);
-					performAjax();
-				});
-				return;
-			} else {
-				throw "Could not perform AJAX call because no valid tokens was found.";	
-			}
+			obtainToken();
+		} else {
+			performAjax();
 		}
 
 
-		performAjax();
+		
 	};
 
 
