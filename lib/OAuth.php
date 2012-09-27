@@ -169,21 +169,28 @@ class OAuth {
 	}
 
 	function check($appscopes = array(), $scopes = array()) {
-		
-		$token = $this->server->getToken();
-		$client_id = $token->client_id;
-		if (!empty($appscopes)) {
-			foreach($appscopes AS $as) {
-				$scopes[] = $client_id . '_' . $as;
-			}	
+
+		try {
+			$token = $this->server->getToken();
+			$client_id = $token->client_id;
+			if (!empty($appscopes)) {
+				foreach($appscopes AS $as) {
+					$scopes[] = $client_id . '_' . $as;
+				}	
+			}
+
+			// echo "About to check for these scopes "; print_r($scopes); 
+			// print_r($token);
+			// exit;
+
+			$token = $this->server->checkToken($scopes);
+
+		} catch(So_UnauthorizedRequest $e) {
+			header("HTTP/1.1 401 Unauthorized");
+			header("X-UWAP-Error: " . $e->getMessage());
+			exit;
 		}
 		
-
-		// echo "About to check for these scopes "; print_r($scopes); 
-		// print_r($token);
-		// exit;
-
-		$token = $this->server->checkToken($scopes);
 		return $token;
 
 	}
