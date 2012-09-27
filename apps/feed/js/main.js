@@ -1,6 +1,6 @@
 define([
-	'./moment'
-], function(moment) {
+	'./moment', './PostController'
+], function(moment, PostController) {
 
 	$("document").ready(function() {
 
@@ -9,36 +9,21 @@ define([
 			var that = this;
 			this.el = el;
 			this.groups = {};
-			$("div#post").on("click", ".actPost", $.proxy(this.postBox, this));
+
+			this.postcontroller = new PostController(this.el.find("div#post"));
+			this.postcontroller.onPost($.proxy(this.post, this));
+
+			
 			this.load();
 		}
 		App.prototype.setgroups = function(groups) {
-			console.log("groups", groups);
 			this.groups = groups;
-			$("div#post div.groups").empty();
-			$.each(groups, function(i, item) {
-				$("div#post div.groups").append('<label class="checkbox inline"><input type="checkbox" id="grp_' + i + '" value="' + i + '">' + item + '</label>');
-				$("ul#navfilter").append('<li><a id="entr_' + i + '" href="#"><span class="icon icon-folder-open"></span> ' + item + '</a></li>');
-			});
-
+			this.postcontroller.setgroups(groups);
 		}
-		App.prototype.postBox = function() {
-			var str = $("div#post textarea").val();
-			var msg = {
-				message: str
-			}
-			var groups = [];
-			
-			$("div#post div.groups input:checked").each(function(i, item) {
-				groups.push($(item).attr('value'));
-			});
-			msg['groups'] = groups;
-			console.log("Pushing obj", msg); // return;
-			this.post(msg);
-			$("div#post textarea").val("").focus();
-		};
+
 		App.prototype.post = function(msg) {
 			var that = this;
+			// console.log("POSTING", msg);
 			UWAP.feed.post(msg, function() {
 				that.load();
 			});

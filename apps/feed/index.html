@@ -47,9 +47,8 @@
 				border-top-right-radius: 5px;
 				border-top-style: none;
 				border-top-width: 0px;
-
-
 			}
+
 			#feed .item p { margin: 0px; padding: 0px; }
 			#feed .item {
 				padding: 8px 10px 8px 70px;
@@ -173,16 +172,52 @@
 			<div  class="span9">
 
 				<div id="post">
-					<textarea style="width: 100%"></textarea>
+
+					<form class="form-horizontal">
+
+					<div style="display: none" class="postc post-message">
+						<textarea class="focusfield field-message" style="width: 100%" placeholder="Type in a message..."></textarea>
+					</div>
+					<div style="display: none" class="postc post-link">
+						<p><input class="focusfield field-link" style="width: 100%" type="text" id="file" placeholder="http://"></p>
+						<p><input type="text" class="field-title" style="width: 100%" name="title" placeholder="Link title" /></p>
+						<p><textarea class="field-message" style="width: 100%" placeholder="Type in a message... (optional)"></textarea></p>
+						
+						
+					</div>
+					<div style="display: none" class="postc post-article">
+						<p><input type="text" class="focusfield field-title" style="width: 100%" name="title" placeholder="Title..." /></p>
+						<textarea class="field-message" style="height: 300px; width: 100%" placeholder="Write an article..."></textarea>
+					</div>
+					<div style="display: none" class="postc post-file">
+						<textarea class="focusfield field-message" style="width: 100%" placeholder="Type in a message..."></textarea>
+						<p><input class="field-file" name="uploadedfile" type="file" /></p>
+					</div>
+
+					<!-- <div class="sharewith">Shared with: <span class="shareitems"></span></div> -->
+					
 
 					<div class="btn-toolbar">
-					  <div class="btn-group">
-					    <button class="btn"><i class="icon-tag"></i></button>
-					    <button class="btn"><i class="icon-plus"></i></button>
-					    <button class="btn"><i class="icon-fire"></i></button>
+					  <div class="btn-group" data-toggle="buttons-radio">
+
+					    <button id="btn-message" class="btn posttype"  rel="tooltip" data-placement="bottom" data-original-title="Post a message">
+					    	<i class="icon-comment"></i></button>
+					    <button id="btn-link" class="btn posttype"  rel="tooltip" data-placement="bottom" data-original-title="Share a link">
+					    	<i class="icon-share"></i></button>
+					    <button id="btn-article" class="btn posttype"  rel="tooltip" data-placement="bottom" data-original-title="Write an article">
+					    	<i class="icon-align-left"></i></button>
+					    <button id="btn-file" class="btn posttype"  rel="tooltip" data-placement="bottom" data-original-title="Share a file">
+					    	<i class="icon-file"></i></button>
+
 					  </div>
-					  <button class="btn btn-primary actPost">Post</button>
+
+						<div class="btn-group">
+						  <button class="btn btn-primary actPost">Post</button>
+						  <!-- <button class="btn actSharewith">Share with</button> -->
+						</div>
 					</div>
+
+					</form>
 
 					
 					<div class="groups"></div>
@@ -224,14 +259,15 @@
 	 
 	 	<script src="js/bootstrap-modal.js"></script>
 		<script src="js/bootstrap-dropdown.js"></script>
+		<script src="js/bootstrap-button.js"></script>
+		<script src="js/bootstrap-tooltip.js"></script>
 <!--	 <script src="js/bootstrap-transition.js"></script>
 	 <script src="js/bootstrap-alert.js"></script>
-	 
 	 <script src="js/bootstrap-scrollspy.js"></script>
 	 <script src="js/bootstrap-tab.js"></script>
-	 <script src="js/bootstrap-tooltip.js"></script>
+	 
 	 <script src="js/bootstrap-popover.js"></script>
-	 <script src="js/bootstrap-button.js"></script>
+	 
 	 <script src="js/bootstrap-collapse.js"></script>
 	 <script src="js/bootstrap-carousel.js"></script>
 	 <script src="js/bootstrap-typeahead.js"></script>
