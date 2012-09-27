@@ -588,8 +588,14 @@ class So_Server {
 	
 	
 	public function getToken() {
+
 		$tokenstr = $this->getProvidedToken();
-		$token = $this->store->getToken($tokenstr);
+		try {
+			$token = $this->store->getToken($tokenstr);	
+		} catch(Exception $e) {
+			throw new So_UnauthorizedRequest('unauthorized_client', 'Could not find provided token');
+		}
+		
 		return $token;
 	}
 
@@ -600,7 +606,13 @@ class So_Server {
 		
 		$tokenstr = $this->getProvidedToken();
 		$token = $this->store->getToken($tokenstr);
-		$token->requireValid($scope);
+		try {
+			$token->requireValid($scope);
+		} catch(Exception $e) {
+			throw new So_UnauthorizedRequest('unauthorized_client', 'Insufficient scope on provided token.');	
+		}
+		
+		
 		return $token;
 	}
 	
@@ -717,7 +729,7 @@ class So_Server {
 
 		$expires_in = 3600*8; // 8 hours
 		if (in_array('longterm', $scopes)) {
-			$expires_in = 3600*24*680; // 180 days
+			$expires_in = 3600*24*680; // 680 days
 		}
 
 
@@ -1038,6 +1050,11 @@ class So_AccessToken {
 		}
 		return $result;
 	}
+}
+
+
+class So_UnauthorizedRequest extends So_Exception {
+
 }
 
 
