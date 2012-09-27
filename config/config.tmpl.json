@@ -2,7 +2,11 @@
 	"mainhost": "uwap.org",
 	"instance": "main",
 	"admins": ["andreas@uninett.no"],
+	"logging.toFile": false,
 	"logging": {
 		"logLevel": 4
+	},
+	"mongodb": {
+		"host": "uwap.org"
 	}
 }

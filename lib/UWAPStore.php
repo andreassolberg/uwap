@@ -3,13 +3,22 @@
 class UWAPStore {
 	
 	protected $db;
-	protected $USER = 'uwap';
-	protected $PASS = 'xQf0jbKKUOS1kp';
 
 
 	public function __construct() {
 
-		$dbc = new Mongo("mongodb://" . $this->USER . ":" .  $this->PASS . "@staff.mongohq.com:10098/uwap");;
+		$mongoconfig = GlobalConfig::getValue('mongodb');
+		if ($mongoconfig === null) {
+			$dbc = new Mongo();
+		} else {
+			$credential = '';
+			if (isset($mongoconfig['user']) && isset($mongoconfig['password'])) {
+				$credential = $mongoconfig['user'] . ':' . $mongoconfig['password'] . '@';	
+			}
+			$connstr = 'mongodb://' . $credential . '' . $mongoconfig['host'] . '/uwap';
+			$dbc = new Mongo($connstr);
+		}
+		
 		$this->db = $dbc->uwap;
 	}
 

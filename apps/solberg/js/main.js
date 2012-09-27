@@ -10,7 +10,7 @@ $(document).ready(function() {
 	var dataurl = 'http://location.app.bridge.uninett.no/js/locations.js';
 
 	// console.log("Loaded data", locationconfig);
-	requirejs(['Tracker', 'locations', 'plugins/SCalendar', 'plugins/Adressa', 'plugins/Yr', 'plugins/SMsg', 'plugins/Buss', 'plugins/Gaver', 'plugins/Todo', 'plugins/Countdown', 'plugins/VGCover'], function(Tracker, locationconfig, SCalendar, Adressa, Yr, SMsg, Buss, Gaver, Todo, Countdown, VGCover) {
+	requirejs(['Tracker', 'locations', 'plugins/SCalendar', 'plugins/Adressa', 'plugins/Yr', 'plugins/SMsg', 'plugins/Buss', 'plugins/Gaver', 'plugins/Todo', 'plugins/Countdown', 'plugins/VGCover', 'plugins/Flo'], function(Tracker, locationconfig, SCalendar, Adressa, Yr, SMsg, Buss, Gaver, Todo, Countdown, VGCover, Flo) {
 
 		console.log("Loaded all set go.")
 		console.log(locationconfig); 
@@ -22,9 +22,9 @@ $(document).ready(function() {
 		var msg = new SMsg($("div#messages"));
 		var buss = new Buss($("div#buss"));
 		var gaver = new Gaver($("div#gaver"));
-		
-
 		var vgc = new VGCover($("div#vg"));
+
+		var flo = new Flo($("#flo"))
 
 		// var andreas = new Countdown($("div#countdowns"), 'Andreas', '1980-10-10 04:00');
 		// var vigdis = new Countdown($("div#countdowns"), 'Vigdis', '1980-03-30 12:00');
