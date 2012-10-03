@@ -21,7 +21,7 @@ define([
 			},
 			'files': {
 				'icon': 'icon-download',
-				'name': 'Download'
+				'name': 'Files'
 			},
 			
 		};
