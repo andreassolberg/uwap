@@ -1,6 +1,6 @@
 define([
-	'./moment', './PostController', './AddCommentController', './GroupSelectorController'
-], function(moment, PostController, AddCommentController, GroupSelectorController) {
+	'./moment', './PostController', './AddCommentController', './GroupSelectorController', './MediaPlayerController', './ViewController'
+], function(moment, PostController, AddCommentController, GroupSelectorController, MediaPlayerController, ViewController) {
 
 	$("document").ready(function() {
 
@@ -12,6 +12,9 @@ define([
 			this.loadeditems = {};
 
 			this.selector = {};
+			this.view = {
+				view: 'feed'
+			};
 
 			this.groupcontroller = new GroupSelectorController(this.el.find('ul#navfilter'));
 			this.groupcontroller.onSelect($.proxy(this.setSelector, this));
@@ -19,9 +22,20 @@ define([
 			this.postcontroller = new PostController(this.el.find("div#post"));
 			this.postcontroller.onPost($.proxy(this.post, this));
 
+			this.mediaplayer = new MediaPlayerController(this.el);
+
+			this.viewcontroller = new ViewController(this.el.find('#viewbarcontroller'));
+			this.viewcontroller.onChange($.proxy(this.viewchange, this));
+
 			this.el.on('click', '.actEnableComment', $.proxy(this.enableComment, this));
 			this.el.on('click', '.actDelete', $.proxy(this.deleteItem, this));
 
+			this.load();
+		}
+
+		App.prototype.viewchange = function(opt) {
+			console.log('View change', opt);
+			this.view = opt;
 			this.load();
 		}
 
@@ -41,6 +55,7 @@ define([
 			e.preventDefault();
 
 			var targetItem = $(e.currentTarget).closest('div.item');
+			$(e.currentTarget).hide();
 			var item = targetItem.tmplItem().data;
 			console.log("Found item ", targetItem, item);
 			var cc = new AddCommentController(this.user, item, targetItem.find('div.postcomment'));
@@ -95,8 +110,18 @@ define([
 
 
 		App.prototype.addPost = function(item) {
-			var h = $("#itemTmpl").tmpl(item);
-			$("div#feed").prepend(h);
+			var h;
+			if (this.view.view === 'media') {
+				h = $("#itemMediaTmpl").tmpl(item);
+				$("#feedMedia").prepend(h);
+
+				console.log("About to add media to ", $("#feedMedia"));
+			} else {
+				h = $("#itemTmpl").tmpl(item);	
+				$("#feedBasic").prepend(h);
+			}
+			
+			
 			this.loadeditems[item.id] = h;
 		}
 		App.prototype.addComment = function(item) {
@@ -108,13 +133,36 @@ define([
 			}
 		}
 
+		App.prototype.getSettings = function() {
+			var s = {};
+			for (var k in this.selector) {
+				if (this.selector.hasOwnProperty(k)) {
+					s[k] = this.selector[k]
+				}
+			}
+			
+			if (this.view.view === 'media') {
+				s['class'] = ['media'];
+			}
+			if (this.view.view === 'files') {
+				s['class'] = ['files'];
+			}
+			if (this.view.view === 'calendar') {
+				s['class'] = ['calendar'];
+			}
+
+			return s;
+		}
+
 
 		App.prototype.load = function() {
 			var that = this;
 
-			UWAP.feed.read(this.selector, function(data) {
+			var s = this.getSettings();
+
+			UWAP.feed.read(s, function(data) {
 				console.log("FEED Received", data);
-				$("div#feed").empty();
+				$(".feedtype").empty();
 				$.each(data, function(i, item) {
 					that.addItem(item);
 				});

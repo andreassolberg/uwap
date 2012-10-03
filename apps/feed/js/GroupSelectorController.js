@@ -10,7 +10,6 @@ define([
 
 		this.el.on("click", '.actGroupSelect', $.proxy(this.actGroupSelect, this));
 		
-		
 	} 
 
 

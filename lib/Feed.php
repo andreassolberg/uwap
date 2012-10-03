@@ -41,7 +41,13 @@ class Feed {
 
 			
 		}
-		
+
+		if (isset($selector['class'])) {
+			$query['class'] = array(
+				'$in' => $selector['class']
+			);
+		}
+
 
 		// echo 'groups'; print_r($this->groups); exit;
 		$auth = new AuthBase();
