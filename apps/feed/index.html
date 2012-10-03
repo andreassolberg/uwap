@@ -121,14 +121,10 @@
 
 			<li id="${id}" class="item mediaItem span4">
 			<div class="thumbnail">
-				{{if user}}
-					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
-				{{/if}}
-				{{if client}}
-					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/logo.php?client=${client.client_id}" />
-				{{/if}}
 
-			
+				{{if media}}
+					<div><img class="videoitem thumb" src="${media.thumbnail}" /></div>
+				{{/if}}
 
 				{{if title}}
 					<h4>${title}</h4>
@@ -136,20 +132,13 @@
 
 				<p>${message}</p>
 
-				{{if thumbnail}}
-					<div><img class="thumb" src="${thumbnail}" /></div>
-				{{/if}}
-
-				{{if media}}
-					<div><img class="videoitem thumb" src="${media.thumbnail}" /></div>
-				{{/if}}
 
 				{{if links}}
 					{{each links}}
 				        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="${$value.href}">${$value.text}</a></span> 
 				    {{/each}}
 				{{/if}}
-
+				
 				<div class="footer">
 					{{if user}}
 						<span><i class=" icon-user"></i> ${user.name}</span>
@@ -166,7 +155,15 @@
 
 				    
 				</div>
-
+				
+				<!--
+				{{if user}}
+					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
+				{{/if}}
+				{{if client}}
+					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/logo.php?client=${client.client_id}" />
+				{{/if}}
+				-->
 				</div>
 			</li>
 		</script>
@@ -330,12 +327,7 @@
 
 
 
-				<div id="feed">
-					<div id="feedBasic" class="feedtype"></div>
-					<ul id="feedMedia" class="feedtype thumbnails">
-					</ul>
-				</div>
-
+	
 
 			</div>
 
@@ -355,9 +347,17 @@
 		</div>
 
 
+	<div id="feed">
+		<div id="feedBasic" class="feedtype"></div>
+		<ul id="feedMedia" class="feedtype thumbnails">
+		</ul>
+	</div>
+
+	</div><!--/.fluid-container-->
 
 
-	 </div><!--/.fluid-container-->
+
+
 
 	 <div id="modalContainer"></div>
 
