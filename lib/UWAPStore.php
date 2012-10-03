@@ -93,6 +93,8 @@ class UWAPStore {
 	}
 
 
+
+
 	public function remove($collection, $userid, $obj) {
 
 
@@ -110,8 +112,8 @@ class UWAPStore {
 			$obj["uwap-userid"] = $userid;
 		}
 
-		// echo '<pre>Removing token: ';
-		// print_r($obj); exit;
+		// echo "Query for removal is ";
+		// print_r($obj); 
 
 		$result = $this->db->{$collection}->remove($obj, array("safe" => true));
 		if (is_array($result)) {

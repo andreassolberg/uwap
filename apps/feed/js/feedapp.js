@@ -70,12 +70,14 @@ define([
 		}, 8000);
 
 
-		UWAP.auth.require(function(user) {
+		UWAP.auth.checkPassive(function(user) {
 
 			
 			var app = new App($("body"), user);
 			
 
+		}, function() {
+			console.log("Not logged in. NOthing I can do.")
 		});
 
 

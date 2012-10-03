@@ -264,10 +264,16 @@ UWAP.feed = {
 			}, 
 			null, callback, errorcallback);
 	},
-	read: function(object, callback, errorcallback) {
+	delete: function(oid, callback, errorcallback) {
 		UWAP._request(
-			'GET', UWAP.utils.getEngineURL("/api/feed"),
+			'DELETE', UWAP.utils.getEngineURL("/api/feed/item/" + oid),
 			null, 
+			null, callback, errorcallback);
+	},
+	read: function(selector, callback, errorcallback) {
+		UWAP._request(
+			'POST', UWAP.utils.getEngineURL("/api/feed"),
+			selector, 
 			null, callback, errorcallback);
 	}
 };

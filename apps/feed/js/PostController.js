@@ -5,17 +5,61 @@ define([
 	var PostController = function(el) {
 		this.el = el;
 		this.type = null;
+		this.groups = null;
 
+		this.selectedGroups = {};
 		
 		this.el.on("click", ".actPost", $.proxy(this.actPost, this));
-		this.el.find("button.posttype").tooltip();
+
+		// this.el.find("button.posttype").tooltip();
 
 		this.el.find("button.posttype").on('click', $.proxy(this.actTypeSelect, this));
 
-		this.el.find("button#btn-message").button('toggle').click();
+		this.el.on('click', '#sharewithgrouplist a.actShareWith', $.proxy(this.shareWith, this));
+		this.el.on('click', 'a.resetsharedwith', $.proxy(this.resetShareWith, this));
 
+		this.el.find("button#btn-message").button('toggle').click();
 		
 	} 
+
+	PostController.prototype.resetShareWith = function(e) {
+		e.preventDefault();
+
+		var sharespan = this.el.find('.shareitems');
+		sharespan.empty();
+
+		this.selectedGroups = {};
+
+		this.el.find('#sharewithgrouplist li').removeClass('disabled');
+
+	}
+
+	PostController.prototype.shareWith = function(e) {
+		e.preventDefault();
+
+		var currentListItem = $(e.currentTarget).closest('li');
+		var groupid = currentListItem.data('groupid');
+		var sharespan = this.el.find('.shareitems');
+
+		if (this.selectedGroups[groupid] && this.selectedGroups[groupid] === true) return;
+
+		this.selectedGroups[groupid] = true;
+
+		sharespan.append('<span class="label sharedwithgroup">' + this.groups[groupid] + '</span>');
+		currentListItem.addClass('disabled');
+
+		console.log('Adding group', groupid)
+	}
+
+	PostController.prototype.getGroups = function(e) {
+		var groups = [];
+		for(var k in this.selectedGroups) {
+			if (this.selectedGroups.hasOwnProperty(k) && this.selectedGroups[k]) {
+				groups.push(k);
+			}
+		}
+		return groups;
+	}	
 
 	PostController.prototype.actTypeSelect = function(e) {
 		e.preventDefault();
@@ -45,17 +89,14 @@ define([
 
 	}
 
+
 	PostController.prototype.actPost = function(e) {
 		e.preventDefault();
 		var msg = {
-			message: str,
 			"class": [this.type]
 		}
-		var groups = [];
-		this.el.find("div.groups input:checked").each(function(i, item) {
-			groups.push($(item).attr('value'));
-		});
-		msg['groups'] = groups;
+
+		msg['groups'] = this.getGroups();
 
 
 		var postcontainer = this.el.find("div.postc.post-" + this.type);
@@ -99,12 +140,16 @@ define([
 	}
 	PostController.prototype.setgroups = function(groups) {
 		var that = this;
-		console.log("groups", groups);
+		var grouplist = this.el.find('#sharewithgrouplist');
+
 		this.groups = groups;
-		this.el.find("div.groups").empty();
+		this.selectedGroups = {};
+
+		grouplist.empty();
+
 		$.each(groups, function(i, item) {
-			that.el.find("div.groups").append('<label class="checkbox inline"><input type="checkbox" id="grp_' + i + '" value="' + i + '">' + item + '</label>');
-			$("ul#navfilter").append('<li><a id="entr_' + i + '" href="#"><span class="icon icon-folder-open"></span> ' + item + '</a></li>');
+			// that.el.find("div.groups").append('<label class="checkbox inline"><input type="checkbox" id="grp_' + i + '" value="' + i + '">' + item + '</label>');
+			$('<li><a class="actShareWith" href="#">' + item + '</a></li>').data('groupid', i).appendTo(grouplist);
 		});
 	}
 

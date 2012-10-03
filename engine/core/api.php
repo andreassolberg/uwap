@@ -184,11 +184,15 @@ try {
 
 		$feed = new Feed($userid, $clientid, $groups);
 
-		if (Utils::route('get', '^/feed$', &$qs, &$parameters)) {
+		if (Utils::route('post', '^/feed$', &$qs, &$parameters)) {
 
-			$response['data'] = $feed->read();
+			
+			
+			$response['data'] = $feed->read($parameters);
 
 		} else if (Utils::route('post', '^/feed/post$', &$qs, &$args)) {
+
+			$oauth->check(null, array('feedwrite'));
 
 			if (empty($args['msg'])) throw new Exception("missing required [msg] property");
 			$msg = $args['msg'];
@@ -196,6 +200,15 @@ try {
 			$groups = array();
 			if (!empty($msg['groups'])) $groups = $msg['groups']; unset($msg['groups']);
 			$response['data'] = $feed->post($msg, $groups);
+
+		} else if (Utils::route('delete', '^/feed/item/([a-z0-9\-]+)$', &$qs, &$args)) {
+
+			$oauth->check(null, array('feedwrite'));
+
+			// echo "About to delete an item: " . $qs[1];
+			
+			$response['data'] = $feed->delete($qs[1]);
+
 
 		} else {
 

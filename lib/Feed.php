@@ -13,9 +13,36 @@ class Feed {
 
 	}
 
-	public function read() {
+	public function read($selector) {
+
+		// print_r($selector); exit;
+
 		$query = array(
 		);
+
+		if (isset($selector['user'])) {
+			if ($selector['user'] === '@me' && $this->userid) {
+				$query['uwap-userid'] = $this->userid;
+			} else {
+				$query['uwap-userid'] = $selector['user'];
+			}
+		}
+
+
+		$qgroups = $this->groups;
+		if (isset($selector['group'])) {
+
+			if (isset($this->groups[$selector['group']])) {
+				// $qgroups = array($selector['group'] => $this->groups[$selector['group']]);
+				$query['uwap-acl-read'] = array(
+					'$in' => array($selector['group']),
+				);
+			}
+
+			
+		}
+		
+
 		// echo 'groups'; print_r($this->groups); exit;
 		$auth = new AuthBase();
 		if ($this->userid) {
@@ -35,10 +62,16 @@ class Feed {
 			if (!empty($v['uwap-clientid'])) {
 				$list[$k]['client'] = $auth->getClientBasic($v['uwap-clientid']);
 			}
+			$list[$k]['id'] = $v['_id']->{'$id'};
 		}
 		return $list;
 	}
 
+	public function delete($oid) {
+
+		return $this->store->remove('feed', $this->userid, array('_id' => array('$id' => $oid)));
+
+	}
 
 	public function post($msg, $groups = array()) {
 		if (!is_array($groups)) throw new Exception("Provided groups must be an array");
