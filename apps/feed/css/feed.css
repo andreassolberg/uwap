@@ -46,6 +46,10 @@ body {
 }
 
 #feed .basicItem p { margin: 0px; padding: 0px; }
+#feed .basicItem p.articleParagraph {
+	margin-top: .4em;
+}
+
 #feed .basicItem {
 	padding: 8px 10px 8px 70px;
 	min-height: 64px;

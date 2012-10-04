@@ -99,6 +99,11 @@ define([
 					}
 				});
 			}
+			console.log("Testing article class", item.class)
+			if ($.isArray(item.class) && $.inArray('article', item.class) !== -1) {
+				console.log("MATCH:", item.class, ' ' + $.inArray('article', item.class));
+				item.message = item.message.replace(/([\n\r]{2,})/gi, '</p><p class="articleParagraph">');
+			}
 
 			if (item.inresponseto) {
 				this.addComment(item);
