@@ -19,7 +19,7 @@ define([
 				'icon': 'icon-calendar',
 				'name': 'Calendar'
 			},
-			'files': {
+			'file': {
 				'icon': 'icon-download',
 				'name': 'Files'
 			},

@@ -99,9 +99,9 @@ define([
 					}
 				});
 			}
-			console.log("Testing article class", item.class)
+			// console.log("Testing article class", item.class)
 			if ($.isArray(item.class) && $.inArray('article', item.class) !== -1) {
-				console.log("MATCH:", item.class, ' ' + $.inArray('article', item.class));
+				// console.log("MATCH:", item.class, ' ' + $.inArray('article', item.class));
 				item.message = item.message.replace(/([\n\r]{2,})/gi, '</p><p class="articleParagraph">');
 			}
 
@@ -121,6 +121,11 @@ define([
 				$("#feedMedia").prepend(h);
 
 				console.log("About to add media to ", $("#feedMedia"));
+			} else if (this.view.view === 'file') {
+
+				h = $("#itemFileTmpl").tmpl(item);
+				$("#feedFiles").prepend(h);
+
 			} else {
 				h = $("#itemTmpl").tmpl(item);	
 				$("#feedBasic").prepend(h);
@@ -134,7 +139,7 @@ define([
 			if (this.loadeditems[item.inresponseto]) {
 				console.log("found item", item);
 				var h = $("#commentTmpl").tmpl(item);
-				this.loadeditems[item.inresponseto].find('div.comments').prepend(h);
+				this.loadeditems[item.inresponseto].find('div.comments').append(h);
 			}
 		}
 
@@ -149,8 +154,8 @@ define([
 			if (this.view.view === 'media') {
 				s['class'] = ['media'];
 			}
-			if (this.view.view === 'files') {
-				s['class'] = ['files'];
+			if (this.view.view === 'file') {
+				s['class'] = ['file'];
 			}
 			if (this.view.view === 'calendar') {
 				s['class'] = ['calendar'];
@@ -186,9 +191,6 @@ define([
 
 
 					}
-
-					
-
 
 
 					// $.each(data, function(i, item) {
