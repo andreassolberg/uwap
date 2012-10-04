@@ -73,6 +73,7 @@ define([
 			'btn-article': 'article',
 			'btn-file': 'file',
 			'btn-message': 'message',
+			'btn-event': 'event'
 		}
 		var target = mapping[id];
 

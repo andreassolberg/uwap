@@ -16,6 +16,7 @@
 
 		<link href="css/feed.css" rel="stylesheet" />
 		<style type="text/css">
+	
 		</style>
 
 
@@ -101,9 +102,80 @@
 			</div>
 		</script>
 
+		<script id="videoplayer" type="text/x-jquery-tmpl">
+			<div id="videoPlayer" >
+
+		    	<video width="${width}" height="${height}" controls="controls" autoplay="autoplay">
+					  <source src="${filename}" type="video/mp4" />
+					  Nettleseren din mangler st&oslash;tte for HTML5 video.
+				</video>
+				<div>
+				    <button class="close btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			    </div>
+			</div>
+		</script>
+
+
+
+	<script id="itemMediaTmpl" type="text/x-jquery-tmpl">
+
+
+			<li id="${id}" class="item mediaItem span4">
+			<div class="thumbnail">
+
+				{{if media.thumbnail}}
+
+					<div><img class="videoitem thumb" src="${media.thumbnail}" /></div>
+				{{else}}
+					<div><img class="videoitem thumb" src="http://placehold.it/300x200" /></div>
+					
+				{{/if}}
+
+				{{if title}}
+					<h4>${title}</h4>
+				{{/if}}
+
+				<p>${message}</p>
+
+
+				{{if links}}
+					{{each links}}
+				        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="${$value.href}">${$value.text}</a></span> 
+				    {{/each}}
+				{{/if}}
+				
+				<div class="footer">
+					{{if user}}
+						<span><i class=" icon-user"></i> ${user.name}</span>
+					{{/if}}
+					{{if client}}
+						<span><i class="icon-briefcase"></i> ${client.client_name}</span>
+					{{/if}}
+					
+					<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
+
+					{{each groupnames}}
+				        <span class="label">${$value}</span>
+				    {{/each}}
+
+				    
+				</div>
+				
+				<!--
+				{{if user}}
+					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
+				{{/if}}
+				{{if client}}
+					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/logo.php?client=${client.client_id}" />
+				{{/if}}
+				-->
+				</div>
+			</li>
+		</script>
 
 		<script id="itemTmpl" type="text/x-jquery-tmpl">
-			<div id="${id}" class="item">
+
+			<div id="${id}" class="item basicItem">
 				{{if user}}
 					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
 				{{/if}}
@@ -129,10 +201,14 @@
 					<h4>${title}</h4>
 				{{/if}}
 
-				<p>${message}</p>
+				<p>{{html message}}</p>
 
 				{{if thumbnail}}
 					<div><img class="thumb" src="${thumbnail}" /></div>
+				{{/if}}
+
+				{{if media}}
+					<div><img class="videoitem thumb" src="${media.thumbnail}" /></div>
 				{{/if}}
 
 				{{if links}}
@@ -180,51 +256,77 @@
 	<body>
 
 
+
+			<div class="navbar">
+              <div class="navbar-inner">
+                <div class="container">
+                  <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </a>
+                  <a class="brand" href="#">UWAP eduFeed</a>
+                  <div class="nav-collapse">
+                    <ul class="nav">
+                      <li class="active"><a href="#">Feed</a></li>
+                      <li><a href="#">Manage</a></li>
+
+
+
+                    </ul>
+                    <form class="navbar-search pull-left" action="">
+                      <input type="text" class="search-query span4" placeholder="Search">
+                    </form>
+                    <ul class="nav pull-right">
+                      
+                      
+
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="badge badge-warning">11</span> <i class="icon-comment"></i></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#">Action</a></li>
+                          <li><a href="#">Another action</a></li>
+                          <li><a href="#">Something else here</a></li>
+                        </ul>
+                      </li>
+
+
+
+                    </ul>
+                  </div><!-- /.nav-collapse -->
+                </div>
+              </div><!-- /navbar-inner -->
+            </div>
+
+
+
+
+
+
+
 	<div class="container-fluid">
 
 		<div class="row-fluid">
 
-			<div  class="span9">
+			<div class="span9">
 
 				<div id="post" class="well">
 
 					<form class="form-horizontal">
-
-					<div style="display: none" class="postc post-message">
-						<textarea class="focusfield field-message" style="width: 100%" placeholder="Type in a message..."></textarea>
-					</div>
-					<div style="display: none" class="postc post-link">
-						<p><input class="focusfield field-link" style="width: 100%" type="text" id="file" placeholder="http://"></p>
-						<p><input type="text" class="field-title" style="width: 100%" name="title" placeholder="Link title" /></p>
-						<p><textarea class="field-message" style="width: 100%" placeholder="Type in a message... (optional)"></textarea></p>
-						
-						
-					</div>
-					<div style="display: none" class="postc post-article">
-						<p><input type="text" class="focusfield field-title" style="width: 100%" name="title" placeholder="Title..." /></p>
-						<textarea class="field-message" style="height: 300px; width: 100%" placeholder="Write an article..."></textarea>
-					</div>
-					<div style="display: none" class="postc post-file">
-						<textarea class="focusfield field-message" style="width: 100%" placeholder="Type in a message..."></textarea>
-						<p><input class="field-file" name="uploadedfile" type="file" /></p>
-					</div>
-
-					<div class="sharewith">Shared with: <span class="shareitems"></span> <a style="margin-left: 1em" class="muted resetsharedwith" href="#">reset</a></div>
-					
-
 					<div class="btn-toolbar">
-					  <div class="btn-group" data-toggle="buttons-radio">
 
-					    <button id="btn-message" class="btn posttype"  rel="tooltip" data-placement="bottom" data-original-title="Post a message">
-					    	<i class="icon-comment"></i></button>
-					    <button id="btn-link" class="btn posttype"  rel="tooltip" data-placement="bottom" data-original-title="Share a link">
-					    	<i class="icon-share"></i></button>
-					    <button id="btn-article" class="btn posttype"  rel="tooltip" data-placement="bottom" data-original-title="Write an article">
-					    	<i class="icon-align-left"></i></button>
-					    <button id="btn-file" class="btn posttype"  rel="tooltip" data-placement="bottom" data-original-title="Share a file">
-					    	<i class="icon-file"></i></button>
-
-					  </div>
+						<div class="btn-group" data-toggle="buttons-radio">
+							<button id="btn-message" class="btn posttype"  rel="tooltip" data-placement="bottom" data-original-title="Post a message">
+								<i class="icon-comment"></i></button>
+							<button id="btn-link" class="btn posttype"  rel="tooltip" data-placement="bottom" data-original-title="Share a link">
+								<i class="icon-share"></i></button>
+							<button id="btn-event" class="btn posttype"  rel="tooltip" data-placement="bottom" data-original-title="Add an event">
+								<i class="icon-calendar"></i></button>
+							<button id="btn-article" class="btn posttype"  rel="tooltip" data-placement="bottom" data-original-title="Write an article">
+								<i class="icon-align-left"></i></button>
+							<button id="btn-file" class="btn posttype"  rel="tooltip" data-placement="bottom" data-original-title="Share a file">
+								<i class="icon-file"></i></button>
+						</div>
 
 						<div class="btn-group">
 							<a class="btn dropdown-toggle actSharewith" data-toggle="dropdown" href="#">
@@ -238,12 +340,47 @@
 						<button class="btn btn-primary actPost">Post</button>
 
 					</div>
+
+					<div style="display: none" class="postc post-message">
+						<textarea class="focusfield field-message" style="width: 100%" placeholder="Type in a message..."></textarea>
+					</div>
+					<div style="display: none" class="postc post-link">
+						<p><input class="focusfield field-link" style="width: 100%" type="text" id="file" placeholder="http://"></p>
+						<p><input type="text" class="field-title" style="width: 100%" name="title" placeholder="Link title" /></p>
+						<p><textarea class="field-message" style="width: 100%" placeholder="Type in a message... (optional)"></textarea></p>
+					</div>
+					<div style="display: none" class="postc post-event">
+						<p><input type="text" class="focusfield field-title" style="width: 100%" name="title" placeholder="Event title" /></p>
+						<textarea class="field-message" style="height: 160px; width: 100%" placeholder="Description of event..."></textarea>
+						<p>Date</p>
+					</div>
+					<div style="display: none" class="postc post-article">
+						<p><input type="text" class="focusfield field-title" style="width: 100%" name="title" placeholder="Title..." /></p>
+						<textarea class="field-message" style="height: 300px; width: 100%" placeholder="Write an article..."></textarea>
+					</div>
+					<div style="display: none" class="postc post-file">
+						<textarea class="focusfield field-message" style="width: 100%" placeholder="Type in a message..."></textarea>
+						<p><input class="field-file" name="uploadedfile" type="file" /></p>
+					</div>
+
+					<div class="sharewith">Shared with: <span class="shareitems"></span> <a style="margin-left: 1em" class="muted resetsharedwith" href="#">reset</a></div>
+					
+
 					</form>
 					
 				</div>
-				<div id="feed">
 
+		
+
+
+				<div id="viewbarcontroller">
+					<div class="viewtypes btn-group" data-toggle="buttons-radio">
+					</div>
 				</div>
+
+
+
+	
 
 			</div>
 
@@ -263,9 +400,17 @@
 		</div>
 
 
+	<div id="feed">
+		<div id="feedBasic" class="feedtype"></div>
+		<ul id="feedMedia" class="feedtype thumbnails">
+		</ul>
+	</div>
+
+	</div><!--/.fluid-container-->
 
 
-	 </div><!--/.fluid-container-->
+
+
 
 	 <div id="modalContainer"></div>
 
@@ -277,14 +422,16 @@
 		<script src="js/bootstrap-dropdown.js"></script>
 		<script src="js/bootstrap-button.js"></script>
 		<script src="js/bootstrap-tooltip.js"></script>
-<!--	 <script src="js/bootstrap-transition.js"></script>
+		<script src="js/bootstrap-collapse.js"></script>
+<!--	 
+	 <script src="js/bootstrap-transition.js"></script>
 	 <script src="js/bootstrap-alert.js"></script>
 	 <script src="js/bootstrap-scrollspy.js"></script>
 	 <script src="js/bootstrap-tab.js"></script>
 	 
 	 <script src="js/bootstrap-popover.js"></script>
 	 
-	 <script src="js/bootstrap-collapse.js"></script>
+	 
 	 <script src="js/bootstrap-carousel.js"></script>
 	 <script src="js/bootstrap-typeahead.js"></script>
 -->
