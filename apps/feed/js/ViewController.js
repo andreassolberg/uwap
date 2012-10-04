@@ -23,7 +23,10 @@ define([
 				'icon': 'icon-download',
 				'name': 'Files'
 			},
-			
+			'members': {
+				'icon': 'icon-user',
+				'name': 'Participants'
+			}
 		};
 		this.opt = {
 			'view': 'feed'

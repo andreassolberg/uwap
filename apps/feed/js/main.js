@@ -156,6 +156,7 @@ define([
 				s['class'] = ['calendar'];
 			}
 
+
 			return s;
 		}
 
@@ -165,7 +166,41 @@ define([
 
 			var s = this.getSettings();
 
-			UWAP.feed.read(s, function(data) {
+			console.log("Load ", this.view.view);
+			if (this.view.view === 'members' && s.group) {
+				
+
+				console.log("Load members", s);
+
+				var gr = s.group;
+
+				UWAP.groups2.get(gr, function(data) {
+					console.log("Group data received.", data);
+
+					if (data.userlist) {
+						$(".feedtype").empty();
+
+						for(var uid in data.userlist) {
+							$("#feedBasic").append('<div>' + data.userlist[uid]['name'] + '</div>');
+						}
+
+
+					}
+
+					
+
+
+
+					// $.each(data, function(i, item) {
+					// 	that.addItem(item);
+					// });
+					// $("span.ts").prettyDate(); 
+				}, function() {
+					console.error("Could not get list");
+				});
+
+			} else {
+				UWAP.feed.read(s, function(data) {
 				console.log("FEED Received", data);
 				$(".feedtype").empty();
 				$.each(data, function(i, item) {
@@ -174,6 +209,9 @@ define([
 
 				$("span.ts").prettyDate(); 
 			});
+			}
+
+			
 		}
 
 

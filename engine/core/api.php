@@ -76,10 +76,10 @@ try {
 	/**
 	 *  The groups API is VOOT
 	 */
-	} else if (Utils::route('get', '^/groups', &$parameters)) {
+	} else if (Utils::route('get', '^/group[s]?', &$parameters)) {
 
 		$oauth = new OAuth();
-		$token = $oauth->check(null, array('voot'));
+		$token = $oauth->check();
 
 
 		$groups = $token->userdata['groups'];
@@ -96,6 +96,18 @@ try {
 				"totalResults" => $no,
 			    "itemsPerPage" => $no,
 			    "entry" => $g
+			);
+		} else if (Utils::route('get', '^/group/([@:.a-z0-9\-]+)$', &$parameters)) {
+
+			// TODO: ensure user is member of the group to extract memberlist
+
+			$groupid = $parameters[1];
+			// Utils::validateGroupID($groupid);
+
+			$groupmanager = new GroupManager($token->userdata['userid']);
+			$response = array(
+				'status' => 'ok',
+				'data' => $groupmanager->getGroup($groupid),
 			);
 
 		} else {
