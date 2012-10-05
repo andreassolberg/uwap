@@ -110,9 +110,10 @@ img.thumb {
 	margin-bottom: 3px;
 }
 #feed .comment {
-	padding: 8px 10px 8px 70px;
+	padding: 2px 10px 2px 70px;
 	min-height: 64px;
-	margin-top: 15px;
+	margin-top: 10px;
+	margin-bottom: 0px;
 }
 #feed .comment .profileimg {
 	float: left;

@@ -42,9 +42,16 @@ class Feed {
 			
 		}
 
+
 		if (isset($selector['class'])) {
 			$query['class'] = array(
 				'$in' => $selector['class']
+			);
+		}
+
+		if (isset($selector['from'])) {
+			$query['ts'] = array(
+				'$gt' => $selector['from'],
 			);
 		}
 
@@ -52,10 +59,12 @@ class Feed {
 		// echo 'groups'; print_r($this->groups); exit;
 		$auth = new AuthBase();
 		if ($this->userid) {
-			$list = $this->store->queryListUser("feed", $this->userid, $this->groups, $query, array(), array('sort' => array('ts' => 1)));	
+			$list = $this->store->queryListUser("feed", $this->userid, $this->groups, $query, array(), array('limit' => 100, 'sort' => array('ts' => -1)));	
 		} else {
-			$list = $this->store->queryListClient("feed", $this->clientid, $this->groups, $query, array(), array('sort' => array('ts' => 1)));	
+			$list = $this->store->queryListClient("feed", $this->clientid, $this->groups, $query, array(), array('limit' => 100, 'sort' => array('ts' => -1)));	
 		}
+
+		$range = array('from' => null, 'to' => null);
 		
 		if (empty($list)) return array();
 		foreach($list AS $k => $v) {
@@ -69,8 +78,20 @@ class Feed {
 				$list[$k]['client'] = $auth->getClientBasic($v['uwap-clientid']);
 			}
 			$list[$k]['id'] = $v['_id']->{'$id'};
+
+			if ($range['to'] === null) $range['to'] = $list[$k]['ts'];
+			if ($range['from'] === null) $range['from'] = $list[$k]['ts'];
+			if ($list[$k]['ts'] > $range['to']) $range['to'] = $list[$k]['ts'];
+			if ($list[$k]['ts'] < $range['from']) $range['from'] = $list[$k]['ts'];
 		}
-		return $list;
+
+		$response = array(
+			'items' => array_reverse($list),
+			'range' => $range,
+		);
+
+
+		return $response;
 	}
 
 	public function delete($oid) {

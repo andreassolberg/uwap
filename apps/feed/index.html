@@ -175,36 +175,33 @@
 
 		<script id="itemFileTmpl" type="text/x-jquery-tmpl">
 
-				<div id="${id}" class="item fileItem">
+			<div id="${id}" class="item fileItem">
 
-					{{if files}}
-						<ul class="nav nav-list">
-							{{each files}}
-						        <li>
-						        	<a target="_blank" href="${$value.href}"><i class="icon-file"></i> ${$value.filename}
-									{{if user}}
-										<span><i class=" icon-user"></i> ${user.name}</span>
-									{{/if}}
-									{{if client}}
-										<span><i class="icon-briefcase"></i> ${client.client_name}</span>
-									{{/if}}
-									
-									<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
+				{{if files}}
+					<ul class="nav nav-list">
+						{{each files}}
+					        <li>
+					        	<a target="_blank" href="${$value.href}"><i class="icon-file"></i> ${$value.filename}
+								{{if user}}
+									<span><i class=" icon-user"></i> ${user.name}</span>
+								{{/if}}
+								{{if client}}
+									<span><i class="icon-briefcase"></i> ${client.client_name}</span>
+								{{/if}}
+								
+								<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
 
-									{{each groupnames}}
-								        <span class="label">${$value}</span>
-								    {{/each}}
-								    </a>
-						        </li>
-						    {{/each}}
-					    </ul>
-					{{/if}}
+								{{each groupnames}}
+							        <span class="label">${$value}</span>
+							    {{/each}}
+							    </a>
+					        </li>
+					    {{/each}}
+				    </ul>
+				{{/if}}
 
-
-
-
-				</div>
-			</script>
+			</div>
+		</script>
 
 
 		<script id="itemTmpl" type="text/x-jquery-tmpl">
@@ -378,10 +375,14 @@
 							<ul id="sharewithgrouplist" class="dropdown-menu">
 							</ul>
 						</div>
-
 						<button class="btn btn-primary actPost">Post</button>
-
 					</div>
+
+					<div>
+						<p><label><input type="checkbox"> Public</label> 
+						   <label><input type="checkbox"> Promoted</label></p>
+					</div>
+
 
 					<div style="display: none" class="postc post-message">
 						<textarea class="focusfield field-message" style="width: 100%" placeholder="Type in a message..."></textarea>

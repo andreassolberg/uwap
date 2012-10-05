@@ -11,6 +11,8 @@ define([
 			this.groups = {};
 			this.loadeditems = {};
 
+			this.currentRange = null;
+
 			this.selector = {};
 			this.view = {
 				view: 'feed'
@@ -31,6 +33,7 @@ define([
 			this.el.on('click', '.actDelete', $.proxy(this.deleteItem, this));
 
 			this.load();
+			setInterval($.proxy(this.update, this), 5000);
 		}
 
 		App.prototype.viewchange = function(opt) {
@@ -165,6 +168,28 @@ define([
 			return s;
 		}
 
+		App.prototype.update = function() {
+			var that = this;
+			console.log("About to update");
+			if (!this.currentRange) return;
+			console.log("Updating...", this.currentRange);
+
+			var s = this.getSettings();
+			s.from = this.currentRange.to;
+
+			UWAP.feed.read(s, function(data) {
+				console.log("FEED Update Received", data);
+				// $(".feedtype").empty();
+				if (!data.range) return;
+				that.currentRange.to = data.range.to;
+				$.each(data.items, function(i, item) {
+					that.addItem(item);
+				});
+				$("span.ts").prettyDate(); 
+			});
+
+		};
+
 
 		App.prototype.load = function() {
 			var that = this;
@@ -189,7 +214,6 @@ define([
 							$("#feedBasic").append('<div>' + data.userlist[uid]['name'] + '</div>');
 						}
 
-
 					}
 
 
@@ -203,14 +227,20 @@ define([
 
 			} else {
 				UWAP.feed.read(s, function(data) {
-				console.log("FEED Received", data);
-				$(".feedtype").empty();
-				$.each(data, function(i, item) {
-					that.addItem(item);
-				});
+					console.log("FEED Received", data);
+					$(".feedtype").empty();
 
-				$("span.ts").prettyDate(); 
-			});
+					if (!data.range) return;
+					that.currentRange = data.range;
+
+
+
+					$.each(data.items, function(i, item) {
+						that.addItem(item);
+					});
+
+					$("span.ts").prettyDate(); 
+				});
 			}
 
 			
