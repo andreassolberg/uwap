@@ -173,6 +173,37 @@
 			</li>
 		</script>
 
+		<script id="itemFileTmpl" type="text/x-jquery-tmpl">
+
+			<div id="${id}" class="item fileItem">
+
+				{{if files}}
+					<ul class="nav nav-list">
+						{{each files}}
+					        <li>
+					        	<a target="_blank" href="${$value.href}"><i class="icon-file"></i> ${$value.filename}
+								{{if user}}
+									<span><i class=" icon-user"></i> ${user.name}</span>
+								{{/if}}
+								{{if client}}
+									<span><i class="icon-briefcase"></i> ${client.client_name}</span>
+								{{/if}}
+								
+								<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
+
+								{{each groupnames}}
+							        <span class="label">${$value}</span>
+							    {{/each}}
+							    </a>
+					        </li>
+					    {{/each}}
+				    </ul>
+				{{/if}}
+
+			</div>
+		</script>
+
+
 		<script id="itemTmpl" type="text/x-jquery-tmpl">
 
 			<div id="${id}" class="item basicItem">
@@ -215,6 +246,14 @@
 					{{each links}}
 				        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="${$value.href}">${$value.text}</a></span> 
 				    {{/each}}
+				{{/if}}
+
+				{{if files}}
+					<ul class="nav nav-list">
+						{{each files}}
+					        <li><a target="_blank" href="${$value.href}"><i class="icon-file"></i> ${$value.filename}</a></li>
+					    {{/each}}
+				    </ul>
 				{{/if}}
 
 				<div class="footer">
@@ -336,10 +375,14 @@
 							<ul id="sharewithgrouplist" class="dropdown-menu">
 							</ul>
 						</div>
-
 						<button class="btn btn-primary actPost">Post</button>
-
 					</div>
+
+					<div>
+						<p><label><input type="checkbox"> Public</label> 
+						   <label><input type="checkbox"> Promoted</label></p>
+					</div>
+
 
 					<div style="display: none" class="postc post-message">
 						<textarea class="focusfield field-message" style="width: 100%" placeholder="Type in a message..."></textarea>
@@ -360,7 +403,22 @@
 					</div>
 					<div style="display: none" class="postc post-file">
 						<textarea class="focusfield field-message" style="width: 100%" placeholder="Type in a message..."></textarea>
-						<p><input class="field-file" name="uploadedfile" type="file" /></p>
+
+						  <div class="control-group">
+						    <label class="control-label" for="filename">Filename</label>
+						    <div class="controls">
+						      <input type="text" id="filename" class="field-filename" placeholder="Filename">
+						    </div>
+						  </div>
+
+						  <div class="control-group">
+						    <label class="control-label" for="fileurl">URL to file</label>
+						    <div class="controls">
+						      <input type="text" id="fileurl" class="field-fileurl" placeholder="http://">
+						    </div>
+						  </div>
+
+						<!-- <p><input class="field-file" name="uploadedfile" type="file" /></p> -->
 					</div>
 
 					<div class="sharewith">Shared with: <span class="shareitems"></span> <a style="margin-left: 1em" class="muted resetsharedwith" href="#">reset</a></div>
@@ -402,6 +460,7 @@
 
 	<div id="feed">
 		<div id="feedBasic" class="feedtype"></div>
+		<div id="feedFiles" class="feedtype"></div>
 		<ul id="feedMedia" class="feedtype thumbnails">
 		</ul>
 	</div>

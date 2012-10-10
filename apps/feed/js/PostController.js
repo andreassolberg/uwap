@@ -112,6 +112,10 @@ define([
 				break;
 			case 'file':
 				msg.message = postcontainer.find(".field-message").val();
+				msg.files = [{
+					"href": postcontainer.find(".field-fileurl").val(),
+					"filename": postcontainer.find(".field-filename").val()
+				}];
 				break;
 			case 'link':
 				msg.message = postcontainer.find(".field-message").val();

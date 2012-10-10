@@ -299,6 +299,14 @@ UWAP.data = {
 };
 
 
+UWAP.groups2 = {
+	get: function(gid, callback, errorcallback) {
+		UWAP._request(
+			'GET', UWAP.utils.getEngineURL("/api/group/" + gid),
+			null, 
+			null, callback, errorcallback);
+	}
+};
 
 
 

@@ -11,6 +11,8 @@ define([
 			this.groups = {};
 			this.loadeditems = {};
 
+			this.currentRange = null;
+
 			this.selector = {};
 			this.view = {
 				view: 'feed'
@@ -31,6 +33,7 @@ define([
 			this.el.on('click', '.actDelete', $.proxy(this.deleteItem, this));
 
 			this.load();
+			setInterval($.proxy(this.update, this), 5000);
 		}
 
 		App.prototype.viewchange = function(opt) {
@@ -99,9 +102,9 @@ define([
 					}
 				});
 			}
-			console.log("Testing article class", item.class)
+			// console.log("Testing article class", item.class)
 			if ($.isArray(item.class) && $.inArray('article', item.class) !== -1) {
-				console.log("MATCH:", item.class, ' ' + $.inArray('article', item.class));
+				// console.log("MATCH:", item.class, ' ' + $.inArray('article', item.class));
 				item.message = item.message.replace(/([\n\r]{2,})/gi, '</p><p class="articleParagraph">');
 			}
 
@@ -121,6 +124,11 @@ define([
 				$("#feedMedia").prepend(h);
 
 				console.log("About to add media to ", $("#feedMedia"));
+			} else if (this.view.view === 'file') {
+
+				h = $("#itemFileTmpl").tmpl(item);
+				$("#feedFiles").prepend(h);
+
 			} else {
 				h = $("#itemTmpl").tmpl(item);	
 				$("#feedBasic").prepend(h);
@@ -134,7 +142,7 @@ define([
 			if (this.loadeditems[item.inresponseto]) {
 				console.log("found item", item);
 				var h = $("#commentTmpl").tmpl(item);
-				this.loadeditems[item.inresponseto].find('div.comments').prepend(h);
+				this.loadeditems[item.inresponseto].find('div.comments').append(h);
 			}
 		}
 
@@ -149,15 +157,38 @@ define([
 			if (this.view.view === 'media') {
 				s['class'] = ['media'];
 			}
-			if (this.view.view === 'files') {
-				s['class'] = ['files'];
+			if (this.view.view === 'file') {
+				s['class'] = ['file'];
 			}
 			if (this.view.view === 'calendar') {
 				s['class'] = ['calendar'];
 			}
 
+
 			return s;
 		}
+
+		App.prototype.update = function() {
+			var that = this;
+			console.log("About to update");
+			if (!this.currentRange) return;
+			console.log("Updating...", this.currentRange);
+
+			var s = this.getSettings();
+			s.from = this.currentRange.to;
+
+			UWAP.feed.read(s, function(data) {
+				console.log("FEED Update Received", data);
+				// $(".feedtype").empty();
+				if (!data.range) return;
+				that.currentRange.to = data.range.to;
+				$.each(data.items, function(i, item) {
+					that.addItem(item);
+				});
+				$("span.ts").prettyDate(); 
+			});
+
+		};
 
 
 		App.prototype.load = function() {
@@ -165,15 +196,54 @@ define([
 
 			var s = this.getSettings();
 
-			UWAP.feed.read(s, function(data) {
-				console.log("FEED Received", data);
-				$(".feedtype").empty();
-				$.each(data, function(i, item) {
-					that.addItem(item);
+			console.log("Load ", this.view.view);
+			if (this.view.view === 'members' && s.group) {
+				
+
+				console.log("Load members", s);
+
+				var gr = s.group;
+
+				UWAP.groups2.get(gr, function(data) {
+					console.log("Group data received.", data);
+
+					if (data.userlist) {
+						$(".feedtype").empty();
+
+						for(var uid in data.userlist) {
+							$("#feedBasic").append('<div>' + data.userlist[uid]['name'] + '</div>');
+						}
+
+					}
+
+
+					// $.each(data, function(i, item) {
+					// 	that.addItem(item);
+					// });
+					// $("span.ts").prettyDate(); 
+				}, function() {
+					console.error("Could not get list");
 				});
 
-				$("span.ts").prettyDate(); 
-			});
+			} else {
+				UWAP.feed.read(s, function(data) {
+					console.log("FEED Received", data);
+					$(".feedtype").empty();
+
+					if (!data.range) return;
+					that.currentRange = data.range;
+
+
+
+					$.each(data.items, function(i, item) {
+						that.addItem(item);
+					});
+
+					$("span.ts").prettyDate(); 
+				});
+			}
+
+			
 		}
 
 

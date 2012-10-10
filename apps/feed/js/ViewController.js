@@ -19,11 +19,14 @@ define([
 				'icon': 'icon-calendar',
 				'name': 'Calendar'
 			},
-			'files': {
+			'file': {
 				'icon': 'icon-download',
 				'name': 'Files'
 			},
-			
+			'members': {
+				'icon': 'icon-user',
+				'name': 'Participants'
+			}
 		};
 		this.opt = {
 			'view': 'feed'
