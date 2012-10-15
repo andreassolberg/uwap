@@ -93,6 +93,46 @@
 				// });
 
 
+				var ng = {
+					'title': "Testing to add a new group 2",
+					'description': "some descr"
+				};
+				// UWAP.groups2.addGroup(ng, function(data) {
+				// 	$("div#out").append('<pre>added new group: ' + JSON.stringify(data, null, 4) + '</pre>');
+				// });
+
+				// UWAP.groups2.listMyGroups(function(data) {
+				// 	$("div#out").append('<pre>My groups: ' + JSON.stringify(data, null, 4) + '</pre>');
+				// });
+
+				var u = {
+					userid: "andreas@uninett.no",
+					name: "Andreas Åkre Solberg",
+					admin: true
+				};
+
+				var gr = {
+					'title': 'Oppdatert tittel',
+					'description': 'Oppdatert descr'
+				};
+
+				UWAP.groups2.updateGroup('1b15ba0d-c3b5-4f54-89f5-1876e52f06a4', gr, function(data) {
+					$("div#out").append('<pre>result: ' + JSON.stringify(data, null, 4) + '</pre>');
+				} );
+
+				UWAP.groups2.get('1b15ba0d-c3b5-4f54-89f5-1876e52f06a4', function(data) {
+					$("div#out").append('<pre>info: ' + JSON.stringify(data, null, 4) + '</pre>');
+				});
+
+
+
+				// UWAP.groups2.removeMember('f5be0115-ffd0-4dda-a1fd-ee78b9a62d29', u.userid, function(data) {
+				// 	$("div#out").append('<pre>result: ' + JSON.stringify(data, null, 4) + '</pre>');
+				// } );
+
+
+
+
 			}, function(response) {
 				console.log("Not logged in");
 				$("div#out").append('<pre>Not logged in: ' + JSON.stringify(response, null, 4) + '</pre>');

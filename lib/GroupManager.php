@@ -25,6 +25,69 @@ class GroupManager {
 	}
 
 
+	/**
+	 * New API for getting all groups of an user.
+	 * Cached token groups are provided in as a parameter.
+	 * 
+	 * @param  [type] $moregroups [description]
+	 * @return [type]             [description]
+	 */
+	public function getGroups($moregroups) {
+
+		$query = array(
+			'$or' => array(
+				array(
+					'members' => array('$in' => array($this->userid)),
+				),
+				array(
+					'admins' => array('$in' => array($this->userid)),
+				),
+				array(
+					'uwap-userid' => $this->userid,
+				)
+			)
+		);
+
+		$res = $this->store->queryList('groups', $query );
+		$result = array();
+
+		foreach($res AS $entry) {
+			$ne = array();
+			$ne['title'] = $entry['title'];
+			$ne['id'] = $entry['id'];
+			$ne['description'] = $entry['description'];
+
+			$ne['owner'] = (bool) ($entry['uwap-userid'] === $this->userid);
+			$ne['admin'] = (bool) (in_array($this->userid, $entry['admins']));
+			$ne['member'] = (bool) (in_array($this->userid, $entry['members']));
+			$ne['listmembers'] = true;
+			$result[] = $ne;
+
+			if (isset($moregroups[$entry['id']])) {
+				unset($moregroups[$entry['id']]);
+			}
+		}
+
+		foreach($moregroups AS $key => $title) {
+			$ne = array();
+
+			$ne['id'] = $key;
+			$ne['title'] = $title;
+
+			$ne['owner'] = false;
+			$ne['admin'] = false;
+			$ne['member'] = false;
+			$ne['listmembers'] = false;
+
+			$result[] = $ne;
+		}
+
+
+
+		return $result;
+	}
+
+
 	public function addGroup($group) {
 		if (empty($group['title'])) throw new Exception('Missing group attribute [title]');
 		$allowedFields = array('id', 'title', 'description');
@@ -51,9 +114,9 @@ class GroupManager {
 	public function getUsers($users) {
 		$ret = array();
 		$query = array('userid' => array('$in' => $users));
-		$u = $this->store->queryList('users', $query);
+		$u = $this->store->queryList('users', $query, array('name', 'userid', 'mail', 'a') );
 
-		if (empty($u)) return null;
+		if (empty($u)) return $ret;
 
 		foreach($u AS $user) {
 			$ret[$user['userid']] = $user;
@@ -67,7 +130,20 @@ class GroupManager {
 		return $this->store->remove('groups', $this->userid, array('id' => $groupid));
 	}
 
-	public function updateGroup($group) {
+	public function updateGroup($groupid, $obj) {
+		$group = $this->getGroup($groupid, 'admin');
+		
+		if (empty($group)) {
+			throw new Exception('Could not lookup group details for this group');
+		}
+
+		if (isset($obj['title'])) {
+			$group['title'] = $obj['title'];
+		}
+		if (isset($obj['description'])) {
+			$group['description'] = $obj['description'];
+		}
+		return $this->store->store('groups', null, $group);
 
 	}
 
@@ -83,24 +159,36 @@ class GroupManager {
 	 * Also implements access control, by requeseting an access level.
 	 * An exception is thrown if 
 	 * @param  [type] $groupid [description]
-	 * @param  [type] $access  Access level: null, member, admin or owner.
+	 * @param  [type] $access  Access level: null, "member", "admin" or "owner".
 	 * @return [type]          [description]
 	 */
 	public function getGroup($groupid, $access = null) {
-		$group = $this->store->queryOne('groups', array('id' => $groupid));
+		$group = $this->store->queryOne('groups', array('id' => $groupid), array('id', 'uwap-userid', 'title', 'description', 'admins', 'members'));
 
 		if (empty($group)) return null;
-
 		if (!isset($group['members']) || !is_array($group['members'])) $group['members'] = array();
 		if (!isset($group['admins']) || !is_array($group['admins'])) $group['admins'] = array();
 
-
 		$group['userlist'] = $this->getUsers($group['members']);
+		foreach($group['userlist'] AS $k => $u) { 
+			$group['userlist'][$k]['admin'] = false;
+			$group['userlist'][$k]['member'] = true;
+		}
 		foreach($group['admins'] AS $admin) {
 			if (isset($group['userlist'][$admin])) {
 				$group['userlist'][$admin]['admin'] = true;	
 			}
 		}
+
+		$group['you'] = array(
+			'owner' => false,
+			'admin' => false,
+			'member' => false,
+		);
+		if ($group['uwap-userid'] === $this->userid) $group['you']['owner'] = true;
+		if (in_array($this->userid, $group['members'])) $group['you']['member'] = true;
+		if (in_array($this->userid, $group['admins'])) $group['you']['admin'] = true;
+
 
 		// Access control
 		if ($access === null) {
@@ -120,6 +208,7 @@ class GroupManager {
 		} else if ($access === 'owner') {
 			if ($group["uwap-userid"] !== $this->userid) throw new Exception('User is not authorized to access this group [owner]');
 		}
+
 		return $group;
 
 	}
@@ -137,9 +226,14 @@ class GroupManager {
 		$arr = $narr;
 	}
 
+
+
 	public function addMember($groupid, $member, $admin = false) {
 		$group = $this->getGroup($groupid, 'admin');
 		
+		$admin = false;
+		if (isset($member['admin'])) $admin = $member['admin'];
+
 		if (empty($group)) {
 			throw new Exception('Could not lookup group details for this group');
 		}
@@ -157,6 +251,26 @@ class GroupManager {
 		$this->addUser($member);
 		return $this->store->store('groups', null, $group);
 
+	}
+
+	public function updateMember($groupid, $userid, $member) {
+		$group = $this->getGroup($groupid, 'admin');
+		
+		$admin = false;
+		if (isset($member['admin'])) $admin = $member['admin'];
+
+		if (!in_array($userid, $group['members'])) {
+			throw new Exception('Cannot update a group member that is not member of the group :/');
+		}
+		if ($admin) {
+			self::addToArray($userid, $group['admins']);
+		} else {
+			self::removeFromArray($userid, $group['admins']);
+		}
+		// print_r($groupid);
+		// echo "MEMBER:"; print_r($member); echo ":";
+		// print_r($group); 
+		return $this->store->store('groups', null, $group);
 	}
 
 	public function removeMember($groupid, $userid) {

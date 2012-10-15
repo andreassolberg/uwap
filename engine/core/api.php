@@ -12,7 +12,7 @@ require_once('../../lib/autoload.php');
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: HEAD, GET, OPTIONS, POST, DELETE");
+header("Access-Control-Allow-Methods: HEAD, GET, OPTIONS, POST, DELETE, PATCH");
 header("Access-Control-Allow-Headers: Authorization, X-Requested-With, Origin, Accept, Content-Type");
 
 try {
@@ -76,38 +76,101 @@ try {
 	/**
 	 *  The groups API is VOOT
 	 */
-	} else if (Utils::route('get', '^/group[s]?', &$parameters)) {
+	} else if (Utils::route(false, '^/group[s]?', &$parameters)) {
 
 		$oauth = new OAuth();
 		$token = $oauth->check();
 
+		$groupmanager = new GroupManager($token->userdata['userid']);
 
 		$groups = $token->userdata['groups'];
-		$g = array();
-		foreach($groups AS $key => $group) {
-			$g[] = array('id' => $key, 'name' => $group);
-		}
 
-		if (Utils::route('get', '^/groups/@me$', &$parameters)) {
+		// Get a list of groups
+		if (Utils::route('get', '^/groups$', &$parameters)) {
 
-			$no = count($g);
+			$response = array(
+				'status' => 'ok',
+				'data' => $groupmanager->getGroups($groups),
+			);
+
+		// Add a new group
+		} else if (Utils::route('post', '^/groups$', &$parameters, &$body)) {
+
+			$res = $groupmanager->addGroup($body);
+
+			$response = array(
+				'status' => 'ok',
+				'data' => $res,
+			);
+
+		// VOOT get a list of groups
+		} else if (Utils::route('get', '^/groups/@me$', &$parameters)) {
+
+			$allgroups = $groupmanager->getGroups($groups);
+			$no = count($allgroups);
 			$response = array(
 				"startIndex" => 0,
 				"totalResults" => $no,
 			    "itemsPerPage" => $no,
-			    "entry" => $g
+			    "entry" => $allgroups
 			);
+
+		// Get a specific group
 		} else if (Utils::route('get', '^/group/([@:.a-z0-9\-]+)$', &$parameters)) {
 
 			// TODO: ensure user is member of the group to extract memberlist
-
 			$groupid = $parameters[1];
-			// Utils::validateGroupID($groupid);
-
-			$groupmanager = new GroupManager($token->userdata['userid']);
 			$response = array(
 				'status' => 'ok',
 				'data' => $groupmanager->getGroup($groupid),
+			);
+
+		// Update some group data...
+		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)$', &$parameters, &$body)) {
+
+			// TODO: ensure user is member of the group to extract memberlist
+			$groupid = $parameters[1];
+			$response = array(
+				'status' => 'ok',
+				'data' => $groupmanager->updateGroup($groupid, $body),
+			);
+
+		// Delete  group
+		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)$', &$parameters)) {
+
+			$groupid = $parameters[1];
+			$response = array(
+				'status' => 'ok',
+				'data' => $groupmanager->removeGroup($groupid),
+			);
+
+		// Add a new member to a group
+		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/members$', &$parameters, &$body)) {
+
+			$groupid = $parameters[1];
+			$response = array(
+				'status' => 'ok',
+				'data' => $groupmanager->addMember($groupid, $body),
+			);
+
+		// Update a membership to a group
+		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', &$parameters, &$obj)) {
+
+			$groupid = $parameters[1];
+			$userid = $parameters[2];
+			$response = array(
+				'status' => 'ok',
+				'data' => $groupmanager->updateMember($groupid, $userid, $obj),
+			);
+
+		// Remove a user from a group
+		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', &$parameters)) {
+
+			$groupid = $parameters[1];
+			$userid = $parameters[2];
+			$response = array(
+				'status' => 'ok',
+				'data' => $groupmanager->removeMember($groupid, $userid),
 			);
 
 		} else {
