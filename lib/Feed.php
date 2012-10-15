@@ -59,9 +59,9 @@ class Feed {
 		// echo 'groups'; print_r($this->groups); exit;
 		$auth = new AuthBase();
 		if ($this->userid) {
-			$list = $this->store->queryListUser("feed", $this->userid, $this->groups, $query, array(), array('limit' => 100, 'sort' => array('ts' => -1)));	
+			$list = $this->store->queryListUser("feed", $this->userid, $this->groups, $query, array(), array('limit' => 300, 'sort' => array('ts' => -1)));	
 		} else {
-			$list = $this->store->queryListClient("feed", $this->clientid, $this->groups, $query, array(), array('limit' => 100, 'sort' => array('ts' => -1)));	
+			$list = $this->store->queryListClient("feed", $this->clientid, $this->groups, $query, array(), array('limit' => 300, 'sort' => array('ts' => -1)));	
 		}
 
 		$range = array('from' => null, 'to' => null);
