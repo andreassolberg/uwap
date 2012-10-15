@@ -239,7 +239,13 @@
 				{{/if}}
 
 				{{if media}}
-					<div><img class="videoitem thumb" src="${media.thumbnail}" /></div>
+					{{if media.thumbnail}}
+						<div><img class="videoitem thumb" src="${media.thumbnail}" /></div>
+					{{else}}
+						<div><img class="videoitem thumb" src="http://placehold.it/300x200" /></div>
+					{{/if}}
+
+					
 				{{/if}}
 
 				{{if links}}
@@ -257,6 +263,19 @@
 				{{/if}}
 
 				<div class="footer">
+
+					{{if keywords}}
+						<div>
+							{{each keywords}}
+								<span class="">${$value}</span>, 
+						    {{/each}}
+					    </div>
+					{{/if}}
+
+
+					{{if author}}
+						<span><i class=" icon-user"></i> ${author}</span>
+					{{/if}}
 					{{if user}}
 						<span><i class=" icon-user"></i> ${user.name}</span>
 					{{/if}}

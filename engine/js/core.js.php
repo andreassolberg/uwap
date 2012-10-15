@@ -299,12 +299,56 @@ UWAP.data = {
 };
 
 
-UWAP.groups2 = {
+UWAP.groups = {
 	get: function(gid, callback, errorcallback) {
 		UWAP._request(
 			'GET', UWAP.utils.getEngineURL("/api/group/" + gid),
 			null, 
 			null, callback, errorcallback);
+	},
+
+	listMyGroups: function(callback, errorcallback) {
+		UWAP._request(
+		 	'GET', UWAP.utils.getEngineURL("/api/groups"),
+		 	// '/_/api/groups.php/groups?filter=admin',
+		 	null,
+		 	null, callback, errorcallback);
+	},
+	addGroup: function(object, callback, errorcallback) {
+		UWAP._request(
+		 	'POST', UWAP.utils.getEngineURL("/api/groups"),
+		 	object, 
+		 	null, callback, errorcallback);
+	},
+	updateGroup: function(groupid, object, callback, errorcallback) {
+		UWAP._request(
+		 	'POST', UWAP.utils.getEngineURL("/api/group/" + groupid),
+		 	object, 
+		 	null, callback, errorcallback);
+	},
+	removeGroup: function(groupid, callback, errorcallback) {
+		UWAP._request(
+		 	'DELETE', UWAP.utils.getEngineURL("/api/group/" + groupid),
+		 	null,
+		 	null, callback, errorcallback);
+	},
+	addMember: function(groupid, user, callback, errorcallback) {
+		UWAP._request(
+		 	'POST', UWAP.utils.getEngineURL("/api/group/" + groupid + '/members'),
+		 	user, 
+		 	null, callback, errorcallback);
+	},
+	removeMember: function(groupid, userid, callback, errorcallback) {
+		UWAP._request(
+		 	'DELETE', UWAP.utils.getEngineURL("/api/group/" + groupid + '/member/' + userid),
+		 	null,
+		 	null, callback, errorcallback);
+	},
+	updateMember: function(groupid, userid, obj, callback, errorcallback) {
+		UWAP._request(
+		 	'POST', UWAP.utils.getEngineURL("/api/group/" + groupid + '/member/' + userid),
+		 	obj,
+		 	null, callback, errorcallback);
 	}
 };
 
@@ -323,58 +367,6 @@ UWAP.groups2 = {
  */
 
 
-UWAP.groups = {
-	listMyOwnGroups: function(callback, errorcallback) {
-		UWAP._request(
-		 	'GET', 
-		 	'/_/api/groups.php/groups?filter=admin',
-		 	null,
-		 	null, callback, errorcallback);
-	},
-	listMyGroups: function(callback, errorcallback) {
-		UWAP._request(
-		 	'GET', 
-		 	'/_/api/groups.php/groups',
-		 	null,
-		 	null, callback, errorcallback);
-	},
-	addGroup: function(object, callback, errorcallback) {
-		UWAP._request(
-		 	'POST', 
-		 	'/_/api/groups.php/groups',
-		 	object, 
-		 	null, callback, errorcallback);
-	},
-	removeGroup: function(groupid, callback, errorcallback) {
-		 UWAP._request(
-		 	'DELETE', 
-		 	'/_/api/groups.php/group/' + groupid,
-		 	null,
-		 	null, callback, errorcallback);
-	},
-	get: function(groupid, callback, errorcallback) {
-		 UWAP._request(
-		 	'GET', 
-		 	'/_/api/groups.php/group/' + groupid,
-		 	null,
-		 	null, callback, errorcallback);
-	},
-	addMember: function(groupid, user, callback, errorcallback) {
-		 UWAP._request(
-		 	'POST', 
-		 	'/_/api/groups.php/group/' + groupid + '/members',
-		 	user, 
-		 	null, callback, errorcallback);
-	},
-	removeMember: function(groupid, userid, callback, errorcallback) {
-		 UWAP._request(
-		 	'DELETE', 
-		 	'/_/api/groups.php/group/' + groupid + '/member/' + userid,
-		 	null,
-		 	null, callback, errorcallback);
-	}
-
-};
 
 UWAP.logs = {
 	get: function(after, filters, callback, errorcallback) {

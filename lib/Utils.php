@@ -33,6 +33,7 @@ class Utils {
 		if ($inputraw) {
 			$object = json_decode($inputraw, true);
 		}
+		
 
 		$path = $_SERVER['PATH_INFO'];
 		$realmethod = strtolower($_SERVER['REQUEST_METHOD']);
