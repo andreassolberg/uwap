@@ -106,7 +106,7 @@ class GroupManager {
 		if ($this->exists($group['id'])) throw new Exception('Group ID [' . $group['id'] . '] is already taken.');
 
 		$this->store->store('groups', $this->userid, $group);
-		return true;
+		return $this->getGroup($group['id']);
 	}
 
 
