@@ -447,8 +447,9 @@ X-Foo-API-Key: sf76sd5f7sd65f69sdf67sd5f</pre>
 			<p>Add a new group.</p>
 
 			<pre class="prettyprint lang-js">UWAP.groups.addGroup('273645shgsjsh', {'title': 'A new group...', 'description': 'description of the new group...'},
-	function() {
-		console.log("Successfully stored");
+	function(groupinfo) {
+		// groupinfo now contains the stored group object as if it was retrieved using get().
+		console.log("Successfully added new group", groupinfo);
 	}, function(err) {
 		console.log("Error:" + err);
 	}
