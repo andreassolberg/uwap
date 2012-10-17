@@ -72,6 +72,22 @@ try {
 		// echo json_encode($userdata);
 
 
+	/**
+	 *  The people API
+	 */
+	} else if (Utils::route(false, '^/people', &$parameters)) {
+
+
+		// $oauth = new OAuth();
+		// $token = $oauth->check();
+
+		$people = new People('andreas@uninett.no');
+
+		$response = array(
+			'status' => 'ok',
+			'data' => $people->query($_REQUEST['query']),
+		);
+
 
 	/**
 	 *  The groups API is VOOT
