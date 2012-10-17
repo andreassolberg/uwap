@@ -298,6 +298,14 @@ UWAP.data = {
 	
 };
 
+UWAP.people = {
+	query: function(query, callback, errorcallback) {
+		UWAP._request(
+			'GET', UWAP.utils.getEngineURL("/api/people?query=" + encodeURIComponent(query)),
+			null, 
+			null, callback, errorcallback);
+	}
+};
 
 UWAP.groups = {
 	get: function(gid, callback, errorcallback) {

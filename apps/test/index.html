@@ -93,13 +93,13 @@
 				// });
 
 
-				var ng = {
-					'title': "Testing to add a new group 2",
-					'description': "some descr"
-				};
-				UWAP.groups.addGroup(ng, function(data) {
-					$("div#out").append('<pre>added new group: ' + JSON.stringify(data, null, 4) + '</pre>');
-				});
+				// var ng = {
+				// 	'title': "Testing to add a new group 2",
+				// 	'description': "some descr"
+				// };
+				// UWAP.groups2.addGroup(ng, function(data) {
+				// 	$("div#out").append('<pre>added new group: ' + JSON.stringify(data, null, 4) + '</pre>');
+				// });
 
 				// UWAP.groups2.listMyGroups(function(data) {
 				// 	$("div#out").append('<pre>My groups: ' + JSON.stringify(data, null, 4) + '</pre>');
@@ -120,10 +120,23 @@
 				// 	$("div#out").append('<pre>result: ' + JSON.stringify(data, null, 4) + '</pre>');
 				// } );
 
-				UWAP.groups2.get('1b15ba0d-c3b5-4f54-89f5-1876e52f06a4', function(data) {
-					$("div#out").append('<pre>info: ' + JSON.stringify(data, null, 4) + '</pre>');
-				});
+				// UWAP.groups2.get('1b15ba0d-c3b5-4f54-89f5-1876e52f06a4', function(data) {
+				// 	$("div#out").append('<pre>info: ' + JSON.stringify(data, null, 4) + '</pre>');
+				// });
 
+
+				UWAP.people.query('andreas', function(data) {
+					// $("div#out").append('<pre>Search result: ' + JSON.stringify(data, null, 4) + '</pre>');
+					$.each(data, function(i, item) {
+						var e = '';
+						e += '<h3>' + item.name + '</h3>';
+						e += '<p>' + item.o + ' ' + item.mail + '</p>';
+						if (item.jpegphoto) {
+							e += '<img style="max-height: 64px; border: 1px solid #ccc" src="data:image/jpeg;base64,' + item.jpegphoto + '" />';
+						}
+						$("div#out").append(e);
+					});
+				});
 
 
 				// UWAP.groups2.removeMember('f5be0115-ffd0-4dda-a1fd-ee78b9a62d29', u.userid, function(data) {

@@ -24,7 +24,7 @@ require_once($base . '/HTTPClientOAuth2.php');
 
 require_once($base . '/ParentMessenger.php');
 
-
+require_once($base . '/People.php');
 
 
 
