@@ -139,9 +139,17 @@ UWAP._request = function(method, url, data, options, callback, errorcallback) {
 		}
 	}
 	try {
+
+
 		$.oajax(ar);
+
+		
 	} catch(exception) {
-		errorcallback(exception);
+		console.log("OAjax exception...", ar);
+		console.error(exception);
+		if  (typeof errorcallback === 'function') {
+			errorcallback(exception);
+		}
 	}
 
 };
