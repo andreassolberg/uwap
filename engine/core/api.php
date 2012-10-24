@@ -78,15 +78,38 @@ try {
 	} else if (Utils::route(false, '^/people', &$parameters)) {
 
 
-		// $oauth = new OAuth();
-		// $token = $oauth->check();
+		$oauth = new OAuth();
+		$token = $oauth->check();
+		$people = new People($token->userdata['userid']);
+		$realm = 'uninett.no';
+		if (preg_match('/^.*@(.*?)$/', $token->userdata['userid'], $matches)) {
+			$relam = $matches[1];
+		}
 
-		$people = new People('andreas@uninett.no');
+		if (Utils::route('get', '^/people/realms$', &$parameters)) {
 
-		$response = array(
-			'status' => 'ok',
-			'data' => $people->query($_REQUEST['query']),
-		);
+			$response = array(
+				'status' => 'ok',
+				'data' => $people->listRealms($realm),
+			);
+
+		} else if (Utils::route('get', '^/people/query/([a-z0-9\.]+)$', &$parameters)) {
+
+			// print_r($parameters); exit;
+
+			if ($parameters[1] !== '_') {
+				$realm = $parameters[1];
+			}
+
+			$response = array(
+				'status' => 'ok',
+				'data' => $people->query($realm, $_REQUEST['query']),
+			);
+
+		} 
+
+
+
 
 
 	/**
