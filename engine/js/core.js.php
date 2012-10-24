@@ -307,9 +307,15 @@ UWAP.data = {
 };
 
 UWAP.people = {
-	query: function(query, callback, errorcallback) {
+	query: function(realm, query, callback, errorcallback) {
 		UWAP._request(
-			'GET', UWAP.utils.getEngineURL("/api/people?query=" + encodeURIComponent(query)),
+			'GET', UWAP.utils.getEngineURL("/api/people/query/" + realm + '?query=' + encodeURIComponent(query)),
+			null, 
+			null, callback, errorcallback);
+	},
+	listRealms: function(callback, errorcallback) {
+		UWAP._request(
+			'GET', UWAP.utils.getEngineURL("/api/people/realms"),
 			null, 
 			null, callback, errorcallback);
 	}
