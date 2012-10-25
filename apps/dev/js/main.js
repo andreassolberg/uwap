@@ -1,10 +1,24 @@
-define([
-	"controllers/appPicker", "controllers/newApp", "controllers/frontpage", "controllers/AppDashboard"
-], function(appPicker, newApp, frontpage, AppDashboard) {
+define(function(require, exports, module) {
+
+	var 
+		$ = require('jquery'),
+		UWAP = require('uwap-core/js/core'),
+		appPicker = require('controllers/appPicker'),
+		newApp = require('controllers/newApp'),
+		frontpage = require('controllers/frontpage'),
+		AppDashboard = require('controllers/AppDashboard')
+    	;
+	
+	require("uwap-core/js/uwap-people");
+
+    require('uwap-core/js/jquery.tmpl');
+
+	require('uwap-core/bootstrap/js/bootstrap');	
+	require('uwap-core/bootstrap/js/bootstrap-modal');	
+	require('uwap-core/bootstrap/js/bootstrap-dropdown');
+
 
 	$("document").ready(function() {
-
-
 
 
 		UWAP.auth.require(function(user) {
