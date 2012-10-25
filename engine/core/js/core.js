@@ -180,7 +180,7 @@ define(function(require) {
 
 					console.log("callbackFailed passive");
 
-					jso_ensureTokensPassive({"uwap": false}, function() {
+					jso.jso_ensureTokensPassive({"uwap": false}, function() {
 						console.log("Callback success from jso_ensureTokensPassive() ")
 
 						UWAP._request(

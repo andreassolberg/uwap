@@ -17,16 +17,23 @@ abstract class HTTPClientUserAuth extends HTTPClient {
 
 		// require_once('../simplesamlphp/lib/_autoload.php');
 
-		$as = new SimpleSAML_Auth_Simple('default-sp');
+		// $as = new SimpleSAML_Auth_Simple('default-sp');
 
-		if (!$as->isAuthenticated()) {
-			throw new Exception("user is not authenticated");
+		// if (!$as->isAuthenticated()) {
+		// 	throw new Exception("user is not authenticated");
+		// }
+		// $attr = $as->getAttributes();
+		// if (empty($attr["eduPersonPrincipalName"])) {
+		// 	throw new Exception("could not obtain userid of authenticated user");
+		// }
+
+		if (empty($this->userid)) {
+			throw new Exception("REST handler requires an user authenticated token to perform operation.");
 		}
-		$attr = $as->getAttributes();
-		if (empty($attr["eduPersonPrincipalName"])) {
-			throw new Exception("could not obtain userid of authenticated user");
-		}
-		return $attr["eduPersonPrincipalName"][0];
+		$userid = $this->userid;
+		return $userid;
+
+		// return $attr["eduPersonPrincipalName"][0];
 	}
 
 
