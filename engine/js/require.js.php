@@ -1,3 +1,15 @@
+<?php
+
+require_once(dirname(dirname(dirname(__FILE__))) . '/lib/autoload.php');
+header('Content-Type: application/javascript');
+
+$config = Config::getInstance();
+$hostname = $config->getHostname();
+
+
+?>
+
+
 /*
  RequireJS 2.1.1 Copyright (c) 2010-2012, The Dojo Foundation All Rights Reserved.
  Available via the MIT or new BSD license.
@@ -62,4 +74,8 @@ requirejs.config({
         'uwap-core/bootstrap/js/bootstrap-typeahead': {deps: ['jquery', 'uwap-core/bootstrap/js/bootstrap'], exports: 'jQuery'}
     }
 });
+requirejs.enginehostname = '<?php echo GlobalConfig::hostname(); ?>';
+requirejs.hostname = '<?php echo $hostname; ?>';
+requirejs.scheme = '<?php echo GlobalConfig::scheme(); ?>';
+requirejs.appid = '<?php echo GlobalConfig::getAppID(); ?>';
 

@@ -7,26 +7,17 @@
  * @version 1.0
  */
 
-<?php
 
-require_once(dirname(dirname(dirname(__FILE__))) . '/lib/autoload.php');
-header('Content-Type: application/javascript');
-
-$config = Config::getInstance();
-$hostname = $config->getHostname();
-
-
-?>
 define(function(require) {
 
-	var jso = require('uwap/oauth');
+	var jso = require('uwap-core/js/oauth');
 
 	UWAP = {};
 	UWAP.utils = {};
-	UWAP.utils.enginehostname = '<?php echo GlobalConfig::hostname(); ?>';
-	UWAP.utils.hostname = '<?php echo $hostname; ?>';
-	UWAP.utils.scheme = '<?php echo GlobalConfig::scheme(); ?>';
-	UWAP.utils.appid = '<?php echo GlobalConfig::getAppID(); ?>';
+	UWAP.utils.enginehostname = requirejs.enginehostname;
+	UWAP.utils.hostname = requirejs.hostname;
+	UWAP.utils.scheme = requirejs.scheme;
+	UWAP.utils.appid = requirejs.appid;
 
 	UWAP.utils.addQueryParam = function (url, key, value) {
 		var delimiter = ((url.indexOf('?') != -1) ? '&' : '?');

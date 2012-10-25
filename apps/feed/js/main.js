@@ -2,7 +2,7 @@ define(function(require, exports, module) {
 
 	var 
 		$ = require('jquery'),
-		UWAP = require('uwap/core'),
+		UWAP = require('uwap-core/js/core'),
 		moment = require('uwap-core/js/moment'),
     	PostController = require('PostController')
     	AddCommentController = require('AddCommentController'),
