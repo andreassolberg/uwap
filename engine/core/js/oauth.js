@@ -552,13 +552,16 @@ define(function(require, exports, module) {
 
 				};
 				var i = $('<iframe class="jso_messenger_iframe" style="display: none;" src="' + aru + '"></iframe>').on('load', function() {
-					jso_checkfortoken(providerid, this.contentWindow.location.href, function() {
+
+					exports.jso_checkfortoken(providerid, this.contentWindow.location.href, function() {
 						console.log("Success callback on OAuth response recevied.");
 						callbackSuccess();
 					}, function(error) {
 						console.log("Error callback on OAuth response recevied.", error);
 						callbackNo(error);
 					});
+
+
 					// console.log("onload on iframe", this.contentWindow.location.href);
 				});
 				$("body").prepend(i);

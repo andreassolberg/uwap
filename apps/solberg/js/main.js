@@ -1,22 +1,58 @@
-$(document).ready(function() {
+define(function(require, exports, module) {
+
+	var 
+		$ = require('jquery'),
+		UWAP = require('uwap-core/js/core'),
+
+		moment = require('uwap-core/js/moment'),
+    	prettydate = require('uwap-core/js/pretty')
+
+		Tracker = require('Tracker'),
+		locations = require('locations'),
+
+		SCalendar = require('plugins/SCalendar'),
+		Adressa = require('plugins/Adressa'),
+		Yr = require('plugins/Yr'),
+		SMsg = require('plugins/SMsg'),
+		Buss = require('plugins/Buss'),
+		Gaver = require('plugins/Gaver'),
+		Todo = require('plugins/Todo'),
+		Countdown = require('plugins/Countdown'),
+		VGCover = require('plugins/VGCover'),
+		Flo = require('plugins/Flo')
+    	;
+
+
+    require('uwap-core/js/jquery.tmpl');
+
+	require('uwap-core/bootstrap/js/bootstrap');	
 	
-	function cdata(s) {
-		var matches=[];
-		s.replace(/\<\!\[CDATA\[(.+?\]{0}\>{0})\]\]\>/g, function(a,b){matches.push(b)});
-		return matches.join(' ');
-	}
+	require('uwap-core/bootstrap/js/bootstrap-modal');
+	require('uwap-core/bootstrap/js/bootstrap-collapse');
+	require('uwap-core/bootstrap/js/bootstrap-button');
+	require('uwap-core/bootstrap/js/bootstrap-dropdown');
+
+	require('libs/jquery.flot');
 
 
-	var dataurl = 'http://location.app.bridge.uninett.no/js/locations.js';
+	$(document).ready(function() {
+		
+		function cdata(s) {
+			var matches=[];
+			s.replace(/\<\!\[CDATA\[(.+?\]{0}\>{0})\]\]\>/g, function(a,b){matches.push(b)});
+			return matches.join(' ');
+		}
 
-	// console.log("Loaded data", locationconfig);
-	requirejs(['Tracker', 'locations', 'plugins/SCalendar', 'plugins/Adressa', 'plugins/Yr', 'plugins/SMsg', 'plugins/Buss', 'plugins/Gaver', 'plugins/Todo', 'plugins/Countdown', 'plugins/VGCover', 'plugins/Flo'], function(Tracker, locationconfig, SCalendar, Adressa, Yr, SMsg, Buss, Gaver, Todo, Countdown, VGCover, Flo) {
+
+		var dataurl = 'http://location.app.bridge.uninett.no/js/locations.js';
+
+		locationconfig = locations;
 
 		console.log("Loaded all set go.")
 		console.log(locationconfig); 
 
 		var adressa = new Adressa($("div#adressa"));
-		var tracker = new Tracker(locationconfig, $("div#locations"));
+		// var tracker = new Tracker(locationconfig, $("div#locations"));
 		var scalendar = new SCalendar($("div#calendar"));
 		var yr = new Yr($("div#yr"));
 		var msg = new SMsg($("div#messages"));
@@ -46,7 +82,9 @@ $(document).ready(function() {
 		// });
 		
 		// var todo = new Todo($("div#todo"));
+			
+
 		
-	});	
-	
+	});
+
 });
