@@ -51,6 +51,16 @@ define(function(require) {
 		return base + path;
 	}
 
+	UWAP.utils.loadCSS = function (url) {
+		var link = document.createElement("link");
+		link.type = "text/css";
+		link.rel = "stylesheet";
+		link.href = require.toUrl(url);
+		console.log("CSS ››››› Loading CSS : " + link.href);
+		document.getElementsByTagName("head")[0].appendChild(link);
+	}
+
+
 	UWAP.token = null;
 
 	UWAP.messenger = {};

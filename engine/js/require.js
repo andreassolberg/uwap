@@ -36,14 +36,18 @@ null);E(c)||(d=c,c=[]);!c.length&&D(d)&&d.length&&(d.toString().replace(ca,"").r
 requirejs.config({
 	paths: {
 		'jquery' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min',
+		'uwap-core' : 'http://core.app.bridge.uninett.no/_',
+		'uwap-core/bootstrap/js/bootstrap': 'http://core.app.bridge.uninett.no/_/bootstrap/js/bootstrap.min',
+		// 'text'		: 'http://core.app.bridge.uninett.no/_/js/text',
 		'uwap': '/_/js',
-		'uwap-core': 'http://core.app.bridge.uninett.no/_'
 	},
 	baseUrl: "/js",
 	shim: {
 		'uwap-core/js/jquery.tmpl': {deps: ['jquery'], exports: 'jQuery'},
 
-        'uwap-core/bootstrap/js/bootstrap': {deps: ['jquery']},
+        'uwap-core/bootstrap/js/bootstrap': {
+        	deps: ['jquery', 'uwap-core/bootstrap/js/bootstrap-loadcss']
+        },
         'uwap-core/bootstrap/js/bootstrap-modal': {deps: ['jquery', 'uwap-core/bootstrap/js/bootstrap'], exports: 'jQuery'},
         'uwap-core/bootstrap/js/bootstrap-button': {deps: ['jquery', 'uwap-core/bootstrap/js/bootstrap'], exports: 'jQuery'},
         'uwap-core/bootstrap/js/bootstrap-tooltip': {deps: ['jquery', 'uwap-core/bootstrap/js/bootstrap'], exports: 'jQuery'},
