@@ -3,7 +3,7 @@ define(function(require, exports, module) {
 	var 
 		$ = require('jquery'),
 		UWAP = require('uwap/core'),
-		moment = require('moment'),
+		moment = require('uwap-core/js/moment'),
     	PostController = require('PostController')
     	AddCommentController = require('AddCommentController'),
     	GroupSelectorController = require('GroupSelectorController'),
