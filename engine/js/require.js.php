@@ -7,6 +7,10 @@ $config = Config::getInstance();
 $hostname = $config->getHostname();
 
 
+$corengine = GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname();
+
+ // UWAP.utils.scheme + '://core.' + UWAP.utils.enginehostname +
+
 ?>
 
 
@@ -48,9 +52,9 @@ null);E(c)||(d=c,c=[]);!c.length&&D(d)&&d.length&&(d.toString().replace(ca,"").r
 requirejs.config({
 	paths: {
 		'jquery' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min',
-		'uwap-core' : 'http://core.app.bridge.uninett.no/_',
-		'uwap-core/bootstrap/js/bootstrap': 'http://core.app.bridge.uninett.no/_/bootstrap/js/bootstrap.min',
-		// 'text'		: 'http://core.app.bridge.uninett.no/_/js/text',
+		'uwap-core' : '<?php echo $corengine; ?>/_',
+		'uwap-core/bootstrap/js/bootstrap': '<?php echo $corengine; ?>/_/bootstrap/js/bootstrap.min',
+		// 'text'		: '<?php echo $corengine; ?>/_/js/text',
 		'uwap': '/_/js',
 	},
 	baseUrl: "/js",
