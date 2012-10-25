@@ -2,38 +2,15 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>UWAP - Developer Dashboard</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>uFeed</title>
+		<meta name="viewport" content="user-scalable=no,width=device-width" />
 		<meta name="description" content="eduFeed" />
 		<meta name="author" content="Andreas Åkre Solberg" />
 
-		<!-- Le styles -->
-		<link href="css/bootstrap.css" rel="stylesheet" />
-		<link href="css/bootstrap-responsive.css" rel="stylesheet" />
-		<!-- <link href="https://docs.uwap.org/css/uwap-docs.css" rel="stylesheet" /> -->
+		<link rel='stylesheet' href="css/feed.css" rel="stylesheet" />
+		<link rel='stylesheet' href='css/feed-mobile.css' media='screen and (max-width: 767px)' />
 
-
-
-		<link href="css/feed.css" rel="stylesheet" />
-		<style type="text/css">
-	
-		</style>
-
-
-		<!-- JQuery hosted by Google -->
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
-		<!-- Core API to UNINETT WebApp Park -->
-		<script type="text/javascript" src="/_/js/oauth.js"></script>
-		<script type="text/javascript" src="/_/js/core.js"></script>
-
-		<script type="text/javascript" src="js/pretty.js"></script>
-
-		<!-- data-main attribute tells require.js to load
-		scripts/main.js after require.js loads. -->
-		<script data-main="js/main" src="js/require.js"></script>
-
-		
-		<script src="js/jquery.tmpl.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript" data-main="main" src="/_/js/require.js"></script>
 
 
 		<script id="postCommentTmpl" type="text/x-jquery-tmpl">
@@ -120,193 +97,193 @@
 	<script id="itemMediaTmpl" type="text/x-jquery-tmpl">
 
 
-			<li id="${id}" class="item mediaItem span4">
-			<div class="thumbnail">
+		<li id="${id}" class="item mediaItem span4">
+		<div class="thumbnail">
 
+			{{if media.thumbnail}}
+
+				<div><img class="videoitem thumb" src="${media.thumbnail}" /></div>
+			{{else}}
+				<div><img class="videoitem thumb" src="/img/300x200.gif" /></div>
+				
+			{{/if}}
+
+			{{if title}}
+				<h4>${title}</h4>
+			{{/if}}
+
+			<p>${message}</p>
+
+
+			{{if links}}
+				{{each links}}
+			        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="${$value.href}">${$value.text}</a></span> 
+			    {{/each}}
+			{{/if}}
+			
+			<div class="footer">
+				{{if user}}
+					<span><i class=" icon-user"></i> ${user.name}</span>
+				{{/if}}
+				{{if client}}
+					<span><i class="icon-briefcase"></i> ${client.client_name}</span>
+				{{/if}}
+				
+				<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
+
+				{{each groupnames}}
+			        <span class="label">${$value}</span>
+			    {{/each}}
+
+			    
+			</div>
+			
+			<!--
+			{{if user}}
+				<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
+			{{/if}}
+			{{if client}}
+				<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/logo.php?client=${client.client_id}" />
+			{{/if}}
+			-->
+			</div>
+		</li>
+	</script>
+
+	<script id="itemFileTmpl" type="text/x-jquery-tmpl">
+
+		<div id="${id}" class="item fileItem">
+
+			{{if files}}
+				<ul class="nav nav-list">
+					{{each files}}
+				        <li>
+				        	<a target="_blank" href="${$value.href}"><i class="icon-file"></i> ${$value.filename}
+							{{if user}}
+								<span><i class=" icon-user"></i> ${user.name}</span>
+							{{/if}}
+							{{if client}}
+								<span><i class="icon-briefcase"></i> ${client.client_name}</span>
+							{{/if}}
+							
+							<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
+
+							{{each groupnames}}
+						        <span class="label">${$value}</span>
+						    {{/each}}
+						    </a>
+				        </li>
+				    {{/each}}
+			    </ul>
+			{{/if}}
+
+		</div>
+	</script>
+
+
+	<script id="itemTmpl" type="text/x-jquery-tmpl">
+
+		<div id="${id}" class="item basicItem">
+			{{if user}}
+				<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
+			{{/if}}
+			{{if client}}
+				<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/logo.php?client=${client.client_id}" />
+			{{/if}}
+
+			<div style="float: right" class="btn-group pull-right">
+				<a class="btn dropdown-toggle btn-small" data-toggle="dropdown" href="#">
+					<i class="icon-cog"></i> 
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+					<li><a class="actDelete" href="#"><i class="icon-trash"></i> Delete this item</a></li>
+					<li><a href="#"><i class="icon-ban-circle"></i> Report this issue</a></li>
+					<li class="divider"></li>
+					<li><a href="#"><i class="icon-star"></i> Promote this item</a></li>
+				</ul>
+			</div>
+
+			{{if title}}
+				<h4>${title}</h4>
+			{{/if}}
+
+			<p>{{html message}}</p>
+
+			{{if thumbnail}}
+				<div><img class="thumb" src="${thumbnail}" /></div>
+			{{/if}}
+
+			{{if media}}
 				{{if media.thumbnail}}
-
 					<div><img class="videoitem thumb" src="${media.thumbnail}" /></div>
 				{{else}}
 					<div><img class="videoitem thumb" src="http://placehold.it/300x200" /></div>
-					
 				{{/if}}
 
-				{{if title}}
-					<h4>${title}</h4>
-				{{/if}}
-
-				<p>${message}</p>
-
-
-				{{if links}}
-					{{each links}}
-				        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="${$value.href}">${$value.text}</a></span> 
-				    {{/each}}
-				{{/if}}
 				
-				<div class="footer">
-					{{if user}}
-						<span><i class=" icon-user"></i> ${user.name}</span>
-					{{/if}}
-					{{if client}}
-						<span><i class="icon-briefcase"></i> ${client.client_name}</span>
-					{{/if}}
-					
-					<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
+			{{/if}}
 
-					{{each groupnames}}
-				        <span class="label">${$value}</span>
+			{{if links}}
+				{{each links}}
+			        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="${$value.href}">${$value.text}</a></span> 
+			    {{/each}}
+			{{/if}}
+
+			{{if files}}
+				<ul class="nav nav-list">
+					{{each files}}
+				        <li><a target="_blank" href="${$value.href}"><i class="icon-file"></i> ${$value.filename}</a></li>
 				    {{/each}}
+			    </ul>
+			{{/if}}
 
-				    
-				</div>
-				
-				<!--
+			<div class="footer">
+
+				{{if keywords}}
+					<div>
+						{{each keywords}}
+							<span class="">${$value}</span>, 
+					    {{/each}}
+				    </div>
+				{{/if}}
+
+
+				{{if author}}
+					<span><i class=" icon-user"></i> ${author}</span>
+				{{/if}}
 				{{if user}}
-					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
+					<span><i class=" icon-user"></i> ${user.name}</span>
 				{{/if}}
 				{{if client}}
-					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/logo.php?client=${client.client_id}" />
+					<span><i class="icon-briefcase"></i> ${client.client_name}</span>
 				{{/if}}
-				-->
-				</div>
-			</li>
-		</script>
+				
+				<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
 
-		<script id="itemFileTmpl" type="text/x-jquery-tmpl">
+				{{each groupnames}}
+			        <span class="label">${$value}</span>
+			    {{/each}}
 
-			<div id="${id}" class="item fileItem">
-
-				{{if files}}
-					<ul class="nav nav-list">
-						{{each files}}
-					        <li>
-					        	<a target="_blank" href="${$value.href}"><i class="icon-file"></i> ${$value.filename}
-								{{if user}}
-									<span><i class=" icon-user"></i> ${user.name}</span>
-								{{/if}}
-								{{if client}}
-									<span><i class="icon-briefcase"></i> ${client.client_name}</span>
-								{{/if}}
-								
-								<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
-
-								{{each groupnames}}
-							        <span class="label">${$value}</span>
-							    {{/each}}
-							    </a>
-					        </li>
-					    {{/each}}
-				    </ul>
-				{{/if}}
-
+			    
 			</div>
-		</script>
-
-
-		<script id="itemTmpl" type="text/x-jquery-tmpl">
-
-			<div id="${id}" class="item basicItem">
-				{{if user}}
-					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
-				{{/if}}
-				{{if client}}
-					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/logo.php?client=${client.client_id}" />
-				{{/if}}
-
-				<div style="float: right" class="btn-group">
-					<a class="btn dropdown-toggle btn-small" data-toggle="dropdown" href="#">
-						<i class="icon-cog"></i> 
-						<span class="caret"></span>
-					</a>
-					<ul class="dropdown-menu">
-						<li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-						<li><a class="actDelete" href="#"><i class="icon-trash"></i> Delete this item</a></li>
-						<li><a href="#"><i class="icon-ban-circle"></i> Report this issue</a></li>
-						<li class="divider"></li>
-						<li><a href="#"><i class="icon-star"></i> Promote this item</a></li>
-					</ul>
-				</div>
-
-				{{if title}}
-					<h4>${title}</h4>
-				{{/if}}
-
-				<p>{{html message}}</p>
-
-				{{if thumbnail}}
-					<div><img class="thumb" src="${thumbnail}" /></div>
-				{{/if}}
-
-				{{if media}}
-					{{if media.thumbnail}}
-						<div><img class="videoitem thumb" src="${media.thumbnail}" /></div>
-					{{else}}
-						<div><img class="videoitem thumb" src="http://placehold.it/300x200" /></div>
-					{{/if}}
-
-					
-				{{/if}}
-
-				{{if links}}
-					{{each links}}
-				        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="${$value.href}">${$value.text}</a></span> 
-				    {{/each}}
-				{{/if}}
-
-				{{if files}}
-					<ul class="nav nav-list">
-						{{each files}}
-					        <li><a target="_blank" href="${$value.href}"><i class="icon-file"></i> ${$value.filename}</a></li>
-					    {{/each}}
-				    </ul>
-				{{/if}}
-
-				<div class="footer">
-
-					{{if keywords}}
-						<div>
-							{{each keywords}}
-								<span class="">${$value}</span>, 
-						    {{/each}}
-					    </div>
-					{{/if}}
-
-
-					{{if author}}
-						<span><i class=" icon-user"></i> ${author}</span>
-					{{/if}}
-					{{if user}}
-						<span><i class=" icon-user"></i> ${user.name}</span>
-					{{/if}}
-					{{if client}}
-						<span><i class="icon-briefcase"></i> ${client.client_name}</span>
-					{{/if}}
-					
-					<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
-
-					{{each groupnames}}
-				        <span class="label">${$value}</span>
-				    {{/each}}
-
-				    
-				</div>
 
 
 
-				<div class="comments">
-				</div>
-
-				<span class="commentlink" style="float: right; clear: right; font-size: small"><a class="muted actEnableComment" href="#">Add comment</a></span>
-				<br class="clearfix" />
-
-				<div class="postcomment">
-				</div>
-
-
-
+			<div class="comments">
 			</div>
-		</script>
+
+			<span class="commentlink" style="float: right; clear: right; font-size: small"><a class="muted actEnableComment" href="#">Add comment</a></span>
+			<br class="clearfix" />
+
+			<div class="postcomment">
+			</div>
+
+
+
+		</div>
+	</script>
 
 
 	</head>
@@ -318,40 +295,55 @@
 			<div class="navbar">
               <div class="navbar-inner">
                 <div class="container">
-                  <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+<!--                   <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
-                  </a>
+                  </a> -->
                   <a class="brand" href="#">UWAP eduFeed</a>
+
+
+                <ul class="nav pull-right">
+                  <li id="feedmenu" class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="selectedFeed">Newsfeed</span> <b class="caret"></b></a>
+                    <ul id="feedlist" class="dropdown-menu">
+                    </ul>
+                  </li>
+                </ul>
+
+                <ul class="nav pull-right">
+
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="badge badge-warning">11</span> <i class="icon-comment"></i></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">Andreas added a comment to a video</a></li>
+                      <li><a href="#">Simon uploaded a document on cloudstore</a></li>
+                      <li><a href="#">Lars subscribed to the group eCampus</a></li>
+                      <li class="divider"></li>
+                      <li><a href="#">Mark all as read...</a></li>
+                    </ul>
+                  </li>
+
+                </ul>
+
+                 <form class="navbar-search pull-left" action="">
+                      <input type="text" class="search-query span4" placeholder="Search">
+                    </form>
+	<!--
                   <div class="nav-collapse">
+                  
+
                     <ul class="nav">
                       <li class="active"><a href="#">Feed</a></li>
                       <li><a href="#">Manage</a></li>
-
-
-
                     </ul>
-                    <form class="navbar-search pull-left" action="">
-                      <input type="text" class="search-query span4" placeholder="Search">
-                    </form>
-                    <ul class="nav pull-right">
-                      
-                      
 
-                      <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="badge badge-warning">11</span> <i class="icon-comment"></i></a>
-                        <ul class="dropdown-menu">
-                          <li><a href="#">Action</a></li>
-                          <li><a href="#">Another action</a></li>
-                          <li><a href="#">Something else here</a></li>
-                        </ul>
-                      </li>
+              
+  
+
+                  </div>  --><!-- /.nav-collapse -->
 
 
-
-                    </ul>
-                  </div><!-- /.nav-collapse -->
                 </div>
               </div><!-- /navbar-inner -->
             </div>
@@ -366,7 +358,7 @@
 
 		<div class="row-fluid">
 
-			<div class="span9">
+			<div class="span12">
 
 				<div id="post" class="well">
 
@@ -457,61 +449,45 @@
 
 
 
-	
-
 			</div>
 
+
+
+
+
+		<!--
 			<div id="sidebar" class="span3">
 
 				<ul id="navfilter" class="nav nav-list">
 
 
 				</ul>
-<!--
+
 				<h3>Upcoming</h3>
 
 				<p>Todo...</p>
-			-->
+	
 			</div>
+		-->
 
 		</div>
 
 
-	<div id="feed">
-		<div id="feedBasic" class="feedtype"></div>
-		<div id="feedFiles" class="feedtype"></div>
-		<ul id="feedMedia" class="feedtype thumbnails">
-		</ul>
-	</div>
+		<div id="feed">
+			<div id="feedBasic" class="feedtype"></div>
+			<div id="feedFiles" class="feedtype"></div>
+			<ul id="feedMedia" class="feedtype thumbnails">
+			</ul>
+		</div>
 
-	</div><!--/.fluid-container-->
-
-
+		</div><!--/.fluid-container-->
 
 
 
-	 <div id="modalContainer"></div>
 
-	 <!-- Le javascript
-	 ================================================== -->
-	 <!-- Placed at the end of the document so the pages load faster -->
-	 
-	 	<script src="js/bootstrap-modal.js"></script>
-		<script src="js/bootstrap-dropdown.js"></script>
-		<script src="js/bootstrap-button.js"></script>
-		<script src="js/bootstrap-tooltip.js"></script>
-		<script src="js/bootstrap-collapse.js"></script>
-<!--	 
-	 <script src="js/bootstrap-transition.js"></script>
-	 <script src="js/bootstrap-alert.js"></script>
-	 <script src="js/bootstrap-scrollspy.js"></script>
-	 <script src="js/bootstrap-tab.js"></script>
-	 
-	 <script src="js/bootstrap-popover.js"></script>
-	 
-	 
-	 <script src="js/bootstrap-carousel.js"></script>
-	 <script src="js/bootstrap-typeahead.js"></script>
--->
+
+		<div id="modalContainer"></div>
+
+
 	</body>
 </html>

@@ -1,8 +1,39 @@
-define([
-	'./moment', './PostController', './AddCommentController', './GroupSelectorController', './MediaPlayerController', './ViewController'
-], function(moment, PostController, AddCommentController, GroupSelectorController, MediaPlayerController, ViewController) {
+define(function(require, exports, module) {
+
+	var 
+		$ = require('jquery'),
+		UWAP = require('uwap-core/js/core'),
+		moment = require('uwap-core/js/moment'),
+    	PostController = require('PostController')
+    	AddCommentController = require('AddCommentController'),
+    	GroupSelectorController = require('GroupSelectorController'),
+    	GroupSelectorControllerBar = require('GroupSelectorControllerBar'),
+    	MediaPlayerController = require('MediaPlayerController'),
+    	ViewController = require('ViewController'),
+
+    	prettydate = require('uwap-core/js/pretty')
+    	;
+
+    require('uwap-core/js/jquery.tmpl');
+
+	require('uwap-core/bootstrap/js/bootstrap');	
+	
+	require('uwap-core/bootstrap/js/bootstrap-modal');
+	require('uwap-core/bootstrap/js/bootstrap-collapse');
+	require('uwap-core/bootstrap/js/bootstrap-button');
+	require('uwap-core/bootstrap/js/bootstrap-dropdown');
+
+    // require('uwap-core/bootstrap/js/bootstrap-tooltip');
+	// require('uwap-core/bootstrap/js/bootstrap-transition');
+	// require('uwap-core/bootstrap/js/bootstrap-alert');
+	// require('uwap-core/bootstrap/js/bootstrap-scrollspy');
+	// require('uwap-core/bootstrap/js/bootstrap-tab');
+	// require('uwap-core/bootstrap/js/bootstrap-popover');
+	// require('uwap-core/bootstrap/js/bootstrap-carousel');
+	// require('uwap-core/bootstrap/js/bootstrap-typeahead');
 
 	$("document").ready(function() {
+
 
 
 		var App = function(el) {
@@ -20,6 +51,10 @@ define([
 
 			this.groupcontroller = new GroupSelectorController(this.el.find('ul#navfilter'));
 			this.groupcontroller.onSelect($.proxy(this.setSelector, this));
+
+			this.groupcontrollerbar = new GroupSelectorControllerBar(this.el.find('#feedmenu'));
+			this.groupcontrollerbar.onSelect($.proxy(this.setSelector, this));
+
 
 			this.postcontroller = new PostController(this.el.find("div#post"));
 			this.postcontroller.onPost($.proxy(this.post, this));
@@ -51,7 +86,7 @@ define([
 			this.user = user;
 			this.groups = user.groups;
 			this.postcontroller.setgroups(user.groups);
-			this.groupcontroller.setgroups(user.groups);
+			this.groupcontrollerbar.setgroups(user.groups);
 		}
 
 		App.prototype.enableComment = function(e) {

@@ -1,0 +1,40 @@
+body {
+	padding: 0px!important;
+}
+#feed #feedBasic {
+	border: none;
+	padding: 0px;
+	margin-right: 0px;
+	margin-left: 0px;
+}
+#feed .basicItem {
+	padding: 8px 10px 8px 70px;
+	min-height: 64px;
+	margin-right: 0px;
+	margin-left: 0px;
+	border-left: none;
+	border-right: none;
+
+	overflow-x: scroll;
+	overflow-y: visible;
+}
+div.container-fluid {
+	margin: 0px; padding: 0px !important;
+}
+
+#feed .basicItem img {
+	max-width: 100%;
+}
+
+
+div.viewtypes {
+	overflow: scroll;
+}
+
+
+#feed .comment {
+	padding: 2px 10px 2px 30px;
+	min-height: 64px;
+	margin-top: 10px;
+	margin-bottom: 0px;
+}
