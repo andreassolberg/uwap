@@ -1,6 +1,9 @@
-(function(exp, $) {
+define(function(require, exports, module) {
 
 	var 
+
+		$ = require('jquery'),
+
 		config = {},
 		default_lifetime = 3600,
 		options = {
@@ -272,7 +275,7 @@
 	 * childbrowser when the jso context is not receiving the response,
 	 * instead the response is received on a child browser.
 	 */
-	exp.jso_checkfortoken = function(providerID, url, callback, callbackError) {
+	exports.jso_checkfortoken = function(providerID, url, callback, callbackError) {
 		var 
 			atoken,
 			h = window.location.hash,
@@ -520,7 +523,7 @@
 		}
 	};
 
-	exp.jso_ensureTokensPassive = function (ensure, callbackSuccess, callbackNo) {
+	exports.jso_ensureTokensPassive = function (ensure, callbackSuccess, callbackNo) {
 		var providerid, scopes, token;
 		for(providerid in ensure) {
 			scopes = undefined;
@@ -568,7 +571,7 @@
 		return true;
 	}
 
-	exp.jso_ensureTokens = function (ensure) {
+	exports.jso_ensureTokens = function (ensure) {
 		var providerid, scopes, token;
 		for(providerid in ensure) {
 			scopes = undefined;
@@ -586,7 +589,7 @@
 		return true;
 	}
 
-	exp.jso_findDefaultEntry = function(c) {
+	exports.jso_findDefaultEntry = function(c) {
 		var 
 			k,
 			i = 0;
@@ -602,14 +605,14 @@
 		if (i === 1) return k;
 	};
 
-	exp.jso_configure = function(c, opts) {
+	exports.jso_configure = function(c, opts) {
 		config = c;
 		setOptions(opts);
 		try {
 
-			var def = jso_findDefaultEntry(c);
+			var def = exports.jso_findDefaultEntry(c);
 			log("jso_configure() about to check for token for this entry", def);
-			exp.jso_checkfortoken(def);	
+			exports.jso_checkfortoken(def);	
 
 		} catch(e) {
 			log("Error when retrieving token from hash: " + e);
@@ -618,7 +621,7 @@
 		
 	}
 
-	exp.jso_dump = function() {
+	exports.jso_dump = function() {
 		var key;
 		for(key in config) {
 
@@ -631,7 +634,7 @@
 		}
 	}
 
-	exp.jso_wipe = function() {
+	exports.jso_wipe = function() {
 		var key;
 		log("jso_wipe()");
 		for(key in config) {
@@ -640,7 +643,7 @@
 		}
 	}
 
-	exp.jso_getToken = function(providerid, scopes) {
+	exports.jso_getToken = function(providerid, scopes) {
 		var token = api_storage.getToken(providerid, scopes);
 		if (!token) return null;
 		if (!token["access_token"]) return null;
@@ -649,11 +652,11 @@
 
 
 
-	exp.jso_registerRedirectHandler = function(callback) {
+	exports.jso_registerRedirectHandler = function(callback) {
 		api_redirect = callback;
 	};
 
-	exp.jso_registerStorageHandler = function(object) {
+	exports.jso_registerStorageHandler = function(object) {
 		api_storage = object;
 	};
 
@@ -752,4 +755,4 @@
 	};
 
 
-})(window, window.jQuery);
+});

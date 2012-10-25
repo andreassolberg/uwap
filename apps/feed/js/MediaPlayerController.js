@@ -1,6 +1,10 @@
-define([
+define(function(require, exports, module) {
 
-], function() {
+	var 
+		$ = require('jquery')
+    	;
+
+
 
 
 	(function($){
