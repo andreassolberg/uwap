@@ -1,9 +1,10 @@
 define(['jquery'], function ($) {
 
-	var PeopleSearch = function(inputEl) {
+	var PeopleSearch = function(inputEl, settings) {
 		var that = this;
 
 		this.inputEl = inputEl;
+		this.settings = settings;
 
 		$(this.inputEl).wrap('<form class="navbar-search pull-left"/>');
 		this.formWrapEl = $(this.inputEl).parent();
@@ -23,7 +24,7 @@ define(['jquery'], function ($) {
 
 		$(that.inputEl).val('').focus();
 
-		this.lc = new ListController(list, function() {
+		this.lc = new ListController(list, settings, function() {
 			$(that.inputEl).val('').focus();
 		});
 
@@ -97,16 +98,17 @@ define(['jquery'], function ($) {
 	}
 
 
-	var ListController = function(el, callback) {
+	var ListController = function(el, settings, callback) {
 		var that = this;
 		this.el = el;
+		this.settings = settings;
 
 		$(this.el).on('click', '.uwap-person', function(e) {
 			e.preventDefault();
 			console.log("Click on event!");
 			
 			var person = $(e.currentTarget).data('src');
-			settings.callback(person)
+			that.settings.callback(person)
 			callback(person);
 
 			that.hide();
@@ -168,7 +170,7 @@ define(['jquery'], function ($) {
 		}, options);
 
 		return this.each(function() {
-			var ps = new PeopleSearch(this);
+			var ps = new PeopleSearch(this, settings);
 		});
 
 	};
