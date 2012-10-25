@@ -32,6 +32,8 @@ define(function(require, exports, module) {
 	require('uwap-core/bootstrap/js/bootstrap-button');
 	require('uwap-core/bootstrap/js/bootstrap-dropdown');
 
+	require('libs/jquery.flot');
+
 
 	$(document).ready(function() {
 		
