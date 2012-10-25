@@ -54,7 +54,7 @@ requirejs.config({
 		'jquery' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min',
 		'uwap-core' : '<?php echo $corengine; ?>/_',
 		'uwap-core/bootstrap/js/bootstrap': '<?php echo $corengine; ?>/_/bootstrap/js/bootstrap.min',
-		// 'text'		: 'http://core.app.bridge.uninett.no/_/js/text',
+		// 'text'		: '<?php echo $corengine; ?>/_/js/text',
 		'uwap': '/_/js',
 	},
 	baseUrl: "/js",
