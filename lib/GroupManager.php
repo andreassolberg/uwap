@@ -171,7 +171,7 @@ class GroupManager {
 	 * @return [type]          [description]
 	 */
 	public function getGroup($groupid, $access = null) {
-		$group = $this->store->queryOne('groups', array('id' => $groupid), array('id', 'uwap-userid', 'title', 'description', 'admins', 'members'));
+		$group = $this->store->queryOne('groups', array('id' => $groupid), array('id', 'uwap-userid', 'title', 'description', 'admins', 'members', 'listable'));
 
 		if (empty($group)) return null;
 		if (!isset($group['members']) || !is_array($group['members'])) $group['members'] = array();
