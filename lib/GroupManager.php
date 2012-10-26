@@ -56,6 +56,7 @@ class GroupManager {
 			$ne['title'] = $entry['title'];
 			$ne['id'] = $entry['id'];
 			$ne['description'] = $entry['description'];
+			$ne['listable'] = $entry['listable'];
 
 			$ne['owner'] = (bool) ($entry['uwap-userid'] === $this->userid);
 			$ne['admin'] = (bool) (in_array($this->userid, $entry['admins']));
@@ -90,13 +91,16 @@ class GroupManager {
 
 	public function addGroup($group) {
 		if (empty($group['title'])) throw new Exception('Missing group attribute [title]');
-		$allowedFields = array('id', 'title', 'description');
+		$allowedFields = array('id', 'title', 'description', 'listable');
 		foreach($group AS $key => $val) {
 			if (!in_array($key, $allowedFields)) throw new Exception('Invalid group attribute provided');
 		}
 		if (empty($group['id'])) {
 			$group['id'] = Utils::genID();
-		} 
+		}
+		if (isset($group['listable']) && !is_bool($group['listable'])) {
+			throw new Exception('Property listable must be boolean.');
+		}
 
 		$group['members'] = array($this->userid);
 		$group['admins'] = array();
