@@ -299,8 +299,6 @@ try {
 		$feed = new Feed($userid, $clientid, $groups);
 
 		if (Utils::route('post', '^/feed$', &$qs, &$parameters)) {
-
-			
 			
 			$response['data'] = $feed->read($parameters);
 
