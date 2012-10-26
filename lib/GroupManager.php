@@ -147,6 +147,10 @@ class GroupManager {
 		if (isset($obj['description'])) {
 			$group['description'] = $obj['description'];
 		}
+		if (isset($obj['listable'])) {
+			if (!is_bool($obj['listable'])) throw new Exception('listable property must be boolean');
+			$group['listable'] = $obj['listable'];
+		}
 		return $this->store->store('groups', null, $group);
 
 	}
