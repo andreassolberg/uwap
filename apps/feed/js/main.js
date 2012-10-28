@@ -239,7 +239,7 @@ define(function(require, exports, module) {
 
 				var gr = s.group;
 
-				UWAP.groups2.get(gr, function(data) {
+				UWAP.groups.get(gr, function(data) {
 					console.log("Group data received.", data);
 
 					if (data.userlist) {
