@@ -68,7 +68,7 @@ try {
 		$token = $oauth->check(array(), array('userinfo'));
 
 		// header('Content-Type: application/json; chat-set: utf-8');
-		$response['data'] = $token->userdata;
+		$response['data'] = $token->getUserdataWithGroups();
 		// echo json_encode($userdata);
 
 
@@ -80,9 +80,9 @@ try {
 
 		$oauth = new OAuth();
 		$token = $oauth->check();
-		$people = new People($token->userdata['userid']);
+		$people = new People($token->getUserID());
 		$realm = 'uninett.no';
-		if (preg_match('/^.*@(.*?)$/', $token->userdata['userid'], $matches)) {
+		if (preg_match('/^.*@(.*?)$/', $token->getUserID(), $matches)) {
 			$relam = $matches[1];
 		}
 
@@ -120,9 +120,9 @@ try {
 		$oauth = new OAuth();
 		$token = $oauth->check();
 
-		$groupmanager = new GroupManager($token->userdata['userid']);
+		$groupmanager = new GroupManager($token->getUserID());
 
-		$groups = $token->userdata['groups'];
+		$groups = $token->getGroups();
 
 		// Get a list of groups
 		if (Utils::route('get', '^/groups$', &$parameters)) {
@@ -228,18 +228,18 @@ try {
 		if (!empty($parameters['appid'])) {
 			$targetapp = $parameters['appid'];	
 		} else {
-			if (preg_match('/^app_(.*?)$/', $token->client_id, $matches)) {
+			if (preg_match('/^app_(.*?)$/', $token->getClientID(), $matches)) {
 				$targetapp = $matches[1];
 			} else {
 				throw new Exception('You MUST provide the [appid] parameter to tell which application target storage to use.');
 			}
 		}
 
-		// echo "TARGET APP IS " . $targetapp . " and clienti_id was " . $token->client_id;
+		// echo "TARGET APP IS " . $targetapp . " and clienti_id was " . $token->getClientID();
 
 		$token = $oauth->check(null, array('app_' . $targetapp . '_user'));
-		$userid = $token->userdata['userid'];
-		$groups = $token->userdata['groups'];
+		$userid = $token->getUserID();
+		$groups = $token->getGroups();
 
 		// print_r($token); exit;
 
@@ -284,17 +284,17 @@ try {
 		$oauth = new OAuth();
 		$token = $oauth->check(null, array('feedread'));
 
-		if (!empty($token->userdata)) {
+		if ($token->isUser()) {
 			$clientid = null;
-			$userid = $token->userdata['userid'];
-			$groups = $token->userdata['groups'];
+			$userid = $token->getUserID();
+			$groups = $token->getGroups();
 		} else {
-			$clientid = $token->clientdata['client_id'];
+			$clientid = $token->getClientID();
 			$userid = null;
-			$groups = $token->clientdata['groups'];
+			$groups = $token->getClientGroups();
 		}
 
-		// echo "clientdata: \n"; print_r($token); echo "...\n";
+		// echo 'groups: '; print_r($groups); exit;
 
 		$feed = new Feed($userid, $clientid, $groups);
 
@@ -367,7 +367,7 @@ try {
 
 		if ($token) {
 			$oauth->check(null, array('app_' . $targetapp . '_user'));
-			$userid = $token->userdata['userid'];
+			$userid = $token->getUserID();
 			$client->setAuthenticated($userid);
 		}
 

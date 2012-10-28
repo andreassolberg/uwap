@@ -134,6 +134,7 @@ class AuthBase {
 
 		$groups = array();
 
+
 		$realm = 'na.feide.no';
 		if (!empty($attributes['eduPersonPrincipalName']) && !empty($attributes['eduPersonOrgDN:o'])) {
 			if (preg_match('/^(.*?)@(.*?)$/', $attributes['eduPersonPrincipalName'][0], $matches)) {
@@ -150,6 +151,7 @@ class AuthBase {
 			}
 		}
 
+		/*
 		$groupmanager = new GroupManager($this->getRealUserID());
 		$adhocgroups = $groupmanager->getMyGroups();
 		if (!empty($adhocgroups)) {
@@ -161,9 +163,15 @@ class AuthBase {
 		if (in_array($this->getRealUserID(), GlobalConfig::getValue('admins', array()))) {
 			$groups['uwapadmin'] = 'UWAP System Administrators';
 		}
+		*/
 
 		return $groups;
 	}
+
+
+
+
+
 
 	public function memberOf($group) {
 		$groups = $this->getGroups();

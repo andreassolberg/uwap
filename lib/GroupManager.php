@@ -56,7 +56,7 @@ class GroupManager {
 			$ne['title'] = $entry['title'];
 			$ne['id'] = $entry['id'];
 			$ne['description'] = $entry['description'];
-			$ne['listable'] = $entry['listable'];
+			if (isset($entry['listable'])) $ne['listable'] = $entry['listable'];
 
 			$ne['owner'] = (bool) ($entry['uwap-userid'] === $this->userid);
 			$ne['admin'] = (bool) (in_array($this->userid, $entry['admins']));
@@ -304,7 +304,7 @@ class GroupManager {
 		// if (empty($user['name'])) throw new Exception('Missing user attribute [userid]');
 
 		$search = $this->getUser($user['userid']);
-		// echo '<pre>SEARCH RESULt: ['; print_r($search); echo ']';
+		// echo '<pre>SEARCH RESULt: ['; print_r($search); echo ']</pre>';
 		if ($search) return false;
 
 		$allowedFields = array('userid', 'name', 'mail');
