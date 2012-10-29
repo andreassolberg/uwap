@@ -38,7 +38,6 @@ class Feed {
 					'$in' => array($selector['group']),
 				);
 			}
-
 			
 		}
 

@@ -151,6 +151,28 @@ define(function(require, exports, module) {
 
 		}
 
+		App.prototype.updateNotifications = function(n) {
+
+			
+			
+			if (n.length > 0)  {
+				$(".notificationcount").show();
+			} else {
+				$(".notificationcount").hide();
+			}
+			$(".notificationlist").find('.notificationentry').empty();
+
+			if (n.length > 10) {
+				$(".notificationlist").prepend('<li class="notificationentry"> - ' + (n.length-10) + ' more notifications...</li>');
+			}
+
+			$.each(n, function(i, item) {
+				if (i > 10) return;
+				$(".notificationlist").prepend('<li class="notificationentry"><a href="#/item/' + item.id + '">' + item.summary + '</a></li>');
+			});
+
+			$(".notificationcount").empty().text(n.length);
+		}
 
 		App.prototype.addPost = function(item) {
 			var h;
@@ -211,6 +233,10 @@ define(function(require, exports, module) {
 
 			var s = this.getSettings();
 			s.from = this.currentRange.to;
+
+			UWAP.feed.notifications({}, function(data) {
+				that.updateNotifications(data);
+			});
 
 			UWAP.feed.read(s, function(data) {
 				console.log("FEED Update Received", data);

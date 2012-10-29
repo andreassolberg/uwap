@@ -260,6 +260,12 @@ define(function(require) {
 	};
 
 	UWAP.feed = {
+		notifications: function(selector, callback, errorcallback) {
+			UWAP._request(
+				'POST', UWAP.utils.getEngineURL("/api/feed/notifications"),
+				selector, 
+				null, callback, errorcallback);
+		},
 		post: function(object, callback, errorcallback) {
 			UWAP._request(
 				'POST', UWAP.utils.getEngineURL("/api/feed/post"),

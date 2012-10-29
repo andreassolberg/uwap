@@ -9,6 +9,7 @@ require_once($base . '/Config.php');
 require_once($base . '/GlobalConfig.php');
 require_once($base . '/Auth.php');
 require_once($base . '/Feed.php');
+require_once($base . '/Notifications.php');
 require_once($base . '/AuthBase.php');
 require_once($base . '/OAuth.php');
 require_once($base . '/AuthenticatedToken.php');
@@ -26,6 +27,7 @@ require_once($base . '/HTTPClientOAuth2.php');
 require_once($base . '/ParentMessenger.php');
 
 require_once($base . '/People.php');
+require_once($base . '/Mailer.php');
 
 
 
