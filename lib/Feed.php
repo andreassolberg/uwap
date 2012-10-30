@@ -13,6 +13,14 @@ class Feed {
 
 	}
 
+	static public function array_remove($remove, $ar) {
+		$r = array();
+		foreach($ar AS $e) {
+			if ($e !== $remove) $r[] = $e;
+		}
+		return $r;
+	}
+
 	public function read($selector) {
 
 		// print_r($selector); exit;
@@ -58,9 +66,9 @@ class Feed {
 		// echo 'groups'; print_r($this->groups); exit;
 		$auth = new AuthBase();
 		if ($this->userid) {
-			$list = $this->store->queryListUser("feed", $this->userid, $this->groups, $query, array(), array('limit' => 300, 'sort' => array('ts' => -1)));	
+			$list = $this->store->queryListUser("feed", $this->userid, $this->groups, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
 		} else {
-			$list = $this->store->queryListClient("feed", $this->clientid, $this->groups, $query, array(), array('limit' => 300, 'sort' => array('ts' => -1)));	
+			$list = $this->store->queryListClient("feed", $this->clientid, $this->groups, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
 		}
 
 		$range = array('from' => null, 'to' => null);
@@ -70,6 +78,13 @@ class Feed {
 			if (!empty($v['uwap-acl-read'])) {
 				$list[$k]['groups'] = $v['uwap-acl-read'];
 			}
+
+			$list[$k]['public'] = false;
+			if (in_array('!public', $list[$k]['groups'])) {
+				$list[$k]['groups'] = self::array_remove('!public', $list[$k]['groups']);
+				$list[$k]['public'] = true;
+			}
+
 			if (!empty($v['uwap-userid'])) {
 				$list[$k]['user'] = $auth->getUserBasic($v['uwap-userid']);
 			}
@@ -101,7 +116,21 @@ class Feed {
 
 	public function post($msg, $groups = array()) {
 		if (!is_array($groups)) throw new Exception("Provided groups must be an array");
+
+
+		// Perform access control on who can post to which group, and also if the user is a superuser.
+		// filter accepted properties on object.
+
+
+		if (isset($msg['public'])) {
+			if ($msg['public']) {
+				$groups[] = '!public';
+			}
+			unset($msg['public']);
+		}
+
 		$msg['uwap-acl-read'] = $groups;
+
 		// unset($groups);
 
 		if (!empty($msg['oid'])) {

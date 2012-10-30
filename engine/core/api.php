@@ -48,7 +48,6 @@ try {
 		}
 
 
-
 	} else if  (Utils::route('get', '^/updateme$', &$parameters)) {
 
 		$auth = new AuthBase();

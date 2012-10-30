@@ -100,6 +100,13 @@ define([
 		msg['groups'] = this.getGroups();
 
 
+		msg.promoted = this.el.find('input.field-promoted').prop("checked");
+		msg.public = this.el.find('input.field-public').prop("checked");
+		// if (public) {
+		// 	msg['groups'].push('!public');
+		// }
+		console.error("PRomoted", this.el.find('input.field-promoted'));
+
 		var postcontainer = this.el.find("div.postc.post-" + this.type);
 
 		switch(this.type) {
@@ -128,7 +135,6 @@ define([
 				break;
 		}
 
-
 		var str = this.el.find("textarea").val();
 
 		console.log("Pushing obj", msg); // return;
@@ -136,6 +142,7 @@ define([
 
 		if (this.callback) {
 			this.callback(msg);
+			console.log("POSTING A NEW MESSAGE ", msg); return;
 			this.el.find("textarea").val("").focus();
 			postcontainer.find("textarea").val("");
 			postcontainer.find("input").val("");

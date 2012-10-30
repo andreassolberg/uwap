@@ -183,7 +183,7 @@
 
 	<script id="itemTmpl" type="text/x-jquery-tmpl">
 
-		<div id="${id}" class="item basicItem">
+		<div id="${id}" class="item basicItem {{if promoted}}promoted{{/if}}">
 			{{if user}}
 				<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
 			{{/if}}
@@ -265,7 +265,13 @@
 				{{each groupnames}}
 			        <span class="label">${$value}</span>
 			    {{/each}}
-
+			    {{if public}}
+			    	<span class="label label-inverse"><i class="icon-eye-open icon-white"></i> Public</span>
+			    {{/if}}
+			    {{if promoted}}
+				    <span class="label label-info"><i class="icon-star icon-white"></i> Promoted</span>
+			    
+			    {{/if}}
 			    
 			</div>
 
@@ -387,8 +393,8 @@
 					</div>
 
 					<div>
-						<p><label><input type="checkbox"> Public</label> 
-						   <label><input type="checkbox"> Promoted</label></p>
+						<p><label><input class="field-public" type="checkbox"> Public</label> 
+						   <label><input class="field-promoted" type="checkbox"> Promoted</label></p>
 					</div>
 
 
