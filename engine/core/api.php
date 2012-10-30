@@ -48,7 +48,6 @@ try {
 		}
 
 
-
 	} else if  (Utils::route('get', '^/updateme$', &$parameters)) {
 
 		$auth = new AuthBase();
@@ -301,6 +300,12 @@ try {
 		if (Utils::route('post', '^/feed$', &$qs, &$parameters)) {
 			
 			$response['data'] = $feed->read($parameters);
+
+		} else if (Utils::route('post', '^/feed/notifications$', &$qs, &$parameters)) {
+
+			// $parameters;
+			$no = new Notifications($userid, $groups);
+			$response['data'] = $no->read(3600*24*30);
 
 		} else if (Utils::route('post', '^/feed/post$', &$qs, &$args)) {
 

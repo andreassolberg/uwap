@@ -75,6 +75,9 @@ body {
 		rgb(51, 51, 51);
 
 }
+#feed .basicItem.promoted {
+	background: #fff !important;
+}
 #feed .basicItem:last-child {
 	border-bottom: none;
 }
