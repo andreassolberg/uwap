@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>UNINETT WebAPP Demo</title>
+
+	<style>
+		body {
+			background: #ccc; color: #222; padding: 3em; font-family: sans-serif
+		}
+		div#out {
+			border-radius: 10px;
+			margin: 2em 0px; background: #eee; border: 1px solid #ccc; padding: 1em
+		}
+		dl dd {
+
+		}
+		div#chatoutput p {
+			margin: 5px;
+			border-top: 1px solid #ccc;
+			padding: 4px;
+
+		}
+	</style>
+
+	<!-- JQuery hosted by Google -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+	<!-- Core API to UNINETT WebApp Park -->
+	<script type="text/javascript" src="/_/js/core.js"></script>
+	<script type="text/javascript" src="/js/geo.js"></script>
+	<script type="text/javascript" src="/js/moment.js"></script>
+
+	<script type="text/javascript">
+
+
+
+		$("document").ready(function() {
+
+			UWAP.auth.require(function() {
+				// var twitter = 'https://api.twitter.com/1/statuses/home_timeline.json?include_entities=true';
+				// UWAP.data.get(twitter, {handler: "twitter"}, function(data) {
+
+				// 	$.each(data, function(i, entry) {
+				// 		$("div#out").append(
+				// 			'<p><img src="' + entry.user.profile_image_url_https + '" /> @' + entry.user.screen_name + 
+				// 			' <span style="font-size: 120%" >' + entry.text + '</span>'  +
+				// 			'</p>');
+				// 	});
+					
+				// });
+
+				// var twitterposturl = 'https://api.twitter.com/1/direct_messages/new.json';
+				// UWAP.data.get(twitterposturl, {
+				// 	handler: "twitter",
+				// 	method: "post",
+				// 	data: {
+				// 		screen_name: "erlang",
+				// 		text: "This is a test. Ignore it."
+				// 	}
+				// }, function(data) {
+				// 	console.log("Response from posting twitter direct message");
+				// 	console.log(data);
+				// });
+
+
+				UWAP.data.get('https://api.twitter.com/1/statuses/update.json', {
+					handler: "twitter",
+					method: "post",
+					data: {
+						status: "Testing Twitter OAuth 1.0a API"
+					}
+				}, function(data) {
+					console.log("Response from posting twitter direct message");
+					console.log(data);
+				});
+
+			});
+
+
+			// UWAP.auth.require(function() {
+			// 	var github = 'https://api.github.com/user';
+			// 	UWAP.data.get(github, {handler: "github"}, function(data) {
+			// 		console.log("DATA RECEIVED", data);
+			// 	});
+			// });
+			
+		});
+
+	</script>
+	
+	
+	
+</head>
+
+<body style="">
+
+
+	<img src="https://www.uninett.no/sites/drupal.uninett.no.uninett/themes/uninett_2012/images/logo.png" style="" />	
+
+	<p style="">UNINETT WebAPP Demo</p>
+
+	<p><a href="https://store.uwap.org">App store</a></p>
+
+	<input type="submit" id="smt" name="smt" value="Require login" />
+	<input type="submit" id="facebook" name="facebook" value="Load facebook" />
+
+
+
+	<div id="out" style=""></div>
+
+
+	
+
+</body>
+</html>
+
+
+
+
+
+
+
+

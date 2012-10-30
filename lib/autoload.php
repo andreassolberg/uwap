@@ -11,6 +11,7 @@ require_once($base . '/Auth.php');
 require_once($base . '/Feed.php');
 require_once($base . '/AuthBase.php');
 require_once($base . '/OAuth.php');
+require_once($base . '/AuthenticatedToken.php');
 require_once($base . '/GroupManager.php');
 require_once($base . '/AppDirectory.php');
 require_once($base . '/UWAPStore.php');
