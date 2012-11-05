@@ -41,14 +41,15 @@ foreach($authz AS $a) {
 	// if ($userid !== 'andreas@uninett.no') continue;
 	if (!in_array($userid, $testusers)) {
 		echo "  › Skipping user " . $userid . "\n\n";
-		continue;	
+		continue;
 	} 
 
 	echo "   [Processing " . $userid . " >\n";
 
 
 	$no = new Notifications($userid, $user['groups']);
-	$entries = $no->read(3600);
+	$response = $no->read(array(), 3600);
+	$entries = $response['items'];
 
 	if (empty($entries)) {
 		echo "No updates...\n\n";
