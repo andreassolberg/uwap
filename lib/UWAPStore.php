@@ -228,6 +228,10 @@ class UWAPStore {
 			));
 		}
 
+		if (isset($criteria["_id"])) {
+			$criteria["_id"] = new MongoId($criteria["_id"]);
+		}
+
 		$cursor = $this->db->{$collection}->find($criteria, $fields);
 		if ($cursor->count() < 1) return null;
 		return $cursor->getNext();
