@@ -260,6 +260,13 @@ define(function(require) {
 	};
 
 	UWAP.feed = {
+		notificationsMarkRead: function(ids, callback, errorcallback) {
+			UWAP._request(
+				'POST', UWAP.utils.getEngineURL("/api/feed/notifications/markread"),
+				ids, 
+				null, callback, errorcallback);
+		},
+
 		notifications: function(selector, callback, errorcallback) {
 			UWAP._request(
 				'POST', UWAP.utils.getEngineURL("/api/feed/notifications"),
@@ -284,6 +291,12 @@ define(function(require) {
 			UWAP._request(
 				'POST', UWAP.utils.getEngineURL("/api/feed"),
 				selector, 
+				null, callback, errorcallback);
+		},
+		readItem: function(oid, callback, errorcallback) {
+			UWAP._request(
+				'GET', UWAP.utils.getEngineURL("/api/feed/item/" + oid),
+				null, 
 				null, callback, errorcallback);
 		}
 	};
