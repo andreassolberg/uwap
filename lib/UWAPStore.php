@@ -174,9 +174,18 @@ class UWAPStore {
 	public function queryListClient($collection, $clientid, $groups, $criteria = array(), $fields = array(), $options = array() ) {
 
 		if (empty($groups)) {
-			$criteria["uwap-clientid"] = $clientid;
+			$criteria["uwap-userid"] = $userid;
 		} else {
-			$criteria['$or'] = $this->getACLclient($clientid, $groups);
+			if (isset($criteria['$or'])) {
+				
+				$criteria['$and'] = array(
+					array('$or' => $this->getACL($userid, $groups)),
+					array('$or' => $criteria['$or']),
+				) ;
+				unset($criteria['$or']);
+			} else {
+				$criteria['$or'] = $this->getACL($userid, $groups);
+			}
 		}
 		// echo 'query'; print_r($criteria); exit;
 		if ($collection !== 'log') {
@@ -198,7 +207,16 @@ class UWAPStore {
 		if (empty($groups)) {
 			$criteria["uwap-userid"] = $userid;
 		} else {
-			$criteria['$or'] = $this->getACL($userid, $groups);
+			if (isset($criteria['$or'])) {
+
+				$criteria['$and'] = array(
+					array('$or' => $this->getACL($userid, $groups)),
+					array('$or' => $criteria['$or']),
+				) ;
+				unset($criteria['$or']);
+			} else {
+				$criteria['$or'] = $this->getACL($userid, $groups);
+			}
 		}
 		// echo 'query'; print_r($criteria); exit;
 		if ($collection !== 'log') {
@@ -208,6 +226,8 @@ class UWAPStore {
 				'criteria' => $criteria,
 			));
 		}
+
+		// print_r($criteria);
 
 		$ret = $this->queryList($collection, $criteria, $fields, $options);
 		// echo 'Result'; print_r($ret); exit;
@@ -237,6 +257,18 @@ class UWAPStore {
 		return $cursor->getNext();
 	}
 
+	public static function idify($q) {
+		foreach($q AS $k => $v) {
+			if ($k === '_id') {
+				$q[$k] = new MongoId($q["_id"]);
+			}
+			if (is_array($v)) {
+				$q[$k] = self::idify($v);
+			}
+		}
+		return $q;
+	}
+
 	public function queryList($collection, $criteria, $fields = array(), $options = array()) {
 
 		if ($collection !== 'log') {
@@ -246,6 +278,18 @@ class UWAPStore {
 				'options'  => $options,
 			));
 		}
+
+		$criteria = self::idify($criteria);
+
+
+		// if ($collection === 'feed') {
+		// echo 'QUERY:';
+		// print_r($criteria);	
+		// }
+
+		
+
+
 
 		$cursor = $this->db->{$collection}->find($criteria, $fields);
 		if ($cursor->count() < 1) return null;
