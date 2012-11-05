@@ -9,7 +9,7 @@ define([
 		this.views = {
 			'feed': {
 				'icon': 'icon-align-left',
-				'name': 'Feed'
+				'name': 'List view'
 			},
 			'media': {
 				'icon': 'icon-th',
@@ -37,25 +37,33 @@ define([
 
 		this.opt = {};
 		
-		this.el.on("click", "button.viewtype", $.proxy(this.actSelect, this));
+		this.el.on("click", ".viewtype", $.proxy(this.actSelect, this));
 
-		var viewcontainer = this.el.find('.viewtypes');
+		var viewcontainer = this.el.find('#viewtypes');
 
 		$.each(this.views, function(i, v) {
-			$('<button type="button" class="btn viewtype"><i class="' + v.icon + '"></i> ' + v.name + '</button>')
+			$('<li class="viewtype"><a href="">' + that.getText(i) + '</li>')
 				.data('opt', i).appendTo(viewcontainer);
 		});
-		viewcontainer.children().eq(0).addClass('active');
+		this.el.find('.selectedView').empty().append(this.getText('feed'));
+		// viewcontainer.children().eq(0).addClass('active');
 
 
 	} 
 
+
+	ViewController.prototype.getText = function(key) {
+		console.log("ettext for key " + key)
+		return '<i class="' + this.views[key].icon + '"></i> ' + this.views[key].name + '</a>';
+	}
 
 	ViewController.prototype.actSelect = function(e) {
  		e.preventDefault();
 
  		var currentItem = $(e.currentTarget).data('opt');
  		this.opt.view = currentItem;
+
+ 		this.el.find('.selectedView').empty().append(this.getText(this.opt.view));
 
  		console.log("Click on item", currentItem, this.views[currentItem]);
  		if (this.callback) {

@@ -9,6 +9,8 @@
 
 require_once('../../lib/autoload.php');
 
+header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true");
@@ -305,7 +307,16 @@ try {
 
 			// $parameters;
 			$no = new Notifications($userid, $groups);
-			$response['data'] = $no->read(3600*24*30);
+			$response['data'] = $no->read($parameters, 3600*24*30);
+
+			// header('Content-Type: text/plain; charset: utf-8'); echo "poot"; print_r($response); exit;
+
+		} else if (Utils::route('post', '^/feed/notifications/markread$', &$qs, &$ids)) {
+
+
+			$no = new Notifications($userid, $groups);
+			$response['data'] = $no->markread($ids);
+
 
 		} else if (Utils::route('post', '^/feed/post$', &$qs, &$args)) {
 
@@ -326,6 +337,12 @@ try {
 			
 			$response['data'] = $feed->delete($qs[1]);
 
+		} else if (Utils::route('get', '^/feed/item/([a-z0-9\-]+)$', &$qs, &$args)) {
+
+			// $oauth->check(null, array('feedwrite'));
+			// echo "About to delete an item: " . $qs[1];
+			
+			$response['data'] = $feed->readItem($qs[1]);
 
 		} else {
 

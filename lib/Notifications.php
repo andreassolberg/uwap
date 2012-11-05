@@ -21,6 +21,13 @@ class Notifications {
 
 			$str .= $item['user']['name'] . ' ';
 
+			if (isset($item['refs'])) {
+				$c = count($item['refs']);
+				if ($c > 0) {
+					$str .= ' and ' . $c . ' more ';
+				}
+			}
+
 		} else if (isset($item['client'])) {
 		
 			$str .= $item['client']['client_name'] . ' ';
@@ -66,31 +73,150 @@ class Notifications {
 		return $str;
 	} 
 
+	static function array_remove($a1, $a2) {
+		$r = array();
+		foreach($a1 AS $k => $v) {
+			if (!in_array($v, $a2)) {
+				$r[] = $v;
+			}
+		}
+		return $r;
 
-	function read($ago = 2592000) { // 30 days
+	}
+
+
+	function markread($ids) {
+
+		$readnotifications = $this->store->queryListUser('notifications', $this->userid, null, array());
+
+		$remaining = self::array_remove($ids, $readnotifications);
+
+		// print_r("rmaining"); print_r($remaining); exit;
+
+		foreach($remaining AS $id) {
+			$query = array('id' => $id);
+			$this->store->store('notifications', $this->userid, $query, 2592000); // 30 days
+		}
+
+		return $remaining;
+	}
+
+	function read($selector, $ago = 2592000) { // 30 days
+
+		// queryListUser($collection, $userid, $groups, $criteria = array(), $fields = array(), $options = array() ) {
+
+
+		$readnotifications = $this->store->queryListUser('notifications', $this->userid, null, array());
+
+
+
+		$readids = array();
+		if (!empty($readnotifications)) {
+			foreach($readnotifications AS $item) {
+				$readids[$item['id']] = 1;
+			}
+		}
+
+		// print_r($readids); exit;
 
 		$results = array();
-
 		$feed = new Feed($this->userid, null, $this->groups);
-		$from = time() - $ago; // (3600*24*4); // 30 days ago.
-		$entries = $feed->read(array('from' => $from));
 
-		// echo "===============> QUERY QYERY " . $this->userid . " " . json_encode($this->groups) . "\n\n";
+		$selector['from'] = time() - $ago;
 
-		// print_r($entries['items']);
+		$entries = $feed->read($selector);
+
+
+
+
+		// foreach($entries['items'] AS $k => $entry) {
+
+		// 	if (isset($entry['uwap-userid']) && $entry['uwap-userid'] === $this->userid) {
+		// 		unset($entries['items'][$k]);
+		// 	}
+
+		// 	$ne = array('id' => $entry['id'], 'ts' => $entry['ts']);
+
+		// 	$isread = isset($readids[$entry['id']]);
+		// 	$ne['isread'] = $isread;
+		// 	if (!$isread) {++$unreadcount;}
+
+		// 	if (isset($entry['inresponseto'])) $ne['inresponseto'] = $entry['inresponseto'];
+
+		// 	$ne['summary'] = $this->itemStr($entry);
+		// 	$ne['timehuman'] = date('D, d M Y H:i:s', $entry['ts']);
+
+		// 	$results[] = $ne;
+
+		// }
+
+
+
+
+
+		/*
+		 * Walk through notifications items to merge comments on same item...
+		 */
+		$refs = array();
+		foreach($entries['items'] AS $k => $entry) {
+
+			if (isset($entry['uwap-userid']) && $entry['uwap-userid'] === $this->userid) continue;
+
+			if (isset($entry['inresponseto'])) {
+
+				if (isset($refs[$entry['inresponseto']])) {
+
+					$refs[$entry['inresponseto']]['refs'][] = $entry;
+					unset($entries['items'][$k]);
+
+				} else {
+
+					$refs[$entry['inresponseto']] =& $entries['items'][$k];
+					$entries['items'][$k]['refs'] = array();
+					// $refs[$entry['inresponseto']]['refs'] = array();
+
+				}
+
+			}
+
+		}
+		// print_r($refs); exit;
+		// print_r($entries['items']); exit;
+
+
+		$unreadcount = 0;
 
 		foreach($entries['items'] AS $entry) {
 
+			if (isset($entry['uwap-userid']) && $entry['uwap-userid'] === $this->userid) continue;
+
 			$ne = array('id' => $entry['id'], 'ts' => $entry['ts']);
+
+			$isread = isset($readids[$entry['id']]);
+			$ne['isread'] = $isread;
+			if (!$isread) {++$unreadcount;}
+
+			if (isset($entry['inresponseto'])) $ne['inresponseto'] = $entry['inresponseto'];
+			if (isset($entry['class'])) $ne['class'] = $entry['class'];
+
+			if (isset($entry['refs'])) {
+				$ne['refs'] = count($entry['refs']);
+			}
+
 			$ne['summary'] = $this->itemStr($entry);
+			$ne['timehuman'] = date('D, d M Y H:i:s', $entry['ts']);
 
 			$results[] = $ne;
 
 		}
 
-		// print_r($results); 
+		$response = array(
+			'items' => $results,
+			'range' => $entries['range'],
+			'unreadcount' => $unreadcount,
+		);
 
-		return $results;
+		return $response;
 	}
 
 

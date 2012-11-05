@@ -21,12 +21,30 @@ class Feed {
 		return $r;
 	}
 
+	public function readItem($id) {
+		$query = array('_id' => $id);
+		// r($collection, $userid, $groups, $criteria = array(), $fields = array()) {
+		// print_r($query); exit;
+		// $item = $this->store->queryOneUser("feed", $this->userid, $this->groups, $query);
+
+		return $this->read(array('id_' => $id));
+
+	}
+
 	public function read($selector) {
 
 		// print_r($selector); exit;
 
 		$query = array(
 		);
+
+		if (isset($selector['id_'])) {
+			$query['$or'] = array(
+				array('_id' => new MongoID($selector['id_'])), 
+				array('inresponseto' => $selector['id_']),
+			);
+		}
+		
 
 		if (isset($selector['user'])) {
 			if ($selector['user'] === '@me' && $this->userid) {
@@ -78,11 +96,22 @@ class Feed {
 			if (!empty($v['uwap-acl-read'])) {
 				$list[$k]['groups'] = $v['uwap-acl-read'];
 			}
+			if (empty($list[$k]['groups'])) {
+				$list[$k]['groups'] = array();
+			}
 
 			$list[$k]['public'] = false;
 			if (in_array('!public', $list[$k]['groups'])) {
 				$list[$k]['groups'] = self::array_remove('!public', $list[$k]['groups']);
 				$list[$k]['public'] = true;
+			}
+
+			if (!empty($list[$k]['class'])) {
+				if (is_string($list[$k]['class'])) {
+					$list[$k]['class'] = array($list[$k]['class']);
+				}
+			} else {
+				$list[$k]['class'] = array('message');
 			}
 
 			if (!empty($v['uwap-userid'])) {
