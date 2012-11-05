@@ -2,12 +2,16 @@ define([
 
 ], function() {
 
-	var PostController = function(el) {
-		this.el = el;
+	var PostController = function(pane) {
+		this.pane = pane;
+		this.el = pane.el;
 		this.type = null;
 		this.groups = null;
 
 		this.selectedGroups = {};
+
+
+		$("#postTmpl").tmpl().appendTo(this.el);
 		
 		this.el.on("click", ".actPost", $.proxy(this.actPost, this));
 
@@ -105,7 +109,7 @@ define([
 		// if (public) {
 		// 	msg['groups'].push('!public');
 		// }
-		console.error("PRomoted", this.el.find('input.field-promoted'));
+		// console.error("PRomoted", this.el.find('input.field-promoted'));
 
 		var postcontainer = this.el.find("div.postc.post-" + this.type);
 

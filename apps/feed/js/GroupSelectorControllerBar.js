@@ -53,9 +53,9 @@ define([
 		// $('<li class=""><a href="#"><i class=" icon-globe"></i> Public feed</a></li>')
 		// 	.data('selector', {}).appendTo(this.el);
 
-		$('<li class="active"><a class="actGroupSelect" href="#"><i class=" icon-home"></i> Newsfeed</a></li>')
+		$('<li class="active"><a class="actGroupSelect" href="#"><i class=" icon-home"></i> All groups</a></li>')
 			.data('selector', {})
-			.data('content', '<i class="icon-home"></i> Newsfeed').appendTo(list);
+			.data('content', '<i class="icon-home"></i> All groups').appendTo(list);
 
 		$('<li class=""><a class="actGroupSelect" href="#"><i class=" icon-user"></i> Your entries</a></li>')
 			.data('selector', {user: '@me'})
