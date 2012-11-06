@@ -19,8 +19,12 @@
 			<form class="form-horizontal">
 
 				{{if user}}
-					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
+					<img class="profileimg img-polaroid" src="http://core.app.bridge.uninett.no/api/media/user/${user.a}" />
 				{{/if}}
+				{{if client}}
+					<img class="profileimg img-polaroid" src="http://core.app.bridge.uninett.no/api/media/logo/client/${client.client_id}" />
+				{{/if}}
+				
 				<textarea class="focusfield field-message" style="width: 90%" placeholder="Write a comment..."></textarea>
 				<div class="btn-group">
 				  <button class="btn btn-mini actPostComment">Post</button>
@@ -36,10 +40,10 @@
 		<script id="commentTmpl" type="text/x-jquery-tmpl">
 			<div id="${id}" class="comment">
 				{{if user}}
-					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
+					<img class="profileimg img-polaroid" src="http://core.app.bridge.uninett.no/api/media/user/${user.a}" />
 				{{/if}}
 				{{if client}}
-					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/logo.php?client=${client.client_id}" />
+					<img class="profileimg img-polaroid" src="http://core.app.bridge.uninett.no/api/media/logo/client/${client.client_id}" />
 				{{/if}}
 
 				{{if title}}
@@ -184,12 +188,13 @@
 	<script id="itemTmpl" type="text/x-jquery-tmpl">
 
 		<div id="${id}" class="item basicItem {{if promoted}}promoted{{/if}}">
-			{{if user}}
-				<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
-			{{/if}}
-			{{if client}}
-				<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/logo.php?client=${client.client_id}" />
-			{{/if}}
+
+				{{if user}}
+					<img class="profileimg img-polaroid" src="http://core.app.bridge.uninett.no/api/media/user/${user.a}" />
+				{{/if}}
+				{{if client}}
+					<img class="profileimg img-polaroid" src="http://core.app.bridge.uninett.no/api/media/logo/client/${client.client_id}" />
+				{{/if}}
 
 			<div style="float: right" class="btn-group pull-right">
 				<a class="btn dropdown-toggle btn-small" data-toggle="dropdown" href="#">
