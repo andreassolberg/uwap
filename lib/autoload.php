@@ -14,6 +14,7 @@ require_once($base . '/AuthBase.php');
 require_once($base . '/OAuth.php');
 require_once($base . '/AuthenticatedToken.php');
 require_once($base . '/GroupManager.php');
+require_once($base . '/GroupFetcherAgora.php');
 require_once($base . '/AppDirectory.php');
 require_once($base . '/UWAPStore.php');
 require_once($base . '/UWAPLogger.php');
