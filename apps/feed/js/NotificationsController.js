@@ -55,9 +55,9 @@ define([
 		});
 	}
 
-	NotificationsController.prototype.markRead = function(id) {
+	NotificationsController.prototype.markRead = function(ids) {
 		var that = this;
-		UWAP.feed.notificationsMarkRead([id], function(data) {
+		UWAP.feed.notificationsMarkRead(ids, function(data) {
 			that.load();
 		});
 	}

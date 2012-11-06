@@ -80,6 +80,7 @@ class Feed {
 			);
 		}
 
+		// print_r($query); exit;
 
 		// echo 'groups'; print_r($this->groups); exit;
 		$auth = new AuthBase();
