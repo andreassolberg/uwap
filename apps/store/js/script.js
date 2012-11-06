@@ -34,9 +34,9 @@ define(function(require, exports, module) {
 			// appinfo(k, o[k]);
 			var item = o[i];
 			item.xmlid = "uwap-" + item.id;
-			item.logo = '/_/api/logo.php?app=' +item.id;
+			item.logo = UWAP.utils.getEngineURL('/api/media/logo/app/' +item.id);
 			item.link_run = UWAP.utils.scheme + '://' + item.id + '.' + UWAP.utils.hostname;
-			item.link_moreinfo = 'http://' + item.id + '.uwap.org';
+			item.link_moreinfo = 'https://' + item.id + '.uwap.org';
 			ui.addItem(item);
 		}
 		ui.ready();
