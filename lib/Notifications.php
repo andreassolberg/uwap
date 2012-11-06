@@ -75,6 +75,7 @@ class Notifications {
 
 	static function array_remove($a1, $a2) {
 		$r = array();
+		if (empty($a2)) return $a1;
 		foreach($a1 AS $k => $v) {
 			if (!in_array($v, $a2)) {
 				$r[] = $v;
@@ -113,10 +114,13 @@ class Notifications {
 		$readids = array();
 		if (!empty($readnotifications)) {
 			foreach($readnotifications AS $item) {
+
 				$readids[$item['id']] = 1;
+				// print_r($item); 
 			}
 		}
-
+		
+		// exit;
 		// print_r($readids); exit;
 
 		$results = array();
