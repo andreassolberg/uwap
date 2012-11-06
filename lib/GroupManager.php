@@ -25,6 +25,29 @@ class GroupManager {
 	}
 
 
+	public function getGroupNamesIndexed($moregroups) {
+		$groups = $this->getGroups($moregroups);
+		$res = array();
+		foreach($groups AS $k => $v) {
+			if (isset($v['id'])) {
+				$res[$v['id']] = $v['title'];
+			}
+		}
+		return $res;
+	}
+
+	public function getGroupsIndexed($moregroups) {
+		$groups = $this->getGroups($moregroups);
+		$res = array();
+		foreach($groups AS $k => $v) {
+			if (isset($v['id'])) {
+				$res[$v['id']] = $v;
+			}
+		}
+		return $res;
+	}
+
+
 	/**
 	 * New API for getting all groups of an user.
 	 * Cached token groups are provided in as a parameter.
@@ -69,6 +92,14 @@ class GroupManager {
 			}
 		}
 
+
+
+		$agora = new GroupFetcherAgora($this->userid);
+		$agroups = $agora->getGroups();
+
+		$result = array_merge($result, $agroups);
+
+
 		foreach($moregroups AS $key => $title) {
 			$ne = array();
 
@@ -82,6 +113,9 @@ class GroupManager {
 
 			$result[] = $ne;
 		}
+
+
+
 
 
 
