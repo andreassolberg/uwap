@@ -276,7 +276,7 @@ define(function(require, exports, module) {
 
 	ItemController.prototype.load = function(id) {
 
-		var that = this;
+		var that = this, ids = [];
 
 		if (id) this.id = id;
 
@@ -288,12 +288,16 @@ define(function(require, exports, module) {
 
 			$.each(data.items, function(i, item) {
 				that.addItem(item);
+				ids.push(item.id);
 			});
 
 			$("span.ts").prettyDate(); 
 
 			// that.enableComment();
 			that.pane.activate();
+
+
+			that.app.notificationsController.markRead(ids);
 
 			// that.currentRange.to = data.range.to;
 			// $.each(data.items, function(i, item) {

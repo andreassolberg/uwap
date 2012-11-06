@@ -196,7 +196,7 @@ define(function(require, exports, module) {
 			console.log("App.prototype.openSingleItem", id)
 			this.singleitemcontroller.load(id);
 
-			this.notificationsController.markRead(id);
+			
 
 		}
 
