@@ -54,16 +54,19 @@ class AuthenticatedToken {
 		$userid = $userdata['userid'];
 
 		$groupmanager = new GroupManager($userid);
-		$adhocgroups = $groupmanager->getMyGroups();
-		if (!empty($adhocgroups)) {
-			foreach($adhocgroups AS $adhocgroup) {
-				$userdata['groups'][$adhocgroup['id']] = $adhocgroup['title'];
-			}
-		}
+		// $adhocgroups = $groupmanager->getMyGroups();
 
-		if (in_array($userid, GlobalConfig::getValue('admins', array()))) {
-			$userdata['groups']['uwapadmin'] = 'UWAP System Administrators';
-		}
+		$userdata['groups'] = $groupmanager->getGroupNamesIndexed($userdata['groups']);
+
+		// if (!empty($adhocgroups)) {
+		// 	foreach($adhocgroups AS $adhocgroup) {
+		// 		$userdata['groups'][$adhocgroup['id']] = $adhocgroup['title'];
+		// 	}
+		// }
+
+		// if (in_array($userid, GlobalConfig::getValue('admins', array()))) {
+		// 	$userdata['groups']['uwapadmin'] = 'UWAP System Administrators';
+		// }
 
 		return $userdata;
 	}
