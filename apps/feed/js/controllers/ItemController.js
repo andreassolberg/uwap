@@ -71,6 +71,8 @@ define(function(require, exports, module) {
 		var that = this;
 		item.timestamp = moment(item.ts*1000).format();
 
+		console.log("Adding item", item);
+
 		this.groups = this.app.getGroups();
 
 		item.groupnames = [];
@@ -83,6 +85,14 @@ define(function(require, exports, module) {
 				}
 			});
 		}
+
+		if (item.user) {
+			item.user.profileimg = UWAP.utils.getEngineURL('/api/media/user/' + item.user.a);
+		}
+		if (item.client) {
+			item.client.profileimg = UWAP.utils.getEngineURL('/api/media/logo/client/' + item.client['client_id']);
+		}
+
 
 		// console.log("Testing article class", item.class)
 		if ($.isArray(item.class) && $.inArray('article', item.class) !== -1) {
@@ -195,12 +205,14 @@ define(function(require, exports, module) {
 			// $(".feedtype").empty();
 			if (!data.range) return;
 			that.currentRange.to = data.range.to;
+
 			$.each(data.items, function(i, item) {
 				if (!item.hasOwnProperty('promoted')) {
 					item.promoted = false;
 				}
 				that.addItem(item);
 			});
+
 			$("span.ts").prettyDate(); 
 		});
 
@@ -287,6 +299,13 @@ define(function(require, exports, module) {
 			that.clean();
 
 			$.each(data.items, function(i, item) {
+				if (item.inresponseto) return;
+				that.addItem(item);
+				ids.push(item.id);
+			});
+
+			$.each(data.items, function(i, item) {
+				if (!item.inresponseto) return;
 				that.addItem(item);
 				ids.push(item.id);
 			});

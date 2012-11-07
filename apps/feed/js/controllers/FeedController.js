@@ -93,6 +93,14 @@ define(function(require, exports, module) {
 			});
 		}
 
+		if (item.user) {
+			item.user.profileimg = UWAP.utils.getEngineURL('/api/media/user/' + item.user.a);
+		}
+		if (item.client) {
+			item.client.profileimg = UWAP.utils.getEngineURL('/api/media/logo/client/' + item.client['client_id']);
+		}
+
+
 		// console.log("Testing article class", item.class)
 		if ($.isArray(item.class) && $.inArray('article', item.class) !== -1) {
 			// console.log("MATCH:", item.class, ' ' + $.inArray('article', item.class));
@@ -274,9 +282,22 @@ define(function(require, exports, module) {
 				}
 				
 
+
 				$.each(data.items, function(i, item) {
+					if (item.inresponseto) return;
 					that.addItem(item);
+					
 				});
+
+				$.each(data.items, function(i, item) {
+					if (!item.inresponseto) return;
+					that.addItem(item);
+					
+				});
+
+				// $.each(data.items, function(i, item) {
+				// 	that.addItem(item);
+				// });
 
 				that.pane.activate();
 
