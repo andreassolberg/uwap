@@ -19,10 +19,12 @@
 			<form class="form-horizontal">
 
 				{{if user}}
-					<img class="profileimg img-polaroid" src="http://core.app.bridge.uninett.no/api/media/user/${user.a}" />
+					
+					<img class="profileimg img-polaroid" src="${user.profileimg}" />
 				{{/if}}
 				{{if client}}
-					<img class="profileimg img-polaroid" src="http://core.app.bridge.uninett.no/api/media/logo/client/${client.client_id}" />
+					
+					<img class="profileimg img-polaroid" src="${client.profileimg}" />
 				{{/if}}
 				
 				<textarea class="focusfield field-message" style="width: 90%" placeholder="Write a comment..."></textarea>
@@ -40,10 +42,12 @@
 		<script id="commentTmpl" type="text/x-jquery-tmpl">
 			<div id="${id}" class="comment">
 				{{if user}}
-					<img class="profileimg img-polaroid" src="http://core.app.bridge.uninett.no/api/media/user/${user.a}" />
+					
+					<img class="profileimg img-polaroid" src="${user.profileimg}" />
 				{{/if}}
 				{{if client}}
-					<img class="profileimg img-polaroid" src="http://core.app.bridge.uninett.no/api/media/logo/client/${client.client_id}" />
+					
+					<img class="profileimg img-polaroid" src="${client.profileimg}" />
 				{{/if}}
 
 				{{if title}}
@@ -189,12 +193,14 @@
 
 		<div id="${id}" class="item basicItem {{if promoted}}promoted{{/if}}">
 
-				{{if user}}
-					<img class="profileimg img-polaroid" src="http://core.app.bridge.uninett.no/api/media/user/${user.a}" />
-				{{/if}}
-				{{if client}}
-					<img class="profileimg img-polaroid" src="http://core.app.bridge.uninett.no/api/media/logo/client/${client.client_id}" />
-				{{/if}}
+			{{if user}}
+				
+				<img class="profileimg img-polaroid" src="${user.profileimg}" />
+			{{/if}}
+			{{if client}}
+				
+				<img class="profileimg img-polaroid" src="${client.profileimg}" />
+			{{/if}}
 
 			<div style="float: right" class="btn-group pull-right">
 				<a class="btn dropdown-toggle btn-small" data-toggle="dropdown" href="#">
@@ -266,6 +272,7 @@
 				{{/if}}
 				
 				<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
+				<!-- <span><i class=" icon-time"></i> activity <span class="ts" data-ts="${lastActivity}"></span></span> -->
 
 				{{each groupnames}}
 			        <span class="label">${$value}</span>
