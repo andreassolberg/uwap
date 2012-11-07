@@ -81,14 +81,44 @@ class Feed {
 		}
 
 		// print_r($query); exit;
-
 		// echo 'groups'; print_r($this->groups); exit;
+		// 
 		$auth = new AuthBase();
 		if ($this->userid) {
 			$list = $this->store->queryListUser("feed", $this->userid, $this->groups, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
 		} else {
 			$list = $this->store->queryListClient("feed", $this->clientid, $this->groups, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
 		}
+
+
+		// Set up a list with references...
+		$references = array();
+		foreach($list AS $k => $v) {
+			$id =  $v['_id']->{'$id'};
+			unset($list[$k]['_id']);
+			$list[$k]['id'] = $id;
+			$references[$id] = $k;
+		}
+
+
+		foreach($list AS $k => $v) {
+			if (isset($v['inresponseto']) && isset($references[$v['inresponseto']]) && isset($list[$references[$v['inresponseto']]]) ) {
+
+				$resolved =& $list[$references[$v['inresponseto']]];
+
+				if (!isset($resolved['linked'])) {
+					$resolved['linked'] = array();
+				}
+				$resolved['linked'][] = $v['id'];
+
+			}
+			
+		}
+
+
+		// print_r($list); exit;
+
+
 
 		$range = array('from' => null, 'to' => null);
 		
@@ -121,7 +151,19 @@ class Feed {
 			if (!empty($v['uwap-clientid'])) {
 				$list[$k]['client'] = $auth->getClientBasic($v['uwap-clientid']);
 			}
-			$list[$k]['id'] = $v['_id']->{'$id'};
+
+			$list[$k]['lastActivity'] = $list[$k]['ts'];
+
+
+			if (isset($list[$k]['linked']) && is_array($list[$k]['linked'])) {
+				foreach($list[$k]['linked'] AS $refid) {
+					$ref =& $list[$references[$refid]];
+					// print_r($ref); exit;
+					if ($ref['ts'] > $list[$k]['lastActivity']) {
+						$list[$k]['lastActivity'] = $ref['ts'];
+					}
+				}
+			}
 
 			if ($range['to'] === null) $range['to'] = $list[$k]['ts'];
 			if ($range['from'] === null) $range['from'] = $list[$k]['ts'];
@@ -129,8 +171,14 @@ class Feed {
 			if ($list[$k]['ts'] < $range['from']) $range['from'] = $list[$k]['ts'];
 		}
 
+		function uwapfeedsort($a, $b) {
+			// return $a['lastActivity'] < $b['lastActivity'];
+			return ($a['lastActivity'] < $b['lastActivity']) ? -1 : 1;
+		}
+		usort($list, 'uwapfeedsort');
+
 		$response = array(
-			'items' => array_reverse($list),
+			'items' => $list,
 			'range' => $range,
 		);
 
@@ -178,35 +226,9 @@ class Feed {
 		}
 
 		return $this->store->store("feed", $this->userid, $msg);
-		// store($collection, $userid = null, $obj, $expiresin = null) {
-	}
 
+              // store($collection, $userid = null, $obj, $expiresin = null) {
+      }
 
-
-/*
-
-	case 'remove':
-		if (empty($parameters['object'])) throw new Exception("Missing required parameter [object] object to save");
-		$store->remove("appdata-" . $targetapp, $userid, $parameters['object']);
-		break;
-
-	case 'save':
-		if (empty($parameters['object'])) throw new Exception("Missing required parameter [object] object to save");
-		$store->store("appdata-" . $targetapp, $userid, $parameters['object']);
-		break;
-
-		// TODO: Clean output before returning. In example remove uwap- namespace attributes...
-	case 'queryOne':
-		if (empty($parameters['query'])) throw new Exception("Missing required parameter [query] query");
-		$response['data'] = $store->queryOneUser("appdata-" . $targetapp, $userid, $groups, $parameters['query']);
-		break;
-
-	case 'queryList':
-		if (empty($parameters['query'])) throw new Exception("Missing required parameter [query] query");
-		$response['data'] = $store->queryListUser("appdata-" . $targetapp, $userid, $groups, $parameters['query']);
-		break;
-
- */
 
 }
-
