@@ -40,6 +40,10 @@ define(function(require, exports, module) {
 	// require('uwap-core/bootstrap/js/bootstrap-typeahead');
 
 	$("document").ready(function() {
+		
+
+		// Fix for ios for now.
+		// $(document).on('touchstart.dropdown', '.dropdown', function(e) { e.stopPropagation(); });
 
 
 		var App = function(el) {

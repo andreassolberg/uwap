@@ -3,6 +3,11 @@ body {
 }
 
 
+div#panecontainer .item {
+	overflow: hidden;
+}
+
+
 
 
 /* Notifications */
