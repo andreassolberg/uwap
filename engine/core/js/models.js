@@ -26,9 +26,16 @@ define(function(require) {
 
 	models.FeedItem.prototype.getDT = function() {
 		var m = moment(this.dtstart);
-		var m = moment(this.datetime);
-		return m.format('DD MMMM YYYY, HH:mm');
+		// var m = moment(this.datetime);
+		return m.format('DD. MMMM YYYY, HH:mm');
 	}
+
+	models.FeedItem.prototype.getDeadlineDT = function() {
+		
+		var m = moment(this.signup.deadline);
+		return m.format('DD. MMMM YYYY, HH:mm');
+	}
+	
 
 	models.FeedItem.prototype.getUntil = function() {
 		var m = moment(this.dtstart);
