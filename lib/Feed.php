@@ -93,26 +93,30 @@ class Feed {
 
 		// Set up a list with references...
 		$references = array();
-		foreach($list AS $k => $v) {
-			$id =  $v['_id']->{'$id'};
-			unset($list[$k]['_id']);
-			$list[$k]['id'] = $id;
-			$references[$id] = $k;
+		if (!empty($list)) {
+			foreach($list AS $k => $v) {
+				$id =  $v['_id']->{'$id'};
+				unset($list[$k]['_id']);
+				$list[$k]['id'] = $id;
+				$references[$id] = $k;
+			}
+
 		}
 
+		if (!empty($list)) {
+			foreach($list AS $k => $v) {
+				if (isset($v['inresponseto']) && isset($references[$v['inresponseto']]) && isset($list[$references[$v['inresponseto']]]) ) {
 
-		foreach($list AS $k => $v) {
-			if (isset($v['inresponseto']) && isset($references[$v['inresponseto']]) && isset($list[$references[$v['inresponseto']]]) ) {
+					$resolved =& $list[$references[$v['inresponseto']]];
 
-				$resolved =& $list[$references[$v['inresponseto']]];
+					if (!isset($resolved['linked'])) {
+						$resolved['linked'] = array();
+					}
+					$resolved['linked'][] = $v['id'];
 
-				if (!isset($resolved['linked'])) {
-					$resolved['linked'] = array();
 				}
-				$resolved['linked'][] = $v['id'];
-
+				
 			}
-			
 		}
 
 

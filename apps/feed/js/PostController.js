@@ -1,6 +1,14 @@
-define([
+define(function(require, exports, module) {
 
-], function() {
+	var 
+		$ = require('jquery'),
+		UWAP = require('uwap-core/js/core'),
+		moment = require('uwap-core/js/moment')
+		;
+
+	require('uwap-core/bootstrap/plugins/datepicker/bootstrap-datepicker');
+
+
 
 	var PostController = function(pane) {
 		this.pane = pane;
@@ -15,15 +23,20 @@ define([
 		
 		this.el.on("click", ".actPost", $.proxy(this.actPost, this));
 
-		// this.el.find("button.posttype").tooltip();
-
 		this.el.find("button.posttype").on('click', $.proxy(this.actTypeSelect, this));
 
 		this.el.on('click', '#sharewithgrouplist a.actShareWith', $.proxy(this.shareWith, this));
 		this.el.on('click', 'a.resetsharedwith', $.proxy(this.resetShareWith, this));
+		
 
 		this.el.find("button#btn-message").button('toggle').click();
-		
+
+		this.el.find('.datepicker').datepicker({weekStart: 1});
+		this.el.on('load',$.proxy(this.responsiveEventUI, this));
+
+		this.el.on('click', '.responsiveEventUI', $.proxy(this.responsiveEventUI, this));
+		this.responsiveEventUI();
+
 	} 
 
 	PostController.prototype.resetShareWith = function(e) {
@@ -35,6 +48,34 @@ define([
 		this.selectedGroups = {};
 
 		this.el.find('#sharewithgrouplist li').removeClass('disabled');
+
+	}
+
+	PostController.prototype.responsiveEventUI = function() {
+
+		var postcontainer = this.el.find("div.postc.post-event");
+
+
+		if (postcontainer.find(".field-deadline").prop('checked')) {
+			postcontainer.find(".section-deadline").show();
+		} else {
+			postcontainer.find(".section-deadline").hide();
+			console.log("Hide section deadlonie", postcontainer.find(".section-deadline"))
+		}
+
+		if (postcontainer.find(".field-maxparticipants").prop('checked')) {
+			postcontainer.find(".section-max").show();
+		} else {
+			postcontainer.find(".section-max").hide();
+			console.log("Hide section max", postcontainer.find(".section-max"))
+		}
+
+		if (postcontainer.find(".field-allowsignup").prop('checked')) {
+			postcontainer.find(".section-signup").show();
+		} else {
+			postcontainer.find(".section-signup").hide();
+			console.log("Hide section signup")
+		}
 
 	}
 
@@ -95,6 +136,10 @@ define([
 	}
 
 
+	PostController.prototype.parseDate = function(str) {
+		return moment(str, "DD-MM-YYYY HH:mm").valueOf();
+	}
+
 	PostController.prototype.actPost = function(e) {
 		e.preventDefault();
 		var msg = {
@@ -114,13 +159,16 @@ define([
 		var postcontainer = this.el.find("div.postc.post-" + this.type);
 
 		switch(this.type) {
+
 			case 'message':
 				msg.message = postcontainer.find(".field-message").val();
 				break;
+
 			case 'article':
 				msg.title = postcontainer.find(".field-title").val();
 				msg.message = postcontainer.find(".field-message").val();
 				break;
+
 			case 'file':
 				msg.message = postcontainer.find(".field-message").val();
 				msg.files = [{
@@ -128,6 +176,30 @@ define([
 					"filename": postcontainer.find(".field-filename").val()
 				}];
 				break;
+
+			case 'event':
+				msg.title = postcontainer.find(".field-title").val();
+				msg.message = postcontainer.find(".field-message").val();
+				msg.dtstart = this.parseDate(postcontainer.find(".field-eventdate").val() + ' ' + postcontainer.find(".field-eventtime").val());
+				msg.location = {
+					address: postcontainer.find(".field-location-address").val(),
+					local: postcontainer.find(".field-location-local").val()
+				};
+
+				if (postcontainer.find(".field-allowsignup").prop("checked")) {
+					var signup = {"allow": true};
+
+					if (postcontainer.find(".field-deadline").prop("checked")) {
+						signup.deadline = this.parseDate(postcontainer.find(".field-deadlinedate").val() + ' ' + postcontainer.find(".field-deadlinetime").val());
+					}
+					if (postcontainer.find(".field-maxparticipants").prop("checked")) {
+						signup.max = postcontainer.find(".field-maxparticipants-value").val();
+					}
+
+					msg.signup = signup;
+				}
+				break;
+
 			case 'link':
 				msg.message = postcontainer.find(".field-message").val();
 				msg.links = [
@@ -146,7 +218,7 @@ define([
 
 		if (this.callback) {
 			this.callback(msg);
-			console.log("POSTING A NEW MESSAGE ", msg); return;
+			console.log("POSTING A NEW MESSAGE ", msg); 
 			this.el.find("textarea").val("").focus();
 			postcontainer.find("textarea").val("");
 			postcontainer.find("input").val("");

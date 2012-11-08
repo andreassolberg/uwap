@@ -23,13 +23,12 @@ define(function(require, exports, module) {
 	
 	require('uwap-core/js/jquery.tmpl');
 
-	require('uwap-core/bootstrap/js/bootstrap');	
-	
-	require('uwap-core/bootstrap/js/bootstrap-modal');
+	require('uwap-core/bootstrap/js/bootstrap');
 	require('uwap-core/bootstrap/js/bootstrap-collapse');
 	require('uwap-core/bootstrap/js/bootstrap-button');
 	require('uwap-core/bootstrap/js/bootstrap-dropdown');
 
+	// require('uwap-core/bootstrap/js/bootstrap-modal');
     // require('uwap-core/bootstrap/js/bootstrap-tooltip');
 	// require('uwap-core/bootstrap/js/bootstrap-transition');
 	// require('uwap-core/bootstrap/js/bootstrap-alert');
@@ -77,7 +76,6 @@ define(function(require, exports, module) {
 			this.postcontroller.onPost($.proxy(this.mainnewsfeed.post, this.mainnewsfeed));
 
 			this.notificationsController = new NotificationsController(this.el.find('#feednotifications'));
-
 
 			$(window).bind('hashchange', $.proxy(this.route, this));
 			this.route();

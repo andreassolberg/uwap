@@ -122,7 +122,7 @@ define(function(require, exports, module) {
 			h,
 			feedcontainer = this.pane.el.find('.feedcontainer');
 
-		console.log("Adding post to ", this.pane.el)
+		// console.log("Adding post to ", item)
 
 		if (this.view.view === 'media') {
 			h = $("#itemMediaTmpl").tmpl(item);
@@ -134,6 +134,7 @@ define(function(require, exports, module) {
 			feedcontainer.prepend(h);
 
 		} else {
+
 			h = $("#itemTmpl").tmpl(item);	
 			feedcontainer.prepend(h);
 		}
