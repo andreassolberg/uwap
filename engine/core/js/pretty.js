@@ -29,6 +29,24 @@ define(function(require) {
 			Math.ceil( day_diff / 7 ) + " weeks ago" ;
 	}
 
+	prettydate.prettyUntil = function(time){
+		var 
+			diff = ((time.valueOf() - new Date().getTime()) / 1000),
+			day_diff = Math.floor(diff / 86400);
+				
+		if ( isNaN(day_diff) || day_diff < 0 ) return 'in the past';
+				
+		return day_diff == 0 && (
+				diff < 60 && "right now" ||
+				diff < 120 && "in one minute" ||
+				diff < 3600 && "in " + Math.floor( diff / 60 ) + " minutes" ||
+				diff < 7200 && "in one hour" ||
+				diff < 86400 && "in " + Math.floor( diff / 3600 ) + " hours") ||
+			day_diff == 1 && "Tomorrow" ||
+			day_diff < 7 && "in " + day_diff + " days" ||
+			"in " + Math.ceil( day_diff / 7 ) + " weeks" ;
+	}
+
 
 	prettydate.prettyInterval = function(time){
 		
