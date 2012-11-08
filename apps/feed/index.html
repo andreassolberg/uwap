@@ -19,11 +19,9 @@
 			<form class="form-horizontal">
 
 				{{if user}}
-					
 					<img class="profileimg img-polaroid" src="${user.profileimg}" />
 				{{/if}}
 				{{if client}}
-					
 					<img class="profileimg img-polaroid" src="${client.profileimg}" />
 				{{/if}}
 				
@@ -41,12 +39,12 @@
 
 		<script id="commentTmpl" type="text/x-jquery-tmpl">
 			<div id="${id}" class="comment">
+
 				{{if user}}
-					
 					<img class="profileimg img-polaroid" src="${user.profileimg}" />
 				{{/if}}
+
 				{{if client}}
-					
 					<img class="profileimg img-polaroid" src="${client.profileimg}" />
 				{{/if}}
 
@@ -231,9 +229,40 @@
 					<div><img class="videoitem thumb" src="${media.thumbnail}" /></div>
 				{{else}}
 					<div><img class="videoitem thumb" src="http://placehold.it/300x200" /></div>
-				{{/if}}
+				{{/if}}				
+			{{/if}}
 
+			{{if $data.hasClass("event") }}
+
+				<div class="row-fluid">
+
+					<div class="span6">
+						<h4>Time and date</h4>
+						<p><strong>{{= $data.getDT() }}</strong></p>
+						<p><i class="icon-time"></i> {{= $data.getUntil() }}</p>
+					</div>
+
+					<div class="span6">
+						<h4>Location</h4>
+						<p><strong>${location.local}</strong><br /><i class="icon-map-marker"></i> ${location.address}</p>
+					</div>
+
+				</div>
 				
+				<div style="margin-top: 15px; margin-bottom: 15px" class="event-signup">
+					<button class="btn btn-success"><i class="icon-ok icon-white"></i> I&apos;m attending</button>
+					<button class="btn btn-mini btn-warning">Maybe</button>
+					<button class="btn btn-mini btn-inverse">Appologize</button>
+				</div>
+
+				<div>
+					<h4>Participant list</h4>
+
+					<table>
+						<tr><td></td><td>test</td></tr>
+					</table>
+				</div>
+
 			{{/if}}
 
 			{{if links}}
@@ -259,7 +288,6 @@
 					    {{/each}}
 				    </div>
 				{{/if}}
-
 
 				{{if author}}
 					<span><i class=" icon-user"></i> ${author}</span>
@@ -339,6 +367,7 @@
 						<p><label><input class="field-public" type="checkbox"> Public</label> 
 						   <label><input class="field-promoted" type="checkbox"> Promoted</label></p>
 					</div>
+					<div class="sharewith" style="margin-bottom: 8px">Shared with: <span class="shareitems"></span> <a style="margin-left: 1em" class="muted resetsharedwith" href="#">reset</a></div>
 
 
 					<div style="display: none" class="postc post-message">
@@ -352,8 +381,59 @@
 					<div style="display: none" class="postc post-event">
 						<p><input type="text" class="focusfield field-title" style="width: 100%" name="title" placeholder="Event title" /></p>
 						<textarea class="field-message" style="height: 160px; width: 100%" placeholder="Description of event..."></textarea>
-						<p>Date</p>
+						
+						<div>
+							<p><strong>Event date and time</strong></p>
+							<div class="input-append date datepicker" id="dp3" data-date="" data-date-format="dd-mm-yyyy">
+							  <input id="" class="field-eventdate eventtime span2" size="16" type="text" value="12-02-2012">
+							  <span class="add-on"><i class="icon-th"></i></span>
+							</div>
+
+							<input class="field-eventtime" size="4" style="width: 50px" type="text" value="08:00">
+						</div>
+
+						<div>
+							<p><strong>Location</strong></p>
+							<input class="field-location-address span6" size="" style="" type="text" value="" placeholder="Address" />
+							<input class="field-location-local span6" size="" style="" type="text" value="" placeholder="Local reference (meeting room etc.)" />
+						</div>
+
+						<div style="margin-top: 1em">
+							<label class="checkbox">
+								<input id="" class="field-allowsignup responsiveEventUI" type="checkbox" checked="checked"> Allow users to sign up for this event.
+							</label>
+
+							<div class="section-signup">
+								<!-- <p><strong>Deadline for signing up</strong></p> -->
+								<label class="checkbox">
+									<input id="" class="field-deadline responsiveEventUI" type="checkbox" /> 
+									Deadline for signing up
+								</label>
+								<div class="section-deadline">
+									<div class="input-append date datepicker" id="dp3" data-date="" data-date-format="dd-mm-yyyy">
+									  <input class="field-deadlinedate span2" size="16" type="text" value="12-02-2012">
+									  <span class="add-on"><i class="icon-th"></i></span>
+									</div>
+									<input class="field-deadlinetime" size="4" style="width: 50px" type="text" value="08:00">
+								</div>
+
+								<div>
+									<label class="checkbox">
+										<input id="" class="field-maxparticipants responsiveEventUI" type="checkbox" > 
+										Max number of participants 
+									</label>
+									<div class="section-max">
+										<input id="" class="field-maxparticipants-value" type="input" size="3" value="10" style="display: inline" />
+									</div>
+								</div>
+							</div>
+
+
+
+						</div>
+
 					</div>
+
 					<div style="display: none" class="postc post-article">
 						<p><input type="text" class="focusfield field-title" style="width: 100%" name="title" placeholder="Title..." /></p>
 						<textarea class="field-message" style="height: 300px; width: 100%" placeholder="Write an article..."></textarea>
@@ -378,7 +458,7 @@
 						<!-- <p><input class="field-file" name="uploadedfile" type="file" /></p> -->
 					</div>
 
-					<div class="sharewith">Shared with: <span class="shareitems"></span> <a style="margin-left: 1em" class="muted resetsharedwith" href="#">reset</a></div>
+					
 					</form>
 					
 				</div>	
