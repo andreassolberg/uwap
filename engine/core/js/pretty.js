@@ -32,7 +32,7 @@ define(function(require) {
 	prettydate.prettyUntil = function(time){
 		var 
 			diff = ((time.valueOf() - new Date().getTime()) / 1000),
-			day_diff = Math.floor(diff / 86400);
+			day_diff = Math.ceil(diff / 86400);
 				
 		if ( isNaN(day_diff) || day_diff < 0 ) return 'in the past';
 				
