@@ -299,7 +299,7 @@ define(function(require) {
 				selector, 
 				null, callback, errorcallback, function(data) {
 					var items = data.items;
-					if (items) {
+					if (data.items && data.items.length) {
 						data.items = [];
 					
 						for(var i = 0; i < items.length; i++) {

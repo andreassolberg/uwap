@@ -39,10 +39,32 @@ define(function(require, exports, module) {
 		this.pane.el.on('click', '#postEnableBtn', $.proxy(this.postEnable, this));
 		this.pane.el.on('click', '#postDisableBtn', $.proxy(this.postDisable, this));
 
+		this.pane.el.on('click', '.responseOption', $.proxy(this.respond, this));
+
 		// this.load();
 		setInterval($.proxy(this.update, this), 50000);
 
 	}
+
+
+	FeedController.prototype.respond = function(e) {
+		if (e) e.preventDefault();
+		var targetItem = $(e.currentTarget).closest('div.item');
+		var item = targetItem.tmplItem().data;
+		var status = $(e.currentTarget).data('status');
+		console.log("Response with ", status, item);
+
+		var response = {};
+		response.inresponseto = item.id;
+		response.status = status;
+
+		UWAP.feed.respond(response, function() {
+			console.log("RESPOND COMPLETE");
+		});
+
+	}
+
+
 	FeedController.prototype.setuser = function(u) {
 		this.user = u;
 	}

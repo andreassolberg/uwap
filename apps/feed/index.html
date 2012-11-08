@@ -234,32 +234,65 @@
 
 			{{if $data.hasClass("event") }}
 
-				<div class="row-fluid">
+				<div class="row-fluid" style="margin-top: 16px; margin-bottom: 10px">
 
-					<div class="span6">
-						<h4>Time and date</h4>
-						<p><strong>{{= $data.getDT() }}</strong></p>
+
+
+
+					{{if $data.signup}}
+						<div class="span4 well responseBox event-signup">
+
+
+							<button data-status="yes" class="responseOption btn btn-success"><i class="icon-ok icon-white"></i> I&apos;m attending</button>
+							<button data-status="maybe" class="responseOption btn btn-mini btn-warning">Maybe</button>
+							<button data-status="no" class="responseOption btn btn-mini btn-inverse">Appologize</button>
+
+							{{if $data.signup.deadline}}
+								<div class="">
+									<p><strong>Deadline for signing up</strong><br />{{= $data.getDeadlineDT() }}</p>
+									<p><i class="icon-exclamation-sign"></i> {{= $data.getUntil() }}</p>
+								</div>
+							{{/if}}
+						</div>
+
+					{{/if}}
+
+
+					<div class="span4" >
+						<!-- <h4>Time and date</h4> -->
+						<p style="font-size: 130%" ><strong>{{= $data.getDT() }}</strong></p>
 						<p><i class="icon-time"></i> {{= $data.getUntil() }}</p>
 					</div>
 
-					<div class="span6">
-						<h4>Location</h4>
+
+
+					<div class="span4">
+						<!-- <h4>Location</h4> -->
 						<p><strong>${location.local}</strong><br /><i class="icon-map-marker"></i> ${location.address}</p>
 					</div>
 
 				</div>
-				
-				<div style="margin-top: 15px; margin-bottom: 15px" class="event-signup">
-					<button class="btn btn-success"><i class="icon-ok icon-white"></i> I&apos;m attending</button>
-					<button class="btn btn-mini btn-warning">Maybe</button>
-					<button class="btn btn-mini btn-inverse">Appologize</button>
-				</div>
+
 
 				<div>
 					<h4>Participant list</h4>
 
-					<table>
-						<tr><td></td><td>test</td></tr>
+					{{if $data.signup && $data.signup.max}}
+						
+						<div style="margin-top: 8px; margin-bottom: 8px">
+							<p>3 of {{= $data.signup.max }} participants signed up. <span class="badge badge-info">7 spaces left</span></p>
+						</div>
+					
+					{{/if}}
+
+					<table class="table table-striped">
+						<tr>
+							<td>Andreas Åkre Solberg</td><td>UNINETT</td> <td>6 minutes ago</td>
+						</tr>
+						<tr>
+							<td>Test person</td><td>UNINETT</td><td>2 days ago</td>
+						</tr>
+
 					</table>
 				</div>
 
@@ -564,8 +597,12 @@
 						<ul id="navbar" class="nav">
 						</ul>
 
-
 						
+						<div style="margin-left: 4px" id="calendarToggle" class="nav pull-right">
+							<!-- <li><a href="#">Post content</a></li> -->
+
+							<a id="" href="#!/calendar" class="btn btn-info"><i class="icon-time icon-white"></i></a>
+						</div>
 
 						<div id="postEnable" class="nav pull-right">
 							<!-- <li><a href="#">Post content</a></li> -->
