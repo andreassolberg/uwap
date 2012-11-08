@@ -10,7 +10,9 @@
 
 define(function(require) {
 
-	var jso = require('uwap-core/js/oauth');
+	var 
+		jso = require('uwap-core/js/oauth'),
+		models = require('uwap-core/js/models');
 
 	UWAP = {};
 	UWAP.utils = {};
@@ -93,7 +95,7 @@ define(function(require) {
 	 * @param  {Function} errorcallback Error callback
 	 * @return {void}                 Returns undefined
 	 */
-	UWAP._request = function(method, url, data, options, callback, errorcallback) {
+	UWAP._request = function(method, url, data, options, callback, errorcallback, dataprocess) {
 		method = method || 'GET';
 
 		var ar = {
@@ -108,6 +110,10 @@ define(function(require) {
 
 				if (result.status === 'ok') {
 					if (typeof callback === 'function') {
+
+						if (typeof dataprocess === 'function') {
+							dataprocess(result.data);
+						}
 						callback(result.data);
 					}
 				} else if (result.status === 'redirect') {
@@ -291,7 +297,14 @@ define(function(require) {
 			UWAP._request(
 				'POST', UWAP.utils.getEngineURL("/api/feed"),
 				selector, 
-				null, callback, errorcallback);
+				null, callback, errorcallback, function(data) {
+					var items = data.items;
+					data.items = [];
+					for(var i = 0; i < items.length; i++) {
+						// data.items.push('1');
+						data.items.push(new models.FeedItem(items[i]));
+					}
+				});
 		},
 		readItem: function(oid, callback, errorcallback) {
 			UWAP._request(
