@@ -39,7 +39,6 @@ define(function(require) {
 
 	models.FeedItem.prototype.getUntil = function() {
 		var m = moment(this.dtstart);
-		var m = moment(this.datetime);
 		return prettydate.prettyUntil(m);
 	}
 

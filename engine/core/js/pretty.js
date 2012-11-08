@@ -35,6 +35,7 @@ define(function(require) {
 			day_diff = Math.ceil(diff / 86400);
 				
 		if ( isNaN(day_diff) || day_diff < 0 ) return 'in the past';
+		if (diff < 0) return 'in the past';
 				
 		return day_diff == 0 && (
 				diff < 60 && "right now" ||
