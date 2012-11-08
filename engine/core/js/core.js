@@ -287,6 +287,14 @@ define(function(require) {
 				}, 
 				null, callback, errorcallback);
 		},
+		respond: function(object, callback, errorcallback) {
+			UWAP._request(
+				'POST', UWAP.utils.getEngineURL("/api/feed/item/" + object.inresponseto + '/respond'),
+				{
+					msg: object
+				}, 
+				null, callback, errorcallback);
+		},
 		delete: function(oid, callback, errorcallback) {
 			UWAP._request(
 				'DELETE', UWAP.utils.getEngineURL("/api/feed/item/" + oid),

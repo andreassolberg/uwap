@@ -7,6 +7,10 @@ define([
 		this.item = item;
 		this.el = el;
 
+		if (user) {
+			user.profileimg = UWAP.utils.getEngineURL('/api/media/user/' + user.a);
+		}
+
 		this.el.append($("#postCommentTmpl").tmpl({user: user}));
 	
 		this.el.on('click', '.actPostComment', $.proxy(this.actPostComment, this));

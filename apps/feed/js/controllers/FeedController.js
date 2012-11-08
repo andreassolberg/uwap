@@ -10,8 +10,9 @@ define(function(require, exports, module) {
 		;
 
 
-	var FeedController = function(pane) {
+	var FeedController = function(pane, app) {
 		this.pane = pane;
+		this.app = app;
 
 		this.groups = {};
 
@@ -46,8 +47,42 @@ define(function(require, exports, module) {
 
 	}
 
+	FeedController.prototype.setMyResponse = function(target, status) {
+		var text = [
+			{
+				'yes': 'Attend',
+				'maybe': 'Maybe',
+				'no': 'Appologize'
+			},
+			{
+				'yes': 'I&apos;m attending',
+				'maybe': 'I&apos;m maybe attending',
+				'no': 'I&apos;m appologized'
+			}
+		];
+		var icon = '<i class="icon-ok icon-white"></i> ';
+
+		target.find('.responseOption').each(function(i, opt) {
+			console.log("Response options is ", opt);
+
+			cur = $(opt).data('status');
+			if (cur === status) {
+				$(this).removeClass('btn-small');
+				$(this).removeClass('btn-mini');
+				$(this).html(icon + text[1][cur]);
+			} else {
+				$(this).removeClass('btn-small');
+				$(this).addClass('btn-mini');
+				$(this).html(text[0][cur]);
+			}	
+		});
+
+
+	}
+
 
 	FeedController.prototype.respond = function(e) {
+		var that = this;
 		if (e) e.preventDefault();
 		var targetItem = $(e.currentTarget).closest('div.item');
 		var item = targetItem.tmplItem().data;
@@ -55,11 +90,19 @@ define(function(require, exports, module) {
 		console.log("Response with ", status, item);
 
 		var response = {};
+		response['uwap-acl-read'] = item['uwap-acl-read'];
 		response.inresponseto = item.id;
 		response.status = status;
 
+
+
+		
+
 		UWAP.feed.respond(response, function() {
 			console.log("RESPOND COMPLETE");
+
+			that.setMyResponse(targetItem, status);
+
 		});
 
 	}
@@ -78,8 +121,8 @@ define(function(require, exports, module) {
 		var targetItem = $(e.currentTarget).closest('div.item');
 		$(e.currentTarget).hide();
 		var item = targetItem.tmplItem().data;
-		console.log("Found item ", targetItem, item);
-		var cc = new AddCommentController(this.user, item, targetItem.find('div.postcomment'));
+		console.log("About to enable comment", this.app.user, targetItem, item);
+		var cc = new AddCommentController(this.app.user, item, targetItem.find('div.postcomment'));
 		cc.onPost($.proxy(this.post, this));
 
 	}
@@ -130,8 +173,10 @@ define(function(require, exports, module) {
 			item.message = item.message.replace(/([\n\r]{2,})/gi, '</p><p class="articleParagraph">');
 		}
 
-		if (item.inresponseto) {
+		if (item.hasClass('comment')) {
 			this.addComment(item);
+		} else if (item.hasClass('response')) {
+			this.addResponse(item);
 		} else {
 			this.addPost(item);
 		}
@@ -164,9 +209,27 @@ define(function(require, exports, module) {
 		this.loadeditems[item.id] = h;
 	}
 
+	FeedController.prototype.addResponse = function(item) {
+		// console.log("Add comment");
+		if (this.loadeditems[item.inresponseto]) {
+			
+			if (item['uwap-userid'] === this.app.user.userid) {
+				console.log("MY RESPONSE", item);
+			}
+
+			this.setMyResponse(this.loadeditems[item.inresponseto], item.status);
+
+			// 
+			var h = $("#participantTmpl").tmpl(item);
+			this.loadeditems[item.inresponseto].find('table.participants').append(h);
+		}
+	}
+
 	FeedController.prototype.addComment = function(item) {
 		// console.log("Add comment");
 		if (this.loadeditems[item.inresponseto]) {
+
+
 			// console.log("found item", item);
 			var h = $("#commentTmpl").tmpl(item);
 			this.loadeditems[item.inresponseto].find('div.comments').append(h);
@@ -303,8 +366,6 @@ define(function(require, exports, module) {
 				if (that.view.view === 'media') {
 					feedcontainer.append('<ul></ul>');	
 				}
-				
-
 
 				$.each(data.items, function(i, item) {
 					if (item.inresponseto) return;
@@ -315,7 +376,6 @@ define(function(require, exports, module) {
 				$.each(data.items, function(i, item) {
 					if (!item.inresponseto) return;
 					that.addItem(item);
-					
 				});
 
 				// $.each(data.items, function(i, item) {

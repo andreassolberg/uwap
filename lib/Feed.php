@@ -28,7 +28,6 @@ class Feed {
 		// $item = $this->store->queryOneUser("feed", $this->userid, $this->groups, $query);
 
 		return $this->read(array('id_' => $id));
-
 	}
 
 	public function read($selector) {
@@ -91,6 +90,58 @@ class Feed {
 		}
 
 
+
+
+		/*
+		 * try to fetch all responses to the objects that needs it.
+		 */
+		$uniqueids = array(); // Log all ids used, and merge only those that are not already fetched later on.
+		$events = array();
+		if (!empty($list)) {
+			foreach($list AS $k => $v) {
+				$id =  $v['_id']->{'$id'};
+				$uniqueids[$id] = 1;
+				if (isset($v['class']) && is_array($v['class']) && in_array('event', $v['class'])) {
+					$events[] = $id;
+				}
+			}
+		}
+
+		$rquery = array(
+			'class' => array(
+				'$in' => array('response'),
+			),
+			'inresponseto' => array(
+				'$in' => $events,
+			),
+		);
+		if ($this->userid) {
+			$responses = $this->store->queryListUser("feed", $this->userid, $this->groups, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
+		} else {
+			$responses = $this->store->queryListClient("feed", $this->clientid, $this->groups, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
+		}
+
+		if (!empty($responses)) {
+			foreach($responses AS $v) {
+				$id =  $v['_id']->{'$id'};
+				if (!$uniqueids[$id]) {
+					$list[] = $v;
+				}
+			}  
+		}
+		
+
+
+
+
+
+
+
+
+
+
+
+
 		// Set up a list with references...
 		$references = array();
 		if (!empty($list)) {
@@ -120,7 +171,11 @@ class Feed {
 		}
 
 
-		// print_r($list); exit;
+
+
+
+
+
 
 
 
@@ -195,6 +250,31 @@ class Feed {
 		return $this->store->remove('feed', $this->userid, array('_id' => array('$id' => $oid)));
 
 	}
+
+	public function respond($msg) {
+
+		$msg['class'] = array('response');
+
+		$query = array(
+			'class' => array(
+				'$in' => array('response')
+			),
+			'inresponseto' => $msg['inresponseto'],
+		);
+		// $collection, $userid, $groups, $criteria = array(), $fields = array()) {
+		$existing = $this->store->queryOneUser('feed', $this->userid, array(), $query);
+
+		if (!empty($existing)) {
+			$existing['status'] = $msg['status'];
+			$existing['updated'] = time();
+			$res = $this->store->store('feed', $this->userid, $existing);
+		} else {
+			$msg['ts'] = time();
+			$res = $this->store->store('feed', $this->userid, $msg);
+		}	
+		return $this->store->queryOneUser('feed', $this->userid, array(), $query);
+	}
+
 
 	public function post($msg, $groups = array()) {
 		if (!is_array($groups)) throw new Exception("Provided groups must be an array");

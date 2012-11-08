@@ -52,6 +52,14 @@ class Notifications {
 
 			$str .= 'uploaded media content';
 
+		} else if (in_array('event', $item['class'])) {
+
+			$str .= 'posted an event';
+
+		} else if (in_array('response', $item['class'])) {
+
+			$str .= 'responded to an event';
+
 		} else if (in_array('comment', $item['class'])) {
 
 			$str .= 'replied with a comment';
