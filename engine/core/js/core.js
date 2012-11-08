@@ -299,10 +299,13 @@ define(function(require) {
 				selector, 
 				null, callback, errorcallback, function(data) {
 					var items = data.items;
-					data.items = [];
-					for(var i = 0; i < items.length; i++) {
-						// data.items.push('1');
-						data.items.push(new models.FeedItem(items[i]));
+					if (items) {
+						data.items = [];
+					
+						for(var i = 0; i < items.length; i++) {
+							// data.items.push('1');
+							data.items.push(new models.FeedItem(items[i]));
+						}						
 					}
 				});
 		},
