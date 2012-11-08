@@ -337,6 +337,17 @@ try {
 			
 			$response['data'] = $feed->delete($qs[1]);
 
+		} else if (Utils::route('post', '^/feed/item/([a-z0-9\-]+)/respond$', &$qs, &$args)) {
+
+			if (empty($args['msg'])) throw new Exception("missing required [msg] property");
+			$msg = $args['msg'];
+			if ($qs[1] !== $msg['inresponseto']) {
+				throw new Exception('inresponseto property does not match url endpoint item.');
+			}
+
+			$response['data'] = $feed->respond($msg);
+
+
 		} else if (Utils::route('get', '^/feed/item/([a-z0-9\-]+)$', &$qs, &$args)) {
 
 			// $oauth->check(null, array('feedwrite'));

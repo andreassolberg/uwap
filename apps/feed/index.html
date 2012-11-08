@@ -206,6 +206,7 @@
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
+					<li><a href="#!/item/${id}"><i class="icon-share-alt"></i> Open</a></li>
 					<li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
 					<li><a class="actDelete" href="#"><i class="icon-trash"></i> Delete this item</a></li>
 					<li><a href="#"><i class="icon-ban-circle"></i> Report this issue</a></li>
@@ -243,9 +244,9 @@
 						<div class="span4 well responseBox event-signup">
 
 
-							<button data-status="yes" class="responseOption btn btn-success"><i class="icon-ok icon-white"></i> I&apos;m attending</button>
-							<button data-status="maybe" class="responseOption btn btn-mini btn-warning">Maybe</button>
-							<button data-status="no" class="responseOption btn btn-mini btn-inverse">Appologize</button>
+							<button data-status="yes" class="responseOption btn btn-small btn-success">Attend</button>
+							<button data-status="maybe" class="responseOption btn btn-small btn-warning">Maybe</button>
+							<button data-status="no" class="responseOption btn btn-small btn-inverse">Appologize</button>
 
 							{{if $data.signup.deadline}}
 								<div class="">
@@ -256,6 +257,8 @@
 						</div>
 
 					{{/if}}
+
+
 
 
 					<div class="span4" >
@@ -273,8 +276,14 @@
 
 				</div>
 
-
-				<div>
+	<!--			<div class="controllList">
+					<p>
+						<a href="#" class="actShow">show participants list</a>
+						<a href="#" style="display: none" class="actHide">hide participants list</a>
+					</p>
+				</div>
+-->
+				<div style="display: block; margin-top: 1em; margin-bottom: 1em">
 					<h4>Participant list</h4>
 
 					{{if $data.signup && $data.signup.max}}
@@ -285,13 +294,7 @@
 					
 					{{/if}}
 
-					<table class="table table-striped">
-						<tr>
-							<td>Andreas Åkre Solberg</td><td>UNINETT</td> <td>6 minutes ago</td>
-						</tr>
-						<tr>
-							<td>Test person</td><td>UNINETT</td><td>2 days ago</td>
-						</tr>
+					<table class="participants table table-striped">
 
 					</table>
 				</div>
@@ -362,6 +365,33 @@
 
 
 		</div>
+	</script>
+
+	<script id="participantTmpl" type="text/x-jquery-tmpl">
+		<tr>
+			<td style="width: 24px">
+			{{if user}}
+				<img class="" style="width: 26px; border: 1px solid #ccc" src="${user.profileimg}" />
+			{{/if}}
+			</td>
+
+			{{if user}}
+				<td>${user.name}</span></td>
+				<td><i class="icon-envelope"></i> ${user.mail}</span></td>
+			{{/if}}
+			<td>
+			{{if $data.status === "yes"}}
+				<span class="label label-success">Attend</span>
+			{{else}}
+				{{if $data.status === "maybe"}}
+					<span class="label label-warning">Maybe</span>
+				{{else}}
+					<span class="label label-inverse">Appologized</span>
+				{{/if}}
+			{{/if}}
+			</td>
+			<td><span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span></td>
+		</tr>
 	</script>
 
 

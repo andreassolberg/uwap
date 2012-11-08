@@ -58,7 +58,7 @@ define(function(require, exports, module) {
 
 			this.pc = new panes.PaneController(this.el.find('#panecontainer'));
 			this.mainnewsfeedPane = this.pc.get('newsfeed');
-			this.mainnewsfeed = new FeedController(this.mainnewsfeedPane);
+			this.mainnewsfeed = new FeedController(this.mainnewsfeedPane, this);
 			this.mainnewsfeedPane.activate();
 
 			this.singleitemcontroller = null;
