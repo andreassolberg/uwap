@@ -154,6 +154,39 @@ class UWAPStore {
 		return $criteria;
 	}
 
+
+	public function getACLwithSubscriptions($userid, $groups = array(), $subs = array()) {
+
+		// echo 'getACLwithSubscriptions()';
+		// print_r($userid); print_r($groups); print_r($subs);
+
+		if (empty($userid)) throw new Exception('Userid is missing');
+		$grps = array_keys($groups);
+		// $grps[] = '!public';
+		// 
+		$sc = array(
+			'$and' => array(
+				array("uwap-acl-read" => array('!public')),
+				array("uwap-acl-read" => array(
+					'$in' => $subs
+				))
+			)
+		);
+
+		$criteria = array();
+		// $criteria[] = array("uwap-userid" => $userid);
+		$criteria[] = array(
+			"uwap-acl-read" => array(
+				'$in' => $grps,
+			),
+		);
+		$criteria[] = $sc;
+
+		// print_r($criteria);
+
+		return $criteria;
+	}
+
 	public function queryOneUser($collection, $userid, $groups, $criteria = array(), $fields = array()) {
 		// $criteria["uwap-userid"] = $userid;
 		if ($userid !== null) {
@@ -201,6 +234,43 @@ class UWAPStore {
 		return $ret;
 	}
 
+
+	public function queryListUserAdvanced($collection, $userid, $groups, $subscriptions, $criteria = array(), $fields = array(), $options = array() ) {
+
+		$criteria = array(
+			'$or' => $this->getACLwithSubscriptions($userid, $groups, $subscriptions)
+		);
+
+
+		// if (empty($groups)) {
+		// 	$criteria["uwap-userid"] = $userid;
+		// } else {
+		// 	if (isset($criteria['$or'])) {
+
+		// 		$criteria['$and'] = array(
+		// 			array('$or' => $this->getACLwithSubscriptions($userid, $groups, $subscriptions)),
+		// 			array('$or' => $criteria['$or']),
+		// 		) ;
+		// 		unset($criteria['$or']);
+		// 	} else {
+		// 		$criteria['$or'] = $this->getACLwithSubscriptions($userid, $groups, $subscriptions);
+		// 	}
+		// }
+		// echo 'query'; print_r($criteria); exit;
+		if ($collection !== 'log') {
+			UWAPLogger::debug('store', 'Query list userobject in [' . $collection . ']', array(
+				'collection' => $collection,
+				'userid' => $userid,
+				'criteria' => $criteria,
+			));
+		}
+
+		// print_r($criteria); exit;
+
+		$ret = $this->queryList($collection, $criteria, $fields, $options);
+		// echo 'Result'; print_r($ret); exit;
+		return $ret;
+	}
 
 	public function queryListUser($collection, $userid, $groups, $criteria = array(), $fields = array(), $options = array() ) {
 

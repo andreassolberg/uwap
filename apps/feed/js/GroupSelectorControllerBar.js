@@ -73,10 +73,13 @@ define([
 		});
 
 
-
+                  	// <li><a target="_blank" href="https://groupmanager.uwap.org"><i class="icon-cog"></i> Manage groups</a></li>
+                   //  <li><a target="_blank" href="https://subscribe.uwap.org"><i class="icon-cog"></i> Subscribe to open groups</a></li>
 
 		// $('<li class="delimiter"></li><li class=""><a target="_blank" href="https://groupmanager.uwap.org">Setup a new group...</a></li>').prependTo(list);	
-		list.append('<li class="divider"></li><li><a href="#"><i class="icon-cog"></i> Manage groups...</a></li>');
+		list.append('<li class="divider"></li>' +
+			'<li><a target="_blank" href="https://groupmanager.uwap.org"><i class="icon-cog"></i> Manage groups</a></li>' + 
+			'<li><a target="_blank" href="https://subscribe.uwap.org"><i class="icon-cog"></i> Subscribe to open groups</a></li>');
 	}
 
 	GroupSelectorControllerBar.prototype.onSelect = function(callback) {

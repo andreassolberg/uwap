@@ -217,10 +217,7 @@ define(function(require, exports, module) {
 				console.log("MY RESPONSE", item);
 				this.setMyResponse(this.loadeditems[item.inresponseto], item.status);
 			}
-
 			
-
-			// 
 			var h = $("#participantTmpl").tmpl(item);
 			this.loadeditems[item.inresponseto].find('table.participants').append(h);
 		}

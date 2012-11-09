@@ -25,6 +25,14 @@ class AuthenticatedToken {
 		$userdata = $this->token->userdata;
 		return $userdata['userid'];
 	}
+	
+	public function getSubscriptions() {
+		if (!$this->token->userdata) return array();
+
+		$groupmanager = new GroupManager($this->token->userdata['userid']);
+		$s = $groupmanager->getSubscriptions();
+		return $s;
+	}
 
 
 	public function getGroups() {

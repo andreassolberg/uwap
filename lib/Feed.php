@@ -2,15 +2,15 @@
 
 class Feed {
 
-	protected $store, $clientid, $userid, $groups;
+	protected $store, $clientid, $userid, $groups, $subscriptions;
 
-	public function __construct($userid = null, $clientid = null, $groups = array()) {
+	public function __construct($userid = null, $clientid = null, $groups = array(), $subscriptions = array()) {
 
 		$this->userid = $userid;
 		$this->clientid = $clientid;
 		$this->groups = $groups;
 		$this->store = new UWAPStore();
-
+		$this->subscriptions = $subscriptions;
 	}
 
 	static public function array_remove($remove, $ar) {
@@ -79,12 +79,14 @@ class Feed {
 			);
 		}
 
+		
+
 		// print_r($query); exit;
 		// echo 'groups'; print_r($this->groups); exit;
 		// 
 		$auth = new AuthBase();
 		if ($this->userid) {
-			$list = $this->store->queryListUser("feed", $this->userid, $this->groups, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
+			$list = $this->store->queryListUserAdvanced("feed", $this->userid, $this->groups, $this->subscriptions, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
 		} else {
 			$list = $this->store->queryListClient("feed", $this->clientid, $this->groups, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
 		}
@@ -124,7 +126,7 @@ class Feed {
 		if (!empty($responses)) {
 			foreach($responses AS $v) {
 				$id =  $v['_id']->{'$id'};
-				if (!$uniqueids[$id]) {
+				if (!isset($uniqueids[$id])) {
 					$list[] = $v;
 				}
 			}  
