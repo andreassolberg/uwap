@@ -36,6 +36,19 @@ class AuthBase {
 		return $search;
 	}
 
+	function getUserByID($a) {
+		$query = array('userid' => $a); 
+		$search = $this->store->queryOne('users', $query, array('name', 'mail', 'a', 'subscriptions') );
+		if (empty($search)) return false;
+
+		return $search;
+	}
+
+	function updateUser($userid, $update) {
+
+		return $this->store->update('users', null, array('userid' => $userid), $update);
+	}
+
 	function getClientBasic($client_id){
 		
 		$store = new So_StorageServerUWAP();
