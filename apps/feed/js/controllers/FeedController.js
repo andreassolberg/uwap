@@ -43,7 +43,7 @@ define(function(require, exports, module) {
 		this.pane.el.on('click', '.responseOption', $.proxy(this.respond, this));
 
 		// this.load();
-		setInterval($.proxy(this.update, this), 50000);
+		setInterval($.proxy(this.update, this), 5000);
 
 	}
 

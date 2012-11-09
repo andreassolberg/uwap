@@ -166,7 +166,9 @@ class UWAPStore {
 		// 
 		$sc = array(
 			'$and' => array(
-				array("uwap-acl-read" => array('!public')),
+				array("uwap-acl-read" => array(
+					'$in' => array('!public')
+				)),
 				array("uwap-acl-read" => array(
 					'$in' => $subs
 				))
@@ -237,10 +239,20 @@ class UWAPStore {
 
 	public function queryListUserAdvanced($collection, $userid, $groups, $subscriptions, $criteria = array(), $fields = array(), $options = array() ) {
 
-		$criteria = array(
-			'$or' => $this->getACLwithSubscriptions($userid, $groups, $subscriptions)
-		);
+		// $criteria = array(
+		// 	'$or' => $this->getACLwithSubscriptions($userid, $groups, $subscriptions)
+		// );
 
+		if (isset($criteria['$or'])) {
+
+			$criteria['$and'] = array(
+				array('$or' => $this->getACLwithSubscriptions($userid, $groups, $subscriptions)),
+				array('$or' => $criteria['$or']),
+			) ;
+			unset($criteria['$or']);
+		} else {
+			$criteria['$or'] = $this->getACLwithSubscriptions($userid, $groups, $subscriptions);
+		}
 
 		// if (empty($groups)) {
 		// 	$criteria["uwap-userid"] = $userid;
@@ -268,7 +280,20 @@ class UWAPStore {
 		// print_r($criteria); exit;
 
 		$ret = $this->queryList($collection, $criteria, $fields, $options);
-		// echo 'Result'; print_r($ret); exit;
+
+		// echo 'query'; print_r($criteria); 
+		// foreach($ret AS $r) {
+		// 	if (isset($r['title'])) {
+		// 		print_r($r['title']); echo "\n";
+		// 	} else {
+		// 		echo "boo";
+		// 	}
+
+			
+		// }
+		// // echo 'Result'; print_r($ret); 
+		// exit;
+
 		return $ret;
 	}
 

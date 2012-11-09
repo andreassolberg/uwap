@@ -92,6 +92,8 @@ class Feed {
 		}
 
 
+		
+
 
 
 		/*
@@ -118,7 +120,7 @@ class Feed {
 			),
 		);
 		if ($this->userid) {
-			$responses = $this->store->queryListUser("feed", $this->userid, $this->groups, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
+			$responses = $this->store->queryListUserAdvanced("feed", $this->userid, $this->groups, $this->subscriptions, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
 		} else {
 			$responses = $this->store->queryListClient("feed", $this->clientid, $this->groups, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
 		}

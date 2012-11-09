@@ -184,9 +184,9 @@ class GroupManager {
 				array(
 					'admins' => array('$in' => array($this->userid)),
 				),
-				array(
-					'uwap-userid' => $this->userid,
-				)
+				// array(
+				// 	'uwap-userid' => $this->userid,
+				// )
 			)
 		);
 
