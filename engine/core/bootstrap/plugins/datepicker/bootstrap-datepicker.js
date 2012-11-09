@@ -23,9 +23,11 @@ define(function(require, exports, module) {
 		$ = require('jquery'),
 		UWAP = require('uwap-core/js/core');
 
+	require('uwap-core/bootstrap/js/bootstrap');
+
 	UWAP.utils.loadCSS("uwap-core/bootstrap/plugins/datepicker/datepicker.css");
 
-});
+
 
 
 !function( $ ) {
@@ -463,3 +465,6 @@ define(function(require, exports, module) {
 						'</div>';
 
 }( window.jQuery )
+
+
+});
