@@ -133,6 +133,14 @@ try {
 				'data' => $groupmanager->getGroups($groups),
 			);
 
+		} else if (Utils::route('get', '^/groups/public$', &$parameters)) {
+
+			$response = array(
+				'status' => 'ok',
+				'data' => $groupmanager->getPublicGroups(),
+			);
+
+
 		// Add a new group
 		} else if (Utils::route('post', '^/groups$', &$parameters, &$body)) {
 
@@ -192,6 +200,22 @@ try {
 				'status' => 'ok',
 				'data' => $groupmanager->addMember($groupid, $body),
 			);
+
+		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/subscription$', &$parameters, &$body)) {
+
+			$groupid = $parameters[1];
+
+			if ($body === true) {
+				$res = $groupmanager->subscribe($groupid, $body);
+			} else {
+				$res = $groupmanager->unsubscribe($groupid, $body);
+			}
+
+			$response = array(
+				'status' => 'ok',
+				'data' => $res,
+			);
+
 
 		// Update a membership to a group
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', &$parameters, &$obj)) {
@@ -500,11 +524,6 @@ try {
 
 	header('Content-Type: application/json; charset=utf-8');
 	echo json_encode($response);
-
-
-
-
-
 
 
 } catch(Exception $e) {

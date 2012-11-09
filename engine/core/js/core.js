@@ -367,11 +367,27 @@ define(function(require) {
 				null, 
 				null, callback, errorcallback);
 		},
-
+		listPublic: function(callback, errorcallback) {
+			UWAP._request(
+			 	'GET', UWAP.utils.getEngineURL("/api/groups/public"),
+			 	null,
+			 	null, callback, errorcallback);
+		},
+		subscribe: function(groupid, callback, errorcallback) {
+			UWAP._request(
+			 	'POST', UWAP.utils.getEngineURL("/api/group/" + groupid + '/subscription'),
+			 	true,
+			 	null, callback, errorcallback);
+		},
+		unsubscribe: function(groupid, callback, errorcallback) {
+			UWAP._request(
+			 	'POST', UWAP.utils.getEngineURL("/api/group/" + groupid + '/subscription'),
+			 	false,
+			 	null, callback, errorcallback);
+		},
 		listMyGroups: function(callback, errorcallback) {
 			UWAP._request(
 			 	'GET', UWAP.utils.getEngineURL("/api/groups"),
-			 	// '/_/api/groups.php/groups?filter=admin',
 			 	null,
 			 	null, callback, errorcallback);
 		},

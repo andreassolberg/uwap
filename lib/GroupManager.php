@@ -48,6 +48,125 @@ class GroupManager {
 	}
 
 
+	public function getSubscriptions() {
+
+		$auth = new AuthBase();
+		$user = $auth->getUserByID($this->userid);
+		if(empty($user)) return array();
+		if(empty($user['subscriptions'])) return array();
+
+		return $user['subscriptions'];
+
+	}
+
+	public function subscribe($id) {
+		$auth = new AuthBase();
+		$user = $auth->getUserByID($this->userid);
+		if(empty($user)) return false;
+
+		$subscriptions = array();
+		if(isset($user['subscriptions']) && is_array($user['subscriptions'])) {
+			foreach($user['subscriptions'] AS $s) {
+				$subscriptions[$s] = 1;
+			}
+		}
+
+		$subscriptions[$id] = 1;
+
+		$update = array(
+			'subscriptions' => array_keys($subscriptions),
+		);
+
+		return $auth->updateUser($this->userid, $update);
+
+
+	}
+
+	public function unsubscribe($id) {
+		$auth = new AuthBase();
+		$user = $auth->getUserByID($this->userid);
+		if(empty($user)) return false;
+
+		$subscriptions = array();
+		if(isset($user['subscriptions']) && is_array($user['subscriptions'])) {
+			foreach($user['subscriptions'] AS $s) {
+				$subscriptions[$s] = 1;
+			}
+		}
+
+		if (isset($subscriptions[$id])) {
+			unset($subscriptions[$id]);
+		}
+
+		$update = array(
+			'subscriptions' => array_keys($subscriptions),
+		);
+
+		return $auth->updateUser($this->userid, $update);
+	}
+
+
+	public function getPublicGroups() {
+
+		$query = array(
+			'listable' => true
+		);
+
+		$res = $this->store->queryList('groups', $query );
+		$result = array();
+
+
+		$mysub = $this->getSubscriptions();
+		$mysubi = array_flip($mysub);
+
+		foreach($res AS $entry) {
+			$ne = array();
+			$ne['title'] = $entry['title'];
+			$ne['id'] = $entry['id'];
+			$ne['description'] = $entry['description'];
+			if (isset($entry['listable'])) $ne['listable'] = $entry['listable'];
+
+			$ne['owner'] = (bool) ($entry['uwap-userid'] === $this->userid);
+			$ne['admin'] = (bool) (in_array($this->userid, $entry['admins']));
+			$ne['member'] = (bool) (in_array($this->userid, $entry['members']));
+
+			$ne['subscribed'] = (bool) (isset($mysubi[$entry['id']]));
+
+			$ne['listmembers'] = true;
+			$result[] = $ne;
+
+			if (isset($moregroups[$entry['id']])) {
+				unset($moregroups[$entry['id']]);
+			}
+		}
+
+
+
+		// $agora = new GroupFetcherAgora($this->userid);
+		// $agroups = $agora->getGroups();
+
+		// $result = array_merge($result, $agroups);
+
+
+		// foreach($moregroups AS $key => $title) {
+		// 	$ne = array();
+
+		// 	$ne['id'] = $key;
+		// 	$ne['title'] = $title;
+
+		// 	$ne['owner'] = false;
+		// 	$ne['admin'] = false;
+		// 	$ne['member'] = false;
+		// 	$ne['listmembers'] = false;
+
+		// 	$result[] = $ne;
+		// }
+
+		return $result;
+
+	}
+
+
 	/**
 	 * New API for getting all groups of an user.
 	 * Cached token groups are provided in as a parameter.
@@ -94,10 +213,9 @@ class GroupManager {
 
 
 
-		$agora = new GroupFetcherAgora($this->userid);
-		$agroups = $agora->getGroups();
-
-		$result = array_merge($result, $agroups);
+		// $agora = new GroupFetcherAgora($this->userid);
+		// $agroups = $agora->getGroups();
+		// $result = array_merge($result, $agroups);
 
 
 		foreach($moregroups AS $key => $title) {
