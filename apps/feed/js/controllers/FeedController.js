@@ -215,9 +215,10 @@ define(function(require, exports, module) {
 			
 			if (item['uwap-userid'] === this.app.user.userid) {
 				console.log("MY RESPONSE", item);
+				this.setMyResponse(this.loadeditems[item.inresponseto], item.status);
 			}
 
-			this.setMyResponse(this.loadeditems[item.inresponseto], item.status);
+			
 
 			// 
 			var h = $("#participantTmpl").tmpl(item);
