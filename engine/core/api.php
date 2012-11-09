@@ -319,9 +319,11 @@ try {
 			$groups = $token->getClientGroups();
 		}
 
+		$subscriptions = $token->getSubscriptions();
+
 		// echo 'groups: '; print_r($groups); exit;
 
-		$feed = new Feed($userid, $clientid, $groups);
+		$feed = new Feed($userid, $clientid, $groups, $subscriptions);
 
 		if (Utils::route('post', '^/feed$', &$qs, &$parameters)) {
 			
