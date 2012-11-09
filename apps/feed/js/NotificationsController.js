@@ -114,11 +114,12 @@ define([
 		$.each(n, function(i, item) {
 			if (i > 10) return;
 			var linked = item.id;
-			var icon = 'icon-exclamation-sign';
+			var icon = 'icon-chevron-right';
 
 			if ($.inArray('comment', item.class) !== -1) {
-				icon = 'icon-comment';
-				console.log("Comment in class", item.class)
+				icon = 'icon-comment-alt';
+			} else if ($.inArray('event', item.class) !== -1) {
+				icon = 'icon-calendar';
 			}
 			
 			if (item.inresponseto) {
