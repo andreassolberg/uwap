@@ -63,7 +63,7 @@ define(function(require, exports, module) {
 		var icon = '<i class="icon-ok icon-white"></i> ';
 
 		target.find('.responseOption').each(function(i, opt) {
-			console.log("Response options is ", opt);
+			// console.log("Response options is ", opt);
 
 			cur = $(opt).data('status');
 			if (cur === status) {
@@ -173,7 +173,7 @@ define(function(require, exports, module) {
 		// console.log("Testing article class", item.class)
 		if ($.isArray(item.class) && $.inArray('article', item.class) !== -1) {
 			// console.log("MATCH:", item.class, ' ' + $.inArray('article', item.class));
-			console.log("ARTICLE", item);
+			// console.log("ARTICLE", item);
 			item.message = item.message.replace(/([\n\r]{2,})/gi, '</p><p class="articleParagraph">');
 		}
 
@@ -218,7 +218,7 @@ define(function(require, exports, module) {
 		if (this.loadeditems[item.inresponseto]) {
 			
 			if (item['uwap-userid'] === this.app.user.userid) {
-				console.log("MY RESPONSE", item);
+				// console.log("MY RESPONSE", item);
 				this.setMyResponse(this.loadeditems[item.inresponseto], item.status);
 			}
 			
@@ -281,8 +281,6 @@ define(function(require, exports, module) {
 
 	FeedController.prototype.viewchange = function(opt) {
 		console.log('View change', opt);
-
-
 
 		this.pane.el.find('.feedcontainer').removeClass('view-' + this.view.view);
 		this.pane.el.find('.feedcontainer').addClass('view-' + opt.view);

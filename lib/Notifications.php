@@ -110,7 +110,7 @@ class Notifications {
 		return $remaining;
 	}
 
-	function read($selector, $ago = 2592000) { // 30 days
+	function read($selector, $ago = 2592000000) { // 30 days
 
 		// queryListUser($collection, $userid, $groups, $criteria = array(), $fields = array(), $options = array() ) {
 
@@ -134,7 +134,9 @@ class Notifications {
 		$results = array();
 		$feed = new Feed($this->userid, null, $this->groups);
 
-		$selector['from'] = floor(microtime()/1000.0) - $ago;
+		$selector['from'] = floor(microtime(true)*1000.0) - $ago;
+
+		// print_r($selector); exit;
 
 		$entries = $feed->read($selector);
 
@@ -170,6 +172,7 @@ class Notifications {
 		 * Walk through notifications items to merge comments on same item...
 		 */
 		$refs = array();
+		if (empty($entries['items'])) return null;
 		foreach($entries['items'] AS $k => $entry) {
 
 			if (isset($entry['uwap-userid']) && $entry['uwap-userid'] === $this->userid) continue;
