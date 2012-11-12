@@ -19,7 +19,7 @@ class RSS {
 				$published_on = $item->pubDate;
 				$description = substr(strip_tags($item->description), 0, 300);
 
-				$ts = strtotime((string) $published_on);
+				$ts = 1000*strtotime((string) $published_on);
 
 				// echo "TS " . $ts . "\n";
 				// echo "Ts " . (string) $published_on . "\n";

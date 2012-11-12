@@ -134,7 +134,7 @@ class Notifications {
 		$results = array();
 		$feed = new Feed($this->userid, null, $this->groups);
 
-		$selector['from'] = time() - $ago;
+		$selector['from'] = floor(microtime()/1000.0) - $ago;
 
 		$entries = $feed->read($selector);
 

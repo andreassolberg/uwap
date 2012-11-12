@@ -145,7 +145,11 @@ define(function(require, exports, module) {
 
 	FeedController.prototype.addItem = function(item) {
 		var that = this;
+
+
+		// console.log ("  ›››› ADD ITEM »›››››");
 		item.timestamp = moment(item.ts).format();
+		// console.log("Working with ", item.ts, item.timestamp);
 
 		item.groupnames = [];
 		if (item.groups) {

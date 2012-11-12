@@ -69,7 +69,7 @@ define(function(require) {
 
 	jQuery.fn.prettyDate = function(){
 		return this.each(function(){
-			var ts = 1000*parseInt($(this).data('ts'), 10);
+			var ts = parseInt($(this).data('ts'), 10);
 			var date = prettydate.prettyDate(ts);
 			// console.log("Processing", ts, this, date)
 			if ( date )

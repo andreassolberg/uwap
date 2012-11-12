@@ -773,6 +773,10 @@ class So_Server {
 		error_log('Access token endpoint: ' . var_export($_REQUEST, true));
 		error_log("Token request: " . var_export($tokenrequest, true));
 		
+		// print_r('Access token endpoint: ' . var_export($_REQUEST, true));
+		// print_r($tokenrequest); 
+		// exit;
+
 		
 		if ($tokenrequest->grant_type === 'authorization_code') {
 			
@@ -796,6 +800,13 @@ class So_Server {
 			if ($clientconfig['client_secret'] !== $_SERVER['PHP_AUTH_PW']) {
 				throw new So_Exception('invalid_grant', 'Invalid secret.');
 			}
+
+			// echo "Juhuuuu \n";
+
+			if (empty($clientconfig['scopes'])) {
+				throw new Exception('Client configuration is missing a list of [scopes] for this client.');
+			}
+
 
 			$expiresin = time() + 3600;
 			$accesstoken = So_AccessToken::generate($clientconfig['client_id'], null, null, $clientconfig['scopes'], $expiresin);

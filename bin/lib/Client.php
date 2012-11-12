@@ -17,10 +17,10 @@ class Client {
 	}
 
 	protected function obtainToken() {
-
+		// echo "About to obtain token\n";
 		$data = array("grant_type" => 'client_credentials');
 		$this->token = $this->basic_post($this->endpointToken, $data);
-
+		// echo "Token is obtained\n";
 		// echo "Token\n\n";
 		// print_r($this->token);
 		// echo  "\n\n";
@@ -47,10 +47,14 @@ class Client {
 	 
 		$ret = json_decode($output, true);
 
+		// echo ("Received ");
+		// print_r($output);
+
 		return $ret;
 	}
 	
 	protected function getAuthHeader() {
+		// echo "About to use token";
 		if (empty($this->token) || empty($this->token['access_token'])) throw new Exception('Cannot perform call without an access token');
 		return 'Authorization: Bearer ' . $this->token['access_token'];
 	}

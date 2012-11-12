@@ -34,6 +34,10 @@ function process($c) {
 	$entries = $rss->get();
 	foreach($entries AS $entry) {
 		$entry['groups'] = $c['groups'];
+		// $entry['public'] = true;
+		echo "Posting ››››\n";
+		print_r($entry);
+		echo "\n\n\n";
 		$res = $client->oauth_http('http://core.app.bridge.uninett.no/api/feed/post', array("msg" => $entry));
 	}
 }
