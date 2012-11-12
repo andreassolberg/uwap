@@ -333,7 +333,7 @@ try {
 
 			// $parameters;
 			$no = new Notifications($userid, $groups);
-			$response['data'] = $no->read($parameters, 3600*24*30);
+			$response['data'] = $no->read($parameters);
 
 			// header('Content-Type: text/plain; charset: utf-8'); echo "poot"; print_r($response); exit;
 

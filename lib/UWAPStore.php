@@ -72,7 +72,7 @@ class UWAPStore {
 			$obj["_id"] = new MongoId($obj["_id"]['$id']);
 		}
 		if ($expiresin !== null) {
-			$obj["expires"] = floor(microtime()/1000.0) + (1000*$expiresin);
+			$obj["expires"] = floor(microtime(true)*1000.0) + (1000*$expiresin);
 		}
 
 		// echo 'store'; print_r($obj);

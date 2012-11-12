@@ -306,12 +306,14 @@ class Feed {
 		}
 
 		if (empty($msg['ts'])) {
-			$msg['ts'] = floor(microtime()/1000.0);
+			$msg['ts'] = floor(microtime(true)*1000.0);
 		}
 		
 		if (!empty($this->clientid)) {
 			$msg['uwap-clientid'] = $this->clientid;
 		}
+
+		// return $msg;
 
 		return $this->store->store("feed", $this->userid, $msg);
 
