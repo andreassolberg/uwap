@@ -53,6 +53,8 @@ class OAuth {
 
 	function authorization() {
 
+
+
 		$passive = false;
 		if (isset($_REQUEST["passive"]) && $_REQUEST["passive"] === 'true') $passive = true;
 

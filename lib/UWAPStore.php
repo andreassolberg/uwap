@@ -72,7 +72,7 @@ class UWAPStore {
 			$obj["_id"] = new MongoId($obj["_id"]['$id']);
 		}
 		if ($expiresin !== null) {
-			$obj["expires"] = time() + $expiresin;
+			$obj["expires"] = floor(microtime()/1000.0) + (1000*$expiresin);
 		}
 
 		// echo 'store'; print_r($obj);
@@ -280,19 +280,6 @@ class UWAPStore {
 		// print_r($criteria); exit;
 
 		$ret = $this->queryList($collection, $criteria, $fields, $options);
-
-		// echo 'query'; print_r($criteria); 
-		// foreach($ret AS $r) {
-		// 	if (isset($r['title'])) {
-		// 		print_r($r['title']); echo "\n";
-		// 	} else {
-		// 		echo "boo";
-		// 	}
-
-			
-		// }
-		// // echo 'Result'; print_r($ret); 
-		// exit;
 
 		return $ret;
 	}
