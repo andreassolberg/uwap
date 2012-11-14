@@ -270,10 +270,10 @@ class Feed {
 
 		if (!empty($existing)) {
 			$existing['status'] = $msg['status'];
-			$existing['updated'] = floor(microtime()/1000.0);
+			$existing['updated'] = floor(microtime(true)*1000.0);
 			$res = $this->store->store('feed', $this->userid, $existing);
 		} else {
-			$msg['ts'] = floor(microtime()/1000.0);
+			$msg['ts'] = floor(microtime(true)*1000.0);
 			$res = $this->store->store('feed', $this->userid, $msg);
 		}	
 		return $this->store->queryOneUser('feed', $this->userid, array(), $query);

@@ -62,7 +62,7 @@ define(function(require, exports, module) {
 		];
 		var icon = '<i class="icon-ok icon-white"></i> ';
 
-		console.log("    › Set my response", target);
+		// console.log("    › Set my response", target);
 
 		target.find('.responseOption').each(function(i, opt) {
 			// console.log("Response options is ", opt);
@@ -217,9 +217,9 @@ define(function(require, exports, module) {
 	}
 
 	FeedController.prototype.addResponse = function(item) {
-		// console.log("Adding a response", item);
+		// console.log("Adding a response", item['uwap-userid'], item['inresponseto']);
 		if (this.loadeditems[item.inresponseto]) {
-			// console.log("Adding YES", item);
+			// console.log("Adding YES", this.loadeditems[item.inresponseto]);
 			if (item['uwap-userid'] === this.app.user.userid) {
 				// console.log("MY RESPONSE", item);
 				this.setMyResponse(this.loadeditems[item.inresponseto], item.status);
