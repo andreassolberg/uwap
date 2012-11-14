@@ -139,19 +139,19 @@ define(function(require, exports, module) {
 		App.prototype.setHash = function(hash) {
 			this.routingEnabled = false;
 			window.location.hash = '#!' + hash;
-			console.log("Setting hash to " + hash);
+			// console.log("Setting hash to " + hash);
 			this.routingEnabled = true;
 		}
 
 		App.prototype.route = function(e) {
 			if (!this.routingEnabled) return;
 			var hash = window.location.hash;
-			console.log("Routing...");
+			// console.log("Routing...");
 			if (hash.length < 3) {
 				this.setHash('/');
 			}
 			hash = hash.substr(2);
-			console.log("Checking hash " + hash);
+			// console.log("Checking hash " + hash);
 
 			var parameters;
 
@@ -175,7 +175,7 @@ define(function(require, exports, module) {
 				console.error('No match found for router...');
 			}
 
-			console.log("HASH Change", window.location.hash);
+			// console.log("HASH Change", window.location.hash);
 		}
 
 

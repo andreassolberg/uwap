@@ -192,9 +192,9 @@ define(function(require, exports, module) {
 
 	ItemController.prototype.update = function() {
 		var that = this;
-		console.log("About to update");
+		// console.log("About to update");
 		if (!this.currentRange) return;
-		console.log("Updating...", this.currentRange);
+		// console.log("Updating...", this.currentRange);
 
 		var s = this.getSettings();
 		s.from = this.currentRange.to;

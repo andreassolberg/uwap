@@ -114,7 +114,7 @@ define(function(require, exports, module) {
 	panes.Pane.prototype.activate = function() {
 		this.pc.iamactive(this.id);
 		this.active = true;
-		console.log("Is about to show element", this.el)
+		// console.log("Is about to show element", this.el)
 		this.el.show();
 		this.emit('activate', true);
 	}
