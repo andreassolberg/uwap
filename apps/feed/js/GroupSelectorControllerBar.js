@@ -28,7 +28,7 @@ define([
 		this.el.find('li').removeClass('active');
 		currentListItem.addClass('active');
 
-		console.log("selector", selector); // return;
+		// console.log("selector", selector); // return;
 
 		this.el.find('span.selectedFeed').empty().append(currentListItem.data('content'));
 		
@@ -44,7 +44,7 @@ define([
 
 		var list = this.el.find('ul#feedlist');
 
-		console.log("About to add to group...")
+		// console.log("About to add to group...")
 
 		// list.find('li.feeditems').empty();
 		list.empty();

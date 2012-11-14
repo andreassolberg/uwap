@@ -96,7 +96,7 @@ define([
 
 
 		// n = this.processNotifications(n);
-		console.log(" ››››› Proicessed", n);
+		// console.log(" ››››› Proicessed", n);
 
 		var length = n.length;
 		if (n.length > 0)  {

@@ -60,21 +60,21 @@ define(function(require, exports, module) {
 			postcontainer.find(".section-deadline").show();
 		} else {
 			postcontainer.find(".section-deadline").hide();
-			console.log("Hide section deadlonie", postcontainer.find(".section-deadline"))
+			// console.log("Hide section deadlonie", postcontainer.find(".section-deadline"))
 		}
 
 		if (postcontainer.find(".field-maxparticipants").prop('checked')) {
 			postcontainer.find(".section-max").show();
 		} else {
 			postcontainer.find(".section-max").hide();
-			console.log("Hide section max", postcontainer.find(".section-max"))
+			// console.log("Hide section max", postcontainer.find(".section-max"))
 		}
 
 		if (postcontainer.find(".field-allowsignup").prop('checked')) {
 			postcontainer.find(".section-signup").show();
 		} else {
 			postcontainer.find(".section-signup").hide();
-			console.log("Hide section signup")
+			// console.log("Hide section signup")
 		}
 
 	}
@@ -93,7 +93,7 @@ define(function(require, exports, module) {
 		sharespan.append('<span class="label sharedwithgroup">' + this.groups[groupid] + '</span>');
 		currentListItem.addClass('disabled');
 
-		console.log('Adding group', groupid)
+		// console.log('Adding group', groupid)
 	}
 
 	PostController.prototype.getGroups = function(e) {
@@ -111,7 +111,7 @@ define(function(require, exports, module) {
 		var id = $(e.currentTarget).attr('id');
 
 		
-		console.log("Selected something", id);
+		// console.log("Selected something", id);
 
 		var mapping = {
 			'btn-link': 'link',
@@ -128,7 +128,7 @@ define(function(require, exports, module) {
 		this.type = target;
 
 		this.el.find("div.postc").hide();
-		console.log("opening " + target)
+		// console.log("opening " + target)
 		this.el.find("div.postc.post-" + target).show();
 
 		this.el.find("div.postc.post-" + target + " .focusfield").focus();

@@ -62,11 +62,14 @@ define(function(require, exports, module) {
 		];
 		var icon = '<i class="icon-ok icon-white"></i> ';
 
+		console.log("    › Set my response", target);
+
 		target.find('.responseOption').each(function(i, opt) {
 			// console.log("Response options is ", opt);
 
 			cur = $(opt).data('status');
 			if (cur === status) {
+				// console.log("SETTIN STATUS TO BE ", status);
 				$(this).removeClass('btn-small');
 				$(this).removeClass('btn-mini');
 				$(this).html(icon + text[1][cur]);
@@ -121,7 +124,7 @@ define(function(require, exports, module) {
 		var targetItem = $(e.currentTarget).closest('div.item');
 		$(e.currentTarget).hide();
 		var item = targetItem.tmplItem().data;
-		console.log("About to enable comment", this.app.user, targetItem, item);
+		// console.log("About to enable comment", this.app.user, targetItem, item);
 		var cc = new AddCommentController(this.app.user, item, targetItem.find('div.postcomment'));
 		cc.onPost($.proxy(this.post, this));
 
@@ -132,7 +135,7 @@ define(function(require, exports, module) {
 		e.preventDefault();
 		var currentItem = $(e.currentTarget).closest('.item');
 		var item = currentItem.tmplItem().data;
-		console.log('About to delete ', item.id);
+		// console.log('About to delete ', item.id);
 
 		UWAP.feed.delete(item.id, function(data) {
 			console.log("Delete response Received", data);
@@ -214,9 +217,9 @@ define(function(require, exports, module) {
 	}
 
 	FeedController.prototype.addResponse = function(item) {
-		// console.log("Add comment");
+		// console.log("Adding a response", item);
 		if (this.loadeditems[item.inresponseto]) {
-			
+			// console.log("Adding YES", item);
 			if (item['uwap-userid'] === this.app.user.userid) {
 				// console.log("MY RESPONSE", item);
 				this.setMyResponse(this.loadeditems[item.inresponseto], item.status);
@@ -280,7 +283,7 @@ define(function(require, exports, module) {
 	}
 
 	FeedController.prototype.viewchange = function(opt) {
-		console.log('View change', opt);
+		// console.log('View change', opt);
 
 		this.pane.el.find('.feedcontainer').removeClass('view-' + this.view.view);
 		this.pane.el.find('.feedcontainer').addClass('view-' + opt.view);
@@ -294,16 +297,16 @@ define(function(require, exports, module) {
 
 	FeedController.prototype.update = function() {
 		var that = this;
-		console.log("About to update");
+		// console.log("About to update");
 		if (!this.currentRange) return;
-		console.log("Updating...", this.currentRange);
+		// console.log("Updating...", this.currentRange);
 
 		var s = this.getSettings();
 		s.from = this.currentRange.to;
 
 
 		UWAP.feed.read(s, function(data) {
-			console.log("FEED Update Received", data);
+			// console.log("FEED Update Received", data);
 			// $(".feedtype").empty();
 			if (!data.range) return;
 			that.currentRange.to = data.range.to;
@@ -325,16 +328,16 @@ define(function(require, exports, module) {
 
 		var s = this.getSettings();
 
-		console.log("Load ", this.view.view);
+		// console.log("Load ", this.view.view);
 		if (this.view.view === 'members' && s.group) {
 			
 
-			console.log("Load members", s);
+			// console.log("Load members", s);
 
 			var gr = s.group;
 
 			UWAP.groups.get(gr, function(data) {
-				console.log("Group data received.", data);
+				// console.log("Group data received.", data);
 
 				if (data.userlist) {
 					feedcontainer.empty();
@@ -356,7 +359,7 @@ define(function(require, exports, module) {
 
 		} else {
 			UWAP.feed.read(s, function(data) {
-				console.log("FEED Received", data);
+				// console.log("FEED Received", data);
 				
 				feedcontainer.empty();
 

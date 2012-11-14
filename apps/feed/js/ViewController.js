@@ -53,7 +53,6 @@ define([
 
 
 	ViewController.prototype.getText = function(key) {
-		console.log("ettext for key " + key)
 		return '<i class="' + this.views[key].icon + '"></i> ' + this.views[key].name + '</a>';
 	}
 

@@ -29,7 +29,7 @@ define(function(require) {
 		return url + delimiter + encodeURIComponent(key) + '=' + encodeURIComponent(value);
 	};
 	UWAP.utils.goAndReturn = function(url) {
-		console.log("About to redirect to: " + UWAP.utils.addQueryParam(url, 'return', document.URL));
+		// console.log("About to redirect to: " + UWAP.utils.addQueryParam(url, 'return', document.URL));
 		var base = UWAP.utils.scheme + '://core.' + UWAP.utils.hostname + '/';
 		window.location = UWAP.utils.addQueryParam(url, 'return', document.URL);	
 	}
@@ -49,7 +49,7 @@ define(function(require) {
 		link.type = "text/css";
 		link.rel = "stylesheet";
 		link.href = require.toUrl(url);
-		console.log("CSS ››››› Loading CSS : " + link.href);
+		// console.log("CSS ››››› Loading CSS : " + link.href);
 		document.getElementsByTagName("head")[0].appendChild(link);
 	}
 
@@ -81,7 +81,7 @@ define(function(require) {
 			redirect_uri: redirect_uri,
 			passive_redirect_uri: passive_redirect_uri
 		}
-	}, {debug: 1});
+	}, {debug: 0});
 
 
 
@@ -105,8 +105,8 @@ define(function(require) {
 			jso_provider: "uwap",
 			jso_allowia: true,
 			success: function(result, textStatus, jqXHR) {
-				console.log('Response _request response reviced()');
-				console.log(result);
+				// console.log('Response _request response reviced()');
+				// console.log(result);
 
 				if (result.status === 'ok') {
 					if (typeof callback === 'function') {
@@ -117,7 +117,7 @@ define(function(require) {
 						callback(result.data);
 					}
 				} else if (result.status === 'redirect') {
-					console.log("Redirecting user to " + result.url);
+					// console.log("Redirecting user to " + result.url);
 					window.location.href = result.url;
 				} else {
 					if  (typeof errorcallback === 'function') {
@@ -176,7 +176,7 @@ define(function(require) {
 
 		// TODO: Upgrade to support OAUTH
 		checkPassive: function (callbackSuccess, callbackNo) {
-			console.log("checkPassive()");
+			// console.log("checkPassive()");
 			UWAP._request(
 				'GET', 
 				UWAP.utils.getEngineURL("/api/userinfo"),
@@ -184,10 +184,10 @@ define(function(require) {
 					"jso_allowia": false
 				}, callbackSuccess, function() {
 
-					console.log("callbackFailed passive");
+					// console.log("callbackFailed passive");
 
 					jso.jso_ensureTokensPassive({"uwap": false}, function() {
-						console.log("Callback success from jso_ensureTokensPassive() ")
+						// console.log("Callback success from jso_ensureTokensPassive() ")
 
 						UWAP._request(
 							'GET', 
@@ -197,7 +197,7 @@ define(function(require) {
 							}, callbackSuccess, callbackNo);
 
 					}, function(error) {
-						console.log("Callback failed from jso_ensureTokensPassive() ");
+						// console.log("Callback failed from jso_ensureTokensPassive() ");
 						callbackNo(error);
 					});
 
