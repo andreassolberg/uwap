@@ -323,7 +323,7 @@ img.thumb {
 
 		<!-- Grey header bar below -->
 		<div id="headerbar" style="clear: both">
-		<p id="breadcrumb">Important updates on <a href="https://feed.uwap.org/">UWAP Feed</a></p>
+		<p id="breadcrumb">Important updates on <a href="https://feed.uwap.org/">UWAP Feed</a> to ' . $this->adr . '</p>
 		<p style="height: 0px; clear: both"></p>
 		</div><!-- /#headerbar -->
 

@@ -67,8 +67,8 @@ foreach($authz AS $a) {
 
 	echo "   [Sending mail to " . $user['mail'] . ".\n\n";
 
-	// $np = new NotificationPost($entries, $user['mail']);
-	$np = new NotificationPost($entries, 'andreas@uninett.no');
+	$np = new NotificationPost($entries, $user['mail']);
+	// $np = new NotificationPost($entries, 'andreas@uninett.no');
 	$np->send();
 
 
