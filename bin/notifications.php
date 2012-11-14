@@ -31,7 +31,7 @@ $authz = $store->queryList('oauth2-server-authorization', $query);
 foreach($authz AS $a) {
 
 	// $testusers = array('andreas@uninett.no', 'armaz@uninett.no', 'anders@uninett.no', 'simon@uninett.no', 'hallen@uninett.no', 'navjord@uninett.no');
-	$testusers = array('andreas@uninett.no', 'simon@uninett.no');
+	$testusers = array('andreas@uninett.no', 'anders@uninett.no', 'simon@uninett.no', 'hallen@uninett.no', 'navjord@uninett.no');
 
 
 	$user = $store->queryOne('users', array('userid' => $a['userid']));
@@ -48,7 +48,7 @@ foreach($authz AS $a) {
 
 	$feed = new Feed($userid, $user['groups'], $user['subscriptions']);
 	$no = new Notifications($userid, $user['groups'], $user['subscriptions']);
-	$response = $no->read(array(), 4320000000, true); // 3600000 is one hour. 432000000 is five days.
+	$response = $no->read(array(), 3600000, true); // 3600000 is one hour. 432000000 is five days.
 	$entries = $response['items'];
 
 	if (empty($entries)) {
