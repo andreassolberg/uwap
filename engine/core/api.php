@@ -332,7 +332,7 @@ try {
 		} else if (Utils::route('post', '^/feed/notifications$', &$qs, &$parameters)) {
 
 			// $parameters;
-			$no = new Notifications($userid, $groups);
+			$no = new Notifications($userid, $groups, $subscriptions);
 			$response['data'] = $no->read($parameters);
 
 			// header('Content-Type: text/plain; charset: utf-8'); echo "poot"; print_r($response); exit;
@@ -340,7 +340,7 @@ try {
 		} else if (Utils::route('post', '^/feed/notifications/markread$', &$qs, &$ids)) {
 
 
-			$no = new Notifications($userid, $groups);
+			$no = new Notifications($userid, $groups, $subscriptions);
 			$response['data'] = $no->markread($ids);
 
 

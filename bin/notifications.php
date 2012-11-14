@@ -7,12 +7,10 @@
  */
 
 // require(dirname(__FILE__) . '/lib/Client.php');
-// require(dirname(__FILE__) . '/lib/RSS.php');
 
 
-
+require(dirname(__FILE__) . '/lib/NotificationPost.php');
 require(dirname(dirname(__FILE__)) . '/lib/autoload.php');
-
 
 $filename = dirname(dirname(__FILE__)) . '/config/notifications.json';
 $raw = file_get_contents($filename);
@@ -32,8 +30,8 @@ $authz = $store->queryList('oauth2-server-authorization', $query);
 
 foreach($authz AS $a) {
 
-	$testusers = array('andreas@uninett.no', 'armaz@uninett.no', 'anders@uninett.no', 'simon@uninett.no', 'hallen@uninett.no', 'navjord@uninett.no');
-	// $testusers = array('andreas@uninett.no');
+	// $testusers = array('andreas@uninett.no', 'armaz@uninett.no', 'anders@uninett.no', 'simon@uninett.no', 'hallen@uninett.no', 'navjord@uninett.no');
+	$testusers = array('andreas@uninett.no', 'simon@uninett.no');
 
 
 	$user = $store->queryOne('users', array('userid' => $a['userid']));
@@ -46,9 +44,11 @@ foreach($authz AS $a) {
 
 	echo "   [Processing " . $userid . " >\n";
 
+	echo "Memeber of groups"; print_r($user['groups']); print_r($user['subscriptions']);
 
-	$no = new Notifications($userid, $user['groups']);
-	$response = $no->read(array(), 3600);
+	$feed = new Feed($userid, $user['groups'], $user['subscriptions']);
+	$no = new Notifications($userid, $user['groups'], $user['subscriptions']);
+	$response = $no->read(array(), 4320000000, true); // 3600000 is one hour. 432000000 is five days.
 	$entries = $response['items'];
 
 	if (empty($entries)) {
@@ -56,17 +56,21 @@ foreach($authz AS $a) {
 		continue;
 	}
 
-	foreach($entries AS $entry) {
+	foreach($entries AS $k => $entry) {
 		// echo "   Entry › " . json_encode($entry) . "\n\n";
 		echo " › " . $entry['summary'] . "\n";
+
+		// $entries[$k]['ref'] = $feed->read(array('id' => $entry['id']));
+		// print_r($entries[$k]); exit;
+
 	}
 
 	echo "   [Sending mail to " . $user['mail'] . ".\n\n";
 
+	// $np = new NotificationPost($entries, $user['mail']);
+	$np = new NotificationPost($entries, 'andreas@uninett.no');
+	$np->send();
 
-	$m = new Mailer($user['mail']);
-	$m->setNotifications($entries);
-	$m->send();
 
 
 	// echo "User groups "; print_r($user['groups']);

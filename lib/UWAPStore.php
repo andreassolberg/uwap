@@ -387,7 +387,18 @@ class UWAPStore {
 		}
 		
 		$result = array();
-		foreach($cursor AS $element) $result[] = $element;
+
+		if (!$cursor->hasNext()) return $result;
+
+		// try {
+		foreach($cursor AS $element) $result[] = $element;	
+		// } catch(Exception $e) {
+		// 	echo "error in performing query: "; print_r($criteria); exit;
+		// }
+		
+
+
+
 		return $result;
 	}
 
