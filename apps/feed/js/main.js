@@ -83,7 +83,7 @@ define(function(require, exports, module) {
 			this.mainnewsfeedPane.on('activate', function() {
 				that.navbar.set([
 					{'title': 'Newsfeed', 'href': '/'}
-				]);				
+				]);		
 			});
 
 			this.mainnewsfeedPane.on('deactivate', function() {
@@ -103,6 +103,9 @@ define(function(require, exports, module) {
 				this.mainnewsfeedPane.activate();
 				this.postDisable();
 			}, this));
+
+			$(".loader-hideOnLoad").hide();
+			$(".loader-showOnLoad").show();
 
 		}
 
