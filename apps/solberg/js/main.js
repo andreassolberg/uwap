@@ -55,20 +55,19 @@ define(function(require, exports, module) {
 		// var tracker = new Tracker(locationconfig, $("div#locations"));
 		var scalendar = new SCalendar($("div#calendar"));
 		var yr = new Yr($("div#yr"));
-		var msg = new SMsg($("div#messages"));
+		// var msg = new SMsg($("div#messages"));
 		var buss = new Buss($("div#buss"));
 		var gaver = new Gaver($("div#gaver"));
 		var vgc = new VGCover($("div#vg"));
-
 		var flo = new Flo($("#flo"))
 
 		// var andreas = new Countdown($("div#countdowns"), 'Andreas', '1980-10-10 04:00');
 		// var vigdis = new Countdown($("div#countdowns"), 'Vigdis', '1980-03-30 12:00');
 
-		var linus = new Countdown($("div#countdowns"), 'Linus', 'August 3, 2012 05:00');
-		var linnea = new Countdown($("div#countdowns"), 'Linnéa', 'March 27, 2009 01:00');		
-		var lukas = new Countdown($("div#countdowns"), 'Lukas', 'March 20, 2012 03:00');
-		var frida = new Countdown($("div#countdowns"), 'Frida', 'July 8, 2012 05:00');
+		var linus = new Countdown($("div#countdowns"), 'Linus 3aug', 'August 3, 2012 05:00');
+		var linnea = new Countdown($("div#countdowns"), 'Linnéa 27mar', 'March 27, 2009 01:00');		
+		var lukas = new Countdown($("div#countdowns"), 'Lukas 20mar', 'March 20, 2012 03:00');
+		var frida = new Countdown($("div#countdowns"), 'Frida 8jul', 'July 8, 2012 05:00');
 
 		// UWAP.data.get('http://www.adressa.no/nyheter/',  null, function(data) {
 		// 	console.log("Got addreasa");

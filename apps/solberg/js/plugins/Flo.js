@@ -22,14 +22,14 @@ define(['../libs/moment'], function(moment) {
 			that = this,
 			now = moment();
 
-		console.log("Day", (now.format("M")-1), "month", now.format("D"));
+		// console.log("Day", (now.format("M")-1), "month", now.format("D"));
 
 		this.url = 'http://retro.met.no/cgi-bin/vannstand-tabell.cgi?' +
 			'havn=' + havn + '&dag=' + now.format("D") + '&mnd=' + (now.format("M")-1) + '&dogn=1&referanse=0&side=1';
 
 		UWAP.data.get(this.url,  null, function(data) {
 			// console.log('data', data);
-			console.log("  - - - - - - - - - - -  -- - - - -  -- - - - -  -- - - - -  - DATATATA");
+			// console.log("  - - - - - - - - - - -  -- - - - -  -- - - - -  -- - - - -  - DATATATA");
 			var obj = $(data);
 
 			var fdata = [];
@@ -38,7 +38,7 @@ define(['../libs/moment'], function(moment) {
 			obj.find("table.table tr[align='right']").each(function(i, item) {
 				var hour = $(item).children().eq(0).text();
 				var height = $(item).children().eq(1).text();
-				console.log("foo", hour, height);
+				// console.log("foo", hour, height);
 
 				if (hour >= start)
 					fdata.push([hour, height]);
@@ -49,7 +49,7 @@ define(['../libs/moment'], function(moment) {
 
 			var dayfill = parseInt(now.format("H"), 10) + (now.format("m") / 60);
 
-			console.log("Day fill", dayfill, now.format("H"), now.format("m"));
+			// console.log("Day fill", dayfill, now.format("H"), now.format("m"));
 
 			// var d1 = [];
 			// for (var i = 0; i < 14; i += 0.5)
