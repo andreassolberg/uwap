@@ -31,7 +31,7 @@ $authz = $store->queryList('oauth2-server-authorization', $query);
 foreach($authz AS $a) {
 
 	// $testusers = array('andreas@uninett.no', 'armaz@uninett.no', 'anders@uninett.no', 'simon@uninett.no', 'hallen@uninett.no', 'navjord@uninett.no');
-	$testusers = array('andreas@uninett.no', 'anders@uninett.no', 'simon@uninett.no', 'hallen@uninett.no', 'navjord@uninett.no');
+	$testusers = array('andreas@uninett.no', 'anders@uninett.no', 'simon@uninett.no', 'hallen@uninett.no', 'navjord@uninett.no', 'bjorn@uninett.no');
 
 
 	$user = $store->queryOne('users', array('userid' => $a['userid']));
