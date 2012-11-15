@@ -254,6 +254,10 @@ class UWAPStore {
 			$criteria['$or'] = $this->getACLwithSubscriptions($userid, $groups, $subscriptions);
 		}
 
+		// echo "prepared query:\n"; print_r($criteria);
+		// echo "\n\ndb.feed.find("; echo json_encode($criteria); echo ");\n\n";
+
+
 		// if (empty($groups)) {
 		// 	$criteria["uwap-userid"] = $userid;
 		// } else {
@@ -269,6 +273,7 @@ class UWAPStore {
 		// 	}
 		// }
 		// echo 'query'; print_r($criteria); exit;
+		
 		if ($collection !== 'log') {
 			UWAPLogger::debug('store', 'Query list userobject in [' . $collection . ']', array(
 				'collection' => $collection,
@@ -278,8 +283,12 @@ class UWAPStore {
 		}
 
 		// print_r($criteria); exit;
+		// 
+		// echo "\nBEFORE\n";
 
 		$ret = $this->queryList($collection, $criteria, $fields, $options);
+
+		// echo "raw result\n"; print_r($ret); echo "\n\n";
 
 		return $ret;
 	}
@@ -363,27 +372,27 @@ class UWAPStore {
 
 		$criteria = self::idify($criteria);
 
+		// echo "IDIFIED \n"; print_r($criteria2); echo "\n\n";
+
 
 		// if ($collection === 'feed') {
 		// echo 'QUERY:';
 		// print_r($criteria);	
 		// }
 
-		
 
 
 
 		$cursor = $this->db->{$collection}->find($criteria, $fields);
-		if ($cursor->count() < 1) return null;
+		// if ($cursor->count() < 1) return null;
 
 		if (isset($options['limit'])) {
 			$cursor->limit($options['limit']);
 		}
 		if (isset($options['sort'])) {
-			error_log("SORT Query ");
 			$cursor->sort($options['sort']);
 		} else {
-			error_log("SORT Query NOTTTT ");
+
 		}
 		
 		$result = array();
@@ -395,9 +404,14 @@ class UWAPStore {
 		// } catch(Exception $e) {
 		// 	echo "error in performing query: "; print_r($criteria); exit;
 		// }
-		
 
+		// echo "Criteria: \n";
+		// // print_r($criteria);
+		// var_export($criteria);
 
+		// echo "\ndb.feed.find("; echo json_encode($criteria); echo ");\n";
+		// echo "\n\n";
+		// echo "RESULT\n"; print_r(count($result)); echo "\n\n\n\n-------------------\n";
 
 		return $result;
 	}

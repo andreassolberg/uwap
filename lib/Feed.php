@@ -41,7 +41,9 @@ class Feed {
 
 	public function read($selector) {
 
-		// print_r($selector); 
+
+
+
 
 		$query = array(
 		);
@@ -88,7 +90,7 @@ class Feed {
 
 		if (isset($selector['from'])) {
 			$query['ts'] = array(
-				'$gt' => $selector['from'],
+				'$gt' => new MongoInt64((string)$selector['from']),
 			);
 		}
 
@@ -105,8 +107,16 @@ class Feed {
 			$list = $this->store->queryListClient("feed", $this->clientid, $this->groups, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
 		}
 
+		// echo "pulling query:\n"; print_r($query);
+		// echo "result is :\n"; print_r($list);
 
-		
+
+		if (empty($list)) {
+			return array(
+				'items' => array(),
+				'range' => null
+			);
+		}
 
 
 
@@ -187,7 +197,6 @@ class Feed {
 				
 			}
 		}
-
 
 
 
