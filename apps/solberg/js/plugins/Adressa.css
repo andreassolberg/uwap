@@ -34,6 +34,9 @@ div#adressa div.article h3,div#adressa div.article a{
 
 	font-weight: normal;
 }
+div#adressa div.media, div#adressa div.media a {
+	display: inline;
+}
 div#adressa div.article img {
 	float: right;
 	border: 1px solid #aaa;
