@@ -4,11 +4,18 @@
 class Notifications {
 
 
-	protected $userid, $groups, $store;
+	protected $userid, $groups, $store, $subscriptions;
 
-	function __construct($userid, $groups) {
+	function __construct($userid, $groups, $subscriptions) {
 		$this->userid = $userid;
 		$this->groups = $groups;
+		
+		$this->subscriptions = array();
+		if (!empty($subscriptions)) {
+			$this->subscriptions = $subscriptions;	
+		}
+
+		
 		$this->store = new UWAPStore;
 	}
 
@@ -110,7 +117,7 @@ class Notifications {
 		return $remaining;
 	}
 
-	function read($selector, $ago = 2592000000) { // 30 days
+	function read($selector, $ago = 2592000000, $ref = false) { // 30 days
 
 		// queryListUser($collection, $userid, $groups, $criteria = array(), $fields = array(), $options = array() ) {
 
@@ -132,7 +139,7 @@ class Notifications {
 		// print_r($readids); exit;
 
 		$results = array();
-		$feed = new Feed($this->userid, null, $this->groups);
+		$feed = new Feed($this->userid, null, $this->groups, $this->subscriptions);
 
 		$selector['from'] = floor(microtime(true)*1000.0) - $ago;
 
@@ -220,6 +227,10 @@ class Notifications {
 
 			$ne['summary'] = $this->itemStr($entry);
 			$ne['timehuman'] = date('D, d M Y H:i:s', $entry['ts']);
+
+			if ($ref) {
+				$ne['ref'] = $entry;
+			}
 
 			$results[] = $ne;
 

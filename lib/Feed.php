@@ -1,5 +1,10 @@
 <?php
 
+		function uwapfeedsort($a, $b) {
+			// return $a['lastActivity'] < $b['lastActivity'];
+			return ($a['lastActivity'] < $b['lastActivity']) ? -1 : 1;
+		}
+
 class Feed {
 
 	protected $store, $clientid, $userid, $groups, $subscriptions;
@@ -10,7 +15,11 @@ class Feed {
 		$this->clientid = $clientid;
 		$this->groups = $groups;
 		$this->store = new UWAPStore();
-		$this->subscriptions = $subscriptions;
+
+		$this->subscriptions = array();
+		if (!empty($subscriptions)) {
+			$this->subscriptions = $subscriptions;	
+		}
 	}
 
 	static public function array_remove($remove, $ar) {
@@ -32,7 +41,7 @@ class Feed {
 
 	public function read($selector) {
 
-		// print_r($selector); exit;
+		// print_r($selector); 
 
 		$query = array(
 		);
@@ -44,6 +53,10 @@ class Feed {
 			);
 		}
 		
+		if (isset($selector['id'])) {
+			$query['_id'] = new MongoID($selector['id']);
+		}
+
 
 		if (isset($selector['user'])) {
 			if ($selector['user'] === '@me' && $this->userid) {
@@ -80,8 +93,9 @@ class Feed {
 		}
 
 		
-
-		// print_r($query); exit;
+		// echo "Performing query:\n";
+		// print_r($query);
+		//  exit;
 		// echo 'groups'; print_r($this->groups); exit;
 		// 
 		$auth = new AuthBase();
@@ -234,10 +248,7 @@ class Feed {
 			if ($list[$k]['ts'] < $range['from']) $range['from'] = $list[$k]['ts'];
 		}
 
-		function uwapfeedsort($a, $b) {
-			// return $a['lastActivity'] < $b['lastActivity'];
-			return ($a['lastActivity'] < $b['lastActivity']) ? -1 : 1;
-		}
+
 		usort($list, 'uwapfeedsort');
 
 		$response = array(
