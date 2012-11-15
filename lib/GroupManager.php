@@ -213,9 +213,9 @@ class GroupManager {
 
 
 
-		// $agora = new GroupFetcherAgora($this->userid);
-		// $agroups = $agora->getGroups();
-		// $result = array_merge($result, $agroups);
+		$agora = new GroupFetcherAgora($this->userid);
+		$agroups = $agora->getGroups();
+		$result = array_merge($result, $agroups);
 
 
 		foreach($moregroups AS $key => $title) {
