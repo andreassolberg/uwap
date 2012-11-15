@@ -132,6 +132,8 @@ define(function(require) {
 					errorcallback(err.responseText + '(' + err.status + ')');
 				}
 				console.error('Data request error (client side): ', err);
+				console.error('Response text');
+				console.error(err.responseText);
 			}
 		};
 
