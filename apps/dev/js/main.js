@@ -5,6 +5,7 @@ define(function(require, exports, module) {
 		UWAP = require('uwap-core/js/core'),
 		appPicker = require('controllers/appPicker'),
 		newApp = require('controllers/newApp'),
+		newProxy = require('controllers/newProxy'),
 		frontpage = require('controllers/frontpage'),
 		AppDashboard = require('controllers/AppDashboard')
     	;
@@ -20,66 +21,140 @@ define(function(require, exports, module) {
 
 	$("document").ready(function() {
 
+		var App = function(el, user) {
+			this.el = el;
+			this.user = user;
+
+			this.picker = new appPicker($("ul.applicationlist"));
+			this.fpage = new frontpage($("div#appmaincontainer"));
+
+			$("span#username").html(this.user.name);
+
+			this.picker.bind('selected', $.proxy(this.actLoadApp, this));
+
+			this.el.on("click", "a.navDashboard", $.proxy(this.actFrontpage, this));
+			this.el.on("click", ".newAppBtn", $.proxy(this.actNewApp, this));
+			this.el.on("click", ".newProxyBtn", $.proxy(this.actNewProxy, this));
+		
+
+			this.load();
+
+			// this.setNavigationBar([
+			// 	{title: "Dashboard", href: "#!/"},
+			// 	{title: "Foodle"}
+			// ]);
+
+		}
+
+
+/*
+		<ul id="navigationlist" class="breadcrumb">
+			<li><a class="navDashboard" href="#">Dashboard</a> <span class="divider">/</span></li>
+			<li class="active">Foodle</li>
+		</ul>
+ */
+		App.prototype.setNavigationBar = function(obj) {
+			var target = this.el.find('#navigationlist');
+			target.empty();
+			for(var i = 0; i < obj.length; i++) {
+				if (i === obj.length-1) {
+					target.append('<li class="active">' + obj[i].title + '</li>');
+				} else {
+					target.append('<li><a class="navDashboard" href="' + obj[i].href + '">' + obj[i].title + '</a> <span class="divider">/</span></li>');
+				}
+			}
+		}
+
+		App.prototype.actFrontpage = function(event) {
+			if (event) event.preventDefault();
+			this.fpage.activate();
+
+			this.picker.unselect();
+
+			this.setNavigationBar([
+				{title: "Dashboard", href: "#!/"}
+			]);
+		}
+
+		App.prototype.load = function() {
+			var that = this;
+			// this.picker.empty();
+			UWAP.appconfig.list(function(list) {
+				that.picker.addList(list);
+			});
+		}
+
+		App.prototype.actLoadApp = function(appid) {
+			var that = this;
+			console.log("Selected an app:", appid);
+			$("div#appmaincontainer").empty();
+
+			UWAP.appconfig.get(appid, function(appconfig) {
+				var adash = new AppDashboard($("div#appmaincontainer"), appconfig);
+
+				console.log("Appconfig", appconfig);
+
+				that.setNavigationBar([
+					{title: "Dashboard", href: "#!/"},
+					{title: appconfig.name}
+				]);
+			});
+
+		}
+		App.prototype.actNewApp = function(event) {
+			var that = this;
+			if (event) event.preventDefault();
+
+			console.log("Initiating new app...")
+
+			var na = new newApp(that.el, function(no) {
+				
+				UWAP.appconfig.store(no, function() {
+					console.log("Successully stored new app");
+
+					UWAP.appconfig.list(function(list) {
+						that.picker.addList(list);
+						that.picker.selectApp(no.id);
+					});
+
+				}, function(err) {
+					console.log("Error storing new app.");
+				});
+			});
+			
+			na.activate();
+		}
+		App.prototype.actNewProxy = function(event) {
+			var that = this;
+			if (event) event.preventDefault();
+
+			var na = new newProxy(that.el, function(no) {
+				
+				UWAP.appconfig.store(no, function() {
+					console.log("Successully stored new app");
+
+					UWAP.appconfig.list(function(list) {
+						that.picker.addList(list);
+						that.picker.selectApp(no.id);
+					});
+
+				}, function(err) {
+					console.log("Error storing new app.");
+				});
+			});
+			na.activate();
+		}
+
+		var app;
+
 
 		UWAP.auth.require(function(user) {
 
-			var picker = new appPicker($("ul.applicationlist"));
-
 			console.log("Logged in", user);
-
-			$("span#username").html(user.name);
-
-			UWAP.appconfig.list(function(list) {
-				console.log(list);
-				picker.addList(list);
-			});
-			console.log(picker);
-			picker.bind('selected', function(appid) {
-				console.log("Selected an app.");
-				$("div#appmaincontainer").empty();
-
-				UWAP.appconfig.get(appid, function(appconfig) {
-					var adash = new AppDashboard($("div#appmaincontainer"), appconfig);
-				});
-				
-			});
-
-			$(".breadcrumb").on("click", "a.navDashboard", function() {
-				fpage.activate();
-				console.log("ACTIVATE frontpage");
-			});
-
-			var fpage = new frontpage($("div#appmaincontainer"));
-			$(".newAppBtn").bind("click", function() {
-				var na = new newApp($("body"), function(no) {
-					// console.log("Created new...", no);
-					UWAP.appconfig.store(no, function() {
-						console.log("Successully stored new app");
-
-						UWAP.appconfig.list(function(list) {
-							console.log(list);
-							picker.addList(list);
-							// console.log("About to select new entry", no);
-							picker.selectApp(no.id);
-						});
-
-					}, function(err) {
-						console.log("Error storing new app.");
-					});
-				});
-				
-				na.activate();
-			});
+			app = new App($("body"), user);
 
 		});
 
-
-		// UWAP.data.get('http://www.vegvesen.no/trafikk/xml/savedsearch.xml?id=600', 
-		// 	{'xml': 1},
-		// 	vegmelding);
-		
-		// UWAP.data.get('https://foodl.org/api/activity', {handler: "foodle"}, activity);
-		// UWAP.data.get('http://foo/rest.php', {handler: "plain"}, generic);
 
 	});
 

@@ -161,11 +161,12 @@ define(function(require) {
 
 	UWAP.auth = {
 
-		require: function (callbackSuccess) {
+		require: function (callbackSuccess, options) {
+			options = options || {};
 			UWAP._request(
 				'GET', 
 				UWAP.utils.getEngineURL("/api/userinfo"),
-				null, null, callbackSuccess);		
+				options, null, callbackSuccess);
 		},
 		check: function (callbackSuccess, callbackNo) {
 			UWAP._request(
@@ -436,6 +437,63 @@ define(function(require) {
 
 
 
+	UWAP.appconfig = {
+		list: function(callback, errorcallback) {
+			UWAP._request(
+				'GET', UWAP.utils.getEngineURL("/api/appconfig/apps"),
+				null, 
+				null, callback, errorcallback);
+		},
+		store: function(object, callback, errorcallback) {
+			UWAP._request(
+				'POST', UWAP.utils.getEngineURL("/api/appconfig/apps"),
+				object, 
+				null, callback, errorcallback);
+		},
+		updateStatus: function(id, object, callback, errorcallback) {
+			 UWAP._request(
+			 	'POST', 
+			 	UWAP.utils.getEngineURL('/api/appconfig/app/' + id + '/status'),
+			 	object, 
+			 	null, callback, errorcallback);
+		},
+		bootstrap: function(id, template, callback, errorcallback) {
+			UWAP._request(
+				'POST', 
+				UWAP.utils.getEngineURL('/api/appconfig/app/' + id + '/bootstrap'),
+				template, 
+				null, callback, errorcallback);
+		},
+		updateAuthzHandler: function(id, object, callback, errorcallback) {
+			UWAP._request(
+				'POST', 
+				UWAP.utils.getEngineURL('/api/appconfig/app/' + id + '/authorizationhandler/' + object.id),
+				object, 
+				null, callback, errorcallback);
+		},
+		deleteAuthzHandler: function(appid, objectid, callback, errorcallback) {
+			UWAP._request(
+				'DELETE', 
+				UWAP.utils.getEngineURL('/api/appconfig/app/' + id + '/authorizationhandler/' + object.id),
+				null, 
+				null, callback, errorcallback);
+		},
+		check: function(id, callback, errorcallback) {
+			UWAP._request(
+				'GET', 
+				UWAP.utils.getEngineURL('/api/appconfig/check/' + id),
+				null, 
+				null, callback, errorcallback);
+		},
+		get: function(id, callback, errorcallback) {
+			UWAP._request(
+				'GET', 
+				UWAP.utils.getEngineURL('/api/appconfig/app/' + id),
+				null, 
+				null, callback, errorcallback);
+		}
+	};
+
 
 
 
@@ -461,7 +519,7 @@ define(function(require) {
 	}
 
 
-	UWAP.appconfig = {
+	UWAP.appconfig2 = {
 		list: function(callback, errorcallback) {
 			
 			$.ajax({

@@ -1,6 +1,6 @@
 define(function() {
 	
-	var newApp = function(container, callback) {
+	var newProxy = function(container, callback) {
 
 		this.container = container;
 		this.callback = callback;
@@ -9,28 +9,28 @@ define(function() {
 		this.verified = false;
 		this.verifytimer = null;
 
-		this.element = $("#newAppTemplate").tmpl();
+		this.element = $("#newProxyTemplate").tmpl();
 
 		console.log("this element", this.element);
 		$("div#modalContainer").append(this.element);
 
 		this.checkIfReady();
 
-		this.element.on('keyup change', '#newAppIdentifier', $.proxy(this.updateIdentifier, this));
-		this.element.on('keyup change', '#newAppName', $.proxy(this.checkIfReady, this));
+		this.element.on('keyup change', '#newProxyIdentifier', $.proxy(this.updateIdentifier, this));
+		this.element.on('keyup change', '#newProxyName', $.proxy(this.checkIfReady, this));
 		this.element.on('click', '.createNewBtn', $.proxy(this.submit, this));
 
 
 	};
 
 
-	newApp.prototype.submit = function() {
+	newProxy.prototype.submit = function() {
 
 		var obj = {};
 
-		obj.id = $(this.element).find("#newAppIdentifier").val();
-		obj.name = $(this.element).find("#newAppName").val();
-		obj.descr = $(this.element).find("#newAppDescr").val();
+		obj.id = $(this.element).find("#newProxyIdentifier").val();
+		obj.name = $(this.element).find("#newProxyName").val();
+		obj.descr = $(this.element).find("#newProxyDescr").val();
 		obj.type = 'app';
 
 		// this.trigger("submit", obj);
@@ -39,9 +39,9 @@ define(function() {
 		$(this.element).remove();
 	};
 
-	newApp.prototype.updateIdentifier = function() {
-		var id = $(this.element).find("#newAppIdentifier").val();
-		$(this.element).find(".newAppIdentifierMirror").html(id);
+	newProxy.prototype.updateIdentifier = function() {
+		var id = $(this.element).find("#newProxyIdentifier").val();
+		$(this.element).find(".newProxyIdentifierMirror").html(id);
 
 		if(this.verifytimer) clearTimeout(this.verifytimer);
 		this.verifytimer = setTimeout($.proxy(this.verifyIdentifier, this), 500);
@@ -52,9 +52,9 @@ define(function() {
 		}
 	};
 
-	newApp.prototype.checkIfReady = function() {
+	newProxy.prototype.checkIfReady = function() {
 		console.log("check if ready");
-		var name = $(this.element).find("#newAppName").val();
+		var name = $(this.element).find("#newProxyName").val();
 		if (name.length > 1 && this.verified) {
 			console.log("READY")
 			// $(this.element).find(".createNewBtn").attr("disabled", "disabled");
@@ -67,9 +67,9 @@ define(function() {
 		}
 	}
 
-	newApp.prototype.verifyIdentifier = function() {
+	newProxy.prototype.verifyIdentifier = function() {
 		var that = this;
-		var id = $(this.element).find("#newAppIdentifier").val();
+		var id = $(this.element).find("#newProxyIdentifier").val();
 
 		if (id === '') {
 			$(that.element).find("span.idlabels").empty().append('<span class="label label-important">Cannot be empty</span>');
@@ -98,12 +98,12 @@ define(function() {
 		});
 	}
 
-	newApp.prototype.activate = function() {
+	newProxy.prototype.activate = function() {
 		$(this.element).modal('show');
-		$(this.element).find("#newAppIdentifier").focus();
+		$(this.element).find("#newProxyIdentifier").focus();
 	}
 
-	// newApp.include(Spine.Events);
-	return newApp;
+	// newProxy.include(Spine.Events);
+	return newProxy;
 
 });

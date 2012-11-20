@@ -299,6 +299,147 @@ try {
 
 
 
+	/**
+	 *  The appconfig API.
+	 */
+	} else if (Utils::route(false, '^/appconfig/', &$qs, &$parameters)) {
+
+
+		$oauth = new OAuth();
+		$token = $oauth->check(null, array('appconfig'));
+		$userid = $token->getUserID();
+		$appdirectory = new AppDirectory();
+
+
+
+
+		if (Utils::route('get', '^/appconfig/apps$', &$qs, &$parameters)) {
+
+			$listing = $appdirectory->getMyApps($userid);			
+			$response['data'] = $listing;
+
+
+		} else if (Utils::route('post', '^/appconfig/apps$', &$qs, &$parameters)) {
+
+			
+
+			
+			$object = $parameters;
+			$id = $object["id"];
+			Utils::validateID($id);
+			// $config = Config::getInstance();
+			// $config->store($object, $userid);
+			Config::store($object, $userid);
+
+			$ac = Config::getInstance($id);
+			$response['data'] = $ac->getConfig();
+
+
+		} else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)/status$', &$qs, &$parameters)) {
+
+			$appid = $qs[1];
+			Utils::validateID($appid);
+			$ac = Config::getInstance($appid);
+			$c = $ac->getConfig();
+
+			$response['data'] = $c['status'];
+
+		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/status$', &$qs, &$parameters)) {
+
+			$appid = $qs[1];
+			$object = $parameters;
+
+			Utils::validateID($appid);
+
+			$ac = Config::getInstance($appid);
+			$ac->updateStatus($object, $userid);
+
+			$c = $ac->getConfig();
+
+			$response['data'] = $c['status'];
+
+
+		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/davcredentials$', &$qs, &$parameters)) {
+
+			$appid = $qs[1];
+			Utils::validateID($appid);
+			$ac = Config::getInstance($appid);
+
+			$response['data'] = $ac->getDavCredentials($userid);
+
+
+		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/bootstrap$', &$qs, &$parameters)) {
+
+			$appid = $qs[1];
+			$object = $parameters;
+
+			if (!is_string($object) || empty($object)) {
+				throw new Exception('Invalid template input to bootstrap application data');
+			}
+			if (!in_array($object, array('twitter', 'boilerplate'))) {
+				throw new Exception('Not valid template to bootstrap application data');	
+			}
+			
+			Utils::validateID($appid);
+			$ac = Config::getInstance($appid);
+			$response['data'] = $ac->bootstrap($object);
+
+
+
+		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+
+			$appid = $qs[1];
+			$authzid = $qs[2];
+			$object = $parameters;
+
+			Utils::validateID($appid);
+			$ac = Config::getInstance($appid);
+			
+			Utils::validateID($authzid);
+
+			$handlers = $ac->updateAuthzHandler($authzid, $object, $userid);
+			$response['data'] = $handlers;
+
+
+		} else if (Utils::route('delete', '^/appconfig/app/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+
+			$appid = $qs[1];
+			$authzid = $qs[2];
+
+			Utils::validateID($appid);
+			$ac = Config::getInstance($appid);
+			
+			Utils::validateID($authzid);
+
+			$res = $ac->deleteAuthzHandler($authzid, $userid);
+			$response['data'] = $res;
+
+
+
+
+		} else if (Utils::route('get', '^/appconfig/check/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+
+			$appid = $qs[1];
+			Utils::validateID($appid);
+			$response['data'] = !$appdirectory->exists($appid);
+
+		} else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+
+			$appid = $qs[1];
+			Utils::validateID($appid);
+			$ac = Config::getInstance($appid);
+
+			$response['data'] = $ac->getConfig();
+			$response['data']['davcredentials'] = $ac->getDavCredentials($userid);
+			$response['data']['appdata-stats'] = $ac->getStats();
+			$response['data']['files-stats'] = $ac->getFilestats();
+			$response['data']['user-stats'] = $ac->getUserStats();
+
+		} else {
+			throw new Exception('Invalid request');
+		}
+
+
 
 
 	/**
@@ -433,14 +574,14 @@ try {
 		$response = $client->get($url, $args);
 
 
-	} else if (Utils::route('post', '^/apps$', &$parameters, &$object)) {
+	// } else if (Utils::route('post', '^/apps$', &$parameters, &$object)) {
 
-		$id = $object["id"];
-		Utils::validateID($id);
-		$config->store($object, $auth->getRealUserID());
+	// 	$id = $object["id"];
+	// 	Utils::validateID($id);
+	// 	$config->store($object, $auth->getRealUserID());
 
-		$ac = Config::getInstance($id);
-		$response['data'] = $ac->getConfig();
+	// 	$ac = Config::getInstance($id);
+	// 	$response['data'] = $ac->getConfig();
 
 
 

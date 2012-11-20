@@ -214,7 +214,7 @@ class Config {
 		return $stat;
 	}
 
-	public function validateAppConfig(&$app) {
+	public static function validateAppConfig(&$app) {
 
 		if (empty($app['id'])) throw new Exception('Missing parameter [id]');
 		if (empty($app['name'])) throw new Exception('Missing parameter [name]');
@@ -338,11 +338,13 @@ class Config {
 		return $current['handlers'];
 	}
 
-	public function store($config, $userid) {
-		$this->validateAppConfig(&$config);
+
+	public static function store($config, $userid) {
+		$store = new UWAPStore();
+		self::validateAppConfig(&$config);
 		$config['status'] = array('pendingDAV');
 		$id = $config["id"];
-		$lookup = $this->store->queryOne('appconfig', array("id" => $id));
+		$lookup = $store->queryOne('appconfig', array("id" => $id));
 		if (!empty($lookup)) {
 			throw new Exception('Application ID already exists, cannot create new app with this ID.');
 		}
@@ -351,8 +353,24 @@ class Config {
 			'id' => $id,
  			'config' => $config,
 		));
-		$this->store->store('appconfig', $userid, $config);
+		$store->store('appconfig', $userid, $config);
 	}
+
+	// public function storeOld($config, $userid) {
+	// 	$this->validateAppConfig(&$config);
+	// 	$config['status'] = array('pendingDAV');
+	// 	$id = $config["id"];
+	// 	$lookup = $this->store->queryOne('appconfig', array("id" => $id));
+	// 	if (!empty($lookup)) {
+	// 		throw new Exception('Application ID already exists, cannot create new app with this ID.');
+	// 	}
+	// 	UWAPLogger::info('core-dev', 'Store application configuration', array(
+	// 		'userid' => $userid,
+	// 		'id' => $id,
+ // 			'config' => $config,
+	// 	));
+	// 	$this->store->store('appconfig', $userid, $config);
+	// }
 
 
 	public function getID() {

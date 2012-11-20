@@ -386,12 +386,12 @@
 				<div class="span4">
 					<h2>SOA Proxies</h2>
 					<p>If you already have a REST data API, and would like to add a layer of authentication and authorization, the SOA Proxy may proxy all REST requests to your application.</p>
-					<p><a class="btn" href="#">Setup a SOA proxy &raquo;</a></p>
+					<p><a class="btn newProxyBtn" href="#">Setup a SOA proxy &raquo;</a></p>
 				</div><!--/span-->
 				<div class="span4">
 					<h2>Clients</h2>
 					<p>Register an OAuth 2.0 Consumer to get access to any of the available data sources through UNINETT WebApp Engine.</p>
-					<p><a class="btn" href="#">Setup a client &raquo;</a></p>
+					<p><a class="btn newClientBtn" href="#">Setup a client &raquo;</a></p>
 				</div><!--/span-->
 			 </div><!--/row-->
 		</script>
@@ -425,7 +425,57 @@
 						</p>
 
 						<p>Your application will be accessible from:<br />
-							<code>https://<span class="newAppIdentifierMirror">&lt;identifier&gt;</span>.eduapps.org</code> 
+							<code>https://<span class="newAppIdentifierMirror">&lt;identifier&gt;</span>.uwap.org</code> 
+							<span class="idlabels"></span></p>
+
+						<p>Then, give your application a short desriptive name, and a longer descriptive text to explain what your application does.</p>
+
+						<p><input style="width: 300px" id="newAppName" type="text" class="input" placeholder="Name"></p>
+
+
+						<p><textarea style="width: 300px" id="newAppDescr" placeholder="Describe your application..."></textarea></p>
+
+
+					</form>
+
+				</div>
+				<div class="modal-footer">
+					<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+					<a href="#" class="createNewBtn btn btn-primary">Create new application</a>
+				</div>
+			</div>
+		</script>
+
+
+		<script id="newProxyTemplate" type="text/x-jquery-tmpl">
+			<div class="modal hide" id="myModal">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">×</button>
+					<h3>Create new API Proxy</h3>
+				</div>
+				<div class="modal-body">
+					<p>You are about to create a new proxy API at UNINETT WebApp Park.</p>
+
+					<form class="registerform form-inline">  
+
+						<p>First, you need to register an app identifier. This will be used as part of the domain name. It can only
+							contain letters and numbers [a-z] and [0-9].</p>
+
+						<p>
+							<input style="width: 200px" type="text" class="input" id="newAppIdentifier" placeholder="Identifier">
+						</p>
+
+						<p>
+							<label class="checkbox">  
+							<input disabled="disabled" type="checkbox" > Use your own domain name </label>
+						</p>
+
+						<p style="display: none">
+							<input type="text" class="input" disabled="disabled" placeholder="yourowndomain.org">
+						</p>
+
+						<p>Your application will be accessible from:<br />
+							<code>https://<span class="newAppIdentifierMirror">&lt;identifier&gt;</span>.uwap.org</code> 
 							<span class="idlabels"></span></p>
 
 						<p>Then, give your application a short desriptive name, and a longer descriptive text to explain what your application does.</p>
@@ -485,11 +535,7 @@
 
 	<div class="container-fluid">
 
-		<ul class="breadcrumb">
-			<li>
-				<a class="navDashboard" href="#">Dashboard</a> <span class="divider">/</span>
-			</li>
-			<li class="active">Foodle</li>
+		<ul id="navigationlist" class="breadcrumb">
 		</ul>
 
 

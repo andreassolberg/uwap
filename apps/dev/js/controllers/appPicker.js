@@ -10,7 +10,10 @@ define(function() {
 			this.element = element;
 			$(this.element).on("click", "li", this.proxy(this.select));
 		},
-
+		unselect: function() {
+			console.log("UNSELECT");
+			$(this.element).find("li").removeClass("active");
+		},
 		select: function(event) {
 			var appid = $(event.currentTarget).attr('data-itemid');
 			console.log("Selected something", appid);
