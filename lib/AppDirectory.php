@@ -55,6 +55,7 @@ class AppDirectory {
 			'owner-userid' => true,
 			'owner' => true,
 			'name' => true,
+			'proxies' => true,
 		);
 
 		$query = array(
@@ -129,6 +130,48 @@ class AppDirectory {
 		return (!empty($config));
 	}
 
+	public static function validateAppConfig(&$app) {
+
+		if (empty($app['id'])) throw new Exception('Missing parameter [id]');
+		if (empty($app['name'])) throw new Exception('Missing parameter [name]');
+		if (empty($app['type'])) throw new Exception('Missing parameter [type]');
+		if (!in_array($app['type'], array('app', 'proxy'))) throw new Exception('Invalid app type.');
+
+		$allowedFields = array(
+			'id', 'name', 'type', 'descr', 'proxies'
+		);
+		foreach($app AS $k => $v) {
+			if (!in_array($k, $allowedFields)) {
+				unset($app[$k]);
+			}
+		}
+	}
+
+
+	public function store($config, $userid) {
+
+		self::validateAppConfig(&$config);
+
+		if ($config['type'] === 'app') {
+			$config['status'] = array('pendingDAV');
+		} else {
+			$config['status'] = array('operational');
+		}
+
+		$id = $config["id"];
+
+		if ($this->exists($id)) {
+			throw new Exception('Application ID already exists, cannot create new app with this ID.');
+		}
+
+
+		UWAPLogger::info('core-dev', 'Store application configuration', array(
+			'userid' => $userid,
+			'id' => $id,
+ 			'config' => $config,
+		));
+		$this->store->store('appconfig', $userid, $config);
+	}
 
 
 	

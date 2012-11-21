@@ -23,6 +23,22 @@ define(function() {
 
 	};
 
+	newProxy.parseArray = function (str) {
+
+		if (str === '') {
+			return null;
+		}
+		var temp = str.split(' ');
+		var res = [];
+		var rule = /([a-zA-Z0-9]+)/;
+
+		for(var i = 0; i < temp.length; i++) {
+			if (!rule.test(temp[i]))
+			res.push(temp[i].toLowerCase());
+		}
+		return res;
+	}
+
 
 	newProxy.prototype.submit = function() {
 
@@ -31,7 +47,16 @@ define(function() {
 		obj.id = $(this.element).find("#newProxyIdentifier").val();
 		obj.name = $(this.element).find("#newProxyName").val();
 		obj.descr = $(this.element).find("#newProxyDescr").val();
-		obj.type = 'app';
+		obj.type = 'proxy';
+
+		obj.proxies = {
+			"api": {
+				"endpoints": [$(this.element).find("#newProxyEndpoint").val()],
+				"scopes": newProxy.parseArray($(this.element).find("#newProxyScopes").val())
+			}
+		};
+
+		// console.log("About to store proxy object", obj); return;
 
 		// this.trigger("submit", obj);
 		this.callback(obj);

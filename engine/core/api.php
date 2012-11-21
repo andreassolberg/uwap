@@ -322,14 +322,14 @@ try {
 		} else if (Utils::route('post', '^/appconfig/apps$', &$qs, &$parameters)) {
 
 			
-
-			
 			$object = $parameters;
 			$id = $object["id"];
 			Utils::validateID($id);
 			// $config = Config::getInstance();
 			// $config->store($object, $userid);
-			Config::store($object, $userid);
+			// Config::store($object, $userid);
+
+			$appdirectory->store($object, $userid);
 
 			$ac = Config::getInstance($id);
 			$response['data'] = $ac->getConfig();

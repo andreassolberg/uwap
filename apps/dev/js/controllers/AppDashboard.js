@@ -74,8 +74,17 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 				that.drawAppStatus();
 			});
 		},
+
 		draw: function() {
-			this.element = $("#appdashboardtmpl").tmpl(this.appconfig);
+			console.log("DRAW", this.appconfig);
+			if (this.appconfig.type === 'app') {
+				this.element = $("#appdashboardtmpl").tmpl(this.appconfig);
+			} else if (this.appconfig.type === 'proxy') {
+				this.element = $("#proxydashboardtmpl").tmpl(this.appconfig);
+			} else {
+				this.element = $("#appdashboardtmpl").tmpl(this.appconfig);
+			}
+			
 			console.log("this element", this.element);
 			this.container.empty();
 			this.container.append(this.element);

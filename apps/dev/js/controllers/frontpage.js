@@ -8,7 +8,6 @@ define(function() {
 		container.append(this.element);
 
 		// this.checkIfReady();
-
 		// this.element.on('click', '.createNewBtn', $.proxy(this.submit, this));
 
 	}

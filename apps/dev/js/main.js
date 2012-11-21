@@ -68,21 +68,21 @@ define(function(require, exports, module) {
 		App.prototype.actFrontpage = function(event) {
 			if (event) event.preventDefault();
 			this.fpage.activate();
-
 			this.picker.unselect();
 
 			this.setNavigationBar([
 				{title: "Dashboard", href: "#!/"}
 			]);
-		}
+		};
 
 		App.prototype.load = function() {
 			var that = this;
 			// this.picker.empty();
 			UWAP.appconfig.list(function(list) {
+				console.log("List of apps", list);
 				that.picker.addList(list);
 			});
-		}
+		};
 
 		App.prototype.actLoadApp = function(appid) {
 			var that = this;
@@ -99,8 +99,8 @@ define(function(require, exports, module) {
 					{title: appconfig.name}
 				]);
 			});
+		};
 
-		}
 		App.prototype.actNewApp = function(event) {
 			var that = this;
 			if (event) event.preventDefault();
@@ -123,7 +123,8 @@ define(function(require, exports, module) {
 			});
 			
 			na.activate();
-		}
+		};
+		
 		App.prototype.actNewProxy = function(event) {
 			var that = this;
 			if (event) event.preventDefault();

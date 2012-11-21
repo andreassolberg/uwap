@@ -214,22 +214,6 @@ class Config {
 		return $stat;
 	}
 
-	public static function validateAppConfig(&$app) {
-
-		if (empty($app['id'])) throw new Exception('Missing parameter [id]');
-		if (empty($app['name'])) throw new Exception('Missing parameter [name]');
-		if (empty($app['type'])) throw new Exception('Missing parameter [type]');
-		if (!in_array($app['type'], array('app', 'proxy'))) throw new Exception('Invalid app type.');
-
-		$allowedFields = array(
-			'id', 'name', 'type'
-		);
-		foreach($app AS $k => $v) {
-			if (!in_array($k, $allowedFields)) {
-				unset($app[$k]);
-			}
-		}
-	}
 
 	public function hasStatus($statuses) {
 
@@ -339,6 +323,24 @@ class Config {
 	}
 
 
+
+	public static function validateAppConfig(&$app) {
+
+		if (empty($app['id'])) throw new Exception('Missing parameter [id]');
+		if (empty($app['name'])) throw new Exception('Missing parameter [name]');
+		if (empty($app['type'])) throw new Exception('Missing parameter [type]');
+		if (!in_array($app['type'], array('app', 'proxy'))) throw new Exception('Invalid app type.');
+
+		$allowedFields = array(
+			'id', 'name', 'type'
+		);
+		foreach($app AS $k => $v) {
+			if (!in_array($k, $allowedFields)) {
+				unset($app[$k]);
+			}
+		}
+	}
+	
 	public static function store($config, $userid) {
 		$store = new UWAPStore();
 		self::validateAppConfig(&$config);
