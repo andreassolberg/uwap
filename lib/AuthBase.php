@@ -234,7 +234,8 @@ class AuthBase {
 	}
 
 	public function authenticate() {
-		$options = array('saml:idp' => 'https://idp-test.feide.no');
+		$defaultidp = GlobalConfig::getValue('idp');
+		$options = array('saml:idp' => $defaultidp);
 		if (isset($_COOKIE['idp'])) {
 			$options = array('saml:idp' => $_COOKIE['idp']);
 		}
