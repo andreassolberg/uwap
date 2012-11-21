@@ -15,8 +15,7 @@ body {
 	border-left: none;
 	border-right: none;
 
-	overflow-x: scroll;
-	overflow-y: visible;
+
 }
 div.container-fluid {
 	margin: 0px; padding: 0px !important;
@@ -38,3 +37,13 @@ div.viewtypes {
 	margin-top: 10px;
 	margin-bottom: 0px;
 }
+
+
+table.participants {
+	display: none;
+}
+
+.userextra {
+	display: none;
+}
+

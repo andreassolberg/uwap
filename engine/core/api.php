@@ -470,6 +470,12 @@ try {
 			
 			$response['data'] = $feed->read($parameters);
 
+		} else if (Utils::route('post', '^/feed/upcoming$', &$qs, &$parameters)) {
+
+			// $parameters;
+			$no = new Upcoming($userid, $groups, $subscriptions);
+			$response['data'] = $no->read($parameters);
+
 		} else if (Utils::route('post', '^/feed/notifications$', &$qs, &$parameters)) {
 
 			// $parameters;

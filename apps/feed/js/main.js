@@ -40,6 +40,21 @@ define(function(require, exports, module) {
 
 	$("document").ready(function() {
 		
+		// $('a.dropdown-toggle, .dropdown-menu a').on('touchstart', function(e) {
+		//   e.stopPropagation();
+		//   console.error("POP");
+		// });
+
+		$("body").on('touchstart', 'a.dropdown-toggle', function(e) {
+		  e.stopPropagation();
+		  console.error("POP");
+		});
+		$("body").on('touchstart', '.dropdown-menu a', function(e) {
+		  e.stopPropagation();
+		  console.error("POP");
+		});
+
+
 
 		// Fix for ios for now.
 		// $(document).on('touchstart.dropdown', '.dropdown', function(e) { e.stopPropagation(); });
@@ -62,6 +77,19 @@ define(function(require, exports, module) {
 			this.mainnewsfeedPane.activate();
 
 			this.singleitemcontroller = null;
+
+			UWAP.feed.upcoming({}, function(data) {
+				console.log("Upcoming response"); console.log(data);
+				if (!data.items) return;
+
+				var container = $("#upcoming").empty();
+				$.each(data.items, function(i, item) {
+					var h = $("#itemUpcomingTmpl").tmpl(item);
+					container.append(h);
+				});
+
+
+			});
 
 
 			// this.groupcontroller = new GroupSelectorController(this.el.find('ul#navfilter'));
@@ -107,7 +135,58 @@ define(function(require, exports, module) {
 			$(".loader-hideOnLoad").hide();
 			$(".loader-showOnLoad").show();
 
+			this.loadSubscriptions();
+
+			this.el.on('click', '.actSubscribe', $.proxy(this.subscribe, this));
+			this.el.on('click', '.actUnsubscribe', $.proxy(this.unsubscribe, this));
+
 		}
+
+		App.prototype.loadSubscriptions = function() {
+			var that = this;
+			UWAP.groups.listPublic(function(items) {
+				var table = $("#subscribeproposals");
+				table.empty();
+				$.each(items, function(i, item) {
+					table.append($("#groupItem").tmpl(item));
+					// table.append('<tr><td>' + item.title + '</td></tr>');
+				});
+			});
+		}
+
+
+		App.prototype.subscribe = function(e) {
+			var that = this;
+			if (e) e.preventDefault();
+
+			var targetItem = $(e.currentTarget).closest('div.group');
+			var item = targetItem.tmplItem().data;
+
+			console.log("Subscribe to ", item);
+
+			UWAP.groups.subscribe(item.id, function() {
+				that.loadSubscriptions();
+				that.mainnewsfeed.load();
+			});
+
+		}
+
+		App.prototype.unsubscribe = function(e) {
+			var that = this;
+			if (e) e.preventDefault();
+
+			var targetItem = $(e.currentTarget).closest('div.group');
+			var item = targetItem.tmplItem().data;
+
+			console.log("unsubscribe to ", item);
+
+			UWAP.groups.unsubscribe(item.id, function() {
+				that.loadSubscriptions();
+				that.mainnewsfeed.load();
+			});
+
+		}
+
 
 
 		App.prototype.postEnable = function(e) {

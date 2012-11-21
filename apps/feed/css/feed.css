@@ -3,6 +3,31 @@ body {
 }
 
 
+
+.sidebar .sidebaritem {
+	padding-bottom: 2em;	
+	border-bottom: 1px solid #eee;
+}
+
+
+#feed .basicItem {
+	
+}
+ .comments .comment p {
+	
+	/*
+	color: green;
+	border: 1px solid #000000;
+	white-space: nowrap;
+	*/
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+
+
+
 div#panecontainer .item {
 /*	overflow-x: hidden;
 	overflow-y: visible;*/

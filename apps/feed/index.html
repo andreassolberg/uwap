@@ -13,6 +13,46 @@
 		<script type="text/javascript" data-main="main" src="/_/js/require.js"></script>
 
 
+		<script id="groupItem" type="text/x-jquery-tmpl">
+			<div class="group">
+
+				<p>
+				
+
+					{{if subscribed}}
+						<button class="actUnsubscribe btn btn-mini">Unsubscribe</button>				
+					{{else}}
+						<button class="actSubscribe btn btn-success btn-mini">Subscribe</button>
+					{{/if}}
+				
+					<!--
+					{{if subscribed}}
+						<span class="label label-success">Subscribed</span>
+					{{else}}
+						
+					{{/if}}
+					-->
+
+					${title} 
+				</p>
+
+<!--
+				
+					{{if admin}}
+						<span class="label label-info">Admin</span>
+					{{/if}}
+					{{if member}}
+						<span class="label label-success">Member</span>
+					{{/if}}
+					{{if owner}}
+						<span class="label label-danger">Owner</span>
+					{{/if}}
+				
+-->
+			</div>
+		</script>
+
+
 		<script id="postCommentTmpl" type="text/x-jquery-tmpl">
 
 			<div class="comment">
@@ -184,6 +224,119 @@
 			{{/if}}
 
 		</div>
+	</script>
+
+	<script id="itemUpcomingTmpl" type="text/x-jquery-tmpl">
+		<div id="${id}" class="item basicItem {{if promoted}}promoted{{/if}}" style="font-size: 95%; border-bottom: 1px dashed #e4e4e4; background: #fff; padding: 2px">
+
+			{{if title}}
+				<h5><a href="#!/item/${id}">${title}</a></h5>
+			{{/if}}
+
+			<p style="max-height: 40px; overflow-y: hidden">{{html message}}</p>
+
+			{{if thumbnail}}
+				<div><img class="thumb" src="${thumbnail}" /></div>
+			{{/if}}
+
+			{{if media}}
+				{{if media.thumbnail}}
+					<div><img class="videoitem thumb" src="${media.thumbnail}" /></div>
+				{{else}}
+					<div><img class="videoitem thumb" src="http://placehold.it/300x200" /></div>
+				{{/if}}				
+			{{/if}}
+
+
+
+			{{if $data.signup}}
+			<!--
+				<div class="well responseBox event-signup">
+
+
+					<button data-status="yes" class="responseOption btn btn-small btn-success">Attend</button>
+					<button data-status="maybe" class="responseOption btn btn-small btn-warning">Maybe</button>
+					<button data-status="no" class="responseOption btn btn-small btn-inverse">Appologize</button>
+
+					{{if $data.signup.deadline}}
+						<div class="">
+							<p><strong>Deadline for signing up</strong><br />{{= $data.getDeadlineDT() }}</p>
+							<p><i class="icon-exclamation-sign"></i> {{= $data.getUntil() }}</p>
+						</div>
+					{{/if}}
+				</div>
+			-->
+			{{/if}}
+
+
+			<div class="row-fluid">
+				<div class="span6">
+
+					<p style="font-size: 110%" ><strong>{{= $data.getDT() }}</strong></p>
+					<p><i class="icon-time"></i> {{= $data.getUntil() }}</p>
+				</div>
+				<div class="span6">
+
+					<!-- <h4>Location</h4> -->
+					<p><strong>${location.local}</strong><br /><i class="icon-map-marker"></i> ${location.address}</p>
+
+				</div>
+
+			</div>
+			
+
+
+			
+		
+
+
+
+
+
+
+			<div class="footer" style="display: none">
+
+				{{if keywords}}
+					<div>
+						{{each keywords}}
+							<span class="">${$value}</span>, 
+					    {{/each}}
+				    </div>
+				{{/if}}
+
+				{{if author}}
+					<span><i class=" icon-user"></i> ${author}</span>
+				{{/if}}
+				{{if user}}
+					<span><i class=" icon-user"></i> ${user.name}</span>
+				{{/if}}
+				{{if client}}
+					<span><i class="icon-briefcase"></i> ${client.client_name}</span>
+				{{/if}}
+				
+				<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
+				<!-- <span><i class=" icon-time"></i> activity <span class="ts" data-ts="${lastActivity}"></span></span> -->
+
+				{{each groupnames}}
+			        <span class="label">${$value}</span>
+			    {{/each}}
+			    {{if public}}
+			    	<span class="label label-inverse"><i class="icon-eye-open icon-white"></i> Public</span>
+			    {{/if}}
+			    {{if promoted}}
+				    <span class="label label-info"><i class="icon-star icon-white"></i> Promoted</span>
+			    
+			    {{/if}}
+			    
+			</div>
+
+
+
+
+
+		</div>
+
+
 	</script>
 
 
@@ -556,7 +709,7 @@
 
             <ul class="nav pull-right">
               <li id="authmenu" class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i> <span class="myname"></span> <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i><span class="userextra"> <span class="myname"></span> <b class="caret"></b></span></a>
                 <ul id="authmenuoptions" class="dropdown-menu">
                 	<li><a href="#!/notificationsetup">Setup notifications</a></li>
                 	<li><a target="_blank" href="https://groupmanager.uwap.org">Manage groups</a></li>
@@ -613,9 +766,7 @@
 
 		<div class="row-fluid">
 
-			<div class="span12">
-
-
+			<div class="span8">
 
 
 				<div class="navbar">
@@ -667,42 +818,46 @@
 				</div>
 
 
-				
-
-
-					
-
-
-				
-
+			<div id="panecontainer">
+			</div>
 
 
 			</div>
 
+			<div class="sidebar hidden-phone span4">
+
+				<div class="sidebaritem">
+				<h4>About this group <i class="icon-reorder"></i></h4>
+				<p>This is the description of the group you are currently viewing...</p>
+				<p>36 group members - <a href="https://groupmanager.uwap.org">manage group</a></p>
+				</div>
+
+				<div class="sidebaritem">
+				<h4>Upcoming <i class="icon-calendar"></i></h4>
+				<div id="upcoming"></div>
+				</div>
 
 
 
+				<div class="sidebaritem">
+				<h4>Webconference <i class="icon-facetime-video"></i></h4>
+				<div>
+					<p>This group has configured a web conference room.</p>
+					<p><button class="btn btn-mini">Join meeting</button></p>
+				</div>
+				</div>
 
-		<!--
-			<div id="sidebar" class="span3">
-
-				<ul id="navfilter" class="nav nav-list">
-
-
-				</ul>
-
-				<h3>Upcoming</h3>
-
-				<p>Todo...</p>
-	
+				<div class="sidebaritem">
+				<h4>Subscribe to groups <i class="icon-group"></i></h4>
+				<div id="subscribeproposals"></div>
+				</div>
 			</div>
-		-->
+
 
 		</div>
 
 
-		<div id="panecontainer">
-		</div>
+
 
 
 

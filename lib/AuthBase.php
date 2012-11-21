@@ -234,7 +234,11 @@ class AuthBase {
 	}
 
 	public function authenticate() {
-		$this->as->requireAuth();
+		$options = array('saml:idp' => 'https://idp-test.feide.no');
+		if (isset($_COOKIE['idp'])) {
+			$options = array('saml:idp' => $_COOKIE['idp']);
+		}
+		$this->as->requireAuth($options);
 	}
 
 	public function authenticatePassive() {

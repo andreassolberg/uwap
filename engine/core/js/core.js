@@ -275,7 +275,22 @@ define(function(require) {
 				ids, 
 				null, callback, errorcallback);
 		},
-
+		upcoming: function(selector, callback, errorcallback) {
+			UWAP._request(
+				'POST', UWAP.utils.getEngineURL("/api/feed/upcoming"),
+				selector, 
+				null, callback, errorcallback, function(data) {
+					var items = data.items;
+					if (data.items && data.items.length) {
+						data.items = [];
+					
+						for(var i = 0; i < items.length; i++) {
+							// data.items.push('1');
+							data.items.push(new models.FeedItem(items[i]));
+						}						
+					}
+				});
+		},
 		notifications: function(selector, callback, errorcallback) {
 			UWAP._request(
 				'POST', UWAP.utils.getEngineURL("/api/feed/notifications"),

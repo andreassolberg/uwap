@@ -88,9 +88,17 @@ class Feed {
 			);
 		}
 
+		
 		if (isset($selector['from'])) {
 			$query['ts'] = array(
 				'$gt' => new MongoInt64((string)$selector['from']),
+			);
+		}
+
+		$now = floor(microtime(true)*1000.0);
+		if (isset($selector['future'])) {
+			$query['dtstart'] = array(
+				'$gt' => new MongoInt64($now),
 			);
 		}
 
@@ -99,7 +107,7 @@ class Feed {
 		// print_r($query);
 		//  exit;
 		// echo 'groups'; print_r($this->groups); exit;
-		// 
+
 		$auth = new AuthBase();
 		if ($this->userid) {
 			$list = $this->store->queryListUserAdvanced("feed", $this->userid, $this->groups, $this->subscriptions, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
@@ -107,10 +115,15 @@ class Feed {
 			$list = $this->store->queryListClient("feed", $this->clientid, $this->groups, $query, array(), array('limit' => 50, 'sort' => array('ts' => -1)));	
 		}
 
+		// if (isset($selector['future'])) {
+		// 	echo "pulling query:\n"; print_r($query);
+		// 	echo "result is :\n"; print_r($list);
+		// }
+
 		// echo "pulling query:\n"; print_r($query);
 		// echo "result is :\n"; print_r($list);
 
-
+		
 		if (empty($list)) {
 			return array(
 				'items' => array(),

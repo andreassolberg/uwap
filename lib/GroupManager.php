@@ -126,9 +126,25 @@ class GroupManager {
 			$ne['description'] = $entry['description'];
 			if (isset($entry['listable'])) $ne['listable'] = $entry['listable'];
 
-			$ne['owner'] = (bool) ($entry['uwap-userid'] === $this->userid);
-			$ne['admin'] = (bool) (in_array($this->userid, $entry['admins']));
-			$ne['member'] = (bool) (in_array($this->userid, $entry['members']));
+			if (isset($entry['uwap-userid'])) {
+				$ne['owner'] = (bool) ($entry['uwap-userid'] === $this->userid);
+			} else {
+				$ne['owner'] = false;
+			}
+			
+
+			if (isset($entry['admins'])) {
+				$ne['admin'] = (bool) (in_array($this->userid, $entry['admins']));
+			} else {
+				$ne['admin'] = false;
+			}
+			if (isset($entry['members'])) {
+				$ne['member'] = (bool) (in_array($this->userid, $entry['members']));
+			} else {
+				$ne['member'] = false;
+			}
+			
+			
 
 			$ne['subscribed'] = (bool) (isset($mysubi[$entry['id']]));
 
