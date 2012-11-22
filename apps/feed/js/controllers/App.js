@@ -4,6 +4,7 @@ define(function(require, exports, module) {
 
 		$ = require('jquery'),
 		UWAP = require('uwap-core/js/core'),
+		jso = require('uwap-core/js/oauth'),
 
 		FeedController = require('controllers/FeedController'),
 		ItemController = require('controllers/ItemController'),
@@ -128,6 +129,14 @@ define(function(require, exports, module) {
 		  e.stopPropagation();
 		  console.error("POP");
 		});
+
+
+		this.el.on('click', '#authmenu #actLogout', function(e) {
+			if (e) e.preventDefault();
+			jso.jso_wipe();
+			$(".loader-showOnLoad").hide();
+		})
+
 
 
 		setInterval(function(){ 
