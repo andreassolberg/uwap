@@ -200,6 +200,10 @@ define(function(require, exports, module) {
 		}
 
 
+		setInterval(function(){ 
+			$("span.ts").prettyDate(); 
+		}, 8000);
+
 		function authpopup(callback) {
 			var url = UWAP.utils.getAppURL('/auth.html');
 			newwindow=window.open(url,'uwap-auth','height=600,width=800');
@@ -215,9 +219,7 @@ define(function(require, exports, module) {
 			return false;
 		}
 
-		setInterval(function(){ 
-			$("span.ts").prettyDate(); 
-		}, 8000);
+
 
 		UWAP.auth.checkPassive(function(user) {
 
