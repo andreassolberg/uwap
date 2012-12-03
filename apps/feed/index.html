@@ -75,53 +75,47 @@
 		</script>
 
 
-		<script id="commentTmpl" type="text/x-jquery-tmpl">
-			<div id="${id}" class="comment">
+		<script id="commentTmpl2" type="text/x-mustache">
+			<div id="{{id}}" class="comment">
 
-				{{if user}}
-					<img class="profileimg img-polaroid" src="${user.profileimg}" />
-				{{/if}}
-
-				{{if client}}
-					<img class="profileimg img-polaroid" src="${client.profileimg}" />
-				{{/if}}
+				{{#user}}
+					<img class="profileimg img-polaroid" src="{{profileimg}}" />
+				{{/user}}
+				{{#client}}
+					<img class="profileimg img-polaroid" src="{{profileimg}}" />
+				{{/client}}
 
 
 				<div class="footer">
-					{{if user}}
-						<span><i class=" icon-user"></i> ${user.name}</span>
-					{{/if}}
-					{{if client}}
-						<span><i class="icon-briefcase"></i> ${client.client_name}</span>
-					{{/if}}
+
+					{{#author}}
+						<span><i class=" icon-user"></i> {{author}}</span>
+					{{/author}}
+
+					{{#user}}
+						<span><i class=" icon-user"></i> {{name}}</span>
+					{{/user}}
+
+					{{#client}}
+						<span><i class="icon-briefcase"></i> {{client_name}}</span>
+					{{/client}}
 					
-					<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
-					<!--
-					{{each groupnames}}
-				        <span class="label">${$value}</span>
-				    {{/each}}
-				    -->
+					<span><i class=" icon-time"></i> <span class="ts" data-ts="{{ts}}"></span></span>
+					
 				</div>
 
-				{{if title}}
-					<h4>${title}</h4>
-				{{/if}}
+				{{#title}}
+					<h4>{{title}}</h4>
+				{{/title}}
 
-				<p>${message}</p>
-
-				{{if thumbnail}}
-					<div><img class="thumb" src="${thumbnail}" /></div>
-				{{/if}}
-
-				{{if links}}
-					{{each links}}
-				        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="${$value.href}">${$value.text}</a></span> 
-				    {{/each}}
-				{{/if}}
-
+				{{#message}}
+					<p>{{message}}</p>
+				{{/message}}
 
 			</div>
 		</script>
+
+
 
 		<script id="videoplayer" type="text/x-jquery-tmpl">
 			<div id="videoPlayer" >
@@ -548,197 +542,6 @@
 	</script>
 
 
-	<script id="itemTmpl" type="text/x-jquery-tmpl">
-
-		<div id="${id}" class="item basicItem {{if promoted}}promoted{{/if}}">
-
-
-			{{if user}}
-				
-				<img class="profileimg img-polaroid" src="${user.profileimg}" />
-			{{/if}}
-			{{if client}}
-				
-				<img class="profileimg img-polaroid" src="${client.profileimg}" />
-			{{/if}}
-
-			<div style="float: right" class="btn-group pull-right">
-				<a class="btn dropdown-toggle btn-small" data-toggle="dropdown" href="#">
-					<i class="icon-cog"></i> 
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu">
-					<li><a href="#!/item/${id}"><i class="icon-share-alt"></i> Open</a></li>
-					<li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-					<li><a class="actDelete" href="#"><i class="icon-trash"></i> Delete this item</a></li>
-					<li><a href="#"><i class="icon-ban-circle"></i> Report this issue</a></li>
-					<li class="divider"></li>
-					<li><a href="#"><i class="icon-star"></i> Promote this item</a></li>
-				</ul>
-			</div>
-
-			{{if title}}
-				<h4>${title}</h4>
-			{{/if}}
-
-			<p>{{html message}}</p>
-
-			{{if thumbnail}}
-				<div><img class="thumb" src="${thumbnail}" /></div>
-			{{/if}}
-
-			{{if media}}
-				{{if media.thumbnail}}
-					<div><img class="videoitem thumb" src="${media.thumbnail}" /></div>
-				{{else}}
-					<div><img class="videoitem thumb" src="http://placehold.it/300x200" /></div>
-				{{/if}}				
-			{{/if}}
-
-			{{if $data.hasClass("event") }}
-
-				<div class="row-fluid" style="margin-top: 16px; margin-bottom: 10px">
-
-					{{if $data.signup}}
-						<div class="span4 well responseBox event-signup">
-
-
-							<button data-status="yes" class="responseOption btn btn-small btn-success">Attend</button>
-							<button data-status="maybe" class="responseOption btn btn-small btn-warning">Maybe</button>
-							<button data-status="no" class="responseOption btn btn-small btn-inverse">Appologize</button>
-
-							{{if $data.signup.deadline}}
-								<div class="">
-									<p><strong>Deadline for signing up</strong><br />{{= $data.getDeadlineDT() }}</p>
-									<p><i class="icon-exclamation-sign"></i> {{= $data.getUntil() }}</p>
-								</div>
-							{{/if}}
-						</div>
-
-					{{/if}}
-
-
-					<div class="span4" >
-						<!-- <h4>Time and date</h4> -->
-						<p style="font-size: 130%" ><strong>{{= $data.getDT() }}</strong></p>
-						<p><i class="icon-time"></i> {{= $data.getUntil() }}</p>
-					</div>
-
-
-
-					<div class="span4">
-						<!-- <h4>Location</h4> -->
-						<p><strong>${location.local}</strong><br /><i class="icon-map-marker"></i> ${location.address}</p>
-					</div>
-
-				</div>
-
-	<!--			<div class="controllList">
-					<p>
-						<a href="#" class="actShow">show participants list</a>
-						<a href="#" style="display: none" class="actHide">hide participants list</a>
-					</p>
-				</div>
-	-->
-				{{if $data.signup }}
-				<div style="display: block; margin-top: 1em; margin-bottom: 1em">
-					<h4>Participant list</h4>
-
-					{{if $data.signup && $data.signup.max}}
-						
-						<div style="margin-top: 8px; margin-bottom: 8px">
-							<p>3 of {{= $data.signup.max }} participants signed up. <span class="badge badge-info">7 spaces left</span></p>
-						</div>
-					
-					{{/if}}
-
-					<table class="participants table table-striped">
-
-					</table>
-				</div>
-				{{/if}}
-
-			{{/if}}
-
-
-
-			{{if $data.activity }}
-					
-				<pre style="font-size: 80%">{{= JSON.stringify($item.data.activity, 0, 2) }}</pre>
-			{{else}}
-				
-			{{/if}}
-
-			{{if links}}
-				{{each links}}
-			        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="${$value.href}">${$value.text}</a></span> 
-			    {{/each}}
-			{{/if}}
-
-			{{if files}}
-				<ul class="nav nav-list">
-					{{each files}}
-				        <li><a target="_blank" href="${$value.href}"><i class="icon-file"></i> ${$value.filename}</a></li>
-				    {{/each}}
-			    </ul>
-			{{/if}}
-
-
-			<div style="floar: right">
-			<span class="commentlink" style="float: right; clear: right; font-size: small"><a class="muted actEnableComment" href="#">Add comment</a></span>
-			</div>
-
-			<div class="footer" style="">
-
-				{{if keywords}}
-					<div>
-						{{each keywords}}
-							<span class="">${$value}</span>, 
-					    {{/each}}
-				    </div>
-				{{/if}}
-
-				{{if author}}
-					<span><i class=" icon-user"></i> ${author}</span>
-				{{/if}}
-				{{if user}}
-					<span><i class=" icon-user"></i> ${user.name}</span>
-				{{/if}}
-				{{if client}}
-					<span><i class="icon-briefcase"></i> ${client.client_name}</span>
-				{{/if}}
-				
-				<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
-				<!-- <span><i class=" icon-time"></i> activity <span class="ts" data-ts="${lastActivity}"></span></span> -->
-
-				{{each groupnames}}
-			        <span class="label">${$value}</span>
-			    {{/each}}
-			    {{if public}}
-			    	<span class="label label-inverse"><i class="icon-eye-open icon-white"></i> Public</span>
-			    {{/if}}
-			    {{if promoted}}
-				    <span class="label label-info"><i class="icon-star icon-white"></i> Promoted</span>
-			    
-			    {{/if}}
-			    
-			</div>
-
-
-
-			<div class="comments">
-			</div>
-
-
-			<div class="clearfix" ></div>
-
-			<div style="margin: 0px; padding: 0px" class="postcomment">
-			</div>
-
-
-
-		</div>
-	</script>
 
 	<script id="participantTmpl" type="text/x-jquery-tmpl">
 		<tr>

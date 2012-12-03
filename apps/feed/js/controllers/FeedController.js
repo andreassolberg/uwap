@@ -45,7 +45,8 @@ define(function(require, exports, module) {
 
 
 		this.templates = {
-			"itemTmpl2": hogan.compile($("#itemTmpl2").html())
+			"itemTmpl2": hogan.compile($("#itemTmpl2").html()),
+			"commentTmpl2": hogan.compile($("#commentTmpl2").html())
 		};
 
 		// this.load();
@@ -243,10 +244,9 @@ define(function(require, exports, module) {
 	FeedController.prototype.addComment = function(item) {
 		// console.log("Add comment");
 		if (this.loadeditems[item.inresponseto]) {
-
-
 			// console.log("found item", item);
-			var h = $("#commentTmpl").tmpl(item);
+			// var h = $("#commentTmpl").tmpl(item);
+			var h = $(this.templates['commentTmpl2'].render(item));
 			this.loadeditems[item.inresponseto].find('div.comments').append(h);
 		}
 	}
