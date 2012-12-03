@@ -135,9 +135,11 @@ try {
 
 		} else if (Utils::route('get', '^/groups/public$', &$parameters)) {
 
+			$gres = $groupmanager->getPublicGroups($groups);
+
 			$response = array(
 				'status' => 'ok',
-				'data' => $groupmanager->getPublicGroups(),
+				'data' => $gres,
 			);
 
 

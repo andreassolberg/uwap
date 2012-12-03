@@ -25,6 +25,17 @@ class GroupManager {
 	}
 
 
+	public function getMyGroupsID() {
+		$query = array('members' => array('$all' => array($this->userid)) );
+		$list = $this->store->queryList('groups', $query, array('id'));
+		if (empty($list)) return array();
+		$res = array();
+		foreach($list AS $i) {
+			$res[] = $i['id'];
+		}
+		return $res;
+	}
+
 	public function getGroupNamesIndexed($moregroups) {
 		$groups = $this->getGroups($moregroups);
 		$res = array();
@@ -106,7 +117,7 @@ class GroupManager {
 	}
 
 
-	public function getPublicGroups() {
+	public function getPublicGroups($exclude) {
 
 		$query = array(
 			'listable' => true
@@ -116,10 +127,29 @@ class GroupManager {
 		$result = array();
 
 
+		// $mygroups = $this->getMyGroupsID();
+		// $mygroupsi = array_flip($mygroups);
+
+
 		$mysub = $this->getSubscriptions();
 		$mysubi = array_flip($mysub);
 
+		// $excludei = array_flip($exclude);
+
+		// echo '<pre>'; 
+		// print_r($mygroups); 
+		// print_r($mysub);
+		// print_r($exclude);
+		// echo '</pre>';
+		// exit;
+		
+
+
 		foreach($res AS $entry) {
+
+			// if (isset($mygroupsi[$entry['id']])) continue;
+			if (isset($exclude[$entry['id']])) continue;
+
 			$ne = array();
 			$ne['title'] = $entry['title'];
 			$ne['id'] = $entry['id'];
