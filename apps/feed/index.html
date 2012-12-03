@@ -17,8 +17,6 @@
 			<div class="group">
 
 				<p>
-				
-
 					{{if subscribed}}
 						<button class="actUnsubscribe btn btn-mini">Unsubscribe</button>				
 					{{else}}
@@ -36,8 +34,8 @@
 					${title} 
 				</p>
 
+
 <!--
-				
 					{{if admin}}
 						<span class="label label-info">Admin</span>
 					{{/if}}
@@ -47,8 +45,8 @@
 					{{if owner}}
 						<span class="label label-danger">Owner</span>
 					{{/if}}
-				
 -->
+
 			</div>
 		</script>
 
@@ -88,21 +86,6 @@
 					<img class="profileimg img-polaroid" src="${client.profileimg}" />
 				{{/if}}
 
-				{{if title}}
-					<h4>${title}</h4>
-				{{/if}}
-
-				<p>${message}</p>
-
-				{{if thumbnail}}
-					<div><img class="thumb" src="${thumbnail}" /></div>
-				{{/if}}
-
-				{{if links}}
-					{{each links}}
-				        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="${$value.href}">${$value.text}</a></span> 
-				    {{/each}}
-				{{/if}}
 
 				<div class="footer">
 					{{if user}}
@@ -120,6 +103,21 @@
 				    -->
 				</div>
 
+				{{if title}}
+					<h4>${title}</h4>
+				{{/if}}
+
+				<p>${message}</p>
+
+				{{if thumbnail}}
+					<div><img class="thumb" src="${thumbnail}" /></div>
+				{{/if}}
+
+				{{if links}}
+					{{each links}}
+				        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="${$value.href}">${$value.text}</a></span> 
+				    {{/each}}
+				{{/if}}
 
 
 			</div>
@@ -340,9 +338,220 @@
 	</script>
 
 
+	<script id="itemTmpl2" type="text/x-mustache">
+		<div id="{{id}}" class="item basicItem{{#promoted}} promoted{{/promoted}}">
+
+
+
+			{{#user}}
+				<img class="profileimg img-polaroid" src="{{profileimg}}" />
+			{{/user}}
+			{{#client}}
+				<img class="profileimg img-polaroid" src="{{profileimg}}" />
+			{{/client}}
+
+
+
+			<div style="float: right" class="btn-group pull-right">
+
+
+
+				<a class="btn dropdown-toggle btn-small" data-toggle="dropdown" href="#">
+					<i class="icon-cog"></i> 
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a href="#!/item/{{id}}"><i class="icon-share-alt"></i> Open</a></li>
+					<li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+					<li><a class="actDelete" href="#"><i class="icon-trash"></i> Delete this item</a></li>
+					<li><a href="#"><i class="icon-ban-circle"></i> Report this issue</a></li>
+					<li class="divider"></li>
+					<li><a href="#"><i class="icon-star"></i> Promote this item</a></li>
+				</ul>
+			</div>
+
+			<div style="float: right" class=" pull-right">
+				<a id="" href="" style="text-decoration: none; margin: 5px; font-size: 20px; color: #999; " class=""><i style="margin-top: 3px" class="icon-star-empty"></i></a>
+			</div>
+
+
+			<div class="footer" style="">
+
+				{{#author}}
+					<span><i class=" icon-user"></i> {{author}}</span>
+				{{/author}}
+
+				{{#user}}
+					<span><i class=" icon-user"></i> {{name}}</span>
+				{{/user}}
+
+				{{#client}}
+					<span><i class="icon-briefcase"></i> {{client_name}}</span>
+				{{/client}}
+				
+				<span><i class=" icon-time"></i> <span class="ts" data-ts="{{ts}}"></span></span>
+
+				<!-- 
+					<span><i class=" icon-time"></i> activity <span class="ts" data-ts="${lastActivity}"></span></span> 
+				-->
+
+				{{#groupnames}}
+					<span class="label">{{.}}</span>
+				{{/groupnames}}
+
+			    {{#public}}
+			    	<span class="label label-inverse"><i class="icon-eye-open icon-white"></i> Public</span>
+			    {{/public}}
+
+			    {{#promoted}}
+				    <span class="label label-info"><i class="icon-star icon-white"></i> Promoted</span>
+			    {{/promoted}}
+			    
+			</div>
+
+
+
+			{{#title}}
+				<h4>{{title}}</h4>
+			{{/title}}
+
+			{{#message}}
+			<p>{{{message}}}</p>
+			{{/message}}
+
+			{{#thumbnail}}
+				<div><img class="thumb" src="{{thumbnail}}" /></div>
+			{{/thumbnail}}
+
+
+			{{#media}}
+				{{#thumbnail}}
+					<div><img class="videoitem thumb" src="{{thumbnail}}" /></div>
+				{{/thumbnail}}
+				{{^thumbnail}}
+					<div><img class="videoitem thumb" src="http://placehold.it/300x200" /></div>
+				{{/thumbnail}}
+			{{/media}}
+
+			{{#isEvent}} 
+				<div class="row-fluid" style="margin-top: 16px; margin-bottom: 10px">
+
+					{{#allowSignup}}
+						<div class="span4 well responseBox event-signup">
+
+							<button data-status="yes" class="responseOption btn btn-mini btn-success">Attend</button>
+							<button data-status="maybe" class="responseOption btn btn-mini btn-warning">Maybe</button>
+							<button data-status="no" class="responseOption btn btn-mini btn-inverse">Appologize</button>
+
+							{{#hasDeadline}}
+								<div class="">
+									<p><strong>Deadline for signing up</strong><br />{{deadlineH}}</p>
+									<p><i class="icon-exclamation-sign"></i> {{deadlineUntil}}</p>
+								</div>
+							{{/hasDeadline}}
+						</div>
+
+					{{/allowSignup}}
+			
+
+					<div class="span4" >
+						<p style="font-size: 130%" ><strong>{{getDT}}</strong></p>
+						<p><i class="icon-time"></i> {{getUntil}}</p>
+					</div>
+
+
+					<div class="span4">
+						<p><strong>{{location.local}}</strong><br /><i class="icon-map-marker"></i> {{location.address}}</p>
+					</div>
+
+				</div>
+
+	<!--			
+				<div class="controllList">
+					<p>
+						<a href="#" class="actShow">show participants list</a>
+						<a href="#" style="display: none" class="actHide">hide participants list</a>
+					</p>
+				</div>
+	-->
+
+
+				{{#allowSignup}}
+				<div style="display: block; margin-top: 1em; margin-bottom: 1em">
+					<h4>Participant list</h4>
+
+					{{#signup.max}}
+						
+						<div style="margin-top: 8px; margin-bottom: 8px">
+							<p>3 of {{signup.max}} participants signed up. <span class="badge badge-info">7 spaces left</span></p>
+						</div>
+					
+					{{/signup.max}}
+
+					<table class="participants table table-striped">
+
+					</table>
+
+				</div>
+				{{/allowSignup}}
+			{{/isEvent}}
+
+
+
+			{{#activity}}			
+
+				shared an article
+
+				{{#object}}
+					<div style="margin: 5px 0px 8px 2em; border-left: 3px solid #ccc; padding-left: 5px" class="sharedArticle">
+						<h4 style="margin:0px"><a target="_blank" href="{{url}}">{{displayName}}</a></h4>
+						<p style="margin: 0px; color: #335"><i class="icon-share-alt"></i> {{hostname}}</p>
+					</div>
+					{{#content}}
+					<p>{{content}}</p>
+					{{/content}}
+				{{/object}}
+
+			{{/activity}}
+				
+
+
+			{{#links}}
+		        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="{{href}}">{{text}}</a></span> 
+			{{/links}}
+
+			{{#files}}
+				<ul class="nav nav-list">
+				{{#files}}
+					<li><a target="_blank" href="{{href}}"><i class="icon-file"></i> {{filename}}</a></li>
+				{{/files}}
+				</ul>
+			{{/files}}
+
+
+			<div style="floar: right">
+				<span class="commentlink" style="float: right; clear: right; font-size: small; margin: 0px"><a class="muted actEnableComment" href="#">Add comment</a></span>
+			</div>
+
+
+			<div class="comments">
+			</div>
+
+
+			<div class="clearfix" ></div>
+
+			<div style="margin: 0px; padding: 0px" class="postcomment">
+			</div>
+
+
+		</div>
+	</script>
+
+
 	<script id="itemTmpl" type="text/x-jquery-tmpl">
 
 		<div id="${id}" class="item basicItem {{if promoted}}promoted{{/if}}">
+
 
 			{{if user}}
 				
@@ -390,9 +599,6 @@
 
 				<div class="row-fluid" style="margin-top: 16px; margin-bottom: 10px">
 
-
-
-
 					{{if $data.signup}}
 						<div class="span4 well responseBox event-signup">
 
@@ -410,8 +616,6 @@
 						</div>
 
 					{{/if}}
-
-
 
 
 					<div class="span4" >
@@ -456,6 +660,15 @@
 
 			{{/if}}
 
+
+
+			{{if $data.activity }}
+					
+				<pre style="font-size: 80%">{{= JSON.stringify($item.data.activity, 0, 2) }}</pre>
+			{{else}}
+				
+			{{/if}}
+
 			{{if links}}
 				{{each links}}
 			        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="${$value.href}">${$value.text}</a></span> 
@@ -470,7 +683,12 @@
 			    </ul>
 			{{/if}}
 
-			<div class="footer">
+
+			<div style="floar: right">
+			<span class="commentlink" style="float: right; clear: right; font-size: small"><a class="muted actEnableComment" href="#">Add comment</a></span>
+			</div>
+
+			<div class="footer" style="">
 
 				{{if keywords}}
 					<div>
@@ -511,10 +729,10 @@
 			<div class="comments">
 			</div>
 
-			<span class="commentlink" style="float: right; clear: right; font-size: small"><a class="muted actEnableComment" href="#">Add comment</a></span>
-			<br class="clearfix" />
 
-			<div class="postcomment">
+			<div class="clearfix" ></div>
+
+			<div style="margin: 0px; padding: 0px" class="postcomment">
 			</div>
 
 
@@ -785,13 +1003,13 @@
 						<ul id="navbar" class="nav">
 						</ul>
 
-						
-						<div style="margin-left: 4px" id="calendarToggle" class="nav pull-right">
-							<!-- <li><a href="#">Post content</a></li> -->
 
+
+						<!--
+						<div style="margin-left: 4px" id="calendarToggle" class="nav pull-right">
 							<a id="" href="#!/calendar" class="btn btn-info"><i class="icon-time icon-white"></i></a>
 						</div>
-
+						-->
 						<div id="postEnable" class="nav pull-right">
 							<!-- <li><a href="#">Post content</a></li> -->
 							<a id="postEnableBtn" href="#!/post" class="btn btn-inverse">Post content</a>
@@ -802,17 +1020,17 @@
 							<a id="2postEnableBtn" class="btn" href="#!/post" class="">Post content</a>
 						</div> -->
 
-
-						<ul id="viewbarcontroller" class="nav pull-right">
+						<!-- 
+						<ul  id="viewbarcontroller" class="nav pull-right">
 							<li class="divider-vertical"></li>
-							<li id="feedm2enu" class="dropdown">
+							<li id="feedmenu" class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="selectedView"></span> <b class="caret"></b></a>
 								<ul id="viewtypes" class="dropdown-menu">
 								</ul>
 							</li>
 							<li class="divider-vertical"></li>
 						</ul>
-
+						-->
 
 					</div>
 				</div>

@@ -15,13 +15,38 @@ define(function(require) {
 		}
 	};
 
+	models.FeedItem.prototype.getObject = function(str) {
+		console.log("getObject: ", this);
+		return this.activity;
+	}
+
 	models.FeedItem.prototype.hasClass = function(cls) {
 		if (!this['class']) return false;
 		for(var i = 0; i < this['class'].length; i++) {
 			if (this['class'][i] === cls) return true;
 		}
 		return false;
+	}
 
+	models.FeedItem.prototype.allowSignup = function() {
+		var s;
+		if (!this.signup) return false;
+		s = this.signup;
+		s.hasDeadline = !!s.deadline;
+
+		if (s.hasDeadline) {
+			var m = moment(s.deadline);
+			s.deadlineH = this.getDeadlineDT();
+			s.deadlineUntil = prettydate.prettyUntil(m);
+		}
+		
+		s.deadlineH = this.getDeadlineDT();
+		return s;
+	}
+
+	models.FeedItem.prototype.isEvent = function() {
+		// console.log("this, a, b", this, a, b);
+		return this.hasClass('event');
 	}
 
 	models.FeedItem.prototype.getDT = function() {
@@ -30,8 +55,9 @@ define(function(require) {
 		return m.format('DD. MMMM YYYY, HH:mm');
 	}
 
-	models.FeedItem.prototype.getDeadlineDT = function() {
-		
+	models.FeedItem.prototype.getDeadlineDT = function(a) {
+		// console.log("this, a, b", this, a, b);
+		// console.log("getDeadlineDT", this, a);
 		var m = moment(this.signup.deadline);
 		return m.format('DD. MMMM YYYY, HH:mm');
 	}
@@ -41,8 +67,6 @@ define(function(require) {
 		var m = moment(this.dtstart);
 		return prettydate.prettyUntil(m);
 	}
-
-
 
 
 	return models;

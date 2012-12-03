@@ -94,7 +94,16 @@ div.feedcontainer .basicItem p.articleParagraph {
 	margin-top: .4em;
 }
 
+div.feedcontainer .basicItem h4 {
+	padding: 0px;
+	margin: 0px;
+	font-size: 12pt;
+}
+
 div.feedcontainer .basicItem {
+
+	font-size: 93%;
+
 	padding: 8px 10px 8px 70px;
 	min-height: 64px;
 	
@@ -132,12 +141,13 @@ div.feedcontainer .basicItem .footer {
 }
 
 
+
 div.feedcontainer .basicItem .profileimg {
 	float: left;
 	margin-left: -64px;
 
 }
-div.feedcontainer .item .profileimg {
+.profileimg {
 	max-width: 48px;	
 }
 
@@ -189,6 +199,7 @@ div.feedcontainer .mediaItem h4 {
 	margin: 0px;
 	font-size: 100%;
 	line-height: 100%;
+	padding: 0px 0px 0px 0px;
 }
 div.feedcontainer .mediaItem p {
 	margin: 0px;

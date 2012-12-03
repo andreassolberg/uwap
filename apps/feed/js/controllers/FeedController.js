@@ -6,7 +6,8 @@ define(function(require, exports, module) {
 
 		AddCommentController = require('AddCommentController'),
 		MediaPlayerController = require('MediaPlayerController'),
-		ViewController = require('ViewController')
+		ViewController = require('ViewController'),
+		hogan = require('uwap-core/js/hogan')
 		;
 
 
@@ -41,6 +42,11 @@ define(function(require, exports, module) {
 		this.pane.el.on('click', '#postDisableBtn', $.proxy(this.postDisable, this));
 
 		this.pane.el.on('click', '.responseOption', $.proxy(this.respond, this));
+
+
+		this.templates = {
+			"itemTmpl2": hogan.compile($("#itemTmpl2").html())
+		};
 
 		// this.load();
 		setInterval($.proxy(this.update, this), 5000);
@@ -88,7 +94,7 @@ define(function(require, exports, module) {
 		var that = this;
 		if (e) e.preventDefault();
 		var targetItem = $(e.currentTarget).closest('div.item');
-		var item = targetItem.tmplItem().data;
+		var item = targetItem.data('object');
 		var status = $(e.currentTarget).data('status');
 		console.log("Response with ", status, item);
 
@@ -99,13 +105,9 @@ define(function(require, exports, module) {
 
 
 
-		
-
 		UWAP.feed.respond(response, function() {
 			console.log("RESPOND COMPLETE");
-
 			that.setMyResponse(targetItem, status);
-
 		});
 
 	}
@@ -123,7 +125,7 @@ define(function(require, exports, module) {
 
 		var targetItem = $(e.currentTarget).closest('div.item');
 		$(e.currentTarget).hide();
-		var item = targetItem.tmplItem().data;
+		var item = targetItem.data('object');
 		// console.log("About to enable comment", this.app.user, targetItem, item);
 		var cc = new AddCommentController(this.app.user, item, targetItem.find('div.postcomment'));
 		cc.onPost($.proxy(this.post, this));
@@ -134,8 +136,8 @@ define(function(require, exports, module) {
 		var that = this;
 		e.preventDefault();
 		var currentItem = $(e.currentTarget).closest('.item');
-		var item = currentItem.tmplItem().data;
-		// console.log('About to delete ', item.id);
+		var item = currentItem.data('object');
+		console.log('About to delete ', currentItem.data());
 
 		UWAP.feed.delete(item.id, function(data) {
 			console.log("Delete response Received", data);
@@ -196,8 +198,10 @@ define(function(require, exports, module) {
 			h,
 			feedcontainer = this.pane.el.find('.feedcontainer');
 
-		// console.log("Adding post to ", item)
-
+		if (item.activity) {
+			console.log("Adding post [activity] ", item);
+		}
+		
 		if (this.view.view === 'media') {
 			h = $("#itemMediaTmpl").tmpl(item);
 			feedcontainer.find('ul').prepend(h);
@@ -209,9 +213,15 @@ define(function(require, exports, module) {
 
 		} else {
 
-			h = $("#itemTmpl").tmpl(item);	
-			feedcontainer.prepend(h);
+			h = $(this.templates['itemTmpl2'].render(item));
+			
+			// console.log('Adding data item to this item: ', $(h));
+
+			h
+				.data('object', item)
+				.prependTo(feedcontainer);
 		}
+
 		
 		this.loadeditems[item.id] = h;
 	}

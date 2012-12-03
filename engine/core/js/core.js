@@ -73,7 +73,6 @@ define(function(require) {
 	// console.log("Redirect URI is " + redirect_uri);
 
 	var client_id = 'app_' + UWAP.utils.appid;
-
 	jso.jso_configure({
 		"uwap": {
 			client_id: client_id,
