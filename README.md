@@ -46,3 +46,7 @@ If this returns status=redirect, then redirect the user.
 
 The data APIs, is located here: /engine/api/*
 
+
+## Installation notes
+
+Apache: enable mod_headers.
