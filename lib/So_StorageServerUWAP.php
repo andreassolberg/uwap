@@ -48,6 +48,10 @@ class So_StorageServerUWAP extends So_Storage {
 			"app" => $this->subid
 		);
 
+		// print_r("Query");
+		// print_r($query);
+		// exit;
+
 		$result = $this->store->queryOne("oauth2-server-clients", $query);
 
 		if ($result === null) throw new So_Exception('invalid_client', 'Unknown client identifier [' . $client_id . ']');
