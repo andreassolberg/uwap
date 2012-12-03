@@ -6,7 +6,8 @@ define(function(require, exports, module) {
 
 		AddCommentController = require('AddCommentController'),
 		MediaPlayerController = require('MediaPlayerController'),
-		ViewController = require('ViewController')
+		ViewController = require('ViewController'),
+		hogan = require('uwap-core/js/hogan')
 		;
 
 
@@ -20,6 +21,12 @@ define(function(require, exports, module) {
 		this.loadeditems = {};
 
 		this.mediaplayer = new MediaPlayerController(this.pane.el);
+
+
+		this.templates = {
+			"itemTmpl2": hogan.compile($("#itemTmpl2").html()),
+			"commentTmpl2": hogan.compile($("#commentTmpl2").html())
+		};
 
 		var vbcel = $('<div class="feedcontainer"></div>')
 			.appendTo(this.pane.el);
@@ -116,8 +123,8 @@ define(function(require, exports, module) {
 			feedcontainer = this.pane.el.find('.feedcontainer');
 
 	
-		h = $("#itemTmpl").tmpl(item);	
-		feedcontainer.prepend(h);
+		h = $(this.templates['itemTmpl2'].render(item));
+		h.data('object', item).prependTo(feedcontainer);
 	
 
 		console.log("Add post", item);
@@ -129,7 +136,7 @@ define(function(require, exports, module) {
 		// console.log("Add comment");
 		if (this.loadeditems[item.inresponseto]) {
 			// console.log("found item", item);
-			var h = $("#commentTmpl").tmpl(item);
+			var h = $(this.templates['commentTmpl2'].render(item));
 			this.loadeditems[item.inresponseto].find('div.comments').append(h);
 		}
 	}

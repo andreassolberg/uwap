@@ -215,12 +215,7 @@ define(function(require, exports, module) {
 		} else {
 
 			h = $(this.templates['itemTmpl2'].render(item));
-			
-			// console.log('Adding data item to this item: ', $(h));
-
-			h
-				.data('object', item)
-				.prependTo(feedcontainer);
+			h.data('object', item).prependTo(feedcontainer);
 		}
 
 		
