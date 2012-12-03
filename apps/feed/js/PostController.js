@@ -4,10 +4,15 @@ define(function(require, exports, module) {
 		$ = require('jquery'),
 		UWAP = require('uwap-core/js/core'),
 		moment = require('uwap-core/js/moment')
+		hogan = require('uwap-core/js/hogan')
 		;
 
 	require('uwap-core/bootstrap/plugins/datepicker/bootstrap-datepicker');
-
+	
+	var tmpl = {
+		"post": require('uwap-core/js/text!templates/post.html')
+	};
+	
 
 
 	var PostController = function(pane) {
@@ -18,8 +23,13 @@ define(function(require, exports, module) {
 
 		this.selectedGroups = {};
 
+		this.templates = {
+			"post": hogan.compile(tmpl.post)
+		};
 
-		$("#postTmpl").tmpl().appendTo(this.el);
+
+		$(this.templates.post.render({})).appendTo(this.el);
+
 		
 		this.el.on("click", ".actPost", $.proxy(this.actPost, this));
 

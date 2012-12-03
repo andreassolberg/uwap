@@ -1,18 +1,29 @@
-define([
+define(function(require, exports, module) {
 
-], function() {
+
+
+	var hogan = require('uwap-core/js/hogan');
+
+	var tmpl = {
+		"postComment": require('uwap-core/js/text!templates/postComment.html')
+	};
+
 
 	var AddCommentController = function(user, item, el) {
 		this.user = user;
 		this.item = item;
 		this.el = el;
 
+		this.templates = {
+			"postComment": hogan.compile(tmpl.postComment)
+		}
+
 		if (user) {
 			user.profileimg = UWAP.utils.getEngineURL('/api/media/user/' + user.a);
 		}
 
-		this.el.append($("#postCommentTmpl").tmpl({user: user}));
-	
+		$(this.templates.postComment.render({user: user})).appendTo(this.el);
+
 		this.el.on('click', '.actPostComment', $.proxy(this.actPostComment, this));
 
 		this.el.find("textarea").focus();

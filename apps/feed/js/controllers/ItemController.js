@@ -11,6 +11,12 @@ define(function(require, exports, module) {
 		;
 
 
+	var tmpl = {
+		"feedItem": require('uwap-core/js/text!templates/feedItem.html'),
+		"feedItemComment": require('uwap-core/js/text!templates/feedItemComment.html'),
+		"participant":  require('uwap-core/js/text!templates/participant.html')
+	};
+
 	var ItemController = function(pane, app) {
 		this.pane = pane;
 
@@ -24,8 +30,9 @@ define(function(require, exports, module) {
 
 
 		this.templates = {
-			"itemTmpl2": hogan.compile($("#itemTmpl2").html()),
-			"commentTmpl2": hogan.compile($("#commentTmpl2").html())
+			"itemTmpl": hogan.compile(tmpl.feedItem),
+			"commentTmpl": hogan.compile(tmpl.feedItemComment),
+			"participant": hogan.compile(tmpl.participant)
 		};
 
 		var vbcel = $('<div class="feedcontainer"></div>')
@@ -123,7 +130,7 @@ define(function(require, exports, module) {
 			feedcontainer = this.pane.el.find('.feedcontainer');
 
 	
-		h = $(this.templates['itemTmpl2'].render(item));
+		h = $(this.templates['itemTmpl'].render(item));
 		h.data('object', item).prependTo(feedcontainer);
 	
 
@@ -136,7 +143,7 @@ define(function(require, exports, module) {
 		// console.log("Add comment");
 		if (this.loadeditems[item.inresponseto]) {
 			// console.log("found item", item);
-			var h = $(this.templates['commentTmpl2'].render(item));
+			var h = $(this.templates['commentTmpl'].render(item));
 			this.loadeditems[item.inresponseto].find('div.comments').append(h);
 		}
 	}

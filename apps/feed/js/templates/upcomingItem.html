@@ -1,0 +1,79 @@
+<div id="${id}" class="item basicItem{{#promoted}} promoted{{/promoted}}" style="font-size: 95%; border-bottom: 1px dashed #e4e4e4; background: #fff; padding: 2px">
+
+	{{#title}}
+		<h5><a href="#!/item/{{id}}">{{title}}</a></h5>
+	{{/title}}
+
+	<p style="max-height: 40px; overflow-y: hidden">{{{message}}}</p>
+
+	{{#thumbnail}}
+		<div><img class="thumb" src="{{thumbnail}}" /></div>
+	{{/thumbnail}}
+
+	{{#media}}
+		{{#thumbnail}}
+			<div><img class="videoitem thumb" src="{{thumbnail}}" /></div>
+		{{/thumbnail}}
+		{{^thumbnail}}
+			<div><img class="videoitem thumb" src="http://placehold.it/300x200" /></div>
+		{{/thumbnail}}				
+	{{/media}}
+
+
+
+
+	<div class="row-fluid">
+		<div class="span6">
+
+			<p style="font-size: 110%" ><strong>{{getDT}}</strong></p>
+			<p><i class="icon-time"></i> {{getUntil}}</p>
+		</div>
+		<div class="span6">
+
+			<p><strong>{{location.local}}</strong><br /><i class="icon-map-marker"></i> {{location.address}}</p>
+
+		</div>
+
+	</div>
+	
+
+
+
+	<div class="footer" style="">
+
+		{{#author}}
+			<span><i class=" icon-user"></i> {{author}}</span>
+		{{/author}}
+
+		{{#user}}
+			<span><i class=" icon-user"></i> {{name}}</span>
+		{{/user}}
+
+		{{#client}}
+			<span><i class="icon-briefcase"></i> {{client_name}}</span>
+		{{/client}}
+		
+		<span><i class=" icon-time"></i> <span class="ts" data-ts="{{ts}}"></span></span>
+
+		<!-- 
+			<span><i class=" icon-time"></i> activity <span class="ts" data-ts="${lastActivity}"></span></span> 
+		-->
+
+		{{#groupnames}}
+			<span class="label">{{.}}</span>
+		{{/groupnames}}
+
+	    {{#public}}
+	    	<span class="label label-inverse"><i class="icon-eye-open icon-white"></i> Public</span>
+	    {{/public}}
+
+	    {{#promoted}}
+		    <span class="label label-info"><i class="icon-star icon-white"></i> Promoted</span>
+	    {{/promoted}}
+	    
+	</div>
+
+
+
+
+</div>

@@ -10,6 +10,12 @@ define(function(require, exports, module) {
 		hogan = require('uwap-core/js/hogan')
 		;
 
+	var tmpl = {
+		"feedItem": require('uwap-core/js/text!templates/feedItem.html'),
+		"feedItemComment": require('uwap-core/js/text!templates/feedItemComment.html'),
+		"participant":  require('uwap-core/js/text!templates/participant.html')
+	};
+
 
 	var FeedController = function(pane, app) {
 		this.pane = pane;
@@ -45,9 +51,12 @@ define(function(require, exports, module) {
 
 
 		this.templates = {
-			"itemTmpl2": hogan.compile($("#itemTmpl2").html()),
-			"commentTmpl2": hogan.compile($("#commentTmpl2").html())
+			"itemTmpl": hogan.compile(tmpl.feedItem),
+			"commentTmpl": hogan.compile(tmpl.feedItemComment),
+			"participant": hogan.compile(tmpl.participant)
 		};
+
+
 
 		// this.load();
 		setInterval($.proxy(this.update, this), 5000);
@@ -214,7 +223,7 @@ define(function(require, exports, module) {
 
 		} else {
 
-			h = $(this.templates['itemTmpl2'].render(item));
+			h = $(this.templates['itemTmpl'].render(item));
 			h.data('object', item).prependTo(feedcontainer);
 		}
 
@@ -231,7 +240,11 @@ define(function(require, exports, module) {
 				this.setMyResponse(this.loadeditems[item.inresponseto], item.status);
 			}
 			
-			var h = $("#participantTmpl").tmpl(item);
+			item.statusItem = {};
+			item.statusItem[item.status] = true;
+
+			var h = $(this.templates.participant.render(item)).data('object', item);
+			// var h = $("#participantTmpl").tmpl(item);
 			this.loadeditems[item.inresponseto].find('table.participants').append(h);
 		}
 	}
@@ -241,7 +254,7 @@ define(function(require, exports, module) {
 		if (this.loadeditems[item.inresponseto]) {
 			// console.log("found item", item);
 			// var h = $("#commentTmpl").tmpl(item);
-			var h = $(this.templates['commentTmpl2'].render(item));
+			var h = $(this.templates['commentTmpl'].render(item));
 			this.loadeditems[item.inresponseto].find('div.comments').append(h);
 		}
 	}

@@ -1,0 +1,26 @@
+<div class="group">
+
+	<p>
+		{{#subscribed}}
+			<button class="actUnsubscribe btn btn-success btn-mini">Unsubscribe</button>				
+		{{/subscribed}}
+		{{^subscribed}}
+			<button class="actSubscribe btn btn-mini">Subscribe</button>
+		{{/subscribed}}
+	
+		{{title}} 
+	</p>
+
+<!--
+		{{#admin}}
+			<span class="label label-info">Admin</span>
+		{{/admin}}
+		{{#member}}
+			<span class="label label-success">Member</span>
+		{{/member}}
+		{{#owner}}
+			<span class="label label-danger">Owner</span>
+		{{/owner}}
+-->
+
+</div>

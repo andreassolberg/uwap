@@ -1,0 +1,29 @@
+<tr>
+	<td style="width: 24px">
+	{{#user}}
+		<img class="" style="width: 26px; border: 1px solid #ccc" src="{{profileimg}}" />
+	{{/user}}
+	</td>
+
+	{{#user}}
+		<td><span>{{name}}</span></td>
+		<td><i class="icon-envelope"></i> <span>{{mail}}</span></td>
+	{{/user}}
+
+
+	<td>
+		{{#statusItem.yes}}
+			<span class="label label-success">Attend</span>
+		{{/statusItem.yes}}
+
+		{{#statusItem.maybe}}
+			<span class="label label-warning">Maybe</span>
+		{{/statusItem.maybe}}
+
+		{{#statusItem.no}}
+			<span class="label label-inverse">Appologized</span>
+		{{/statusItem.no}}
+	</td>
+
+	<td><span><i class=" icon-time"></i> <span class="ts" data-ts="{{ts}}"></span></span></td>
+</tr>

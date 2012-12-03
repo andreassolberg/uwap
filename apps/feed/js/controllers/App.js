@@ -14,16 +14,14 @@ define(function(require, exports, module) {
 		GroupSelectorController = require('GroupSelectorController'),
 		GroupSelectorControllerBar = require('GroupSelectorControllerBar'),
 
-		
 		NotificationsController = require('NotificationsController'),
 
 		panes = require('controllers/panes'),
 
 		moment = require('uwap-core/js/moment'),
+		hogan = require('uwap-core/js/hogan'),
 		prettydate = require('uwap-core/js/pretty')
 		;
-
-	require('uwap-core/js/jquery.tmpl');
 
 	require('uwap-core/bootstrap/js/bootstrap');
 	require('uwap-core/bootstrap/js/bootstrap-collapse');
@@ -40,6 +38,14 @@ define(function(require, exports, module) {
 	// require('uwap-core/bootstrap/js/bootstrap-typeahead');
 
 
+	var tmpl = {
+		"subscriptionList": require('uwap-core/js/text!templates/subscriptionList.html'),
+		"upcomingItem":  require('uwap-core/js/text!templates/upcomingItem.html')
+	};
+
+
+
+
 	var App = function(el) {
 		var that = this;
 		this.el = el;
@@ -47,6 +53,10 @@ define(function(require, exports, module) {
 
 		this.routingEnabled = true;
 
+		this.templates = {
+			"subscriptionList": hogan.compile(tmpl.subscriptionList),
+			"upcomingItem": hogan.compile(tmpl.upcomingItem)
+		};
 
 		this.navbar = new panes.NavBar(this.el.find('#navbar'));
 
@@ -64,8 +74,9 @@ define(function(require, exports, module) {
 
 			var container = $("#upcoming").empty();
 			$.each(data.items, function(i, item) {
-				var h = $("#itemUpcomingTmpl").tmpl(item);
-				container.append(h);
+				// var h = $("#itemUpcomingTmpl").tmpl(item);
+				$(that.templates.upcomingItem.render(item)).data('object', item).appendTo(container);
+				// container.append(h);
 			});
 
 
@@ -139,6 +150,7 @@ define(function(require, exports, module) {
 
 
 
+
 		setInterval(function(){ 
 			$("span.ts").prettyDate(); 
 		}, 8000);
@@ -151,7 +163,8 @@ define(function(require, exports, module) {
 			var table = $("#subscribeproposals");
 			table.empty();
 			$.each(items, function(i, item) {
-				table.append($("#groupItem").tmpl(item));
+				// table.append($("#groupItem").tmpl(item));
+				$(that.templates.subscriptionList.render(item)).data('object', item).appendTo(table);
 				// table.append('<tr><td>' + item.title + '</td></tr>');
 			});
 		});
@@ -163,7 +176,7 @@ define(function(require, exports, module) {
 		if (e) e.preventDefault();
 
 		var targetItem = $(e.currentTarget).closest('div.group');
-		var item = targetItem.tmplItem().data;
+		var item = targetItem.data('object');
 
 		console.log("Subscribe to ", item);
 
@@ -179,7 +192,7 @@ define(function(require, exports, module) {
 		if (e) e.preventDefault();
 
 		var targetItem = $(e.currentTarget).closest('div.group');
-		var item = targetItem.tmplItem().data;
+		var item = targetItem.data('object');
 
 		console.log("unsubscribe to ", item);
 
