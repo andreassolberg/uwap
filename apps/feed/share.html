@@ -15,9 +15,18 @@
 		<script id="shareTmpl" type="text/x-jquery-tmpl">
 			<div class="item">
 				{{if user}}
-					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
+					<img class="profileimg img-polaroid" src="${user.profileurl}" />
 				{{/if}}
-				<p>${message}</p>
+
+				{{if activity.object.displayName}}
+					<h4>${activity.object.displayName}</h4>
+				{{/if}}
+				{{if activity.object.url}}
+					<p style="font-size: 90%; color: blue"><a target="_blank" href="${activity.object.url}">{{= activity.object.hostname }}</a></p>
+				{{/if}}
+
+				<textarea style="width: 95%" placeholder="Type in a message about this link..." id="fieldMessage"></textarea>
+
 				<div class="footer">
 					{{if user}}
 						<span><i class="icon-user"></i> ${user.name}</span>
@@ -31,12 +40,14 @@
 			</div>
 		</script>
 
-
+		<!--
 		<script id="itemTmpl" type="text/x-jquery-tmpl">
 			<div class="item">
 				{{if user}}
-					<img class="profileimg img-polaroid" src="http://dev.app.bridge.uninett.no/_/api/photo.php?a=${user.a}" />
+					<img class="profileimg img-polaroid" src="${user.profileurl}" />
 				{{/if}}
+
+
 				<p>${message}</p>
 				<div class="footer">
 					{{if user}}
@@ -50,7 +61,7 @@
 				</p>
 			</div>
 		</script>
-
+		-->
 
 	</head>
 
@@ -62,10 +73,15 @@
 		</div>
 
 		<div id="share-widget-main" style="display: none">
-			<div id="post">
-				<div id="share"></div>
-				<button style="margin: 2px" class="btn btn-mini btn-primary actPost">Post</button>
-				<div class="groups"></div>
+			<div class="feedcontainer" >
+				<div id="share" class="basicItem">
+					<div id="post"></div>
+
+					<div style="display: inline" class="groups"></div>
+
+					<button style="margin: 2px" class="btn btn-mini btn-primary actPost">Post</button>
+
+				</div>
 			</div>
 		</div>
 

@@ -35,21 +35,23 @@ define(function(require, exports, module) {
 
 		this.currentData = null;
 
-		$("div#post").on("click", ".actPost", $.proxy(this.postBox, this));
+		this.el.on("click", ".actPost", $.proxy(this.postBox, this));
 		this.setgroups();
 
-
 		window.addEventListener("message", $.proxy(this.receiveMessage, this), false);
+		// window.addEventListener("message", $.proxy(this.receiveMessage, this), false);
 		 
 	}
 	App.prototype.receiveMessage = function(event) {
-		console.log("Receives message", event);
+		// console.log("Receives message", event);
 		this.currentData = event.data;
 		this.currentData.user = this.user;
+		this.currentData.user.profileurl = UWAP.utils.getEngineURL('/api/media/user/' + this.currentData.user.a);
 
+		console.log("POOT", event.data);
 		console.log("sharetmpl", this.currentData);
 		var sharetmpl = $("#shareTmpl").tmpl(this.currentData);
-		$("div#post div#share").empty().append(sharetmpl);
+		$("div#post").empty().append(sharetmpl);
 		console.log("sharetmpl", sharetmpl);
 
 		// if (event.origin !== "http://example.org:8080")
@@ -58,85 +60,55 @@ define(function(require, exports, module) {
 	App.prototype.setgroups = function() {
 		var groups = this.user.groups;
 		console.log("groups", groups);
-		$("div#post div.groups").empty();
+		var groupscontainer = $("div.groups").empty();
+		var select = $('<select id="groups"></select>').appendTo(groupscontainer);
+
 		$.each(groups, function(i, item) {
-			$("div#post div.groups").append('<label class="checkbox inline"><input type="checkbox" id="grp_' + i + '" value="' + i + '">' + item + '</label>');
-			$("ul#navfilter").append('<li><a id="entr_' + i + '" href="#"><span class="icon icon-folder-open"></span> ' + item + '</a></li>');
+
+			select.append('<option value="' + i + '">' + item + '</option>');
+			// $("div.groups").append('<label class="checkbox inline"><input type="checkbox" id="grp_' + i + '" value="' + i + '">' + item + '</label>');
+			// $("ul#navfilter").append('<li><a id="entr_' + i + '" href="#"><span class="icon icon-folder-open"></span> ' + item + '</a></li>');
 		});
 
 	}
 	App.prototype.postBox = function() {
-		var str = $("div#post textarea").val();
+
+		console.log("PostBox()")
+
+		var str = $("#fieldMessage").val();
 		var msg = this.currentData;
 		delete msg.user;
-		var groups = [];
+		var groups;
 		
-		$("div#post div.groups input:checked").each(function(i, item) {
-			groups.push($(item).attr('value'));
-		});
+		// $("div.groups input:checked").each(function(i, item) {
+		// 	groups.push($(item).attr('value'));
+		// });
+
+		groups = [$("select#groups").val()];
+
+		msg['class'] = ['activity'];
 		msg['groups'] = groups;
-		console.log("Pushing obj", msg); // return;
+		msg.activity.object.content = str;
+
+		console.log("Pushing obj", msg); 
+		// $("#fieldMessage").val("").focus();
 		this.post(msg);
-		$("div#post textarea").val("").focus();
+		
 	};
 	App.prototype.post = function(msg) {
 		var that = this;
 		UWAP.feed.post(msg, function() {
-			$("#feed").empty().append('<p>Thanks for sharing...</p>');
+			$("#share").empty().append('<p>Thanks for sharing...</p><p><a target="_blank" href="https://feed.uwap.org">View your post on uwap.org</a></p>');
 		});
 	}
 
+
+
+
+
+
+
 	$("document").ready(function() {
-
-
-
-		// App.prototype.load = function() {
-		// 	var that = this;
-		// 	UWAP.feed.read({}, function(data) {
-		// 		console.log("FEED Received", data);
-		// 		$("div#feed").empty();
-		// 		$.each(data, function(i, item) {
-		// 			// item.user = 'User ' + item['uwap-userid'];
-		// 			item.timestamp = moment(item.ts).format();
-
-		// 			item.groupnames = [];
-		// 			if (item.groups) {
-		// 				$.each(item.groups, function(i, g) {
-		// 					if (that.groups[g]) {
-		// 						item.groupnames.push(that.groups[g]);
-		// 					} else {
-		// 						item.groupnames.push(g);
-		// 					}
-		// 				});
-		// 			}
-
-		// 			var h = $("#itemTmpl").tmpl(item);
-		// 			$("div#feed").prepend(h);
-		// 			console.log("Object,", item);
-		// 		});
-
-		// 		// $("span.ts").prettyDate(); 
-		// 	});
-		// }
-
-
-		// setInterval(function(){ 
-		// 	$("span.ts").prettyDate(); 
-		// }, 8000);
-
-
-		// UWAP.auth.checkPassive(function(user) {
-
-		// 	var app = new App($("body"), user);
-		// 	// app.setgroups(user.groups);
-
-		// }, function() {
-		// 	$("#noauth").show();
-		// 	$("#feed").hide();
-		// 	$("#noauth").on("click", function() {
-		// 		var w = window.open("http://feed.app.bridge.uninett.no/");
-		// 	});
-		// });
 
 		function authpopup(callback) {
 			var url = UWAP.utils.getAppURL('/auth.html');
@@ -180,11 +152,6 @@ define(function(require, exports, module) {
 					});
 
 				});
-
-				// UWAP.auth.require(function(user) {
-				// 	var app = new App($("body"))
-				// 	app.setauth(user);
-				// });
 
 			});
 		});
