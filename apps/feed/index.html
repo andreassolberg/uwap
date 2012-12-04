@@ -12,43 +12,12 @@
 
 		<script type="text/javascript" data-main="main" src="/_/js/require.js"></script>
 
-
-
-		<script id="itemFileTmpl" type="text/x-jquery-tmpl">
-
-			<div id="${id}" class="item fileItem">
-
-				{{if files}}
-					<ul class="nav nav-list">
-						{{each files}}
-					        <li>
-					        	<a target="_blank" href="${$value.href}"><i class="icon-file"></i> ${$value.filename}
-								{{if user}}
-									<span><i class=" icon-user"></i> ${user.name}</span>
-								{{/if}}
-								{{if client}}
-									<span><i class="icon-briefcase"></i> ${client.client_name}</span>
-								{{/if}}
-								
-								<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
-
-								{{each groupnames}}
-							        <span class="label">${$value}</span>
-							    {{/each}}
-							    </a>
-					        </li>
-					    {{/each}}
-				    </ul>
-				{{/if}}
-
-			</div>
-		</script>
-
 	</head>
 
+
+
+
 	<body>
-
-
 		<div class="loader-hideOnLoad" stlye="margin: 20%">
 			<p><img src="/img/ajax-loader.gif" /> Loading application...</p>
 		</div>

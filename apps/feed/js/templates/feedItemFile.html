@@ -1,0 +1,32 @@
+<div id="{{id}}" class="item fileItem">
+
+	{{#files}}
+
+		<ul class="nav nav-list">
+
+			{{#files}}
+
+				 <li>
+		        	<a target="_blank" href="${$value.href}"><i class="icon-file"></i> {{filename}}
+					{{#user}}
+						<span><i class=" icon-user"></i> {{name}}</span>
+					{{/user}}
+					{{#client}}
+						<span><i class="icon-briefcase"></i> {{name}}</span>
+					{{/client}}
+					
+					<span><i class=" icon-time"></i> <span class="ts" data-ts="${ts}"></span></span>
+
+					{{#groupnames}}
+				        <span class="label">{{.}}</span>
+				    {{/groupnames}}
+				    </a>
+		        </li>
+
+			{{/files}}
+
+		</ul>
+
+	{{/files}}
+
+</div>

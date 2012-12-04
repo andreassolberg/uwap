@@ -12,6 +12,7 @@ define(function(require, exports, module) {
 
 	var tmpl = {
 		"feedItem": require('uwap-core/js/text!templates/feedItem.html'),
+		"feedItemFile": require('uwap-core/js/text!templates/feedItemFile.html'),
 		"feedItemComment": require('uwap-core/js/text!templates/feedItemComment.html'),
 		"participant":  require('uwap-core/js/text!templates/participant.html')
 	};
@@ -52,6 +53,7 @@ define(function(require, exports, module) {
 
 		this.templates = {
 			"itemTmpl": hogan.compile(tmpl.feedItem),
+			"itemTmplFile": hogan.compile(tmpl.feedItemFile),
 			"commentTmpl": hogan.compile(tmpl.feedItemComment),
 			"participant": hogan.compile(tmpl.participant)
 		};
@@ -213,13 +215,18 @@ define(function(require, exports, module) {
 		}
 		
 		if (this.view.view === 'media') {
-			h = $("#itemMediaTmpl").tmpl(item);
-			feedcontainer.find('ul').prepend(h);
+			// TODO TODO ADD TEMPLATE FOR MEDIA ITEMS. Look in DeprecatedJQUery templates folder to find old template...
+			// h = $("#itemMediaTmpl").tmpl(item);
+			// feedcontainer.find('ul').prepend(h);
 
 		} else if (this.view.view === 'file') {
 
-			h = $("#itemFileTmpl").tmpl(item);
-			feedcontainer.prepend(h);
+			// h = $("#itemFileTmpl").tmpl(item);
+			// feedcontainer.prepend(h);
+
+			// DISABLED BECAUSE NOT YET TESTED.
+			// h = $(this.templates['itemTmplFile'].render(item));
+			// h.data('object', item).prependTo(feedcontainer);
 
 		} else {
 
