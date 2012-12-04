@@ -50,7 +50,7 @@ define(function(require) {
 	}
 
 	models.FeedItem.prototype.getDT = function() {
-		var m = moment(this.dtstart);
+		var m = moment(this.dtstart*1000);
 		// var m = moment(this.datetime);
 		return m.format('DD. MMMM YYYY, HH:mm');
 	}
@@ -58,7 +58,7 @@ define(function(require) {
 	models.FeedItem.prototype.getDeadlineDT = function(a) {
 		// console.log("this, a, b", this, a, b);
 		// console.log("getDeadlineDT", this, a);
-		var m = moment(this.signup.deadline);
+		var m = moment(this.signup.deadline*1000);
 		return m.format('DD. MMMM YYYY, HH:mm');
 	}
 	

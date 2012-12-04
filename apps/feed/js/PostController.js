@@ -147,7 +147,7 @@ define(function(require, exports, module) {
 
 	PostController.prototype.parseDate = function(str) {
 		console.log("parseDate(" + str + ")");
-		return moment(str, "DD-MM-YYYY HH:mm").valueOf();
+		return moment(str, "DD-MM-YYYY HH:mm").unix();
 	}
 
 	PostController.prototype.actPost = function(e) {

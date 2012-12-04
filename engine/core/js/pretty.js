@@ -12,6 +12,11 @@ define(function(require) {
 	// Takes an ISO time and returns a string representing how
 	// long ago the date represents.
 	prettydate.prettyDate = function(time){
+
+		if (time < 4102488000) {
+			time = time *1000;
+		}
+
 		var date = new Date(time),
 			diff = (((new Date()).getTime() - date.getTime()) / 1000),
 			day_diff = Math.floor(diff / 86400);
