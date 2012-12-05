@@ -16,10 +16,10 @@
 -->
 
 
+	{{^viewconfig.hide.actionMenu}}
+
+
 	<div style="float: right" class="btn-group pull-right">
-
-
-
 		<a class="btn dropdown-toggle btn-small" data-toggle="dropdown" href="#">
 			<i class="icon-cog"></i> 
 			<span class="caret"></span>
@@ -37,6 +37,7 @@
 	<div style="float: right" class=" pull-right">
 		<a id="" href="" style="text-decoration: none; margin: 5px; font-size: 20px; color: #999; " class=""><i style="margin-top: 3px" class="icon-star-empty"></i></a>
 	</div>
+	{{/viewconfig.hide.actionMenu}}
 
 
 	<div class="footer" style="">
@@ -62,17 +63,19 @@
 			<span><i class=" icon-time"></i> activity <span class="ts" data-ts="${lastActivity}"></span></span> 
 		-->
 
-		{{#groupnames}}
-			<span class="label">{{.}}</span>
-		{{/groupnames}}
+		{{^viewconfig.hide.groups}}
+			{{#groupnames}}
+				<span class="label">{{.}}</span>
+			{{/groupnames}}
 
-		{{#public}}
-			<span class="label label-inverse"><i class="icon-eye-open icon-white"></i> Public</span>
-		{{/public}}
+			{{#public}}
+				<span class="label label-inverse"><i class="icon-eye-open icon-white"></i> Public</span>
+			{{/public}}
 
-		{{#promoted}}
-			<span class="label label-info"><i class="icon-star icon-white"></i> Promoted</span>
-		{{/promoted}}
+			{{#promoted}}
+				<span class="label label-info"><i class="icon-star icon-white"></i> Promoted</span>
+			{{/promoted}}
+		{{/viewconfig.hide.groups}}
 
 	</div>
 
@@ -172,7 +175,7 @@
 
 		{{#object_.article}}an article{{/object_.article}}
 		{{#object_.issue}}an issue{{/object_.issue}}
-
+		{{#object_.page}}a page{{/object_.page}}
 
 		{{#activity.provider}}
 			<span> through 
@@ -213,6 +216,19 @@
 			
 		{{/object_.issue}}
 
+		{{#object_.page}}
+
+			<div style="margin: 5px 0px 8px 2em; border-left: 3px solid #ccc; padding-left: 5px" class="sharedArticle">
+				<i class="icon-file" style="font-size: 170%; color: #666; float: left; margin-left: -30px"></i>
+				<h4 style="margin:0px"><a target="_blank" href="{{url}}">{{displayName}}</a></h4>
+				{{#content}}
+					<p>{{content}}</p>
+				{{/content}}
+			</div>
+
+			
+		{{/object_.page}}
+
 	{{/activity}}
 		
 
@@ -229,7 +245,7 @@
 		</ul>
 	{{/files}}
 
-
+	{{^viewconfig.hide.comments}}
 	<div style="floar: right">
 		<span class="commentlink" style="float: right; clear: right; font-size: small; margin: 0px"><a class="muted actEnableComment" href="#">Add comment</a></span>
 	</div>
@@ -237,7 +253,7 @@
 
 	<div class="comments">
 	</div>
-
+	{{/viewconfig.hide.comments}}
 
 	<div class="clearfix" ></div>
 

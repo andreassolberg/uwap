@@ -18,9 +18,11 @@ define(function(require, exports, module) {
 	};
 
 
-	var FeedController = function(pane, app) {
+	var FeedController = function(pane, app, viewconfig) {
 		this.pane = pane;
 		this.app = app;
+
+		this.viewconfig = viewconfig || {};
 
 		this.groups = {};
 
@@ -201,6 +203,8 @@ define(function(require, exports, module) {
 			item.activity.object_[item.activity.object.objectType] = item.activity.object;
 		}
 
+
+		item.viewconfig = this.viewconfig;
 
 
 		/*

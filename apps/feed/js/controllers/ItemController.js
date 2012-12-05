@@ -106,15 +106,24 @@ define(function(require, exports, module) {
 			} else if (item.activity.actor.objectType === 'client') {
 				item.activity.actor.image = {url: UWAP.utils.getEngineURL('/api/media/logo/client/' + item.activity.actor.id)}
 			}
+
+			item.activity.actor.type = {};
+			item.activity.actor.type[item.activity.actor.objectType] = true;
+
 		}
-		/*
-		if (item.user) {
-			item.user.profileimg = UWAP.utils.getEngineURL('/api/media/user/' + item.user.a);
+
+		if (item.activity.verb) {
+			item.activity.verb_ = {};
+			item.activity.verb_[item.activity.verb] = true;
 		}
-		if (item.client) {
-			item.client.profileimg = UWAP.utils.getEngineURL('/api/media/logo/client/' + item.client['client_id']);
+
+		if (item.activity.object) {
+			item.activity.object_ = {};
+			item.activity.object_[item.activity.object.objectType] = item.activity.object;
 		}
-		*/
+
+
+		item.viewconfig = this.viewconfig;
 
 
 		// console.log("Testing article class", item.class)
