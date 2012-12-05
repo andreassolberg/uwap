@@ -1,14 +1,16 @@
 <tr>
 	<td style="width: 24px">
-	{{#user}}
-		<img class="" style="width: 26px; border: 1px solid #ccc" src="{{profileimg}}" />
-	{{/user}}
+	{{#activity.actor}}
+		<img class="" style="width: 26px; border: 1px solid #ccc" src="{{image.url}}" />
+	{{/activity.actor}}
+
 	</td>
 
-	{{#user}}
-		<td><span>{{name}}</span></td>
+	{{#activity.actor}}
+		<td><span>{{displayName}}</span></td>
 		<td><i class="icon-envelope"></i> <span>{{mail}}</span></td>
-	{{/user}}
+	{{/activity.actor}}
+
 
 
 	<td>

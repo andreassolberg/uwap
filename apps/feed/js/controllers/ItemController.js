@@ -100,12 +100,21 @@ define(function(require, exports, module) {
 			});
 		}
 
+		if (item.activity && item.activity.actor) {
+			if (item.activity.actor.objectType === 'person') {
+				item.activity.actor.image = {url: UWAP.utils.getEngineURL('/api/media/user/' + item.activity.actor.a)}
+			} else if (item.activity.actor.objectType === 'client') {
+				item.activity.actor.image = {url: UWAP.utils.getEngineURL('/api/media/logo/client/' + item.activity.actor.id)}
+			}
+		}
+		/*
 		if (item.user) {
 			item.user.profileimg = UWAP.utils.getEngineURL('/api/media/user/' + item.user.a);
 		}
 		if (item.client) {
 			item.client.profileimg = UWAP.utils.getEngineURL('/api/media/logo/client/' + item.client['client_id']);
 		}
+		*/
 
 
 		// console.log("Testing article class", item.class)

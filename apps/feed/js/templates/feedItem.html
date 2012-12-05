@@ -2,13 +2,18 @@
 
 
 
+	{{#activity.actor}}
+		<img class="profileimg img-polaroid" src="{{image.url}}" />
+	{{/activity.actor}}
+
+<!--
 	{{#user}}
 		<img class="profileimg img-polaroid" src="{{profileimg}}" />
 	{{/user}}
 	{{#client}}
 		<img class="profileimg img-polaroid" src="{{profileimg}}" />
 	{{/client}}
-
+-->
 
 
 	<div style="float: right" class="btn-group pull-right">
@@ -36,18 +41,21 @@
 
 	<div class="footer" style="">
 
-		{{#author}}
-			<span><i class=" icon-user"></i> {{author}}</span>
-		{{/author}}
+		{{#activity.actor}}
+			<span>
+				{{#type.person}}
+					<i class="icon-user"></i> 
+				{{/type.person}}
 
-		{{#user}}
-			<span><i class=" icon-user"></i> {{name}}</span>
-		{{/user}}
+				{{#type.client}}
+					<i class="icon-briefcase"></i> 
+				{{/type.client}}
 
-		{{#client}}
-			<span><i class="icon-briefcase"></i> {{client_name}}</span>
-		{{/client}}
-		
+				{{displayName}}</span>
+		{{/activity.actor}}
+
+
+
 		<span><i class=" icon-time"></i> <span class="ts" data-ts="{{ts}}"></span></span>
 
 		<!-- 
@@ -58,14 +66,14 @@
 			<span class="label">{{.}}</span>
 		{{/groupnames}}
 
-	    {{#public}}
-	    	<span class="label label-inverse"><i class="icon-eye-open icon-white"></i> Public</span>
-	    {{/public}}
+		{{#public}}
+			<span class="label label-inverse"><i class="icon-eye-open icon-white"></i> Public</span>
+		{{/public}}
 
-	    {{#promoted}}
-		    <span class="label label-info"><i class="icon-star icon-white"></i> Promoted</span>
-	    {{/promoted}}
-	    
+		{{#promoted}}
+			<span class="label label-info"><i class="icon-star icon-white"></i> Promoted</span>
+		{{/promoted}}
+
 	</div>
 
 
@@ -159,17 +167,51 @@
 
 	{{#activity}}			
 
-		shared an article
+		{{#verb_.share}}shared{{/verb_.share}}
+		{{#verb_.post}}posted{{/verb_.post}}
 
-		{{#object}}
+		{{#object_.article}}an article{{/object_.article}}
+		{{#object_.issue}}an issue{{/object_.issue}}
+
+
+		{{#activity.provider}}
+			<span> through 
+
+				{{#type.client}}
+					<i class="icon-briefcase"></i> 
+				{{/type.client}}
+
+				{{displayName}}</span>
+		{{/activity.provider}}
+
+
+		{{#object_.article}}
+
 			<div style="margin: 5px 0px 8px 2em; border-left: 3px solid #ccc; padding-left: 5px" class="sharedArticle">
+				<i class="icon-external-link" style="font-size: 170%; color: #666; float: left; margin-left: -30px"></i>
 				<h4 style="margin:0px"><a target="_blank" href="{{url}}">{{displayName}}</a></h4>
-				<p style="margin: 0px; color: #335"><i class="icon-share-alt"></i> {{hostname}}</p>
+				<p style="margin: 0px; color: #335">{{hostname}}</p>
 			</div>
+
 			{{#content}}
-			<p>{{content}}</p>
+				<p style="font-size: 120%">{{content}}</p>
 			{{/content}}
-		{{/object}}
+
+		{{/object_.article}}
+
+
+		{{#object_.issue}}
+
+			<div style="margin: 5px 0px 8px 2em; border-left: 3px solid #ccc; padding-left: 5px" class="sharedArticle">
+				<i class="icon-tasks" style="font-size: 170%; color: #666; float: left; margin-left: -30px"></i>
+				<h4 style="margin:0px"><a target="_blank" href="{{url}}">{{displayName}}</a></h4>
+				{{#content}}
+					<p>{{content}}</p>
+				{{/content}}
+			</div>
+
+			
+		{{/object_.issue}}
 
 	{{/activity}}
 		

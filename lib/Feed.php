@@ -42,9 +42,6 @@ class Feed {
 	public function read($selector) {
 
 
-
-
-
 		$query = array(
 		);
 
@@ -95,10 +92,10 @@ class Feed {
 			);
 		}
 
-		$now = floor(microtime(true)*1000.0);
+		$now = time();
 		if (isset($selector['future'])) {
 			$query['dtstart'] = array(
-				'$gt' => new MongoInt64($now),
+				'$gt' => $now,
 			);
 		}
 
@@ -244,12 +241,8 @@ class Feed {
 				$list[$k]['class'] = array('message');
 			}
 
-			if (!empty($v['uwap-userid'])) {
-				$list[$k]['user'] = $auth->getUserBasic($v['uwap-userid']);
-			}
-			if (!empty($v['uwap-clientid'])) {
-				$list[$k]['client'] = $auth->getClientBasic($v['uwap-clientid']);
-			}
+
+
 
 			$list[$k]['lastActivity'] = $list[$k]['ts'];
 
@@ -270,6 +263,36 @@ class Feed {
 			if ($list[$k]['ts'] < $range['from']) $range['from'] = $list[$k]['ts'];
 		}
 
+		/**
+		 * Populate the activity / actor property.
+		 */
+		foreach($list AS $k => $v) {
+
+			if (!isset($list[$k]['activity'])) {
+				$list[$k]['activity'] = array();
+			}
+			if (!isset($list[$k]['activity']['actor'])) {
+				$list[$k]['activity']['actor'] = array();
+			}
+
+			if (isset($v['activity']['actor']['id'])) {
+				$list[$k]['activity']['actor'] = $auth->getUserBasicActor($v['activity']['actor']['id']);
+
+			} else {
+
+				if (!empty($v['uwap-userid'])) {
+					$list[$k]['activity']['actor'] = $auth->getUserBasicActor($v['uwap-userid']);
+				}
+				if (!empty($v['uwap-clientid'])) {
+					$provider = $auth->getClientBasicActor($v['uwap-clientid']);
+					if (empty($list[$k]['activity']['actor'])) {
+						$list[$k]['activity']['actor'] = $provider;
+					}
+					$list[$k]['activity']['provider'] = $provider;
+				}
+			}
+
+		}
 
 		usort($list, 'uwapfeedsort');
 

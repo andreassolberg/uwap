@@ -1,26 +1,26 @@
 <div id="{{id}}" class="comment">
 
-	{{#user}}
-		<img class="profileimg img-polaroid" src="{{profileimg}}" />
-	{{/user}}
-	{{#client}}
-		<img class="profileimg img-polaroid" src="{{profileimg}}" />
-	{{/client}}
+
+	{{#activity.actor}}
+		<img class="profileimg img-polaroid" src="{{image.url}}" />
+	{{/activity.actor}}
 
 
 	<div class="footer">
 
-		{{#author}}
-			<span><i class=" icon-user"></i> {{author}}</span>
-		{{/author}}
+		{{#activity.actor}}
+			<span>
+				{{#type.person}}
+					<i class="icon-user"></i> 
+				{{/type.person}}
 
-		{{#user}}
-			<span><i class=" icon-user"></i> {{name}}</span>
-		{{/user}}
+				{{#type.client}}
+					<i class="icon-briefcase"></i> 
+				{{/type.client}}
 
-		{{#client}}
-			<span><i class="icon-briefcase"></i> {{client_name}}</span>
-		{{/client}}
+				{{displayName}}</span>
+		{{/activity.actor}}
+
 		
 		<span><i class=" icon-time"></i> <span class="ts" data-ts="{{ts}}"></span></span>
 		

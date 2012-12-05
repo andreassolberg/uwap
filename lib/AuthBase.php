@@ -7,6 +7,7 @@ class AuthBase {
 	protected $as;
 
 	protected static $basicusers = array();
+	protected static $basicactors = array();
 
 	public function __construct() {
 
@@ -49,6 +50,19 @@ class AuthBase {
 		return $this->store->update('users', null, array('userid' => $userid), $update);
 	}
 
+	function getClientBasicActor($client_id){
+		
+		$store = new So_StorageServerUWAP();
+		$ac = $store->getClient($client_id);
+
+		$res = array(
+			'id' => $ac['client_id'],
+			'displayName' => $ac['client_name'],
+			'objectType' => 'client',
+		);
+		return $res;
+	}	
+
 	function getClientBasic($client_id){
 		
 		$store = new So_StorageServerUWAP();
@@ -56,11 +70,15 @@ class AuthBase {
 
 		$res = array(
 			'client_id' => $ac['client_id'],
-			'client_name' => $ac['client_name'],
-			'logo' => $ac['logo'],
+			'client_name' => $ac['client_name']
 		);
+		if (isset($ac['logo'])) {
+			$res['logo'] = $ac['logo'];
+		}
 		return $res;
 	}
+
+	
 	function getUserBasic($userid) {
 
 		if (!empty(self::$basicusers[$userid])) {
@@ -76,14 +94,62 @@ class AuthBase {
 		return $search;
 	}
 
+	function getUserBasicActor($userid) {
+
+		if (!empty(self::$basicactors[$userid])) {
+			return self::$basicactors[$userid];
+		}
+
+		$query = array('userid' => $userid);
+		$search = $this->store->queryOne('users', $query, array('name', 'mail', 'a'));
+		if (empty($search)) return false;
+
+		$search['objectType'] = 'person';
+		$search['displayName'] = $search['name'];
+		unset($search['name']);
+
+		self::$basicactors[$userid] = $search;
+
+		return $search;
+	}
+
+
 	function storeUser() {
 
 		$user = $this->getUserdata();
-
 		if (empty($user['userid'])) throw new Exception('Missing user attribute [userid]');
 
 		$search = $this->store->queryOne('users', array('userid' => $user['userid']));
-		if (!empty($search)) return false;
+		if (!empty($search)) {
+
+			$updateCandidates = array('mail', 'name', 'photo', 'groups');
+			$updates = array();
+
+			foreach($updateCandidates AS $uc) {
+				if (!isset($user[$uc])) continue;
+				if (!isset($search[$uc])) {
+					// Adding a missing attr
+					$updates[$uc] = $user[$uc];
+				} else if($search[$uc] !== $user[$uc]) {
+					// Updating a modified attr
+					$updates[$uc] = $user[$uc];
+				}
+			}
+
+
+			// Nothing to update.
+			if (empty($updates)) return false;
+
+			$this->updateUser($user['userid'], $updates);
+			return true;
+
+
+			// echo "<pre>About to update user from :\n\n";
+			// print_r($search);
+			// echo "\n with  \n";
+			// print_r($user);
+
+		}
 
 		$user['a'] = Utils::genID();
 		$this->store->store('users', null, $user);
