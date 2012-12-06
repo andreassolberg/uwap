@@ -502,6 +502,10 @@ try {
 
 			$groups = array();
 			if (!empty($msg['groups'])) $groups = $msg['groups']; unset($msg['groups']);
+
+			error_log("About to post groups: " . json_encode($msg));
+			error_log("About to post groups: " . json_encode($groups));
+
 			$response['data'] = $feed->post($msg, $groups);
 
 		} else if (Utils::route('delete', '^/feed/item/([a-z0-9\-]+)$', &$qs, &$args)) {

@@ -1,6 +1,16 @@
 # Groups
 
 
+## Information model
+
+
+
+
+
+
+
+## API
+
 Adding new group
 
 

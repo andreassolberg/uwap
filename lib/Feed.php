@@ -357,8 +357,15 @@ class Feed {
 
 		if (!empty($msg['oid'])) {
 			if ($this->store->queryOne('feed', array('oid' => $msg['oid']))) {
+				error_log("FEED >> OID is included and did MATCH " . $msg['oid']);
+				error_log("FEED >>  " . json_encode($msg['activity']['object']['displayName']));
 				return false;
+			} else {
+				error_log("FEED >> OID is included and did not match " . $msg['oid'] . "    <<<<<<<<<<<");
+				error_log("FEED >>  " . json_encode($msg['activity']['object']['displayName']));
 			}
+		} else {
+			error_log("FEED >> OID is not included");
 		}
 
 		if (empty($msg['ts'])) {
