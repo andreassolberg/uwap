@@ -47,6 +47,12 @@ class AuthBase {
 
 	function updateUser($userid, $update) {
 
+		// echo "<pre>About to update user:\n";
+		// echo "db.users.update(" . json_encode(array('userid' => $userid)) . ", ". 
+		// 	json_encode( array('$set' => $update)). ");\n\n";
+		// echo "</pre>"; exit;
+
+
 		return $this->store->update('users', null, array('userid' => $userid), $update);
 	}
 
@@ -214,19 +220,19 @@ class AuthBase {
 		$groups = array();
 
 
-		$realm = 'na.feide.no';
+		$realm = 'norealm_uwap_org';
 		if (!empty($attributes['eduPersonPrincipalName']) && !empty($attributes['eduPersonOrgDN:o'])) {
 			if (preg_match('/^(.*?)@(.*?)$/', $attributes['eduPersonPrincipalName'][0], $matches)) {
-				$realm = $matches[2];
+				$realm = str_replace('.', '_', $matches[2]);
 				$orgname = $attributes['eduPersonOrgDN:o'][0];
-				$groups['@realm:' . $realm] = $orgname;
+				$groups['uwap:realm:' . $realm] = $orgname;
 			}
 		}
 		if (!empty($attributes['eduPersonOrgUnitDN']) && !empty($attributes['eduPersonOrgUnitDN:cn'])) {
 			for($i = 0; $i < count($attributes['eduPersonOrgUnitDN']); $i++) {
 				$key = sha1($attributes['eduPersonOrgUnitDN'][$i]);
 				$name = $attributes['eduPersonOrgUnitDN:cn'][$i];
-				$groups['@orgunit:' . $realm . ':' . $key] = $name;
+				$groups['uwap:orgunit:' . $realm . ':' . $key] = $name;
 			}
 		}
 
