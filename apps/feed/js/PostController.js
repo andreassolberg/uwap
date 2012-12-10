@@ -3,7 +3,7 @@ define(function(require, exports, module) {
 	var 
 		$ = require('jquery'),
 		UWAP = require('uwap-core/js/core'),
-		moment = require('uwap-core/js/moment')
+		moment = require('uwap-core/js/moment'),
 		hogan = require('uwap-core/js/hogan')
 		;
 
@@ -13,8 +13,6 @@ define(function(require, exports, module) {
 		"post": require('uwap-core/js/text!templates/post.html')
 	};
 	
-
-
 	var PostController = function(pane) {
 		this.pane = pane;
 		this.el = pane.el;
