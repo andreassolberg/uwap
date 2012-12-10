@@ -7,7 +7,8 @@ define(function(require, exports, module) {
 		AddCommentController = require('AddCommentController'),
 		MediaPlayerController = require('MediaPlayerController'),
 		ViewController = require('ViewController'),
-		hogan = require('uwap-core/js/hogan')
+		hogan = require('uwap-core/js/hogan'),
+		moment = require('uwap-core/js/moment')
 		;
 
 
