@@ -82,6 +82,11 @@ class Static_File {
 		$localfile = self::getpath($_SERVER['REQUEST_URI']);
 		if ($localfile === '/') $localfile = '/index.html';
 
+		if (!preg_match('/^[a-zA-Z0-9\.\-_\/]+$/', $localfile)) {
+			throw new Exception('Invalid characters in filename');
+		}
+
+
 		$file = $subhostpath . $localfile;
 
 		if (preg_match('/\.html$/', $file)) {
@@ -99,17 +104,45 @@ class Static_File {
 		} else if(preg_match('/\.js$/', $file)) {
 			header("Content-Type: application/javascript; charset: utf-8");
 		}
+		
 
+		$caching = GlobalConfig::getValue('cache', true);
 
-		// TODO: Do strict input checking on filename. for security.
+		$data = file_get_contents($file);
+		$timestamp = filemtime($file);
+		$tsstring = gmdate('D, d M Y H:i:s ', $timestamp) . 'GMT';
+		$etag = md5($data);
 
-		error_log( "File is: " . $file);
+		$if_modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] : false;
+		$if_none_match = isset($_SERVER['HTTP_IF_NONE_MATCH']) ? $_SERVER['HTTP_IF_NONE_MATCH'] : false;
 
-		if (file_exists($file)) {
-			echo file_get_contents($file);
+		header('Cache-Control: max-age=290304000, public');
+
+		if ($caching && $if_none_match && ($if_none_match === $etag) ) {
+
+			header('X-Cache-Match: etag');
+			header('HTTP/1.1 304 Not Modified');
+			exit();
+
+		} else if ($caching && $if_modified_since && $if_modified_since === $tsstring) {
+
+			header('X-Cache-Match: modified-since');
+			header('HTTP/1.1 304 Not Modified');
+			exit();
+
 		} else {
-			throw new Exception('File not found [' . $file . ']');
+
+			header('X-Cache-Etag: ' . $if_none_match . ' != ' . $etag);
+			header('X-Cache-Modified: ' . $if_modified_since . ' != ' . $tsstring);
+
+		    header("Last-Modified: $tsstring");
+		    header("ETag: \"{$etag}\"");
+
 		}
+
+		echo $data;
+
+
 
 	}
 
