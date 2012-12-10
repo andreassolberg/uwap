@@ -6,6 +6,7 @@
 	"logging": {
 		"logLevel": 4
 	},
+	"cache": false,
 	"mongodb": {
 		"host": "uwap.org"
 	}

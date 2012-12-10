@@ -104,7 +104,7 @@ class Static_File {
 		} else if(preg_match('/\.js$/', $file)) {
 			header("Content-Type: application/javascript; charset: utf-8");
 		}
-		
+
 
 		$caching = GlobalConfig::getValue('cache', true);
 
@@ -141,7 +141,6 @@ class Static_File {
 		}
 
 		echo $data;
-
 
 
 	}
