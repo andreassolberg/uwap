@@ -105,6 +105,11 @@ class Static_File {
 			header("Content-Type: application/javascript; charset: utf-8");
 		}
 
+		if (!file_exists($file)) {
+			header("HTTP/1.0 404 Not Found");
+			exit;
+		}
+
 
 		$caching = GlobalConfig::getValue('cache', true);
 
@@ -116,7 +121,13 @@ class Static_File {
 		$if_modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] : false;
 		$if_none_match = isset($_SERVER['HTTP_IF_NONE_MATCH']) ? $_SERVER['HTTP_IF_NONE_MATCH'] : false;
 
-		header('Cache-Control: max-age=290304000, public');
+		if ($caching) {
+			header('Cache-Control: no-cache');	
+		} else {
+			header('Cache-Control: no-store');
+		}
+
+		
 
 		if ($caching && $if_none_match && ($if_none_match === $etag) ) {
 
