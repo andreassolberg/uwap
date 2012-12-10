@@ -1,5 +1,8 @@
-define(['libs/geo', 'libs/moment'], function(LatLon, moment) {
-
+define(function(require, exports, module) {
+	
+	var
+		moment = require('uwap-core/js/moment'),
+		geo = require('libs/geo');
 
 	/**
 	 * Holds a single position

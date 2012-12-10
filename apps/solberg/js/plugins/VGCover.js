@@ -1,4 +1,4 @@
-define(function() {
+define(function(require, exports, module) {
 
 	var VGCover = function(container) {
 		this.container = container;
@@ -19,7 +19,6 @@ define(function() {
 			$(that.container).empty().append('<img src="' + imgurl + '" />');
 
 		});
-
 
 	}
 

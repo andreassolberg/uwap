@@ -1,5 +1,8 @@
-define(['../libs/moment'], function(moment) {
-
+define(function(require, exports, module) {
+	
+	var
+		moment = require('uwap-core/js/moment');
+		
 	var SMsg = function(container) {
 		this.container = container;
 		this.load();

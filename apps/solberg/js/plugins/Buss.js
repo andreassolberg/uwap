@@ -1,4 +1,7 @@
-define(['../libs/moment'], function(moment) {
+define(function(require, exports, module) {
+	
+	var
+		moment = require('uwap-core/js/moment');
 
 	var Buss = function(container) {
 		this.container = container;
@@ -38,13 +41,18 @@ define(['../libs/moment'], function(moment) {
 		})
 	}
 
+
 	Buss.prototype.load = function() {
 		var bussurl = "http://api.busbuddy.no:8080/api/1.3/departures/16011125";
 		UWAP.data.get(bussurl, {handler: "buss", followRedirects: false, curl: true}, $.proxy(this.response, this));
 	}
+
 	Buss.prototype.response = function(r) {
 		var that = this;
 		$(this.container).empty();
+		if (!r) {
+			console.error('Did not get any proper response', r); return;
+		}
 		$.each(r.departures, function(i, item) {
 			var now = new Date(); 
 			var rdt = new Date(); 

@@ -1,4 +1,8 @@
-define(['../libs/moment', '../libs/humdur'], function(moment, humdur) {
+define(function(require, exports, module) {
+	
+	var
+		moment = require('uwap-core/js/moment'),
+		humdur = require('../libs/humdur');
 
 	var Countdown = function(container, text, ts) {
 

@@ -18,10 +18,9 @@ define(function(require, exports, module) {
 		Gaver = require('plugins/Gaver'),
 		Todo = require('plugins/Todo'),
 		Countdown = require('plugins/Countdown'),
-		VGCover = require('plugins/VGCover'),
+		// VGCover = require('plugins/VGCover'),
 		Flo = require('plugins/Flo')
     	;
-
 
     require('uwap-core/js/jquery.tmpl');
 
@@ -58,7 +57,7 @@ define(function(require, exports, module) {
 		// var msg = new SMsg($("div#messages"));
 		var buss = new Buss($("div#buss"));
 		var gaver = new Gaver($("div#gaver"));
-		var vgc = new VGCover($("div#vg"));
+		// var vgc = new VGCover($("div#vg"));
 		var flo = new Flo($("#flo"))
 
 		// var andreas = new Countdown($("div#countdowns"), 'Andreas', '1980-10-10 04:00');
