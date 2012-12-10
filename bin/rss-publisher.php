@@ -47,7 +47,6 @@ function process($c) {
 
 foreach($config AS $c) {
 
-
 	process($c);
 
 }
