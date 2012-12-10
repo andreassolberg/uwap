@@ -24,21 +24,8 @@ class Notifications {
 
 		$str = '';
 
-		if (isset($item['user'])) {
-
-			$str .= $item['user']['name'] . ' ';
-
-			if (isset($item['refs'])) {
-				$c = count($item['refs']);
-				if ($c > 0) {
-					$str .= ' and ' . $c . ' more ';
-				}
-			}
-
-		} else if (isset($item['client'])) {
-		
-			$str .= $item['client']['client_name'] . ' ';
-
+		if (isset($item['activity']) && isset($item['activity']['actor']) && isset($item['activity']['actor']['displayName'])) {
+			$str .= $item['activity']['actor']['displayName'] . ' ';
 		}
 
 		if (!isset($item['class'])) $item['class'] = array();
