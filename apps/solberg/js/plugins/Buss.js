@@ -53,6 +53,10 @@ define(function(require, exports, module) {
 		if (!r) {
 			console.error('Did not get any proper response', r); return;
 		}
+		if (!r.departures) {
+			console.error('Did not get any proper response', r); return;
+		}
+		console.log("r.departures", typeof r.departures);
 		$.each(r.departures, function(i, item) {
 			var now = new Date(); 
 			var rdt = new Date(); 
