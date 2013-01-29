@@ -34,7 +34,7 @@ class So_StorageServerUWAP extends So_Storage {
 		// notimplemented();
 
 		// TODO: Add impliccit app clients, with redirect_uri...
-		if (preg_match('/^app_([a-z]+)/', $client_id, $matches)) {
+		if (preg_match('/^app_([a-z0-9]+)/', $client_id, $matches)) {
 			$app = $matches[1];
 			$config = Config::getInstance($app);
 
