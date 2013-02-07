@@ -12,193 +12,31 @@
 
 		<link href="css/moterom.css"  rel="stylesheet" />
 
-
-		<script type='text/javascript' charset='utf-8'>
-
-			if (typeof console == "undefined" || typeof console.log == "undefined") var console = { log: function() {} }; 
-	
-		</script>
-
-		<script type="text/javascript" data-main="script" src="/_/js/require.js"></script>
-
-
-
-
-		<script type="text/javascript" src="js/spine/spine.js"></script>
-		
-
-
-		<script id="deviceInfoTmpl" type="text/x-jquery-tmpl">
-			<div style="margin-top: 40px" class="navbar">
-				<div class="navbar-inner">
-					<p style="text-align: right">Device registered: <strong>${name}</strong> 
-						<button class="unregister btn btn-inverse">Unregister</button>
-					</p>
-				</div>
-			</div>
-		</script>
-
-		<script id="regTmpl" type="text/x-jquery-tmpl">
-			<div class="modal hide">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">×</button>
-					<h3>Registrer ad-hoc møte</h3>
-				</div>
-				<div class="selecthours modal-body">
-					<p>Du kan gjøre en ad-hoc møteromsregistrering her fra nå og opp til en time frem i tid.</p>
-
-					<button class="btn" data-minutes="0">15 min</button>
-					<button class="btn" data-minutes="1">30 min</button>
-					<button class="btn" data-minutes="2">45 min</button>
-					<button class="btn" data-minutes="3">1 time</button>
-
-					<hr />
-
-					<p style="">Dersom du ønsker å registrere møterommet på et annet tidspunkt eller en lengre periode, kan du med din telefon eller desktop gå til:</p>
-
-					<p><code>https://moterom.uwap.org</code></p>
-
-				</div>
-				<div class="modal-footer">
-					<a href="#" class="btn" data-dismiss="modal">Avbryt</a>
-					<!-- <a href="#" class="btn btn-primary">OK, reserver nå</a> -->
-				</div>
-			</div>
-		</script>
-
-		<script id="authDialogTmpl" type="text/x-jquery-tmpl">
-			<div class="modal hide">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">×</button>
-					<h3>Authentication</h3>
-				</div>
-				<div class="modal-body">
-					<p>You can choose to register a new public display</p>
-					
-					<form class="well">
-						<input type="text" id="devicename" placeholder="Device name" name="device" />
-						<input type="text" id="devicekey" placeholder="Device secret key" name="key" />
-						<p>Which room?
-							<select name="deviceroom" id="deviceroom">
-								<option value="gra">Grå (3etg)</option>
-								<option value="gronn">Blå (3etg)</option>
-								<option value="orange">Orange (4etg)</option>
-								<option value="lilla">Lilla (4etg)</option>
-								<option value="rod">Turkis (5etg)</option>
-								<option value="sort">Sort (6etg)</option>
-								<option value="gul">Grønn (6etg)</option>
-							</select>
-						</p>
-						<button class="btn devicereg" ><i class="icon-ok-sign"></i> Register device</button>
-					</form>
-
-					<p>or to login using Feide on your personal device</p>
-					<button class="btn btn-primary login" ><i class="icon-user icon-white"></i> Feide login</button>
-				</div>
-				<div class="modal-footer">
-					<a href="#" class="btn" data-dismiss="modal">Avbryt</a>
-					<!-- <a href="#" class="btn btn-primary">OK, reserver nå</a> -->
-				</div>
-			</div>
-		</script>
-
-		<script id="roomTmpl" type="text/x-jquery-tmpl">
-			<div class="roomcontainer roomtype-${name} span5">
-				<div class="room roomtype-${name}">
-					<div class="roomHdr">${$item.data.short }</div>
-					<div class="roomEvents"></div>
-					<div class="roomReg">
-						<button class="btn btn-inverse register"><i class="icon-edit icon-white"></i> Registrer ad-hoc møte</button>
-					</div>
-				</div>
-			</div>
-		</script>
-
-		<script id="eventTmpl" type="text/x-jquery-tmpl">
-			<div class="event ${$item.data.getClass() }">
-				
-
-				<div class="eventDate">${$item.data.getTime() } 
-					<span class="eventHdr">${$item.data.getHdr() }</span>
-					<span class="eventP">
-						<button class="btn btn-inverse btn-mini">
-						<i class="icon-user icon-white"></i> 
-						${$item.data.getPerson() }</button>
-					</span>
-				</div>
-
-			</div>
-		</script>
-
-		<script id="nowTmpl" type="text/x-jquery-tmpl">
-			<div class="eventNow">
-				{{if $item.data.isAvailable() }}
-
-					{{if $item.data.isAvailableFor(15) }}
-						<button class="btn btn-success">Ledig (<span class="remaining">${$item.data.isAvailableForHowLong() }</span>)</button>
-					{{else}}
-						<button class="btn btn-warning">Ledig (<span class="remaining">${$item.data.isAvailableForHowLong() }</span>)</button>
-					{{/if}}
-				{{else}}
-					<button class="btn btn-danger">Opptatt (<span class="remaining">${$item.data.isAvailableToday() }</span>)</button>
-				{{/if}}
-				<!-- div class="roomMore">${$item.data.getMore() }</div> -->
-			</div>
-		</script>
-
-		<script id="authTmpl" type="text/x-jquery-tmpl">
-
-
-			<div class="navbar ">
-				<div class="navbar-inner">
-					<div class="container">
-						<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-						</a> 
-						<a class="brand" href="#">Møterom</a>
-						<div class="btn-group pull-right">
-							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-								<i class="icon-user"></i> <span id="username">${name}</span>
-								<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a href="#">Profile</a></li>
-								<li class="divider"></li>
-								<li><a href="#">Sign Out</a></li>
-							</ul>
-						</div>
-						<div class="nav-collapse">
-							<ul class="nav">
-								
-								<li class="active"><a href="#">Oversikt</a></li>
-								
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-
-		</script>
-
+		<script src="phonegap.js"></script>
+		<script src="childbrowser.js"></script>
+		<script type="text/javascript" data-main="script" src="js/require-phonegap.js"></script>
 	</head>
 
 	<body>
 
-
-
 		<div id="main" class="container-fluid">
-
 			<div class="etg row-fluid etg6"></div>
 			<div class="etg row-fluid etg5"></div>
 			<div class="etg row-fluid etg4"></div>
 			<div class="etg row-fluid etg3"></div>
-
+			<div class="clock"></div>
 		</div>
+		<div id="modalContainer" style=""></div>
 
-
-		 <div id="modalContainer"></div>
-
+	
+<!-- 		<div id="test">
+			<div id="dashboard">
+				<button class="btn" id="req">UWAP.auth.require()</button>
+				<button class="btn" id="check">UWAP.auth.check()</button>
+				<button class="btn" id="logout">logout</button>
+			</div>
+			<div id="out"></div>
+		</div>		
+ -->
 	</body>
 </html>

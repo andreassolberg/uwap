@@ -1,0 +1,40 @@
+﻿<div class="modal hide">
+	<div class="modal-header">
+		<!-- <button type="button" class="close" data-dismiss="modal">x</button> -->
+		<h3>Authentication</h3>
+	</div>
+	<div class="modal-body">
+		<p>You can choose to register a new public display</p>
+
+		<form class="well">
+			<input type="text" id="devicename" placeholder="Device name"
+				name="device" /> 
+			<input type="text" id="devicekey"
+				placeholder="Device secret key" name="key" />
+			<p>
+				Which room? <select name="deviceroom" id="deviceroom">
+					<option value="gra">Gr&aring; (3etg)</option>
+					<option value="gronn">Bl&aring; (3etg)</option>
+					<option value="orange">Orange (4etg)</option>
+					<option value="lilla">Lilla (4etg)</option>
+					<option value="rod">Turkis (5etg)</option>
+					<option value="sort">Sort (6etg)</option>
+					<option value="gul">Gr&aelig;nn (6etg)</option>
+				</select>
+			</p>
+			<button class="btn devicereg">
+				<i class="icon-ok-sign"></i> Register device
+			</button>
+		</form>
+
+		<p>or to login using Feide on your personal device</p>
+		<button class="btn btn-primary login">
+			<i class="icon-user icon-white"></i> Feide login
+		</button>
+	</div>
+	<!-- <div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">Avbryt</a>
+		<a href="#" class="btn btn-primary">OK, reserver nå</a>
+		&copy; Andreas Åkre Solberg
+	</div> -->
+</div>
