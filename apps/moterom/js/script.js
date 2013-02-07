@@ -77,7 +77,7 @@ define(function(require, exports, module) {
 		var udur = Math.abs(moment().unix() - this.unix());
 		return prettyInterval(udur);
 	}
-	moment.lang('no');
+	moment.lang('en');
 
 	var Room = Spine.Class.sub({
 		showAvail: function(avail) {
@@ -360,7 +360,7 @@ define(function(require, exports, module) {
 						to: ranges[minutes][1]
 					};
 					console.log("RESERVATION: ", reservation);
-					var url = 'https://foodle.feide.no/reserve';
+					var url = 'http://moterom-api.uninett.no/reserve';
 					var opts = {method: "POST", data: reservation};
 
 					console.log(that);
@@ -442,7 +442,7 @@ define(function(require, exports, module) {
 				var deviceid = that.uuid();
 				var devicekey  = $(event.currentTarget).closest("form").find("input#devicekey").val();
 				var deviceroom = $(event.currentTarget).closest("form").find("select#deviceroom").val();
-				UWAP.data.get("https://foodle.feide.no/register?key=" + devicekey, {}, function(data) {
+				UWAP.data.get("http://moterom-api.uninett.no/register?key=" + devicekey, {}, function(data) {
 					if (data && data.ok === true) {
 						el.modal('hide').remove();
 						that.device = {
@@ -475,7 +475,7 @@ define(function(require, exports, module) {
 			var date = moment()
 				// .add("days", 1)
 				.format('YYYY-MM-DD');
-			var url = 'https://foodle.feide.no/meetingroom/' + date;
+			var url = 'http://moterom-api.uninett.no/meetingroom/' + date;
 			var opts = {};
 
 			if (this.user) {
