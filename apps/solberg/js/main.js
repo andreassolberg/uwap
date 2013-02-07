@@ -1,5 +1,11 @@
 define(function(require, exports, module) {
 
+	requirejs.config( {
+	    "shim": {
+	        "libs/jquery.flot"  : {deps: ['jquery'], exports: 'jQuery'}
+	    }
+	} );
+
 	var 
 		$ = require('jquery'),
 		UWAP = require('uwap-core/js/core'),
@@ -17,6 +23,7 @@ define(function(require, exports, module) {
 		Buss = require('plugins/Buss'),
 		Gaver = require('plugins/Gaver'),
 		Todo = require('plugins/Todo'),
+		Temp = require('plugins/Temp'),
 		Countdown = require('plugins/Countdown'),
 		// VGCover = require('plugins/VGCover'),
 		Flo = require('plugins/Flo')
@@ -55,10 +62,11 @@ define(function(require, exports, module) {
 		var scalendar = new SCalendar($("div#calendar"));
 		var yr = new Yr($("div#yr"));
 		// var msg = new SMsg($("div#messages"));
-		var buss = new Buss($("div#buss"));
+		// var buss = new Buss($("div#buss"));
 		var gaver = new Gaver($("div#gaver"));
 		// var vgc = new VGCover($("div#vg"));
-		var flo = new Flo($("#flo"))
+		// var flo = new Flo($("#flo"))
+		var temp = new Temp($("#temp"))
 
 		// var andreas = new Countdown($("div#countdowns"), 'Andreas', '1980-10-10 04:00');
 		// var vigdis = new Countdown($("div#countdowns"), 'Vigdis', '1980-03-30 12:00');
