@@ -287,7 +287,7 @@ define(function(require, exports, module) {
 			console.log("Logged in");
 //			var el = $("#authTmpl").tmpl(user);
 			var el = $( this.templates['auth'].render(user) );
-			$("body").prepend(el);
+			$("body").append(el);
 
 			this.load();
 		};
