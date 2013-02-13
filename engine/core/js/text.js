@@ -239,6 +239,9 @@ define(['module'], function (module) {
     } else if (masterConfig.env === 'xhr' || (!masterConfig.env &&
             text.createXhr())) {
         text.get = function (url, callback, errback) {
+
+            console.log("text get XHR url", url);
+
             var xhr = text.createXhr();
             xhr.open('GET', url, true);
 
@@ -263,6 +266,7 @@ define(['module'], function (module) {
                     }
                 }
             };
+
             xhr.send(null);
         };
     } else if (masterConfig.env === 'rhino' || (!masterConfig.env &&

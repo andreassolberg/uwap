@@ -21,6 +21,76 @@ define(function(require) {
 	UWAP.utils.scheme = requirejs.scheme;
 	UWAP.utils.appid = requirejs.appid;
 
+	UWAP.utils.jso_configure = function(conf) {
+		jso.jso_configure(conf);
+	};
+
+	/*
+	 * Setup and install the ChildBrowser plugin to Phongap/Cordova.
+	 */
+	if(window.isPhonegap) {
+		ChildBrowser.install();
+		console.log("Installing childbrowser...")
+
+		// Use ChildBrowser instead of redirecting the main page.
+		// jso.jso_registerRedirectHandler(window.plugins.childBrowser.showWebPage);
+		// console.log(window.plugins.childBrowser.showWebPage);
+		// window.plugins.childBrowser.showWebPage('http://vg.no');
+		// jso.jso_registerRedirectHandler(window.plugins.childBrowser.showWebPage);
+		jso.jso_registerRedirectHandler(function(p, callback) {
+			// alert('opening url ' + p);
+			window.plugins.childBrowser.showWebPage(p, {
+				showLocationBar:true,
+				showAddress: true,
+				showNavigationBar: true
+			});
+
+	        /*
+	         * Register a handler on the childbrowser that detects redirects and
+	         * lets JSO to detect incomming OAuth responses and deal with the content.
+	         */
+			window.plugins.childBrowser.onLocationChange = function(url){
+	            url = decodeURIComponent(url);
+	            console.log("Checking location: " + url);
+	            jso.jso_checkfortoken('uwap', url, function() {
+	                console.log("Closing child browser, because a valid response was detected.");
+	                // alert('closing childbrowser now');
+	                setTimeout(function() {
+						window.plugins.childBrowser.close();
+						if (typeof callback === 'function') callback();
+	                }, 800);
+	                
+	            });
+	            // window.plugins.childBrowser.close();
+	        };
+			window.plugins.childBrowser.onClose = function(){
+	            $("div#out").empty().append(JSON.stringify(window.plugins.childBrowser));
+	        };
+
+			// var x = window.open(p);
+			// x.focus();
+		});
+		console.log("Registering redirect handler...");
+
+
+
+	} else {
+		// jso.jso_registerRedirectHandler(function(p) {
+
+		// 	// if (window.cxcount++ > 1 ) {
+		// 	// 	alert('Multiple childbrowsers ' + window.cxcount);
+		// 	// 	return;
+		// 	// }
+
+		// 	// alert('opening url ' + p);
+		// 	// window.plugins.childBrowser.showWebPage(p);
+		// 	var x = window.open(p);
+		// 	x.focus();
+		// });
+		console.log("Registering redirect handler...");
+	}
+
+
 	UWAP.utils.addQueryParam = function (url, key, value) {
 		var delimiter = ((url.indexOf('?') != -1) ? '&' : '?');
 		if (url.charAt(url.length-1) === '?') {
@@ -80,7 +150,7 @@ define(function(require) {
 			redirect_uri: redirect_uri,
 			passive_redirect_uri: passive_redirect_uri
 		}
-	}, {debug: 0});
+	}, {debug: 1});
 
 
 
@@ -174,6 +244,9 @@ define(function(require) {
 				null, {
 					"jso_allowia": false
 				}, callbackSuccess, callbackNo);
+		},
+		logout: function() {
+			jso.jso_wipe();
 		},
 
 		// TODO: Upgrade to support OAUTH

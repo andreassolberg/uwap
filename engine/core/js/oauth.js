@@ -446,7 +446,9 @@ define(function(require, exports, module) {
 		log(JSON.parse(JSON.stringify(request)));
 
 		api_storage.saveState(state, request);
-		api_redirect(authurl);
+		// alert('opening url ', authurl);
+		api_redirect(authurl, callback);
+		// api_redirect('http://uninett.no');
 
 	};
 
@@ -678,6 +680,8 @@ define(function(require, exports, module) {
 			providerid,
 			co;
 		
+		log("$.oajax...... " + settings.url, settings);
+
 		providerid = settings.jso_provider;
 		allowia = settings.jso_allowia || false;
 		scopes = settings.jso_scopes;
@@ -692,6 +696,7 @@ define(function(require, exports, module) {
 
 
 		var obtainToken = function() {
+			log('obtainToken');
 			if (allowia) {
 				log("Perform authrequest");
 				jso_authrequest(providerid, scopes, function() {
