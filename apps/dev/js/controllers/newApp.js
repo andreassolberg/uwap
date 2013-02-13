@@ -1,15 +1,18 @@
 define(function() {
 	
-	var newApp = function(container, callback) {
+	var newApp = function(container, callback, templates) {
 
 		this.container = container;
 		this.callback = callback;
+		this.templates = templates;
 		
 		this.verifiedidentifier = null;
 		this.verified = false;
 		this.verifytimer = null;
 
-		this.element = $("#newAppTemplate").tmpl();
+//		this.element = $("#newAppTemplate").tmpl();
+		console.log('newApp.html');
+		this.element = $(templates['newApp'].render());
 
 		console.log("this element", this.element);
 		$("div#modalContainer").append(this.element);
