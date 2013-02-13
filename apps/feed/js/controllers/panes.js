@@ -22,7 +22,7 @@ define(function(require, exports, module) {
 		this.current = null;
 
 		this.containerEl = el;
-		this.navbarEl = $('<div id="navbar"></div>').appendTo(el);
+		// this.navbarEl = $('<div id="navbar"></div>').appendTo(el);
 		this.panesEl = $('<div id="panes"></div>').appendTo(el);
 
 
