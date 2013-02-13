@@ -1,0 +1,30 @@
+[{
+"rooms": {			"gra": {
+
+					},
+					"orange": {
+
+					},
+					"lilla": {
+
+					},
+					"sort": {
+
+					},
+					"rod": {
+
+					},
+					"gul": {
+
+					},
+					"gronn": {
+
+					}
+			},
+"etg": {
+					"6": ["gul", "sort"],
+					"5": ["rod"],
+					"4": ["lilla", "orange"],
+					"3": ["gronn", "gra"]
+				}
+}]
