@@ -582,15 +582,22 @@ class So_Server {
 		if ($authorizationHeader !== null) return $authorizationHeader;
 		
 		if (!empty($_REQUEST['access_token'])) return $_REQUEST['access_token'];
-		
-		throw new Exception('Could not get provided Access Token');
+		return null;
+		// throw new Exception('Could not get provided Access Token');
 	}
 	
 	
-	public function getToken() {
+	public function getToken($required = true) {
 
 		$tokenstr = $this->getProvidedToken();
 		try {
+			if (empty($tokenstr)) {
+				if ($required) {
+					throw new Exception('Could not find provided Access token in request');
+				} else {
+					return null;
+				}
+			}
 			$token = $this->store->getToken($tokenstr);	
 		} catch(Exception $e) {
 			throw new So_UnauthorizedRequest('unauthorized_client', 'Could not find provided token');

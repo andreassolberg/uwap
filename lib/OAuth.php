@@ -165,7 +165,9 @@ class OAuth {
 	}
 
 	function getProvidedToken() {
-		return new AuthenticatedToken($this->server->getToken());
+		$token = $this->server->getToken(false);
+		if ($token === null) return null;
+		return new AuthenticatedToken($token);
 	}
 
 	function check($appscopes = array(), $scopes = array()) {
