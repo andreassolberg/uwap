@@ -225,7 +225,6 @@ define(function(require) {
 
 		try {
 			if (options.handler === 'plain') {
-				console.log("trying to use plain handler for this dataset", data, options); return;
 				$.ajax(ar);
 			} else {
 				$.oajax(ar);
