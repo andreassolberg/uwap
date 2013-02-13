@@ -11,13 +11,15 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 	}
 
 	var AppDashboard = Spine.Class.sub({
-		init: function(container, appconfig) {
+		init: function(container, appconfig, templates) {
 
 			var handlertmpl;
 			var that = this;
+			this.handlers = {};
 
 			this.container = container;
 			this.appconfig = appconfig;
+			this.templates = templates;
 
 			this.draw();		
 
@@ -77,12 +79,26 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 
 		draw: function() {
 			console.log("DRAW", this.appconfig);
+			this.appconfig.sizeH = this.appconfig['files-stats'].sizeH;
+			this.appconfig.capacityH = this.appconfig['files-stats'].capacityH;
+			this.appconfig.usage = this.appconfig['files-stats'].usage;
+			this.appconfig.count = this.appconfig['user-stats'].count;
+			this.appconfig.appstats = (this.appconfig['appdata-stats'] != null);
+			if(this.appconfig.appstats){
+				this.appconfig.appsizeH = this.appconfig['appdata-stats'].sizeH;
+				this.appconfig.appcapacityH = this.appconfig['appdata-stats'].capacityH;
+				this.appconfig.appusage = this.appconfig['appdata-stats'].usage;
+			}
 			if (this.appconfig.type === 'app') {
-				this.element = $("#appdashboardtmpl").tmpl(this.appconfig);
+//				this.element = $("#appdashboardtmpl").tmpl(this.appconfig);
+				this.element = $(this.templates['appdashboard'].render(this.appconfig));
 			} else if (this.appconfig.type === 'proxy') {
-				this.element = $("#proxydashboardtmpl").tmpl(this.appconfig);
+//				this.element = $("#proxydashboardtmpl").tmpl(this.appconfig);
+				this.element = $(this.templates['proxydashboard'].render(this.appconfig));
+				
 			} else {
-				this.element = $("#appdashboardtmpl").tmpl(this.appconfig);
+//				this.element = $("#appdashboardtmpl").tmpl(this.appconfig);
+				this.element = $(this.templates['appdashboard'].render(this.appconfig));
 			}
 			
 			console.log("this element", this.element);
@@ -148,8 +164,15 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 
 			if (this.appconfig.handlers) {
 				$.each(this.appconfig.handlers, function(hid, item) {
+					that.handlers[item.id];
 					item.id = hid;
-					handlertmpl = $("#authorizationhandlertmpl").tmpl(item);
+					that.handlers[item.id] = item;
+					if(item.type == "oauth1" || item.type =="oauth2"){
+						item.makeReset = true;
+					}
+//					handlertmpl = $("#authorizationhandlertmpl").tmpl(item);
+					console.log('authorizationhandler template-making');
+					handlertmpl = $(that.templates['authorizationhandler'].render(item));
 					$(that.element).find("tbody.authorizationhandlers").append(handlertmpl);
 					console.log("App has handlers", that.appconfig.handlers, handlertmpl);
 					// console.log(that.element.find("tbody.authorizationhandlers"));
@@ -174,11 +197,14 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 					console.error("Error storing authorization handler edit.");
 				});
 				
-			});
+			}, that.templates);
 			handlerEditor.activate();
 		},
 		handlerEdit: function(eventObject) {
-			var obj = $(eventObject.target).closest("tr").tmplItem().data;
+//			var obj = $(eventObject.target).closest("tr").tmplItem().data;
+			console.log(this.handlers);
+			console.log($(eventObject.target).attr('editid'));
+			var obj = this.handlers[$(eventObject.target).attr('editid')];
 			obj.new = false;
 			var that = this;
 			console.log("HandlerEdit on object: ", obj);
@@ -193,14 +219,15 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 					console.error("Error storing authorization handler edit.");
 				});
 				
-			});
+			}, that.templates);
 			handlerEditor.activate();
 		},
 		handlerReset: function(eventObject) {
 			console.log("handler", eventObject);
 		},
 		handlerDelete: function(eventObject) {
-			var object = $(eventObject.target).closest("tr").tmplItem().data;
+//			var object = $(eventObject.target).closest("tr").tmplItem().data;
+			var object = this.handlers[$(eventObject.target).attr('editid')];
 			var that = this;
 			console.log("HandlerDelete on object: ", object);
 

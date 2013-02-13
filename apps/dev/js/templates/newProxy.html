@@ -1,0 +1,57 @@
+<div class="modal hide" id="myModal">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">×</button>
+					<h3>Create new API Gatekeeper</h3>
+				</div>
+				<div class="modal-body">
+					<p>You are about to create a new API Gatekeeper at UNINETT WebApp Park.</p>
+
+					<form class="registerform form-inline">  
+
+						<p>First, you need to register an app identifier. This will be used as part of the domain name. It can only
+							contain letters and numbers [a-z] and [0-9].</p>
+
+						<p>
+							<input style="width: 200px" type="text" class="input" id="newProxyIdentifier" placeholder="Identifier">
+						</p>
+
+
+						<p>
+							<label class="checkbox">  
+							<input disabled="disabled" type="checkbox" > Use your own domain name </label>
+						</p>
+
+						<p style="display: none">
+							<input type="text" class="input" disabled="disabled" placeholder="yourowndomain.org">
+						</p>
+
+						<p>Your application will be accessible from:<br />
+							<code>https://<span class="newProxyIdentifierMirror">&lt;identifier&gt;</span>.uwap.org</code> 
+							<span class="idlabels"></span></p>
+
+						<p>Then, give your application a short desriptive name, and a longer descriptive text to explain what your application does.</p>
+
+						<p><input style="width: 300px" id="newProxyName" type="text" class="input" placeholder="Name"></p>
+
+
+						<p><textarea style="width: 300px" id="newProxyDescr" placeholder="Describe your application..."></textarea></p>
+
+
+						<p>Setup the endpoint of your API base.</p>
+						<p>
+							<input style="width: 380px" type="text" class="input" id="newProxyEndpoint" placeholder="http://apiendpoint.yourservice.org">
+						</p>
+
+						<p>Include a list of available scopes (optional):</p>
+						<p>
+							<input style="width: 380px" type="text" class="input" id="newProxyScopes" placeholder="scope1 scope2 scope3">
+						</p>
+
+					</form>
+
+				</div>
+				<div class="modal-footer">
+					<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+					<a href="#" class="createNewBtn btn btn-primary">Create new API Gatekeeper</a>
+				</div>
+			</div>

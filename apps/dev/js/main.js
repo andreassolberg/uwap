@@ -2,6 +2,8 @@ define(function(require, exports, module) {
 
 	var 
 		$ = require('jquery'),
+
+		hogan = require('uwap-core/js/hogan'),
 		UWAP = require('uwap-core/js/core'),
 		appPicker = require('controllers/appPicker'),
 		newApp = require('controllers/newApp'),
@@ -12,21 +14,41 @@ define(function(require, exports, module) {
 	
 	require("uwap-core/js/uwap-people");
 
-    require('uwap-core/js/jquery.tmpl');
-
 	require('uwap-core/bootstrap/js/bootstrap');	
 	require('uwap-core/bootstrap/js/bootstrap-modal');	
 	require('uwap-core/bootstrap/js/bootstrap-dropdown');
 
+	
+	var tmpl = {
+		    "appdashboard": require('uwap-core/js/text!templates/appdashboard.html'),
+		    "authhandlereditor": require('uwap-core/js/text!templates/authhandlereditor.html'),
+		    "authorizationhandler":  require('uwap-core/js/text!templates/authorizationhandler.html'),
+		    "frontpage": require('uwap-core/js/text!templates/frontpage.html'),
+		    "newApp": require('uwap-core/js/text!templates/newApp.html'),
+		    "proxydashboard": require('uwap-core/js/text!templates/proxydashboard.html')
+	};
+	
+	console.log('making templates compile');
+	var templates = {
+					"appdashboard": hogan.compile(tmpl.appdashboard),
+					"authhandlereditor": hogan.compile(tmpl.authhandlereditor),
+					"authorizationhandler": hogan.compile(tmpl.authorizationhandler),
+					"frontpage": hogan.compile(tmpl.frontpage),
+					"newApp": hogan.compile(tmpl.newApp),
+					"proxydashboard": hogan.compile(tmpl.proxydashboard)
+				};
+	console.log('done compile');
 
 	$("document").ready(function() {
 
 		var App = function(el, user) {
+			
+			
 			this.el = el;
 			this.user = user;
 
 			this.picker = new appPicker($("ul.applicationlist"));
-			this.fpage = new frontpage($("div#appmaincontainer"));
+			this.fpage = new frontpage($("div#appmaincontainer"), function(){}, templates);
 
 			$("span#username").html(this.user.name);
 
@@ -78,6 +100,7 @@ define(function(require, exports, module) {
 		App.prototype.load = function() {
 			var that = this;
 			// this.picker.empty();
+//			alert('Trying to list apps');
 			UWAP.appconfig.list(function(list) {
 				console.log("List of apps", list);
 				that.picker.addList(list);
@@ -90,7 +113,7 @@ define(function(require, exports, module) {
 			$("div#appmaincontainer").empty();
 
 			UWAP.appconfig.get(appid, function(appconfig) {
-				var adash = new AppDashboard($("div#appmaincontainer"), appconfig);
+				var adash = new AppDashboard($("div#appmaincontainer"), appconfig, templates);
 
 				console.log("Appconfig", appconfig);
 
@@ -120,7 +143,7 @@ define(function(require, exports, module) {
 				}, function(err) {
 					console.log("Error storing new app.");
 				});
-			});
+			}, templates);
 			
 			na.activate();
 		};

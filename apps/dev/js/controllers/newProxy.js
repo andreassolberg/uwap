@@ -9,7 +9,9 @@ define(function() {
 		this.verified = false;
 		this.verifytimer = null;
 
-		this.element = $("#newProxyTemplate").tmpl();
+//		this.element = $("#newProxyTemplate").tmpl();
+		console.log('newProxy.html');
+		this.element = $(templates['newProxy'].render());
 
 		console.log("this element", this.element);
 		$("div#modalContainer").append(this.element);

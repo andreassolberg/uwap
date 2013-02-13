@@ -1,9 +1,10 @@
 define(function() {
-	
-	var frontpage = function(container, callback) {
+
+	var frontpage = function(container, callback, templates) {
 		this.callback = callback;
 		this.container = container;
-		this.element = $("#frontpage").tmpl();
+//		this.element = $("#frontpage").tmpl();
+		this.element = $(templates['frontpage'].render());
 
 		container.append(this.element);
 
