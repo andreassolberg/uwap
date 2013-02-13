@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 		UWAP = require('uwap-core/js/core'),
 
 		moment = require('uwap-core/js/moment'),
-    	prettydate = require('uwap-core/js/pretty')
+    	prettydate = require('uwap-core/js/pretty'),
 
 		Tracker = require('Tracker'),
 		locations = require('locations'),
