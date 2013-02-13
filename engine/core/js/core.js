@@ -215,24 +215,30 @@ define(function(require) {
 			ar.contentType = 'application/json; charset=UTF-8';
 		}
 
-		if (typeof options === 'object') {
-			for(var key in options) {
-				if (options.hasOwnProperty(key)) {
-					ar[key] = options[key];
-				}
+
+		for(var key in options) {
+			if (options.hasOwnProperty(key)) {
+				ar[key] = options[key];
 			}
 		}
 
 
 		try {
 			if (options.handler === 'plain') {
+				console.log("trying to use plain handler for this dataset", data, options); return;
 				$.ajax(ar);
 			} else {
 				$.oajax(ar);
 			}
 			
 		} catch(exception) {
-			errorcallback(exception);
+			if (typeof errorcallback === 'function') {
+				errorcallback(exception);	
+			} else {
+				console.error("Error performing XHTTP Request: ", exception.message);
+			}
+
+			
 		}
 
 	};
@@ -431,16 +437,19 @@ define(function(require) {
 
 		get: function (url, options, callback, errorcallback) {
 
-			options = options || {};
-			options.url = url;
-			options.returnTo = window.location.href;
+			var data = {};
+			data.url = url;
+			data.returnTo = window.location.href;
+			data.appid = UWAP.utils.appid;
 
-			options.appid = UWAP.utils.appid;
+			options = options || {};
+			
+
 
 			UWAP._request(
 				'POST', UWAP.utils.getEngineURL("/api/rest"),
+				data,
 				options, 
-				null,
 				callback, errorcallback);
 		}
 		

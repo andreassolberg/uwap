@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 
 	Temp.prototype.loadNow = function() {
 		var url = "http://solweb.no/data/twine/temp.php";
-		UWAP.data.get(url, {}, $.proxy(this.responseNow, this));
+		UWAP.data.get(url, {handler: "solberg"}, $.proxy(this.responseNow, this));
 	}
 
 
@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 
 	Temp.prototype.loadTS = function() {
 		var url = "http://solweb.no/data/twine/timeseries.php";
-		UWAP.data.get(url, {}, $.proxy(this.responseTS, this));
+		UWAP.data.get(url, {handler: "solberg"}, $.proxy(this.responseTS, this));
 	}
 	
 	Temp.prototype.responseTS = function(data) {

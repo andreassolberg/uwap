@@ -20,7 +20,7 @@ Require authentication to store tokens or share tokens?
 
 	sharedtoken true/false
 
-Not exposed in dev UI yet.
+Not exposed in dev UI yet. (this is deprecated i think.)
 
 
 ## OAuth 1.0
