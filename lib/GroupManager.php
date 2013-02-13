@@ -263,6 +263,10 @@ class GroupManager {
 		$agroups = $agora->getGroups();
 		$result = array_merge($result, $agroups);
 
+		// $redmine = new GroupFetcherRedmine($this->userid);
+		// $rgroups = $redmine->getGroups();
+		// $result = array_merge($result, $rgroups);
+
 
 		foreach($moregroups AS $key => $title) {
 			$ne = array();
@@ -277,11 +281,6 @@ class GroupManager {
 
 			$result[] = $ne;
 		}
-
-
-
-
-
 
 		return $result;
 	}
