@@ -25,6 +25,11 @@ define(function(require) {
 		jso.jso_configure(conf);
 	};
 
+	UWAP.utils.hasToken = function() {
+		var token = jso.jso_getToken("uwap");
+		return (token !== null);
+	}
+
 	/*
 	 * Setup and install the ChildBrowser plugin to Phongap/Cordova.
 	 */
@@ -222,11 +227,16 @@ define(function(require) {
 			}
 		}
 
+		console.log("UWAP.data _request data ", data, " options", options);
 
 		try {
-			if (options.handler === 'plain') {
+			if (options.handler === 'plain' && !options.auth) {
+				// console.log("Attempt nonauthenticated REST request to ", data.url); 
 				$.ajax(ar);
+
 			} else {
+				// console.log("Attempt authenticated REST request to ", data.url); return;
+				console.log("UWAP.data authenticated _request data ", data, " options", options);
 				$.oajax(ar);
 			}
 			
@@ -248,18 +258,25 @@ define(function(require) {
 
 		require: function (callbackSuccess, options) {
 			options = options || {};
+			options.auth = true;
 			UWAP._request(
 				'GET', 
 				UWAP.utils.getEngineURL("/api/userinfo"),
-				options, null, callbackSuccess);
+				null, options, callbackSuccess);
 		},
 		check: function (callbackSuccess, callbackNo) {
+			var options = {
+				auth: true,
+				"jso_allowia": false
+			};
+			if (!UWAP.utils.hasToken()) {
+				callbackNo();
+				return;
+			}
 			UWAP._request(
 				'GET', 
 				UWAP.utils.getEngineURL("/api/userinfo"),
-				null, {
-					"jso_allowia": false
-				}, callbackSuccess, callbackNo);
+				null,options, callbackSuccess, callbackNo);
 		},
 		logout: function() {
 			jso.jso_wipe();
@@ -442,9 +459,12 @@ define(function(require) {
 			data.appid = UWAP.utils.appid;
 
 			options = options || {};
+			if (options.handler) {
+				data.handler = options.handler;
+			}
+
+			console.log("UWAP.data options", options);
 			
-
-
 			UWAP._request(
 				'POST', UWAP.utils.getEngineURL("/api/rest"),
 				data,
