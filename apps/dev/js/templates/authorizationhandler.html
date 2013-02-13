@@ -1,0 +1,16 @@
+<tr>
+				<td>{{title}}</td>
+				<td><code>{{id}}</code></td>
+				<td>{{type}}</td>
+
+				<!-- Actions -->
+				<td>
+					<a class="handlerEdit btn btn-mini" href="#" editid="{{id}}"><i class="icon-wrench" editid="{{id}}"></i> Edit</a> 
+					<a class="handlerDelete btn btn-danger btn-mini" href="#" editid="{{id}}"><i class="icon-trash icon-white" editid="{{id}}"></i> Delete</a>
+					{{#makeReset}}
+						
+						<a class="handlerReset btn btn-warning btn-mini" href="#" id="reset{{id}}"><i class="icon-repeat icon-white"></i> Reset</a> 
+						
+					{{/makeReset}}
+				</td>
+			</tr>
