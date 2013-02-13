@@ -167,6 +167,9 @@ define(function(require) {
 	UWAP._request = function(method, url, data, options, callback, errorcallback, dataprocess) {
 		method = method || 'GET';
 
+		options = options || {};
+		options.handler = options.handler || 'plain';
+
 		var ar = {
 			type: method,
 			url: url,
@@ -219,13 +222,21 @@ define(function(require) {
 				}
 			}
 		}
+
+
 		try {
-			$.oajax(ar);
+			if (options.handler === 'plain') {
+				$.ajax(ar);
+			} else {
+				$.oajax(ar);
+			}
+			
 		} catch(exception) {
 			errorcallback(exception);
 		}
 
 	};
+
 
 
 	UWAP.auth = {

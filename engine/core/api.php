@@ -540,6 +540,49 @@ try {
 
 		}
 
+	/**
+	 *  The SOA Proxy REST data API.
+	 */
+	} else if (Utils::route('post', '^/soa$', &$qs, &$args)) {
+
+
+		if (empty($args['url'])) {
+			throw new Exception("Missing parameter [url]");
+		}
+
+		if (empty($args['appid'])) {
+			throw new Exception("Missing parameter [appid]");
+		}
+
+		$url = $args["url"];
+		$handler = "plain";
+
+		/*
+		 * Try to figure out on behalf of which app to perform the request.
+		 * This will be used to lookup HTTP REST handler configurations.
+		 */
+		$targetapp = $args['appid'];
+
+		if (!empty($args["handler"])) $handler = $args["handler"];
+
+
+
+		// Initiate an Oauth server handler
+		$oauth = new OAuth();
+
+		// Get provided Token on this request, if present.
+		$token = $oauth->getProvidedToken();
+
+		$client = HTTPClient::getClient($handler, $targetapp);
+
+		if ($token) {
+			$oauth->check(null, array('app_' . $targetapp . '_user'));
+			$userid = $token->getUserID();
+			$client->setAuthenticated($userid);
+		}
+
+		$response = $client->get($url, $args);
+
 
 
 	/**
@@ -577,7 +620,7 @@ try {
 
 		$client = HTTPClient::getClient($handler, $targetapp);
 
-		if ($token) {
+		if ($token && $handler !== 'plain') {
 			$oauth->check(null, array('app_' . $targetapp . '_user'));
 			$userid = $token->getUserID();
 			$client->setAuthenticated($userid);

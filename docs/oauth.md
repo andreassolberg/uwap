@@ -74,11 +74,12 @@ This property indicates
 		"descr" : "A description of the test application.",
 		"id" : "vootprovider",
 		"name" : "VOOT Provider",
-		"owner" : {
-			"displayName" : "Andreas Åkre Solberg",
-			"email" : "andreas.solberg@uninett.no"
-		},
-		"owner-userid" : "andreas@uninett.no",
+	//	"owner" : {
+	//		"displayName" : "Andreas Åkre Solberg",
+	//		"email" : "andreas.solberg@uninett.no"
+	//	},
+		"uwap-userid" : "andreas@uninett.no",
+	//	"owner-userid" : "andreas@uninett.no",
 		"proxies" : {
 			"api" : {
 				"endpoints" : [
@@ -95,8 +96,7 @@ This property indicates
 		"status" : [
 			"pendingDAV"
 		],
-		"type" : "proxy",
-		"uwap-userid" : "andreas@uninett.no"
+		"type" : "proxy"
 	}
 
 
