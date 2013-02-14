@@ -15,6 +15,8 @@ class HTTPClientOauth1 extends HTTPClient {
 		$auth->req();
 		$userdata = $auth->getUserdata();
 
+		$this->verifyURL($url);
+
 		$consumer = new sspmod_oauth_Consumer($this->config['client_id'], $this->config['client_secret']);
 
 		// print_r($this->config); exit;

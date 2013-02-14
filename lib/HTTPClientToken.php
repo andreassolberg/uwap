@@ -14,6 +14,8 @@ class HTTPClientToken extends HTTPClient {
 
 		$headers = array($this->config["token_hdr"] => $this->config["token_val"]);
 
+		$this->verifyURL($url);
+
 		$redir = true;
 		// if (isset($this->config['followRedirects']) && $this->config['followRedirects'] === false) {
 		// 	$redir = false;

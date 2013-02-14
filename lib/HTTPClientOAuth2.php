@@ -23,6 +23,8 @@ class HTTPClientOAuth2 extends HTTPClient {
 		// }
 		$makeMoreAttempts = true;
 
+		$this->verifyURL($url);
+
 
 		while ($makeMoreAttempts) {
 			$makeMoreAttempts = false;

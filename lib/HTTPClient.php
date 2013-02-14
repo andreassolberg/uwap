@@ -183,16 +183,26 @@ class HTTPClient {
 		return $result;
 	}
 
+	public function verifyURL($url) {
+		error_log(" [================= x =================] About to verify URL " . $url . "  " . $this->config['host']);
+		if (isset($this->config['host'])) {
+			// Throw an exception if configured prefix does not match handler host configuration.
+			if (strpos($url, $this->config['host']) !== 0) {
+				throw new Exception('This authroization handler is limited to only work on a specific host, and this was not the one...');
+			}
+		}
+	}
+
 	public function get($url, $options) {
 		$result = array("status" => "ok");
+
+		$this->verifyURL($url);
 
 		// ($url, $headers = array(), $redir = true, $curl = false, $options = array()) {
 		$result["data"] = $this->rawget($url, array(), true, false, $options);
 
 		error_log("Got data: " . var_export($result["data"], true)) ;
-
 		$result = $this->decode($result, $options);
-		
 		return $result;
 	}
 

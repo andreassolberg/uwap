@@ -19,6 +19,7 @@ class HTTPClientBasic extends HTTPClient {
 		);
 
 		$this->getUserAuthHeaders($headers);
+		$this->verifyURL($url);
 
 		// if (isset($this->config['user']) && $this->config['user'] === true) {
 		// 	$headers["UWAP-UserID"] = $this->userauth();
