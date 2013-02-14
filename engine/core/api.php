@@ -618,7 +618,7 @@ try {
 
 		// Initiate an Oauth server handler
 		$oauth = new OAuth();
-		$token = $oauth->getProvidedToken();
+		$token = $oauth->getProvidedToken(false);
 		// echo '<pre>';  print_r($token);
 
 		$client = HTTPClient::getClient($handler, $targetapp);

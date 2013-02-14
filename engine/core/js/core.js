@@ -174,6 +174,7 @@ define(function(require) {
 
 		options = options || {};
 		options.handler = options.handler || 'plain';
+		options.auth = (typeof options.auth !== 'undefined' ) ?  options.auth : true;
 
 		var ar = {
 			type: method,
@@ -258,7 +259,6 @@ define(function(require) {
 
 		require: function (callbackSuccess, options) {
 			options = options || {};
-			options.auth = true;
 			UWAP._request(
 				'GET', 
 				UWAP.utils.getEngineURL("/api/userinfo"),
@@ -266,7 +266,6 @@ define(function(require) {
 		},
 		check: function (callbackSuccess, callbackNo) {
 			var options = {
-				auth: true,
 				"jso_allowia": false
 			};
 			if (!UWAP.utils.hasToken()) {
@@ -459,6 +458,7 @@ define(function(require) {
 			data.appid = UWAP.utils.appid;
 
 			options = options || {};
+			options.auth = false;
 			if (options.handler) {
 				data.handler = options.handler;
 			}

@@ -164,8 +164,8 @@ class OAuth {
 		$this->server->info();
 	}
 
-	function getProvidedToken() {
-		$token = $this->server->getToken(false);
+	function getProvidedToken($required = true) {
+		$token = $this->server->getToken($required);
 		if ($token === null) return null;
 		return new AuthenticatedToken($token);
 	}
