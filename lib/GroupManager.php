@@ -259,9 +259,9 @@ class GroupManager {
 
 
 
-		$agora = new GroupFetcherAgora($this->userid);
-		$agroups = $agora->getGroups();
-		$result = array_merge($result, $agroups);
+		// $agora = new GroupFetcherAgora($this->userid);
+		// $agroups = $agora->getGroups();
+		// $result = array_merge($result, $agroups);
 
 		// $redmine = new GroupFetcherRedmine($this->userid);
 		// $rgroups = $redmine->getGroups();
