@@ -603,8 +603,6 @@ try {
 		$url = $args["url"];
 		$handler = "plain";
 
-		$useoauth = false;
-		if (isset($args['oauth']) && $args['oauth']) { $useoauth = true; }
 
 		/*
 		 * Try to figure out on behalf of which app to perform the request.
@@ -614,21 +612,17 @@ try {
 
 		if (!empty($args["handler"])) $handler = $args["handler"];
 
-		// echo "Oauth " . var_export($useoauth, true);
-		// echo "handler " . var_export($handler, true);
 
 		// Initiate an Oauth server handler
+		// Get provided Token on this request, if present.
 		$oauth = new OAuth();
 		$token = $oauth->getProvidedToken(false);
-		// echo '<pre>';  print_r($token);
 
+		// Get an HTTP Client handler
 		$client = HTTPClient::getClient($handler, $targetapp);
 
+		// Make HTTP request authenticated by both client and user if applicable.
 		if (($token !== null) || ($handler !== 'plain')) {
-
-			// Get provided Token on this request, if present.
-			
-
 			$oauth->check(null, array('app_' . $targetapp . '_user'));
 			$userid = $token->getUserID();
 			$userdata = $token->getUserdataWithGroups();
@@ -640,17 +634,8 @@ try {
 		// print_r($client);
 		// echo '---- o ---- o ---- o ---- o ---- o ---- o ---- ';
 
+
 		$response = $client->get($url, $args);
-
-
-	// } else if (Utils::route('post', '^/apps$', &$parameters, &$object)) {
-
-	// 	$id = $object["id"];
-	// 	Utils::validateID($id);
-	// 	$config->store($object, $auth->getRealUserID());
-
-	// 	$ac = Config::getInstance($id);
-	// 	$response['data'] = $ac->getConfig();
 
 
 
