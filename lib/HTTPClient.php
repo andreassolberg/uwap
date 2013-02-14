@@ -4,16 +4,32 @@
 class HTTPClient {
 	
 	protected $config;
-	protected $userid = null;
+	protected $userinfo = null;
 	protected $appid = null;
 	public function __construct($config, $appid) {
 		$this->config = $config;
 		$this->appid = $appid;
 	}
 
-	public function setAuthenticated($userid) {
-		$this->userid = $userid;
+	public function setAuthenticated($userinfo) {
+		$this->userinfo = $userinfo;
 	}
+
+
+	protected function getUserAuthHeaders(&$headers) {
+
+		// $headers = array();
+
+		if (!isset($this->config['user'])) return $headers;
+		if (!$this->config['user']) return $headers;
+		if ($this->userinfo === null) throw new Exception('Cannot add http headers with authenticated user when user is not authenticated.');
+
+		$headers['UWAP-UserID'] = $this->userinfo['userid'];
+		$headers["UWAP-Groups"] = join(',', array_keys($this->userinfo['groups']));
+
+		return $headers;
+	}
+
 
 	// TODO: Security check on URL to not refer to local file system
 	private function file_get_contents_curl($url, $headers = array(), $redir = true) {

@@ -30,12 +30,15 @@ class HTTPClientToken extends HTTPClientUserAuth {
 			$curl = true;
 		}
 		
-		if (isset($this->config['userinfo'])) {
-			error_log('Config: ' . json_encode($this->config['userinfo']));
-			if (isset($this->config['userinfo']['userid']) && $this->config['userinfo']['userid'] === true) {
-				$headers["UWAP-UserID"] = $this->userauth();
-			}
-		}
+		// if (isset($this->config['userinfo'])) {
+		// 	error_log('Config: ' . json_encode($this->config['userinfo']));
+		// 	if (isset($this->config['userinfo']['userid']) && $this->config['userinfo']['userid'] === true) {
+		// 		$headers["UWAP-UserID"] = $this->userauth();
+		// 	}
+		// }
+
+		$this->getUserAuthHeaders($headers);
+
 
 		error_log('HTTPClientToken Handler: ' . json_encode($options['handler']));
 		error_log('HTTPClientToken URL: ' . json_encode($options['url']));

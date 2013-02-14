@@ -4,16 +4,16 @@
 abstract class HTTPClientUserAuth extends HTTPClient {
 	
 
-	protected function clientauth($u, $p) {
-		return "Basic " . base64_encode($u . ':' . $p);
-	}
+	// protected function clientauth($u, $p) {
+	// 	return "Basic " . base64_encode($u . ':' . $p);
+	// }
 
-	protected function groups() {
-		$groups = array('testgroups');
-		return join(',', $groups);
-	}
+	// protected function groups() {
+	// 	$groups = array('testgroups');
+	// 	return join(',', $groups);
+	// }
 
-	protected function userauth() {
+	// protected function userauth() {
 
 		// require_once('../simplesamlphp/lib/_autoload.php');
 
@@ -27,14 +27,14 @@ abstract class HTTPClientUserAuth extends HTTPClient {
 		// 	throw new Exception("could not obtain userid of authenticated user");
 		// }
 
-		if (empty($this->userid)) {
-			throw new Exception("REST handler requires an user authenticated token to perform operation.");
-		}
-		$userid = $this->userid;
-		return $userid;
+		// if (empty($this->userid)) {
+		// 	throw new Exception("REST handler requires an user authenticated token to perform operation.");
+		// }
+		// $userid = $this->userid;
+		// return $userid;
 
 		// return $attr["eduPersonPrincipalName"][0];
-	}
+	// }
 
 
 }

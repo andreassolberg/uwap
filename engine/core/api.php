@@ -17,6 +17,9 @@ header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: HEAD, GET, OPTIONS, POST, DELETE, PATCH");
 header("Access-Control-Allow-Headers: Authorization, X-Requested-With, Origin, Accept, Content-Type");
 
+$profiling = microtime(true);
+error_log("Time to run command:     ======> " . (microtime(true) - $profiling));
+
 try {
 
 	if (Utils::route('options', '.*', &$parameters)) {
@@ -513,7 +516,6 @@ try {
 			$oauth->check(null, array('feedwrite'));
 
 			// echo "About to delete an item: " . $qs[1];
-			
 			$response['data'] = $feed->delete($qs[1]);
 
 		} else if (Utils::route('post', '^/feed/item/([a-z0-9\-]+)/respond$', &$qs, &$args)) {
@@ -574,13 +576,12 @@ try {
 		$token = $oauth->getProvidedToken();
 
 		$client = HTTPClient::getClient($handler, $targetapp);
-
 		if ($token) {
 			$oauth->check(null, array('app_' . $targetapp . '_user'));
 			$userid = $token->getUserID();
-			$client->setAuthenticated($userid);
+			$userdata = $token->getUserdataWithGroups();
+			$client->setAuthenticated($userdata);
 		}
-
 		$response = $client->get($url, $args);
 
 
@@ -630,7 +631,8 @@ try {
 
 			$oauth->check(null, array('app_' . $targetapp . '_user'));
 			$userid = $token->getUserID();
-			$client->setAuthenticated($userid);
+			$userdata = $token->getUserdataWithGroups();
+			$client->setAuthenticated($userdata);
 		}
 
 		// echo '<pre>'; 
@@ -734,6 +736,9 @@ try {
 
 	header('Content-Type: application/json; charset=utf-8');
 	echo json_encode($response);
+
+	// $profiling = microtime(true);
+	error_log("Time to run command:     ======> " . (microtime(true) - $profiling));
 
 
 } catch(Exception $e) {

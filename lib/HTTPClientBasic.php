@@ -4,6 +4,9 @@
 class HTTPClientBasic extends HTTPClientUserAuth {
 	
 
+	protected function clientauth($u, $p) {
+		return "Basic " . base64_encode($u . ':' . $p);
+	}
 
 	public function get($url, $options) {
 		$result = array("status" => "ok");
@@ -15,12 +18,14 @@ class HTTPClientBasic extends HTTPClientUserAuth {
 			"Authorization" => $this->clientauth($this->config["client_user"], $this->config["client_secret"])
 		);
 
-		if (isset($this->config['user']) && $this->config['user'] === true) {
-			$headers["UWAP-UserID"] = $this->userauth();
-		}
-		if (isset($this->config['groups']) && $this->config['groups'] === true) {
-			$headers["UWAP-Groups"] = $this->groups();
-		}
+		$this->getUserAuthHeaders($headers);
+
+		// if (isset($this->config['user']) && $this->config['user'] === true) {
+		// 	$headers["UWAP-UserID"] = $this->userauth();
+		// }
+		// if (isset($this->config['groups']) && $this->config['groups'] === true) {
+		// 	$headers["UWAP-Groups"] = $this->groups();
+		// }
 
 		error_log("HTTPClientBasic headers:" .  var_export($headers, true));
 
