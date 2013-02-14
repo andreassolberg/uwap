@@ -22,8 +22,8 @@ require_once($base . '/GroupFetcherRedmine.php');
 require_once($base . '/AppDirectory.php');
 require_once($base . '/UWAPStore.php');
 require_once($base . '/UWAPLogger.php');
+
 require_once($base . '/HTTPClient.php');
-require_once($base . '/HTTPClientUserAuth.php');
 require_once($base . '/HTTPClientBasic.php');
 require_once($base . '/HTTPClientToken.php');
 require_once($base . '/HTTPClientOAuth1.php');

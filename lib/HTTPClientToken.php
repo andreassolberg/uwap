@@ -1,7 +1,7 @@
 <?php
 
 
-class HTTPClientToken extends HTTPClientUserAuth {
+class HTTPClientToken extends HTTPClient {
 	
 
 	public function get($url, $options) {

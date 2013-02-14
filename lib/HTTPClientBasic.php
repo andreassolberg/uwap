@@ -1,7 +1,7 @@
 <?php
 
 
-class HTTPClientBasic extends HTTPClientUserAuth {
+class HTTPClientBasic extends HTTPClient {
 	
 
 	protected function clientauth($u, $p) {
