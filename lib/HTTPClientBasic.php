@@ -33,7 +33,7 @@ class HTTPClientBasic extends HTTPClient {
 		$result["data"] = $this->rawget($url, $headers, true, false, $options);
 		// ($url, $headers = array(), $redir = true, $curl = false, $options = array()) {
 		// 
-		// $result = $this->decode($result, $options);
+		$result = $this->decode($result, $options);
 		return $result;
 	}
 
