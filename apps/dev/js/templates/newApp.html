@@ -1,46 +1,45 @@
 <div class="modal hide" id="myModal">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">x</button>
-					<h3>Create new Application</h3>
-				</div>
-				<div class="modal-body">
-					<p>You are about to create a new application to be hosted in the UNINETT WebApp Park.</p>
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal">x</button>
+		<h3>Create new Application</h3>
+	</div>
+	<div class="modal-body">
+		<p>You are about to create a new application to be hosted in the UNINETT WebApp Park.</p>
 
-					<form class="registerform form-inline">  
+		<form class="registerform form-inline">  
 
-						<p>First, you need to register an app identifier. This will be used as part of the domain name. It can only
-							contain letters and numbers [a-z] and [0-9].</p>
+			<p>First, you need to register an app identifier. This will be used as part of the domain name. It can only
+				contain letters and numbers [a-z] and [0-9].</p>
 
-						<p>
-							<input style="width: 200px" type="text" class="input" id="newAppIdentifier" placeholder="Identifier">
-						</p>
+			<p>
+				<input style="width: 200px" type="text" class="input" id="newAppIdentifier" placeholder="Identifier">
+			</p>
 
-						<p>
-							<label class="checkbox">  
-							<input disabled="disabled" type="checkbox" > Use your own domain name </label>
-						</p>
+			<p>
+				<label class="checkbox">  
+				<input disabled="disabled" type="checkbox" > Use your own domain name </label>
+			</p>
 
-						<p style="display: none">
-							<input type="text" class="input" disabled="disabled" placeholder="yourowndomain.org">
-						</p>
+			<p style="display: none">
+				<input type="text" class="input" disabled="disabled" placeholder="yourowndomain.org">
+			</p>
 
-						<p>Your application will be accessible from:<br />
-							<code>https://<span class="newAppIdentifierMirror">&lt;identifier&gt;</span>.uwap.org</code> 
-							<span class="idlabels"></span></p>
+			<p>Your application will be accessible from:<br />
+				<code>https://<span class="newAppIdentifierMirror">&lt;identifier&gt;</span>.uwap.org</code> 
+				<span class="idlabels"></span></p>
 
-						<p>Then, give your application a short desriptive name, and a longer descriptive text to explain what your application does.</p>
+			<p>Then, give your application a short desriptive name, and a longer descriptive text to explain what your application does.</p>
 
-						<p><input style="width: 300px" id="newAppName" type="text" class="input" placeholder="Name"></p>
-
-
-						<p><textarea style="width: 300px" id="newAppDescr" placeholder="Describe your application..."></textarea></p>
+			<p><input style="width: 300px" id="newAppName" type="text" class="input" placeholder="Name"></p>
 
 
-					</form>
+			<p><textarea style="width: 300px" id="newAppDescr" placeholder="Describe your application..."></textarea></p>
 
-				</div>
-				<div class="modal-footer">
-					<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-					<a href="#" class="createNewBtn btn btn-primary">Create new application</a>
-				</div>
-			</div>
+		</form>
+
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+		<a href="#" class="createNewBtn btn btn-primary">Create new application</a>
+	</div>
+</div>

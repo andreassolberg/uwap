@@ -6,6 +6,9 @@ class HTTPClient {
 	protected $config;
 	protected $userinfo = null;
 	protected $appid = null;
+
+	protected $clientid, $clientScopes;
+
 	public function __construct($config, $appid) {
 		$this->config = $config;
 		$this->appid = $appid;
@@ -15,6 +18,10 @@ class HTTPClient {
 		$this->userinfo = $userinfo;
 	}
 
+	public function setAuthenticatedClient($clientid, $scopes) {
+		$this->clientid = $clientid;
+		$this->clientScopes = $scopes;
+	}
 
 	protected function getUserAuthHeaders(&$headers) {
 
@@ -24,8 +31,14 @@ class HTTPClient {
 		if (!$this->config['user']) return $headers;
 		if ($this->userinfo === null) throw new Exception('Cannot add http headers with authenticated user when user is not authenticated.');
 
+		if (empty($this->clientScopes)) {
+			$this->clientScopes = array();
+		}
+
 		$headers['UWAP-UserID'] = $this->userinfo['userid'];
 		$headers["UWAP-Groups"] = join(',', array_keys($this->userinfo['groups']));
+		$headers['UWAP-Client'] = $this->clientid;
+		$headers["UWAP-Scopes"] = join(',', $this->clientScopes);
 
 		return $headers;
 	}
@@ -184,7 +197,7 @@ class HTTPClient {
 	}
 
 	public function verifyURL($url) {
-		error_log(" [================= x =================] About to verify URL " . $url . "  " . $this->config['host']);
+		// error_log(" [================= x =================] About to verify URL " . $url . "  " . $this->config['host']);
 		if (isset($this->config['host'])) {
 			// Throw an exception if configured prefix does not match handler host configuration.
 			if (strpos($url, $this->config['host']) !== 0) {
@@ -206,7 +219,31 @@ class HTTPClient {
 		return $result;
 	}
 
-	static function getClient($handler, $appid = null) {
+
+	public static function getClientWithConfig($config, $appid) {
+		if (!is_array($config)) throw new Exception('Must call getClientWithConfig() with config array');
+
+		switch($config['type']) {
+
+			case "basic":
+				return new HTTPClientBasic($config, $appid);
+
+			case "token":
+				return new HTTPClientToken($config, $appid);
+
+			case "oauth2":
+				return new HTTPClientOAuth2($config, $appid);
+
+			case "oauth1":
+				return new HTTPClientOAuth1($config, $appid);
+
+			case "plain":
+			default:
+				return new HTTPClient($config, $appid);
+		}
+	}
+
+	public static function getClient($handler, $appid = null) {
 
 		$subconfigobj = Config::getInstance($appid);
 		$subhost = $subconfigobj->getID();

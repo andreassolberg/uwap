@@ -26,6 +26,28 @@ class Config {
 		}
 	}
 
+
+	/**
+	 * Public static function get to get an config instance for a specific app.
+	 * @var [type]
+	 */
+	public static function getInstanceFromHost($host = null) {
+
+		if ($host === null) {
+			$host = Utils::getHost();
+		}
+		$id = Utils::getSubID($host);	
+		if ($id === false) {
+			// Lookup external host from appconfig.
+			$id = self::getSubIDfromHost($host);
+		}
+
+		if (!array_key_exists($id, self::$instances)) {
+			self::$instances[$id] = new self($id);
+		}
+		return self::$instances[$id];
+	}
+
 	/**
 	 * Public static function get to get an config instance for a specific app.
 	 * @var [type]
@@ -50,6 +72,9 @@ class Config {
 	}
 
 	public static function getSubIDfromHost($host) {
+
+		$sid = Utils::getSubID($host);
+
 		$store = new UWAPStore();
 		$res = $store->queryOne('appconfig', array('externalhost' => $host));
 		if (!empty($res)) {
@@ -441,6 +466,7 @@ class Config {
 		$config = self::getInstance();
 		return $config->_getValue($key, $default, $required);
 	}
+
 
 
 

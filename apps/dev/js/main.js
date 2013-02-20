@@ -20,23 +20,25 @@ define(function(require, exports, module) {
 
 	
 	var tmpl = {
-		    "appdashboard": require('uwap-core/js/text!templates/appdashboard.html'),
-		    "authhandlereditor": require('uwap-core/js/text!templates/authhandlereditor.html'),
-		    "authorizationhandler":  require('uwap-core/js/text!templates/authorizationhandler.html'),
-		    "frontpage": require('uwap-core/js/text!templates/frontpage.html'),
-		    "newApp": require('uwap-core/js/text!templates/newApp.html'),
-		    "proxydashboard": require('uwap-core/js/text!templates/proxydashboard.html')
+		"appdashboard": require('uwap-core/js/text!templates/appdashboard.html'),
+		"proxydashboard": require('uwap-core/js/text!templates/proxydashboard.html'),
+		"authhandlereditor": require('uwap-core/js/text!templates/authhandlereditor.html'),
+		"authorizationhandler":  require('uwap-core/js/text!templates/authorizationhandler.html'),
+		"frontpage": require('uwap-core/js/text!templates/frontpage.html'),
+		"newApp": require('uwap-core/js/text!templates/newApp.html'),
+		"newProxy": require('uwap-core/js/text!templates/newProxy.html')
 	};
 	
 	console.log('making templates compile');
 	var templates = {
-					"appdashboard": hogan.compile(tmpl.appdashboard),
-					"authhandlereditor": hogan.compile(tmpl.authhandlereditor),
-					"authorizationhandler": hogan.compile(tmpl.authorizationhandler),
-					"frontpage": hogan.compile(tmpl.frontpage),
-					"newApp": hogan.compile(tmpl.newApp),
-					"proxydashboard": hogan.compile(tmpl.proxydashboard)
-				};
+		"appdashboard": hogan.compile(tmpl.appdashboard),
+		"authhandlereditor": hogan.compile(tmpl.authhandlereditor),
+		"authorizationhandler": hogan.compile(tmpl.authorizationhandler),
+		"frontpage": hogan.compile(tmpl.frontpage),
+		"newApp": hogan.compile(tmpl.newApp),
+		"newProxy": hogan.compile(tmpl.newProxy),
+		"proxydashboard": hogan.compile(tmpl.proxydashboard)
+	};
 	console.log('done compile');
 
 	$("document").ready(function() {
@@ -152,6 +154,7 @@ define(function(require, exports, module) {
 			var that = this;
 			if (event) event.preventDefault();
 
+			console.log("Initiating new Proxy...");
 			var na = new newProxy(that.el, function(no) {
 				
 				UWAP.appconfig.store(no, function() {
@@ -165,7 +168,7 @@ define(function(require, exports, module) {
 				}, function(err) {
 					console.log("Error storing new app.");
 				});
-			});
+			}, templates);
 			na.activate();
 		}
 

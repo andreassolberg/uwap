@@ -11,107 +11,107 @@ class Proxy_REST {
 
 
 
-	function oauth() {
-		$storage = new So_StorageServerUWAP();
-		$server = new So_Server($storage);
-
-		$token = $server->checkToken();
-		$this->userid = $token->userid;
-		// if ($token->userid !== 'andreas@uninett.no') throw new Exception('Youre not authorized to access this information.');
-
-	}
-
-	protected function rawget($url, $headers = array(), $redir = true, $curl = false) {
-
-		$headerstring = '';
-		foreach($headers AS $k => $v) {
-			$headerstring .= $k . ': ' . $v . "\r\n";
-		}
-		$method = "GET";
-
-		if (isset($opts["method"])) {
-			$method = $opts["method"];
-		}
-		$opts = array(
-			'http'=>array(
-				'method'=> $method,
-				'header'=> $headerstring,
-				'follow_location' => $redir,
-				'max_redirects' => 1
-			)
-		);
-		error_log("URL: " . $url);
-		error_log("Options: " . var_export($opts, true));
-		error_log("Header string: " . $headerstring);
-		error_log("Headers: " . var_export($headers, true));
-		$context = stream_context_create($opts);
-
-		if ($curl) {
-			return $this->file_get_contents_curl($url, $headers, $redir);
-		}
-
-		return file_get_contents($url, false, $context);
-		// return file_get_contents($url);
-	}
-
-
-	function getInfo() {
-		$fullpath = $_SERVER['REQUEST_URI'];
-		$proxyconfig = $this->config->getValue('proxies', array());
-
-		return array(
-			'fullpath' => $fullpath,
-			'proxyconfig' => $proxyconfig,
-		);
-	}
-
 	function show() {
 
 
-		$fullpath = $_SERVER['REQUEST_URI'];
-		$proxyconfig = $this->config->getValue('proxies', array());
+		try {
+
+			if (Utils::route(false, '.*', &$qs, &$args)) {
+
+				// if (empty($args['url'])) {
+				// 	throw new Exception("Missing parameter [url]");
+				// }
+
+				// if (empty($args['appid'])) {
+				// 	throw new Exception("Missing parameter [appid]");
+				// }
+				
+
+				/*
+				 * TODO: Convert incoming request to a new method url path qs etc.
+				 * make it work.
+				 */
 
 
-		if (preg_match('|^/([a-zA-Z0-9_\-]+)/(.*?)$|', $fullpath, $matches)) {
 
-			$proxy = $matches[1];
-			$remotepath = $matches[2];
+				$url = $args["url"];
+				$handler = "plain";
 
-			if (!isset($proxyconfig[$proxy])) {
-				throw new Exception('Proxy not setup for this endpoint.');
+				$remoteHost = parse_url($url, PHP_URL_HOST);
+				$remoteConfig = Config::getInstanceFromHost($remoteHost);
+
+				if ($remoteConfig->_getValue('type', null, true) !== 'proxy') {
+					throw new Exception('This host is not running a soaproxy.');
+				}
+
+				$proxyconfig = $remoteConfig->_getValue('proxies', null, true) ;
+
+				// $rawpath = parse_url($url, PHP_URL_PATH);
+				$rawpath = $_SERVER['PATH_INFO'];
+				if (preg_match('|^/([^/]+)(/.*)$|i', $rawpath, $matches)) {
+					$api = $matches[1];
+					$restpath = $matches[2];
+
+					if (!isset($proxyconfig[$api])) {
+						throw new Exception('API Endpoint is not configured...');
+					}
+
+					$realurl = $proxyconfig[$api]['endpoints'][0] . $restpath;
+
+					if (!empty($_SERVER['QUERY_STRING'])) {
+						$realurl .= '?' . $_SERVER['QUERY_STRING'];
+					}
+
+					// echo("REAL URL IS " . $realurl . "\n\n");
+				} else {
+					throw new Exception('Does not include a API prefix: ' . $rawpath);
+				}
+
+
+				// // // Initiate an Oauth server handler
+				$oauth = new OAuth();
+
+				// // // Get provided Token on this request, if present.
+				$token = $oauth->getProvidedToken();
+
+				$providerID = $remoteConfig->getID();
+
+				$client = HTTPClient::getClientWithConfig($proxyconfig[$api], $providerID);
+				if ($token) {
+					
+					$clientid = $token->getClientID();
+					
+					$ensureScopes = array('soa_' . $providerID);
+					$oauth->check(null, $ensureScopes);
+
+					// print_r($ensureScopes);  exit;
+
+
+					$userdata = $token->getUserdataWithGroups();
+					$client->setAuthenticated($userdata);
+					$scopes = $oauth->getApplicationScopes('soa', $providerID);
+					$client->setAuthenticatedClient($clientid, $scopes);
+				}
+				$response = $client->get($realurl, $args); 
+
+				header('Content-Type: application/json; charset=utf-8');
+				echo json_encode($response);
+
+			} else {
+				throw new Exception('Bad request.');
 			}
 
-			$url = $proxyconfig[$proxy]["endpoints"][0] . $remotepath;
+		} catch(Exception $e) {
 
-			try {
-				$this->oauth();	
-			} catch(So_ExpiredToken $e) {
-				header('WWW-Authenticate: Bearer realm="uwap", error="invalid_token", error_description="The access token expired"', true, 401);
-				exit;
-			}
+			// TODO: Catch OAuth token expiration etc.! return correct error code.
 
-			error_log("Proxying request to: " . $url);
-
-			header('Content-Type: application/json; charset: utf-8');
-
-			$headers = array();
-
-			if ($proxyconfig[$proxy]["user"]) {
-				$headers["UWAP-UserID"] = $this->userid;
-			}
-			if ($proxyconfig[$proxy]["token_hdr"]) {
-				$headers[$proxyconfig[$proxy]["token_hdr"]] =$proxyconfig[$proxy]["token"];
-			}
-			echo $this->rawget($url, $headers);
-
-			error_log( "show" . $file);
-			exit;
+			header("Status: 500 Internal Error");
+			header('Content-Type: text/plain; charset: utf-8');
+			echo "Error stack trace: \n";
+			print_r($e);
 
 
-		} else {
-			throw new Exception('Wrong URL used for app proxy.');
 		}
-
 
 	}
 

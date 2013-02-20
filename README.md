@@ -28,7 +28,7 @@ Container HTML refers an js API:
 
 	<script type="text/javascript" src="/_/js/core.js"></script>
 
-The script is located here: /var/www/uwap/engine/js
+The script is located h ere: /var/www/uwap/engine/js
 
 The script communicates with the endpoints under:
 

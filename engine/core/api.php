@@ -18,7 +18,7 @@ header("Access-Control-Allow-Methods: HEAD, GET, OPTIONS, POST, DELETE, PATCH");
 header("Access-Control-Allow-Headers: Authorization, X-Requested-With, Origin, Accept, Content-Type");
 
 $profiling = microtime(true);
-error_log("Time to run command:     ======> " . (microtime(true) - $profiling));
+error_log("Time START    :     ======> " . (microtime(true) - $profiling));
 
 try {
 
@@ -559,31 +559,56 @@ try {
 		$url = $args["url"];
 		$handler = "plain";
 
-		/*
-		 * Try to figure out on behalf of which app to perform the request.
-		 * This will be used to lookup HTTP REST handler configurations.
-		 */
-		$targetapp = $args['appid'];
+		$remoteHost = parse_url($url, PHP_URL_HOST);
+		$remoteConfig = Config::getInstanceFromHost($remoteHost);
 
-		if (!empty($args["handler"])) $handler = $args["handler"];
+		if ($remoteConfig->_getValue('type', null, true) !== 'proxy') {
+			throw new Exception('This host is not running a soaproxy.');
+		}
 
+		$proxyconfig = $remoteConfig->_getValue('proxies', null, true) ;
 
+		$rawpath = parse_url($url, PHP_URL_PATH);
+		if (preg_match('|^/([^/]+)(/.*)$|i', $rawpath, $matches)) {
+			$api = $matches[1];
+			$restpath = $matches[2];
 
-		// Initiate an Oauth server handler
+			if (!isset($proxyconfig[$api])) {
+				throw new Exception('API Endpoint is not configured...');
+			}
+
+			$realurl = $proxyconfig[$api]['endpoints'][0] . $restpath;
+
+			error_log("REAL URL IS " . $realurl);
+		}
+
+		
+
+		// // // Initiate an Oauth server handler
 		$oauth = new OAuth();
 
-		// Get provided Token on this request, if present.
+		// // // Get provided Token on this request, if present.
 		$token = $oauth->getProvidedToken();
 
-		$client = HTTPClient::getClient($handler, $targetapp);
+		$providerID = $remoteConfig->getID();
+
+		$client = HTTPClient::getClientWithConfig($proxyconfig[$api], $providerID);
 		if ($token) {
-			$oauth->check(null, array('app_' . $targetapp . '_user'));
-			$userid = $token->getUserID();
+			
+			$clientid = $token->getClientID();
+			
+			$ensureScopes = array('soa_' . $providerID);
+			$oauth->check(null, $ensureScopes);
+
+			// print_r($ensureScopes);  exit;
+
+
 			$userdata = $token->getUserdataWithGroups();
 			$client->setAuthenticated($userdata);
+			$scopes = $oauth->getApplicationScopes('soa', $providerID);
+			$client->setAuthenticatedClient($clientid, $scopes);
 		}
-		$response = $client->get($url, $args);
-
+		$response = $client->get($realurl, $args); 
 
 
 	/**
@@ -610,6 +635,8 @@ try {
 		 */
 		$targetapp = $args['appid'];
 
+		error_log("target app is " . $targetapp);
+
 		if (!empty($args["handler"])) $handler = $args["handler"];
 
 
@@ -623,7 +650,13 @@ try {
 
 		// Make HTTP request authenticated by both client and user if applicable.
 		if (($token !== null) || ($handler !== 'plain')) {
-			$oauth->check(null, array('app_' . $targetapp . '_user'));
+			
+			// $clientid = $client->getID();
+			// $ensureScopes = array('app_' . $clientid . '_user');
+
+			// print_r($ensureScopes); exit;
+
+			// $oauth->check(null, $ensureScopes);
 			$userid = $token->getUserID();
 			$userdata = $token->getUserdataWithGroups();
 			$client->setAuthenticated($userdata);

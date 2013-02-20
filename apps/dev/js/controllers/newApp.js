@@ -15,7 +15,7 @@ define(function() {
 		this.element = $(templates['newApp'].render());
 
 		console.log("this element", this.element);
-		$("div#modalContainer").append(this.element);
+		$("div#modalContainer").empty().append(this.element);
 
 		this.checkIfReady();
 

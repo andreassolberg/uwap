@@ -44,7 +44,7 @@ if (Config::getValue('type') === 'app') {
 	header('Access-Control-Allow-Headers: X-Requested-With, Authorization');
 
 	$h = new Proxy_REST();
-	UWAPLogger::debug('engine', 'Accessing a SOA proxied endpoint', $h->getInfo());
+	// UWAPLogger::debug('engine', 'Accessing a SOA proxied endpoint', $h->getInfo());
 	$h->show();
 
 

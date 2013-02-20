@@ -82,6 +82,7 @@ class AuthenticatedToken {
 		return $userdata;
 	}
 
+	
 
 	public function getClientID() {
 		return $this->token->client_id;

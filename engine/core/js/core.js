@@ -31,6 +31,16 @@ define(function(require) {
 	}
 
 	/*
+	 * Returns a random string
+	 */
+	UWAP.utils.uuid = function() {
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    		var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+		    return v.toString(16);
+		});
+	}
+
+	/*
 	 * Setup and install the ChildBrowser plugin to Phongap/Cordova.
 	 */
 	if(window.isPhonegap) {
@@ -467,6 +477,23 @@ define(function(require) {
 			
 			UWAP._request(
 				'POST', UWAP.utils.getEngineURL("/api/rest"),
+				data,
+				options, 
+				callback, errorcallback);
+		},
+		soa: function (url, options, callback, errorcallback) {
+
+			var data = {};
+			data.url = url;
+			data.returnTo = window.location.href;
+			data.appid = UWAP.utils.appid;
+
+			options = options || {};
+
+			console.log("UWAP.data options", options);
+			
+			UWAP._request(
+				'POST', UWAP.utils.getEngineURL("/api/soa"),
 				data,
 				options, 
 				callback, errorcallback);

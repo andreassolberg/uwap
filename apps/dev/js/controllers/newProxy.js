@@ -1,20 +1,25 @@
-define(function() {
-	
-	var newProxy = function(container, callback) {
+define(function(require, exports, module) {
+
+	var 
+		$ = require('jquery'),
+		UWAP = require('uwap-core/js/core')
+    	;
+
+	var newProxy = function(container, callback, templates) {
 
 		this.container = container;
 		this.callback = callback;
+		this.templates = templates;
 		
 		this.verifiedidentifier = null;
 		this.verified = false;
 		this.verifytimer = null;
 
-//		this.element = $("#newProxyTemplate").tmpl();
 		console.log('newProxy.html');
-		this.element = $(templates['newProxy'].render());
+		this.element = $(this.templates['newProxy'].render());
 
 		console.log("this element", this.element);
-		$("div#modalContainer").append(this.element);
+		$("div#modalContainer").empty().append(this.element);
 
 		this.checkIfReady();
 
@@ -54,16 +59,21 @@ define(function() {
 		obj.proxies = {
 			"api": {
 				"endpoints": [$(this.element).find("#newProxyEndpoint").val()],
-				"scopes": newProxy.parseArray($(this.element).find("#newProxyScopes").val())
+				"scopes": newProxy.parseArray($(this.element).find("#newProxyScopes").val()),
+				"token_hdr": "UWAP-X-Auth",
+				"token": UWAP.utils.uuid(),
+				"type": "token",
+				"user": true
 			}
 		};
 
 		// console.log("About to store proxy object", obj); return;
-
 		// this.trigger("submit", obj);
+		
 		this.callback(obj);
 		$(this.element).modal("hide");
 		$(this.element).remove();
+
 	};
 
 	newProxy.prototype.updateIdentifier = function() {

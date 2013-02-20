@@ -42,7 +42,7 @@ class HTTPClientToken extends HTTPClient {
 		$this->getUserAuthHeaders($headers);
 
 
-		error_log('HTTPClientToken Handler: ' . json_encode($options['handler']));
+		// error_log('HTTPClientToken Handler: ' . json_encode($options['handler']));
 		error_log('HTTPClientToken URL: ' . json_encode($options['url']));
 		error_log('HTTPClientToken Headers: ' . json_encode($headers));
 		error_log('HTTPClientToken Redirect?: ' . json_encode($redir));

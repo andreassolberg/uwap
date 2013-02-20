@@ -3,16 +3,20 @@
 
 class Utils {
 	
-	public static function getSubID() {
+	public static function getSubID($hostname = null) {
 
 		if(php_sapi_name() == 'cli' || empty($_SERVER['REMOTE_ADDR'])) {
 			return '_CLI';
 		}
 
+		if ($hostname === null) {
+			$hostname = $_SERVER['HTTP_HOST'];
+		}
+
 		$subhost = null;
 		$mainhost = GlobalConfig::hostname();
 
-		if (preg_match('/^([a-zA-Z0-9]+).' . $mainhost . '$/', $_SERVER['HTTP_HOST'], $matches)) {
+		if (preg_match('/^([a-zA-Z0-9]+).' . $mainhost . '$/', $hostname, $matches)) {
 			$subhost = $matches[1];
 		} else {
 			return false;

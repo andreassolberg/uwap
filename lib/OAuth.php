@@ -170,9 +170,29 @@ class OAuth {
 		return new AuthenticatedToken($token);
 	}
 
+	function getApplicationScopes($type, $appid) {
+		// Return only as set of scopes that matches an app
+		// Type might be 'app' or 'soa'
+		$scopesMatch = array();
+		$scopes = $this->getScopes();
+		foreach($scopes AS $scope) {
+			if (preg_match('/^' . $type . '_' . $appid . '_(.*)$/', $scope, $matches)) {
+				$scopesMatch[] = $matches[1];
+			}
+		}
+		return $scopesMatch;
+	}
+
+	function getScopes() {
+		$token = $this->server->getToken();
+		// print_r($token->scope); exit;
+		return $token->scope;
+	}
+
 	function check($appscopes = array(), $scopes = array()) {
 
 		try {
+
 			$token = $this->server->getToken();
 			$client_id = $token->client_id;
 			if (!empty($appscopes)) {
@@ -199,3 +219,6 @@ class OAuth {
 
 	
 }
+
+
+
