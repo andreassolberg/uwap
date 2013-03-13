@@ -240,8 +240,6 @@ define(['module'], function (module) {
             text.createXhr())) {
         text.get = function (url, callback, errback) {
 
-            console.log("text get XHR url", url);
-
             var xhr = text.createXhr();
             xhr.open('GET', url, true);
 

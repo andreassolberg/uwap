@@ -165,7 +165,7 @@ define(function(require) {
 			redirect_uri: redirect_uri,
 			passive_redirect_uri: passive_redirect_uri
 		}
-	}, {debug: 1});
+	}, {debug: 0});
 
 
 
@@ -238,7 +238,7 @@ define(function(require) {
 			}
 		}
 
-		console.log("UWAP.data _request data ", data, " options", options);
+		// console.log("UWAP.data _request data ", data, " options", options);
 
 		try {
 			if (options.handler === 'plain' && !options.auth) {
@@ -247,7 +247,7 @@ define(function(require) {
 
 			} else {
 				// console.log("Attempt authenticated REST request to ", data.url); return;
-				console.log("UWAP.data authenticated _request data ", data, " options", options);
+				// console.log("UWAP.data authenticated _request data ", data, " options", options);
 				$.oajax(ar);
 			}
 			

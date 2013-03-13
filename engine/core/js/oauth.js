@@ -716,14 +716,14 @@ define(function(require, exports, module) {
 
 			if (co["presenttoken"] && co["presenttoken"] === "qs") {
 				// settings.url += ((h.indexOf("?") === -1) ? '?' : '&') + "access_token=" + encodeURIComponent(token["access_token"]);
-				console.log("presenttoken === qs");
+				// console.log("presenttoken === qs");
 				if (!settings.data) settings.data = {};
 				settings.data["access_token"] = token["access_token"];
 			} else {
 
 				if (!settings.headers) settings.headers = {};
 				settings.headers["Authorization"] = "Bearer " + token["access_token"];
-				console.log("headers", settings);
+				// console.log("headers", settings);
 			}
 			$.ajax(settings);
 		};
@@ -756,10 +756,10 @@ define(function(require, exports, module) {
 
 
 		if (!token) {
-			console.log("Did not have token, obtaining it.")
+			// console.log("Did not have token, obtaining it.")
 			obtainToken();
 		} else {
-			console.log("performing ajax..")
+			// console.log("performing ajax..")
 			performAjax();
 		}
 
