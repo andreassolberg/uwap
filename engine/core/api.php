@@ -114,8 +114,6 @@ try {
 
 
 
-
-
 	/**
 	 *  The groups API is VOOT
 	 */
@@ -326,10 +324,10 @@ try {
 
 		} else if (Utils::route('post', '^/appconfig/apps$', &$qs, &$parameters)) {
 
-			
 			$object = $parameters;
 			$id = $object["id"];
 			Utils::validateID($id);
+
 			// $config = Config::getInstance();
 			// $config->store($object, $userid);
 			// Config::store($object, $userid);
@@ -352,9 +350,9 @@ try {
 		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/status$', &$qs, &$parameters)) {
 
 			$appid = $qs[1];
-			$object = $parameters;
-
 			Utils::validateID($appid);
+
+			$object = $parameters;
 
 			$ac = Config::getInstance($appid);
 			$ac->updateStatus($object, $userid);
@@ -363,6 +361,14 @@ try {
 
 			$response['data'] = $c['status'];
 
+
+		} else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)/clients$', &$qs, &$parameters)) {
+
+			$appid = $qs[1];
+			Utils::validateID($appid);
+
+			$clients = $appdirectory->getClients($appid, $userid);
+			$response['data'] = $clients;
 
 		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/davcredentials$', &$qs, &$parameters)) {
 
@@ -435,15 +441,19 @@ try {
 			$ac = Config::getInstance($appid);
 
 			$response['data'] = $ac->getConfig();
-			$response['data']['davcredentials'] = $ac->getDavCredentials($userid);
-			$response['data']['appdata-stats'] = $ac->getStats();
-			$response['data']['files-stats'] = $ac->getFilestats();
-			$response['data']['user-stats'] = $ac->getUserStats();
+				$response['data']['user-stats'] = $ac->getUserStats();
+			if ($response['data']['type'] === 'app') {
+	
+				$response['data']['davcredentials'] = $ac->getDavCredentials($userid);
+				$response['data']['appdata-stats'] = $ac->getStats();
+				$response['data']['files-stats'] = $ac->getFilestats();
+
+
+			}
 
 		} else {
 			throw new Exception('Invalid request');
 		}
-
 
 
 

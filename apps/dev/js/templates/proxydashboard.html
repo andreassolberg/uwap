@@ -1,127 +1,109 @@
 <div class="row-fluid">
 
-						<div class="span9">
-							<h2>{{name}} <span class="label label-success">API Gatekeeper</span></h2>
+		<div class="span9">
+			<h2>{{name}} <span class="label label-success">API Gatekeeper</span></h2>
 
-							<p>{{descr}}</p>
+			<p>{{descr}}</p>
 
-							<dl>
-								<dt>Application access URL</dt>
-								<dd><code>{{url}}</code></dd>
-								<dd><a target="_blank" href="{{url}}">Open web application in new window</a></dd>
-							</dl>
-							<p></p>
+			<dl>
+				<dt>API Endpoint</dt>
+				<dd><code>{{url}}</code></dd>
+			</dl>
+			<p></p>
 
-						</div>
-						<div class="span3">
-							<p><img src="https://core.uwap.org/api/media/logo/app/{{id}}" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px; backgroud: #eee" /></p>
-						</div>
+		</div>
+		<div class="span3">
+			<p><img src="https://core.uwap.org/api/media/logo/app/{{id}}" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px; backgroud: #eee" /></p>
+		</div>
 
-					</div>
-
-
-					<div class="row-fluid">
-
-						<div class="span4">
-							<h3>API Authentication details</h3>
-							<p>The following credentials are using for connections between UWAP and your API.</p>
-
-							<dl>
-								<dt>Username</dt>
-								<dd><code>uwap</code></dd>
-								<dt>Password</dt>
-								<dd><code>skd7wdsnkiu37dsfiudf765dfg</code></dd>
-							</dl>
-
-						</div>
-						<div class="span4">
-
-							<h3>Scopes</h3>
-							
-							{{#proxies}}
-								{{#api}}
-									<ul>
-									{{#scopes}}
-										<li><code>{{value}}</code></li>
-									
-									{{/scopes}}
-									</ul>
-								{{/api}}
-							
-							{{/proxies}}
-
-							
-
-							<h3>Endpoints</h3>
-							
-							{{#proxies}}
-								{{#api}}
-									<dl>
-										<dt>/api</dt>
-										<dd><code>{{endpoints[0]}}</code></dd>
-									
-									</dl>
-								{{/api}}
-							
-							{{/proxies}}
-							
-							
-
-						</div>
-						<div class="span4">
-							<h3>Usage Statistics</h3>
-
-							<p><img src="img/plot.jpg" style="border-radius: 5px"></p>
-								
-							<p>{{item.data['user-stats'].count}} registered users. ( <a href="">see more statistics</a> )</p>
-
-						</div>
-
-					</div>
+	</div>
 
 
+	<div class="row-fluid">
+
+		<div class="span4">
+			<h3>API Authentication details</h3>
+			<p>The following credentials are using for connections between UWAP and your API.</p>
+
+			<dl>
+				<dt>HTTP Authentication Header</dt>
+				<dd><code></code></dd>
+				<dt>HTTP Authentication Token</dt>
+				<dd><code></code></dd>
+			</dl>
+
+		</div>
+
+		<div class="span4">
+
+			<h3>Scopes</h3>
+			
+			{{#proxies}}
+				{{#api}}
+					<ul>
+					{{#scopes}}
+						<li><code>{{value}}</code></li>
+					{{/scopes}}
+					{{^scopes}} 
+						<li>No scopes configured</li>
+					{{/scopes}}
+					</ul>
+				{{/api}}
+			
+			{{/proxies}}
+			
+
+			<h3>Endpoints</h3>
+			
+
+			{{#proxiesArr}}
+
+				<p>API <code>/{{id}}</code></p>
+				
+				<ul>
+					{{#endpoints}}
+						<li>{{.}}</li>
+					{{/endpoints}}
+				</ul>
+				
+			{{/proxiesArr}}
+
+		</div>
+		<div class="span4">
+			<h3>Usage Statistics</h3>
+
+			<p><img src="img/plot.jpg" style="border-radius: 5px"></p>
+				
+			<p>{{count}} registered users. ( <a href="">see more statistics</a> )</p>
+
+		</div>
+
+	</div>
 
 
-					<div class="row-fluid">
-
-						<div class="span6 appstatus">
-								<h3>App Status</h3>
-								<div class="appstatusMain"></div>
-								<div class="listing"></div>
-								<div class="deletion"></div>
-						</div>
-
-						<div class="span6">
-
-							<h3>Release management</h3>
-							<p>You manage these tagged instances</p>
-
-							<dl>
-								<dt>production</dt>
-								<dd>Production instance</dd>
-								<dt>pre-prod</dt>
-								<dd>Pre-production for verification</dd>
-								<dt>test</dt>
-								<dd>Development version</dd>
-							</dl>
-
-							<p><a href="">Manage releases</a></p>
 
 
-							<h3>Server API</h3>
+	<div class="row-fluid">
 
-							<p style="color: #555">No servers registered</p>
-							<p><a href="">Setup new server</a></p>
+		<div class="span6 appstatus">
+				<h3>App Status</h3>
+				<div class="appstatusMain"></div>
+				<div class="listing"></div>
+				<div class="deletion"></div>
+		</div>
 
-							<h3>Cron robots</h3>
-
-							<p style="color: #555">No cron robots registered</p>
-							<p><a href="">Setup new robot</a></p>
-
-						</div>
-					</div>
+		<div class="span6">
 
 
-	
 
-				</div><!--/span-->
+
+			<h3>Monitoring</h3>
+			<p>Not yet implemented..</p>
+
+		</div>
+	</div>
+
+
+
+
+</div><!--/span-->

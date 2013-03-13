@@ -3,7 +3,7 @@ define(function(require, exports, module) {
 	var 
 		$ = require('jquery'),
 		UWAP = require('uwap-core/js/core')
-    	;
+		;
 
 	var newProxy = function(container, callback, templates) {
 
@@ -40,8 +40,9 @@ define(function(require, exports, module) {
 		var rule = /([a-zA-Z0-9]+)/;
 
 		for(var i = 0; i < temp.length; i++) {
-			if (!rule.test(temp[i]))
-			res.push(temp[i].toLowerCase());
+			if (rule.test(temp[i])) {
+				res.push(temp[i].toLowerCase());
+			}
 		}
 		return res;
 	}
@@ -55,6 +56,12 @@ define(function(require, exports, module) {
 		obj.name = $(this.element).find("#newProxyName").val();
 		obj.descr = $(this.element).find("#newProxyDescr").val();
 		obj.type = 'proxy';
+
+		var scopestr = $(this.element).find("#newProxyScopes").val();
+		var scopes = newProxy.parseArray(scopestr);
+
+		console.log("scope string", scopestr);
+		console.log("scope array", scopes);
 
 		obj.proxies = {
 			"api": {

@@ -9,7 +9,10 @@ define(function(require, exports, module) {
 		newApp = require('controllers/newApp'),
 		newProxy = require('controllers/newProxy'),
 		frontpage = require('controllers/frontpage'),
-		AppDashboard = require('controllers/AppDashboard')
+		AppDashboard = require('controllers/AppDashboard'),
+		ProxyDashboard = require('controllers/ProxyDashboard'),
+
+		Proxy = require('models/Proxy')
     	;
 	
 	require("uwap-core/js/uwap-people");
@@ -115,9 +118,23 @@ define(function(require, exports, module) {
 			$("div#appmaincontainer").empty();
 
 			UWAP.appconfig.get(appid, function(appconfig) {
-				var adash = new AppDashboard($("div#appmaincontainer"), appconfig, templates);
 
+				var adash;
 				console.log("Appconfig", appconfig);
+
+				if (appconfig.type === 'app') {
+
+					adash = new AppDashboard($("div#appmaincontainer"), appconfig, templates);
+
+				} else if (appconfig.type === 'proxy') {
+
+					adash = new ProxyDashboard($("div#appmaincontainer"), new Proxy(appconfig), templates);
+
+				} else {
+
+					console.error('Does not reckognize this type of app');
+					return;
+				}
 
 				that.setNavigationBar([
 					{title: "Dashboard", href: "#!/"},
@@ -157,6 +174,8 @@ define(function(require, exports, module) {
 			console.log("Initiating new Proxy...");
 			var na = new newProxy(that.el, function(no) {
 				
+				// console.log("About to store a new proxy", no); return;
+
 				UWAP.appconfig.store(no, function() {
 					console.log("Successully stored new app");
 

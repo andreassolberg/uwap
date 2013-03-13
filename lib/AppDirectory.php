@@ -76,6 +76,36 @@ class AppDirectory {
 		return $sorted;
 	}
 
+	public function getClients($appid, $userid) {
+		$fields = array(
+			// 'id' => true,
+			// 'name' => true,
+			// 'descr' => true,
+			// 'type' => true,
+			// 'owner-userid' => true,
+			// 'owner' => true,
+			// 'name' => true,
+			// 'proxies' => true,
+		);
+
+		$query = array(
+			"uwap-userid" => $userid,
+			"status" => array(
+				'$ne' => "pendingDelete"
+			),
+		);
+
+		$listing = $this->store->queryList('appconfig',$query, $fields);
+
+		$sorted = array("app" => array(), "proxy" => array(), "client" => array());
+		foreach($listing AS $e) {
+			if (isset($e['type']) && isset($sorted[$e['type']])) {
+				$sorted[$e['type']][] = $e;
+			}
+		}
+		return $sorted;
+	}
+
 	public function getMyAppIDs($userid) {
 		$fields = array(
 			'id' => true
@@ -145,6 +175,16 @@ class AppDirectory {
 				unset($app[$k]);
 			}
 		}
+
+		if (isset($app['proxies'])) {
+			if (!is_array($app['proxies'])) throw new Exception('proxies properties needs to be an object (array)');
+			foreach($app['proxies'] AS $key => $proxy) {
+				Utils::validateID($key);
+				if (!is_array($proxy)) throw new Exception('Proxy config must be an object in new proxy config.');
+
+			}
+		}
+
 	}
 
 
@@ -163,7 +203,6 @@ class AppDirectory {
 		if ($this->exists($id)) {
 			throw new Exception('Application ID already exists, cannot create new app with this ID.');
 		}
-
 
 		UWAPLogger::info('core-dev', 'Store application configuration', array(
 			'userid' => $userid,

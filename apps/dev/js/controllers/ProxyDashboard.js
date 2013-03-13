@@ -1,5 +1,11 @@
-define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
-	
+define(function(require, exports, module) {
+
+	var 
+		$ = require('jquery'),
+		UWAP = require('uwap-core/js/core')
+		;
+
+
 	var in_array = function (key, array) {
 
 		var i;
@@ -10,50 +16,28 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 		return false;
 	}
 
-	var AppDashboard = function(container, appconfig, templates) {
 
-		var handlertmpl;
-		var that = this;
-		this.handlers = {};
-
+	var ProxyDashboard = function(container, appconfig, templates) {
 		this.container = container;
 		this.appconfig = appconfig;
 		this.templates = templates;
 
-		this.draw();		
+		console.log("PROXY", appconfig);
 
-		$(this.element).find("tbody.authorizationhandlers")
-			.on("click", "a.handlerEdit", this.proxy(this.handlerEdit));
-		$(this.element).find("tbody.authorizationhandlers")
-			.on("click", "a.handlerReset", this.proxy(this.handlerReset));
-		$(this.element).find("tbody.authorizationhandlers")
-			.on("click", "a.handlerDelete", this.proxy(this.handlerDelete));
+		this.draw();
 
-		$(this.element).on("click", "div.appstatus button.appDelete", 
-			this.proxy(this.deleteApp));
-
-		$(this.element).on("click", "div.appstatus div.listing button.listingAdd", 
-			this.proxy(this.listingAdd));
-		$(this.element).on("click", "div.appstatus div.listing button.listingRemove", 
-			this.proxy(this.listingRemove));
+	}
 
 
-		$(this.element).on('click', '#addNewAuthzHandle', this.proxy(this.handlerNew));
-
-
-		$(this.element).on('click', 'div.bootstrapform button#bootstrap_action', this.proxy(this.bootstrap));
-
-	};
-
-	AppDashboard.prototype.proxy = function(func) {
+	ProxyDashboard.prototype.proxy = function(func) {
 		return $.proxy(func, this);
 	}
 
-	AppDashboard.prototype.updateStatus = function() {
+	ProxyDashboard.prototype.updateStatus = function() {
 
 	}
 	
-	AppDashboard.prototype.bootstrap = function() {
+	ProxyDashboard.prototype.bootstrap = function() {
 		var template = $(this.element).find("div.bootstrapform select#bootstrap_template").val();
 		console.log("Bootstrapping with template " + template);
 		UWAP.appconfig.bootstrap(this.appconfig.id, template, function() {
@@ -61,7 +45,7 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 		});
 	}
 
-	AppDashboard.prototype.deleteApp = function() {
+	ProxyDashboard.prototype.deleteApp = function() {
 		var that = this;
 		UWAP.appconfig.updateStatus(this.appconfig.id, {pendingDelete: true, operational: false, listing: false}, function(newstatus) {
 			that.appconfig.status = newstatus;
@@ -69,14 +53,14 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 		});
 	}
 
-	AppDashboard.prototype.listingAdd = function() {
+	ProxyDashboard.prototype.listingAdd = function() {
 		var that = this;
 		UWAP.appconfig.updateStatus(this.appconfig.id, {listing: true}, function(newstatus) {
 			that.appconfig.status = newstatus;
 			that.drawAppStatus();
 		});
 	}
-	AppDashboard.prototype.listingRemove = function() {
+	ProxyDashboard.prototype.listingRemove = function() {
 		var that = this;
 		UWAP.appconfig.updateStatus(this.appconfig.id, {listing: false}, function(newstatus) {
 			that.appconfig.status = newstatus;
@@ -84,20 +68,19 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 		});
 	}
 
-	AppDashboard.prototype.draw = function() {
+	ProxyDashboard.prototype.draw = function() {
 		console.log("DRAW", this.appconfig);
-		this.appconfig.sizeH = this.appconfig['files-stats'].sizeH;
-		this.appconfig.capacityH = this.appconfig['files-stats'].capacityH;
-		this.appconfig.usage = this.appconfig['files-stats'].usage;
-		this.appconfig.count = this.appconfig['user-stats'].count;
-		this.appconfig.appstats = (this.appconfig['appdata-stats'] != null);
+		// this.appconfig.sizeH = this.appconfig['files-stats'].sizeH;
+		// this.appconfig.capacityH = this.appconfig['files-stats'].capacityH;
+		// this.appconfig.usage = this.appconfig['files-stats'].usage;
+		// this.appconfig.count = this.appconfig['user-stats'].count;
+		// this.appconfig.appstats = (this.appconfig['appdata-stats'] != null);
 		if(this.appconfig.appstats){
 			this.appconfig.appsizeH = this.appconfig['appdata-stats'].sizeH;
 			this.appconfig.appcapacityH = this.appconfig['appdata-stats'].capacityH;
 			this.appconfig.appusage = this.appconfig['appdata-stats'].usage;
 		}
-
-		this.element = $(this.templates['appdashboard'].render(this.appconfig));
+		this.element = $(this.templates['proxydashboard'].render(this.appconfig));
 
 		
 		console.log("this element", this.element);
@@ -106,8 +89,9 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 
 		this.drawAuthzHandlers();
 		this.drawAppStatus();
-	},
-	AppDashboard.prototype.drawAppStatus = function() {
+	}
+
+	ProxyDashboard.prototype.drawAppStatus = function() {
 
 		$(this.element).find("div.appstatus div.appstatusMain").empty();
 		$(this.element).find("div.appstatus div.listing").empty();
@@ -146,7 +130,7 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 	}
 
 
-	AppDashboard.prototype.hasStatus = function(statuses) {
+	ProxyDashboard.prototype.hasStatus = function(statuses) {
 		var i;
 		for(i = 0; i < statuses.length; i++) {
 			if (!in_array(statuses[i], this.appconfig.status)) {
@@ -157,7 +141,7 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 	}
 
 
-	AppDashboard.prototype.drawAuthzHandlers = function() {
+	ProxyDashboard.prototype.drawAuthzHandlers = function() {
 		var that = this;
 		$(this.element).find("tbody.authorizationhandlers").empty();
 
@@ -186,7 +170,7 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 		}		
 	}
 
-	AppDashboard.prototype.handlerNew = function() {
+	ProxyDashboard.prototype.handlerNew = function() {
 		var obj = {"type": "oauth2"};
 		var that = this;
 		var handlerEditor = new AuthzHandlerEditor(this.container, this.appconfig, obj, true, function(item) {
@@ -204,7 +188,7 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 		handlerEditor.activate();
 	}
 
-	AppDashboard.prototype.handlerEdit = function(eventObject) {
+	ProxyDashboard.prototype.handlerEdit = function(eventObject) {
 //			var obj = $(eventObject.target).closest("tr").tmplItem().data;
 		console.log(this.handlers);
 		console.log($(eventObject.target).attr('editid'));
@@ -227,11 +211,11 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 		handlerEditor.activate();
 	}
 
-	AppDashboard.prototype.handlerReset = function(eventObject) {
+	ProxyDashboard.prototype.handlerReset = function(eventObject) {
 		console.log("handler", eventObject);
 	}
 
-	AppDashboard.prototype.handlerDelete = function(eventObject) {
+	ProxyDashboard.prototype.handlerDelete = function(eventObject) {
 //			var object = $(eventObject.target).closest("tr").tmplItem().data;
 		var object = this.handlers[$(eventObject.target).attr('editid')];
 		var that = this;
@@ -247,7 +231,7 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 		});
 	}
 
-	AppDashboard.prototype.submit = function() {
+	ProxyDashboard.prototype.submit = function() {
 		var obj = {};
 
 		obj.id = $(this.element).find("#newAppIdentifier").val();
@@ -261,7 +245,7 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 		$(this.element).remove();
 	}
 
-	AppDashboard.prototype.updateIdentifier = function() {
+	ProxyDashboard.prototype.updateIdentifier = function() {
 		var id = $(this.element).find("#newAppIdentifier").val();
 		$(this.element).find(".newAppIdentifierMirror").html(id);
 
@@ -274,7 +258,7 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 		}
 	}
 
-	AppDashboard.prototype.checkIfReady = function() {
+	ProxyDashboard.prototype.checkIfReady = function() {
 		console.log("check if ready");
 		var name = $(this.element).find("#newAppName").val();
 		if (name.length > 1 && this.verified) {
@@ -289,7 +273,7 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 		}
 	}
 
-	AppDashboard.prototype.verifyIdentifier = function() {
+	ProxyDashboard.prototype.verifyIdentifier = function() {
 		var that = this;
 		var id = $(this.element).find("#newAppIdentifier").val();
 
@@ -320,13 +304,13 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 		});
 	}
 
-	AppDashboard.prototype.activate = function() {
+	ProxyDashboard.prototype.activate = function() {
 		$(this.element).modal('show');
 		$(this.element).find("#newAppIdentifier").focus();
 	}
 
+	return ProxyDashboard;
 
 
-	return AppDashboard;
 
 });
