@@ -51,7 +51,7 @@ define(function(require, exports, module) {
 		this.el = el;
 		this.groups = {};
 
-		this.routingEnabled = true;
+
 
 		this.templates = {
 			"subscriptionList": hogan.compile(tmpl.subscriptionList),
@@ -96,6 +96,7 @@ define(function(require, exports, module) {
 
 		this.notificationsController = new NotificationsController(this.el.find('#feednotifications'));
 
+		this.routingEnabled = true;
 		$(window).bind('hashchange', $.proxy(this.route, this));
 		this.route();
 

@@ -22,6 +22,8 @@ define(function(require, exports, module) {
 	require('uwap-core/bootstrap/js/bootstrap-dropdown');
 
 	
+	UWAP.utils.loadCSS('/css/style.css');
+
 	var tmpl = {
 		"appdashboard": require('uwap-core/js/text!templates/appdashboard.html'),
 		"proxydashboard": require('uwap-core/js/text!templates/proxydashboard.html'),
@@ -63,14 +65,66 @@ define(function(require, exports, module) {
 			this.el.on("click", ".newAppBtn", $.proxy(this.actNewApp, this));
 			this.el.on("click", ".newProxyBtn", $.proxy(this.actNewProxy, this));
 		
-
 			this.load();
+
+			this.routingEnabled = true;
+			$(window).bind('hashchange', $.proxy(this.route, this));
+			this.route();
+
+			
 
 			// this.setNavigationBar([
 			// 	{title: "Dashboard", href: "#!/"},
 			// 	{title: "Foodle"}
 			// ]);
 
+		}
+
+
+		/**
+		 * setHash sets the # fragment of the url to a path without triggering the hashchange event.
+		 * Example of use:
+		 * 		this.setHash('/object/239487239847');
+		 * @param {string} hash The hash path
+		 */
+		App.prototype.setHash = function(hash) {
+			this.routingEnabled = false;
+			window.location.hash = '#!' + hash;
+			this.routingEnabled = true;
+			return window.location.hash;
+		}
+
+		/**
+		 * Perform routing, triggered by the hashchange event, and is also called on load.
+		 * @param  {object} e Event object
+		 * @return {[type]}   [description]
+		 */
+		App.prototype.route = function(e) {
+			if (!this.routingEnabled) return;
+			var hash = window.location.hash;
+
+			// Assumes that the hash starts with #!/
+			if (hash.length < 3) {
+				hash = this.setHash('/');
+			}
+			hash = hash.substr(2);
+
+			var parameters;
+
+			if (hash.match(/^\/$/)) {
+
+				this.load();
+
+			} else if (parameters = hash.match(/^\/config\/([0-9a-z]+)$/)) {
+				console.log("Item ", parameters[1]);
+
+				this.actLoadApp(parameters[1]);
+
+			} else {
+				console.error('No match found for router...');
+			}
+
+			// console.log("HASH Change", window.location.hash);
 		}
 
 
@@ -83,6 +137,7 @@ define(function(require, exports, module) {
 		App.prototype.setNavigationBar = function(obj) {
 			var target = this.el.find('#navigationlist');
 			target.empty();
+
 			for(var i = 0; i < obj.length; i++) {
 				if (i === obj.length-1) {
 					target.append('<li class="active">' + obj[i].title + '</li>');
@@ -96,6 +151,8 @@ define(function(require, exports, module) {
 			if (event) event.preventDefault();
 			this.fpage.activate();
 			this.picker.unselect();
+
+			this.setHash('/');
 
 			this.setNavigationBar([
 				{title: "Dashboard", href: "#!/"}
@@ -121,6 +178,8 @@ define(function(require, exports, module) {
 
 				var adash;
 				console.log("Appconfig", appconfig);
+
+				that.setHash('/config/' + appconfig.id);
 
 				if (appconfig.type === 'app') {
 

@@ -26,6 +26,42 @@ define(function(require, exports, module) {
 
 		this.draw();
 
+		$(this.element).on("click", "ul.scopes li.scope a.removeScope", 
+			this.proxy(this.actRemoveScope));
+		$(this.element).on("click", "button.addScope", 
+			this.proxy(this.actAddScope));
+
+		$(this.element).on("click", "ul.apis li.api button.actEdit", 
+			this.proxy(this.actAPIEdit));
+		$(this.element).on("click", "ul.apis li.api button.actSave", 
+			this.proxy(this.actAPISave));
+
+
+
+	}
+	ProxyDashboard.prototype.actAPIEdit = function(e) {
+		e.stopPropagation();
+		var el = $(e.currentTarget).parent('li.api');
+		el.addClass('edit');
+		console.log("Edit", el);
+	}
+	ProxyDashboard.prototype.actAPISave = function(e) {
+		e.stopPropagation();
+		var el = $(e.currentTarget).parent('li.api');
+		el.removeClass('edit');
+		console.log("Save", $(e.currentTarget).parent('li.api'));
+	}
+	ProxyDashboard.prototype.actAddScope = function(e) {
+		e.stopPropagation();
+		// var el = $(e.currentTarget).parent('li.api');
+		// el.addClass('edit');
+		console.log("add scope");
+	}
+	ProxyDashboard.prototype.actRemoveScope = function(e) {
+		e.stopPropagation();
+		// var el = $(e.currentTarget).parent('li.api');
+		// el.addClass('edit');
+		console.log("remove scope");
 	}
 
 
@@ -69,7 +105,7 @@ define(function(require, exports, module) {
 	}
 
 	ProxyDashboard.prototype.draw = function() {
-		console.log("DRAW", this.appconfig);
+		// console.log("DRAW", this.appconfig);
 		// this.appconfig.sizeH = this.appconfig['files-stats'].sizeH;
 		// this.appconfig.capacityH = this.appconfig['files-stats'].capacityH;
 		// this.appconfig.usage = this.appconfig['files-stats'].usage;

@@ -22,14 +22,19 @@
 	<div class="row-fluid">
 
 		<div class="span4">
-			<h3>API Authentication details</h3>
+			<h3>API Authentication</h3>
 			<p>The following credentials are using for connections between UWAP and your API.</p>
 
 			<dl>
+			{{#proxiesArr}}
 				<dt>HTTP Authentication Header</dt>
-				<dd><code></code></dd>
+				<dd><code>{{token_hdr}}</code></dd>
 				<dt>HTTP Authentication Token</dt>
-				<dd><code></code></dd>
+				<dd><code>{{token}}</code></dd>
+			{{/proxiesArr}}
+
+				
+				
 			</dl>
 
 		</div>
@@ -40,32 +45,36 @@
 			
 			{{#proxies}}
 				{{#api}}
-					<ul>
+					<ul class="scopes">
 					{{#scopes}}
-						<li><code>{{value}}</code></li>
+						<li class="scope"><code>{{.}}</code> <a href="#" style="display: inline" class="removeScope" title="Remove scope" >&times;</a></li>
 					{{/scopes}}
 					{{^scopes}} 
 						<li>No scopes configured</li>
 					{{/scopes}}
+
 					</ul>
 				{{/api}}
-			
 			{{/proxies}}
 			
+			<p><button class="btn btn-mini addScope">Add scope</button></p>
+
 
 			<h3>Endpoints</h3>
 			
 
 			{{#proxiesArr}}
-
 				<p>API <code>/{{id}}</code></p>
-				
-				<ul>
+				<ul class="apis">
 					{{#endpoints}}
-						<li>{{.}}</li>
+						<li class="api">
+							<code class="api hideEdit">{{.}}</code> 
+							<input type="text" class="showEdit" name="api" value="{{.}}" />
+							<button class="btn actEdit hideEdit btn-mini">Edit</button>
+							<button class="btn actSave showEdit btn-mini">Save</button>
+						</li>
 					{{/endpoints}}
 				</ul>
-				
 			{{/proxiesArr}}
 
 		</div>
