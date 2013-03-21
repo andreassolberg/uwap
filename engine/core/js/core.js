@@ -617,6 +617,13 @@ define(function(require) {
 				template, 
 				null, callback, errorcallback);
 		},
+		updateProxies: function(id, proxies, callback, errorcallback) {
+			UWAP._request(
+				'POST', 
+				UWAP.utils.getEngineURL('/api/appconfig/app/' + id + '/proxies'),
+				proxies, 
+				null, callback, errorcallback);
+		},
 		updateAuthzHandler: function(id, object, callback, errorcallback) {
 			UWAP._request(
 				'POST', 

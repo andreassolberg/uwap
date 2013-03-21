@@ -2,8 +2,13 @@ define(function(require, exports, module) {
 
 	var 
 		$ = require('jquery'),
-		UWAP = require('uwap-core/js/core')
+		UWAP = require('uwap-core/js/core'),
+
+		hogan = require('uwap-core/js/hogan')
 		;
+
+	var addScopeTmplText = require('uwap-core/js/text!templates/components/newScope.html');
+	var addScopeTmpl = hogan.compile(addScopeTmplText);
 
 
 	var in_array = function (key, array) {
@@ -36,32 +41,69 @@ define(function(require, exports, module) {
 		$(this.element).on("click", "ul.apis li.api button.actSave", 
 			this.proxy(this.actAPISave));
 
-
-
 	}
+
 	ProxyDashboard.prototype.actAPIEdit = function(e) {
 		e.stopPropagation();
 		var el = $(e.currentTarget).parent('li.api');
 		el.addClass('edit');
 		console.log("Edit", el);
 	}
+
 	ProxyDashboard.prototype.actAPISave = function(e) {
 		e.stopPropagation();
 		var el = $(e.currentTarget).parent('li.api');
 		el.removeClass('edit');
 		console.log("Save", $(e.currentTarget).parent('li.api'));
 	}
+
 	ProxyDashboard.prototype.actAddScope = function(e) {
+		var that = this;
 		e.stopPropagation();
+
+		var as = $(addScopeTmpl.render({}));
+		as.appendTo("body").modal();
+		as.on('shown', function() {
+			as.find("input.newScopeValue").focus();
+		});
+		as.on("click", "#addScopeSubmit", function(e) {
+			e.preventDefault(); e.stopPropagation();
+			var svalue = as.find("input.newScopeValue").val();
+			as.modal('hide');
+
+			// console.log("TEST TEST TEST", that.appconfig.proxies.api.scopes);
+
+			that.appconfig.proxies.api.scopes.push(svalue);
+			that.updateProxies();
+
+		})
+		as.on('hidden', function() {
+			as.remove();
+		});
+
 		// var el = $(e.currentTarget).parent('li.api');
 		// el.addClass('edit');
 		console.log("add scope");
 	}
 	ProxyDashboard.prototype.actRemoveScope = function(e) {
-		e.stopPropagation();
+		e.stopPropagation(); e.preventDefault();
 		// var el = $(e.currentTarget).parent('li.api');
 		// el.addClass('edit');
 		console.log("remove scope");
+
+		var t = $(e.currentTarget).parent("li.scope").data('scope');
+		console.log("currentTarget", t);
+
+		var remaining = [];
+		for(var i = 0; i < this.appconfig.proxies.api.scopes.length; i++) {
+			if (this.appconfig.proxies.api.scopes[i] !== t) {
+				remaining.push(this.appconfig.proxies.api.scopes[i]);
+			}
+		}
+		this.appconfig.proxies.api.scopes = remaining;
+		console.log("removing ", t, "remaining", remaining);
+		this.updateProxies();
+
 	}
 
 
@@ -86,6 +128,14 @@ define(function(require, exports, module) {
 		UWAP.appconfig.updateStatus(this.appconfig.id, {pendingDelete: true, operational: false, listing: false}, function(newstatus) {
 			that.appconfig.status = newstatus;
 			that.drawAppStatus();
+		});
+	}
+
+	ProxyDashboard.prototype.updateProxies = function() {
+		var that = this;
+		UWAP.appconfig.updateProxies(this.appconfig.id, this.appconfig.proxies, function(proxies) {
+			that.appconfig.proxies = proxies;
+			that.drawScopes();
 		});
 	}
 
@@ -123,8 +173,25 @@ define(function(require, exports, module) {
 		this.container.empty();
 		this.container.append(this.element);
 
+		this.drawScopes();
+
 		this.drawAuthzHandlers();
 		this.drawAppStatus();
+	}
+
+	ProxyDashboard.prototype.drawScopes = function() {
+
+		var container = $(this.element).find('ul.scopes');
+		container.empty();
+
+		var tmpl = hogan.compile('<li class="scope" data-scope="{{scope}}"><code>{{scope}}</code> ' +
+			'<a href="#" style="display: inline" class="removeScope" title="Remove scope" >&times;</a></li>');
+		console.log(this.appconfig.proxies.api.scopes)
+		$.each(this.appconfig.proxies.api.scopes, function(i, scope) {
+			container.append(tmpl.render({scope: scope}));
+			console.log("Processing scopes", i, scope)
+		});
+
 	}
 
 	ProxyDashboard.prototype.drawAppStatus = function() {

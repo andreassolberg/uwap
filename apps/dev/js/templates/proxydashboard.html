@@ -1,118 +1,104 @@
 <div class="row-fluid">
 
-		<div class="span9">
-			<h2>{{name}} <span class="label label-success">API Gatekeeper</span></h2>
+	<div class="span9">
+		<h2>{{name}} <span class="label label-success">API Gatekeeper</span></h2>
 
-			<p>{{descr}}</p>
+		<p>{{descr}}</p>
 
-			<dl>
-				<dt>API Endpoint</dt>
-				<dd><code>{{url}}</code></dd>
-			</dl>
-			<p></p>
+		<dl>
+			<dt>API Endpoint</dt>
+			<dd><code>{{url}}</code></dd>
+		</dl>
+		<p></p>
 
-		</div>
-		<div class="span3">
-			<p><img src="https://core.uwap.org/api/media/logo/app/{{id}}" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px; backgroud: #eee" /></p>
-		</div>
+	</div>
+	<div class="span3">
+		<p><img src="https://core.uwap.org/api/media/logo/app/{{id}}" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px; backgroud: #eee" /></p>
+	</div>
+
+</div>
+
+
+
+<div class="row-fluid">
+
+	<div class="span6">
+		<h3>API Authentication</h3>
+		<p>The following credentials are using for connections between UWAP and your API.</p>
+
+		<dl>
+
+		{{#proxiesArr}}
+			<dt>HTTP Authentication Header</dt>
+			<dd><code>{{token_hdr}}</code></dd>
+			<dt>HTTP Authentication Token</dt>
+			<dd><code>{{token}}</code></dd>
+		{{/proxiesArr}}
+
+		</dl>
 
 	</div>
 
+	<div class="span6">
 
-	<div class="row-fluid">
+		<h3>Scopes</h3>
+		
+		{{#proxies}}
+			{{#api}}
+				<ul class="scopes">
+				{{#scopes}}
+					<li class="scope" data-scope="{{.}}"><code>{{.}}</code> <a href="#" style="display: inline" class="removeScope" title="Remove scope" >&times;</a></li>
+				{{/scopes}}
+				{{^scopes}} 
+					<li>No scopes configured</li>
+				{{/scopes}}
 
-		<div class="span4">
-			<h3>API Authentication</h3>
-			<p>The following credentials are using for connections between UWAP and your API.</p>
-
-			<dl>
-			{{#proxiesArr}}
-				<dt>HTTP Authentication Header</dt>
-				<dd><code>{{token_hdr}}</code></dd>
-				<dt>HTTP Authentication Token</dt>
-				<dd><code>{{token}}</code></dd>
-			{{/proxiesArr}}
-
-				
-				
-			</dl>
-
-		</div>
-
-		<div class="span4">
-
-			<h3>Scopes</h3>
-			
-			{{#proxies}}
-				{{#api}}
-					<ul class="scopes">
-					{{#scopes}}
-						<li class="scope"><code>{{.}}</code> <a href="#" style="display: inline" class="removeScope" title="Remove scope" >&times;</a></li>
-					{{/scopes}}
-					{{^scopes}} 
-						<li>No scopes configured</li>
-					{{/scopes}}
-
-					</ul>
-				{{/api}}
-			{{/proxies}}
-			
-			<p><button class="btn btn-mini addScope">Add scope</button></p>
-
-
-			<h3>Endpoints</h3>
-			
-
-			{{#proxiesArr}}
-				<p>API <code>/{{id}}</code></p>
-				<ul class="apis">
-					{{#endpoints}}
-						<li class="api">
-							<code class="api hideEdit">{{.}}</code> 
-							<input type="text" class="showEdit" name="api" value="{{.}}" />
-							<button class="btn actEdit hideEdit btn-mini">Edit</button>
-							<button class="btn actSave showEdit btn-mini">Save</button>
-						</li>
-					{{/endpoints}}
 				</ul>
-			{{/proxiesArr}}
+			{{/api}}
+		{{/proxies}}
+		
+		<p><button class="btn btn-mini addScope">Add scope</button></p>
 
-		</div>
-		<div class="span4">
-			<h3>Usage Statistics</h3>
 
-			<p><img src="img/plot.jpg" style="border-radius: 5px"></p>
-				
-			<p>{{count}} registered users. ( <a href="">see more statistics</a> )</p>
+		<h3>Endpoints</h3>
+		
 
-		</div>
+		{{#proxiesArr}}
+			<p>API <code>/{{id}}</code></p>
+			<ul class="apis">
+				{{#endpoints}}
+					<li class="api">
+						<code class="api hideEdit">{{.}}</code> 
+						<input type="text" class="showEdit" name="api" value="{{.}}" />
+						<button class="btn actEdit hideEdit btn-mini">Edit</button>
+						<button class="btn actSave showEdit btn-mini">Save</button>
+					</li>
+				{{/endpoints}}
+			</ul>
+		{{/proxiesArr}}
 
 	</div>
 
+</div>
 
 
 
-	<div class="row-fluid">
+<div class="row-fluid">
 
-		<div class="span6 appstatus">
-				<h3>App Status</h3>
-				<div class="appstatusMain"></div>
-				<div class="listing"></div>
-				<div class="deletion"></div>
-		</div>
-
-		<div class="span6">
-
-
-
-
-			<h3>Monitoring</h3>
-			<p>Not yet implemented..</p>
-
-		</div>
+	<div class="span6 appstatus">
+			<h3>App Status</h3>
+			<div class="appstatusMain"></div>
+			<div class="listing"></div>
+			<div class="deletion"></div>
 	</div>
 
+	<div class="span6">
+		<h3>Usage Statistics</h3>
 
+		<p><img src="img/plot.jpg" style="border-radius: 5px"></p>
+			
+		<p>{{count}} registered users. ( <a href="">see more statistics</a> )</p>
 
+	</div>
+</div>
 
-</div><!--/span-->

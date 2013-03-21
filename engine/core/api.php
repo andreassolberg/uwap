@@ -361,6 +361,17 @@ try {
 
 			$response['data'] = $c['status'];
 
+		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/proxies$', &$qs, &$object)) {
+
+			$appid = $qs[1];
+			Utils::validateID($appid);
+
+			$ac = Config::getInstance($appid);
+			$ac->updateProxies($object, $userid);
+
+			$c = $ac->getConfig();
+
+			$response['data'] = $c['proxies'];
 
 		} else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)/clients$', &$qs, &$parameters)) {
 

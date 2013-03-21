@@ -288,6 +288,49 @@ class Config {
 		return true;
 	}
 
+
+	public function updateProxies($proxies, $userid) {
+		$current = $this->getConfig();
+
+		$allowedFields = array(
+			'endpoints', 'scopes', 'token', 'token_hdr', 'type', 'user'
+		);
+		foreach($proxies AS $key => $proxy) {
+			if (!preg_match('/^[a-z0-9]+$/', $key)) {
+				unset($proxies[$key]); continue;
+			}
+			foreach($proxies[$key] AS $k => $v) {
+				if (!in_array($k, $allowedFields)) {
+					unset($proxies[$key][$k]);
+				}
+			}
+		}
+
+		// if(empty($current['proxies'])) {
+		// 	$current['proxies'] = array();
+		// }
+		$this->config['proxies'] = $proxies;
+
+		$criteria = array('id' => $this->config['id']);
+
+		$updates = array('proxies' => $proxies);
+
+		UWAPLogger::info('core-dev', 'Updating proxies configuration', array(
+			'userid' => $userid,
+			'obj' => $proxies,
+			'updates' => $updates,
+		));
+
+		// update($collection, $userid, $criteria, $updates)
+		$ret = $this->store->update('appconfig',  $userid, $criteria, $updates);
+
+		if (empty($ret)) {
+			throw new Exception('Empty response from update() on storage. Indicates an error occured. Check logs.');;
+		}
+
+		return $proxies;
+	}
+
 	public function updateAuthzHandler($id, $obj, $userid) {
 		$current = $this->getConfig();
 
