@@ -1,4 +1,4 @@
-define(function() {
+define(function(require, exports, module) {
 
 	var appPicker = Spine.Class.sub({
 
@@ -16,12 +16,13 @@ define(function() {
 		},
 		select: function(event) {
 			var appid = $(event.currentTarget).attr('data-itemid');
+			var type = $(event.currentTarget).attr('data-type');
 			console.log("Selected something", appid);
 			console.log(this);
 
 			if (appid !== this.selected) {
 				this.selected = appid;
-				this.trigger('selected', appid);
+				this.trigger('selected', appid, type);
 				$(this.element).find("li").removeClass("active");
 				$(event.currentTarget).addClass("active");
 			}
@@ -48,6 +49,7 @@ define(function() {
 		getAppItem: function(item) {
 			var ji = $('<li class=""><a href="#">' + item.name + '</a></li>');
 			ji.attr('data-itemid', item.id);
+			ji.attr('data-type', item.type);
 			return ji;
 		},
 

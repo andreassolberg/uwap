@@ -1,0 +1,184 @@
+<div class="row-fluid">
+
+	<div class="span9">
+		<h2>{{client_name}} <span class="label label-success">Client</span></h2>
+
+		<p>{{descr}}</p>
+
+
+	</div>
+	<div class="span3">
+		<p><img src="https://core.uwap.org/api/media/logo/app/{{id}}" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px; backgroud: #eee" /></p>
+	</div>
+
+</div>
+
+
+
+<div class="row-fluid">
+
+	<div class="span4">
+		<h3>OAuth details</h3>
+		<p>You may access your application area using WebDAV</p>
+
+		<dl>
+			<dt>Client ID</dt>
+			<dd><code>{{client_id}}</code></dd>
+
+			<dt>Client Secret</dt>
+			<dd><code>{{client_secret}}</code></dd>
+
+
+			<dt>Redirect URI</dt>
+			{{#each redirect_uri}}
+				<dd><code>{{this}}</code></dd>
+			{{/each}}
+		</dl>
+	</div>
+
+	<div class="span4">
+
+		<h3>Authorized Scopes</h3>
+
+
+
+		<ul>
+		{{#each scopes}}
+			{{.}}
+		{{/each}}
+		</ul>
+
+	</div>
+
+	<div class="span4">
+		<h3>Usage Statistics</h3>
+
+		<p><img src="img/plot.jpg" style="border-radius: 5px"></p>
+
+		<p>{{count}} registered users. ( <a href="">see more statistics</a> )</p>
+
+	</div>
+
+</div>
+
+
+
+<div class="row-fluid">
+
+	<div class="span12">
+
+		<h3>Generic Authorization Scopes</h3>
+		<table class="table table-striped">
+
+			<thead>
+				<tr>
+					<th>Scope</th>
+					<th>Descr</th>
+					<th>Status</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+
+			<tbody>
+
+				{{#each getGenericScopes}}
+					<tr class="scope" data-scope="{{@key}}">
+						<td><code>{{@key}}</code></td>
+						<td>{{name}}. {{descr}}</td>
+						<td>
+							{{#if granted}}
+								<span class="label label-success">Granted</span>
+							{{/if}}
+							{{#if requested}}
+								<span class="label label-danger">Requested</span>
+							{{/if}}
+						</td>
+						<td>
+							{{#if granted}}
+								<button class="btn btn-mini actRemoveAccessGeneric">Remove</button>
+							{{else}}
+								{{#if requested}}
+									<button class="btn btn-mini actRemoveAccessGeneric">Remove</button>
+								{{else}}
+									<button class="btn btn-mini actRequestAccessGeneric">Request</button>
+								{{/if}}
+							{{/if}}
+						</td>
+					</tr>
+				{{/each}}
+
+			</tbody>
+		</table>
+
+	</div>
+
+
+</div>
+
+<div class="row-fluid">
+	<div class="span12">
+
+		<h3>Application or API Scopes</h3>
+
+
+		<p>
+			<input id="proxysearch" type="search" class="input-large search-query" style="" placeholder="Search application or API" />
+		</p>
+
+		<div id="searchres"></div>
+
+		<table class="table table-striped">
+
+			<thead>
+				<tr>
+					<th>API</th>
+					<th>Scope</th>
+					<th>Status</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+
+			<tbody class="authorizedList">
+
+				{{#each getAppScopes}}
+
+					<tr class="appscope" data-scope="rest_{{@key}}">
+						<td>{{@key}}</td>
+						<td>Generic access</td>
+						<td>
+							{{#if access}}
+								<span class="label label-success">Granted</span>
+							{{else}}
+								<span class="label label-danger">Requested</span>
+							{{/if}}
+						</td>
+						<td><button class="btn btn-mini actRemoveAccess">Remove</button></td>
+					</tr>
+
+					{{#each subscopes}}
+						<tr class="appscope" data-scope="rest_{{app}}_{{@key}}">
+							<td>&nbsp;</td>
+							<td>{{@key}}</td>
+							<td>
+								{{#if access}}
+									<span class="label label-success">Granted</span>
+								{{else}}
+									<span class="label label-danger">Requested</span>
+								{{/if}}
+							</td>
+							<td><button class="btn btn-mini actRemoveAccess">Remove</button></td>
+						</tr>
+					{{/each}}
+
+
+				{{/each}}
+
+
+			</tbody>
+		</table>
+
+	</div>
+
+
+
+</div>

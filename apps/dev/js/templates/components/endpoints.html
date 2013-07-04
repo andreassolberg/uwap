@@ -1,0 +1,13 @@
+
+			<!-- <p>API <code>/{{id}}</code></p> -->
+			<ul class="apis">
+				{{#each endpoints}}
+					<li class="api">
+						<code class="api hideEdit">{{this}}</code> 
+						<input type="text" class="showEdit" name="api" value="{{this}}" />
+						<button class="btn actEdit hideEdit btn-mini">Edit</button>
+						<button class="btn actSave showEdit btn-mini">Save</button>
+					</li>
+				{{/each}}
+			</ul>
+		

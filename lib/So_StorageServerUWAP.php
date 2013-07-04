@@ -45,7 +45,7 @@ class So_StorageServerUWAP extends So_Storage {
 
 		$query = array(
 			"client_id" => $client_id,
-			"app" => $this->subid
+			// "app" => $this->subid
 		);
 
 		// print_r("Query");
@@ -57,6 +57,70 @@ class So_StorageServerUWAP extends So_Storage {
 		if ($result === null) throw new So_Exception('invalid_client', 'Unknown client identifier [' . $client_id . ']');
 		return $result;
 	}
+
+
+
+
+	public function authorizeClient($clientid, $appid, $userid, $authz) {
+
+		$client = $this->getClient($clientid);
+		$updates = array('scopes' => array(), 'scopes_requested' => array());
+
+		if (!empty($client['scopes'])) {
+			foreach($client['scopes'] AS $scope) {
+
+				// Access control, if not a match
+				if (isset($authz[$scope]) && !$authz[$scope]) {
+					// Remove existing scope
+				} else {
+					// Keep existing scope
+					$updates['scopes'][] = $scope;
+				}
+			}
+		}
+
+		if (!empty($client['scopes_requested'])) {
+			foreach($client['scopes_requested'] AS $scope) {
+				if (isset($authz[$scope])) {
+					if ($authz[$scope]) {
+						// Remove existing scope
+						$updates['scopes'][] = $scope;
+					} else {
+						// Rejected requested scope, not add to scope and not kept in requested..
+					}
+				} else {
+					// No change to requested scope, stay as requested.
+					$updates['scopes_requested'][] = $scope;
+				}
+			}
+		}
+
+		// return array(
+		// 	'client' => $client,
+		// 	'authz' => $authz,
+		// 	'updates' => $updates
+		// );
+		// return $updates;
+
+		$criteria = array('client_id' => $clientid);
+
+		UWAPLogger::info('core-dev', 'Updating client authorization (scopes)', array(
+			'criteria' => $criteria,
+			'updates' => $updates,
+			'userid' => $userid
+		));
+
+		$ret = $this->store->update('oauth2-server-clients', null, $criteria, $updates);
+		if (empty($ret)) {
+			throw new Exception('Empty response from update() on storage. Indicates an error occured. Check logs.');;
+		}
+		return true;
+
+	}
+
+
+
+
 
 
 	public function getAuthorization($client_id, $userid) {

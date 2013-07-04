@@ -5,11 +5,24 @@ define(function(require, exports, module) {
 		UWAP = require('uwap-core/js/core')
 		;
 
+	var in_array = function (key, array) {
 
-	var Proxy = function(opts) {
+		var i;
+		if (typeof array === 'undefined' || !array.length) return false;
+		for(i = 0; i < array.length; i++) {
+			if (key === array[i]) return true;
+		}
+		return false;
+	}
+
+	var AuthorizedClient = function(appconfig, opts) {
+		this.appconfig = appconfig;
 		for(var key in opts) {
 			this[key] = opts[key];
 		}
+
+		if (!this.scopes) this.scopes = [];
+		if (!this.scopes_requested) this.scopes_requested = [];
 
 
 		// if (this.proxies) {
@@ -20,40 +33,28 @@ define(function(require, exports, module) {
 		// 	}
 		// }
 
-		if (this['user-stats']) {
-			this.count = this['user-stats']['count'];
-		} else {
-			this.count = null;
-		}
 	}
 
+	AuthorizedClient.prototype.isPending = function() {
+		console.log("Checking is in_array()", "rest_" + this.appconfig.id, this.scopes);
 
+		return !in_array("rest_" + this.appconfig.id, this.scopes);
+	}
 
-	Proxy.prototype.getScopes = function() {
+	AuthorizedClient.prototype.getScopes = function() {
 		
-
-		var result = {};
-
-		// if (this.scopes) {
-		// 	$.each(this.scopes, function(i, scope) {
-				
-		// 	});
-		// }
-
-		return this.scopes;
-
 		var result = {};
 		var that = this;
 		var prefix = "rest_" + this.appconfig.id;
 
 		var smatch = new RegExp(prefix + '_([^_]+)$');
 
-		console.log ('------ loooking for scopes in ', that.appconfig.proxy.scopes);
+		// console.log ('------ loooking for scopes in ', that.appconfig.proxy.scopes);
 
 
 		$.each([ [this.scopes, true], [this.scopes_requested, false] ], function(i, p) {
 			var scopes = p[0], access = p[1];
-			console.log("About to priocess scopes", p, scopes);
+			console.log("About to priocess sciopes", p, scopes);
 
 			$.each(scopes, function(i, scope) {
 				var localScope = null;
@@ -82,5 +83,5 @@ define(function(require, exports, module) {
 		
 	}
 
-	return Proxy;
+	return AuthorizedClient;
 });

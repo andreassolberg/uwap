@@ -23,6 +23,13 @@ longterm
 
 
 
+rest_APPID
+: Basic access to a proxied API
+
+rest_APPID_SCOPE
+: A specific API specific scope defined in the rest proxy configuration.
+
+
 
 
 ### Default set of scopes for applications

@@ -3,16 +3,21 @@ define(function(require, exports, module) {
 	var 
 		$ = require('jquery'),
 
-		hogan = require('uwap-core/js/hogan'),
+		hb = require('uwap-core/js/handlebars'),
+
 		UWAP = require('uwap-core/js/core'),
 		appPicker = require('controllers/appPicker'),
 		newApp = require('controllers/newApp'),
 		newProxy = require('controllers/newProxy'),
+		newClient = require('controllers/newClient'),
 		frontpage = require('controllers/frontpage'),
 		AppDashboard = require('controllers/AppDashboard'),
+		ClientDashboard = require('controllers/ClientDashboard'),
 		ProxyDashboard = require('controllers/ProxyDashboard'),
+		ProxyViewDashboard = require('controllers/ProxyViewDashboard'),
 
-		Proxy = require('models/Proxy')
+		Proxy = require('models/Proxy'),
+		Client = require('models/Client')
     	;
 	
 	require("uwap-core/js/uwap-people");
@@ -24,32 +29,39 @@ define(function(require, exports, module) {
 	
 	UWAP.utils.loadCSS('/css/style.css');
 
+	console.log(" -----> LOADED handlebars", hb);
+
 	var tmpl = {
 		"appdashboard": require('uwap-core/js/text!templates/appdashboard.html'),
+		"clientdashboard": require('uwap-core/js/text!templates/clientdashboard.html'),
 		"proxydashboard": require('uwap-core/js/text!templates/proxydashboard.html'),
+		"proxyviewdashboard": require('uwap-core/js/text!templates/proxyviewdashboard.html'),
 		"authhandlereditor": require('uwap-core/js/text!templates/authhandlereditor.html'),
 		"authorizationhandler":  require('uwap-core/js/text!templates/authorizationhandler.html'),
 		"frontpage": require('uwap-core/js/text!templates/frontpage.html'),
 		"newApp": require('uwap-core/js/text!templates/newApp.html'),
-		"newProxy": require('uwap-core/js/text!templates/newProxy.html')
+		"newProxy": require('uwap-core/js/text!templates/newProxy.html'),
+		"newClient": require('uwap-core/js/text!templates/newClient.html'),
 	};
 	
 	console.log('making templates compile');
 	var templates = {
-		"appdashboard": hogan.compile(tmpl.appdashboard),
-		"authhandlereditor": hogan.compile(tmpl.authhandlereditor),
-		"authorizationhandler": hogan.compile(tmpl.authorizationhandler),
-		"frontpage": hogan.compile(tmpl.frontpage),
-		"newApp": hogan.compile(tmpl.newApp),
-		"newProxy": hogan.compile(tmpl.newProxy),
-		"proxydashboard": hogan.compile(tmpl.proxydashboard)
+		"appdashboard": hb.compile(tmpl.appdashboard),
+		"clientdashboard": hb.compile(tmpl.clientdashboard),
+		"authhandlereditor": hb.compile(tmpl.authhandlereditor),
+		"authorizationhandler": hb.compile(tmpl.authorizationhandler),
+		"frontpage": hb.compile(tmpl.frontpage),
+		"newApp": hb.compile(tmpl.newApp),
+		"newProxy": hb.compile(tmpl.newProxy),
+		"newClient": hb.compile(tmpl.newClient),
+		"proxydashboard": hb.compile(tmpl.proxydashboard),
+		"proxyviewdashboard": hb.compile(tmpl.proxyviewdashboard)
 	};
 	console.log('done compile');
 
 	$("document").ready(function() {
 
 		var App = function(el, user) {
-			
 			
 			this.el = el;
 			this.user = user;
@@ -61,17 +73,16 @@ define(function(require, exports, module) {
 
 			this.picker.bind('selected', $.proxy(this.actLoadApp, this));
 
-			this.el.on("click", "a.navDashboard", $.proxy(this.actFrontpage, this));
+			this.el.on("click", ".navDashboard", $.proxy(this.actFrontpage, this));
 			this.el.on("click", ".newAppBtn", $.proxy(this.actNewApp, this));
 			this.el.on("click", ".newProxyBtn", $.proxy(this.actNewProxy, this));
+			this.el.on("click", ".newClientBtn", $.proxy(this.actNewClient, this));
 		
 			this.load();
 
 			this.routingEnabled = true;
 			$(window).bind('hashchange', $.proxy(this.route, this));
 			this.route();
-
-			
 
 			// this.setNavigationBar([
 			// 	{title: "Dashboard", href: "#!/"},
@@ -115,10 +126,20 @@ define(function(require, exports, module) {
 
 				this.load();
 
-			} else if (parameters = hash.match(/^\/config\/([0-9a-z]+)$/)) {
+			} else if (parameters = hash.match(/^\/config\/([0-9a-z\-]+)$/)) {
 				console.log("Item ", parameters[1]);
 
 				this.actLoadApp(parameters[1]);
+
+			} else if (parameters = hash.match(/^\/view\/([0-9a-z\-]+)$/)) {
+				console.log("Item ", parameters[1]);
+
+				this.actLoadAppRO(parameters[1]);
+
+			} else if (parameters = hash.match(/^\/client\/([0-9a-z\-]+)$/)) {
+				console.log("Item ", parameters[1]);
+
+				this.actLoadClient(parameters[1]);
 
 			} else {
 				console.error('No match found for router...');
@@ -169,8 +190,78 @@ define(function(require, exports, module) {
 			});
 		};
 
-		App.prototype.actLoadApp = function(appid) {
+		/**
+		 * Loading a dashboard in read only information page. Does not require owner.
+		 * This page displays information about the API as well as links to register a client.
+		 * 
+		 * @type {[type]}
+		 */
+		App.prototype.actLoadAppRO = function(appid) {
+
 			var that = this;
+			console.log("Selected an app:", appid);
+			$("div#appmaincontainer").empty();
+
+			UWAP.appconfig.getView(appid, function(appconfig) {
+
+				var adash;
+				console.log("Appconfig", appconfig);
+
+				that.setHash('/view/' + appconfig.id);
+
+				if (appconfig.type === 'app') {
+
+					// adash = new AppDashboard($("div#appmaincontainer"), appconfig, templates);
+					alert("not implemented public display of webapp dashboard yet."); return;
+
+				} else if (appconfig.type === 'proxy') {
+
+					// adash = new ProxyDashboard($("div#appmaincontainer"), new Proxy(appconfig), templates);
+					rdash = new ProxyViewDashboard($("div#appmaincontainer"), new Proxy(appconfig), templates);
+
+				} else {
+
+					console.error('Does not reckognize this type of app');
+					return;
+				}
+
+				that.setNavigationBar([
+					{title: "Dashboard", href: "#!/"},
+					{title: appconfig.name}
+				]);
+
+			});
+
+		}
+
+		App.prototype.actLoadClient = function(appid) {
+			var that = this;
+			console.log("Selected an app:", appid);
+			$("div#appmaincontainer").empty();
+
+			UWAP.appconfig.getClient(appid, function(appconfig) {
+
+				var adash;
+				console.log("Appconfig", appconfig);
+
+				that.setHash('/client/' + appconfig["client_id"]);
+
+				adash = new ClientDashboard($("div#appmaincontainer"), new Client(appconfig), templates);
+
+				that.setNavigationBar([
+					{title: "Dashboard", href: "#!/"},
+					{title: appconfig["client_name"]}
+				]);
+			});
+		};
+
+		App.prototype.actLoadApp = function(appid, type) {
+			var that = this;
+
+			// console.log("actLoadApp", appid, type)
+
+			if (type === 'client') return this.actLoadClient(appid);
+
 			console.log("Selected an app:", appid);
 			$("div#appmaincontainer").empty();
 
@@ -202,6 +293,11 @@ define(function(require, exports, module) {
 			});
 		};
 
+		/**
+		 * Registering a new WebApp.
+		 * @param  {[type]} event [description]
+		 * @return {[type]}       [description]
+		 */
 		App.prototype.actNewApp = function(event) {
 			var that = this;
 			if (event) event.preventDefault();
@@ -226,6 +322,11 @@ define(function(require, exports, module) {
 			na.activate();
 		};
 		
+		/**
+		 * Registering a new API Gatekeeper.
+		 * @param  {[type]} event [description]
+		 * @return {[type]}       [description]
+		 */
 		App.prototype.actNewProxy = function(event) {
 			var that = this;
 			if (event) event.preventDefault();
@@ -249,6 +350,38 @@ define(function(require, exports, module) {
 			}, templates);
 			na.activate();
 		}
+
+		/**
+		 * Registering a new client
+		 * @param  {[type]} event [description]
+		 * @return {[type]}       [description]
+		 */
+		App.prototype.actNewClient = function(event) {
+			var that = this;
+			if (event) event.preventDefault();
+
+			console.log("Initiating new Client...");
+			var na = new newClient(that.el, function(no) {
+				
+				console.log("About to store a new client", no); 
+
+				UWAP.appconfig.storeClient(no, function() {
+					console.log("Successully stored new app");
+
+					UWAP.appconfig.list(function(list) {
+						that.picker.addList(list);
+						// that.picker.selectApp(no.id);
+					});
+
+				}, function(err) {
+					console.log("Error storing new app.");
+				});
+
+			}, templates);
+			na.activate();
+		}
+
+
 
 		var app;
 

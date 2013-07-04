@@ -597,9 +597,21 @@ define(function(require) {
 				null, 
 				null, callback, errorcallback);
 		},
+		query: function(object, callback, errorcallback) {
+			UWAP._request(
+				'POST', UWAP.utils.getEngineURL("/api/appconfig/apps/query"),
+				object, 
+				null, callback, errorcallback);
+		},
 		store: function(object, callback, errorcallback) {
 			UWAP._request(
 				'POST', UWAP.utils.getEngineURL("/api/appconfig/apps"),
+				object, 
+				null, callback, errorcallback);
+		},
+		storeClient: function(object, callback, errorcallback) {
+			UWAP._request(
+				'POST', UWAP.utils.getEngineURL("/api/appconfig/clients"),
 				object, 
 				null, callback, errorcallback);
 		},
@@ -617,11 +629,11 @@ define(function(require) {
 				template, 
 				null, callback, errorcallback);
 		},
-		updateProxies: function(id, proxies, callback, errorcallback) {
+		updateProxy: function(id, proxy, callback, errorcallback) {
 			UWAP._request(
 				'POST', 
-				UWAP.utils.getEngineURL('/api/appconfig/app/' + id + '/proxies'),
-				proxies, 
+				UWAP.utils.getEngineURL('/api/appconfig/app/' + id + '/proxy'),
+				proxy, 
 				null, callback, errorcallback);
 		},
 		updateAuthzHandler: function(id, object, callback, errorcallback) {
@@ -651,7 +663,48 @@ define(function(require) {
 				UWAP.utils.getEngineURL('/api/appconfig/app/' + id),
 				null, 
 				null, callback, errorcallback);
+		},
+		getClient: function(id, callback, errorcallback) {
+			UWAP._request(
+				'GET', 
+				UWAP.utils.getEngineURL('/api/appconfig/client/' + id),
+				null, 
+				null, callback, errorcallback);
+		},
+		addClientScopes: function(id, object, callback, errorcallback) {
+			UWAP._request(
+				'POST', UWAP.utils.getEngineURL('/api/appconfig/client/' + id + '/addScopes'),
+				object, 
+				null, callback, errorcallback);
+		},
+		removeClientScopes: function(id, object, callback, errorcallback) {
+			UWAP._request(
+				'POST', UWAP.utils.getEngineURL('/api/appconfig/client/' + id + '/removeScopes'),
+				object, 
+				null, callback, errorcallback);
+		},
+		getView: function(id, callback, errorcallback) {
+			UWAP._request(
+				'GET', 
+				UWAP.utils.getEngineURL('/api/appconfig/view/' + id),
+				null, 
+				null, callback, errorcallback);
+		},
+		getAppClients: function(id, callback, errorcallback) {
+			UWAP._request(
+				'GET', 
+				UWAP.utils.getEngineURL('/api/appconfig/app/' + id + '/clients'),
+				null, 
+				null, callback, errorcallback);
+		},
+		authorizeClient: function(id, clientid, authz, callback, errorcallback) {
+			UWAP._request(
+				'POST', 
+				UWAP.utils.getEngineURL('/api/appconfig/app/' + id + '/client/' + clientid + '/authorize'),
+				authz, 
+				null, callback, errorcallback);
 		}
+
 	};
 
 

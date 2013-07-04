@@ -1,0 +1,29 @@
+<div class="modal hide" id="myModal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal">x</button>
+		<h3>Register a new client</h3>
+	</div>
+	<div class="modal-body">
+		<p>You are about to create a client to access UNINETT WebApp Park.</p>
+
+		<form class="registerform form-inline">  
+
+			<p>Give your application a short desriptive name, and a longer descriptive text to explain what your application does.</p>
+
+			<p><input style="width: 300px" id="newClientName" type="text" class="input" placeholder="Name"></p>
+			<p><textarea style="width: 300px" id="newClientDescr" placeholder="Describe your client..."></textarea></p>
+
+			<p>Enter the OAuth 2.0 <tt>redirect_uri</tt> of your application. This is the URL where the user will be redirected back after successfull authentication.</p>
+
+			<p>
+				<input style="width: 200px" type="text" class="input" id="newClientRedirectURI" placeholder="http://yourservice.org/callback">
+			</p>
+
+		</form>
+
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+		<a href="#" class="createNewBtn btn btn-primary">Create new application</a>
+	</div>
+</div>

@@ -1,0 +1,84 @@
+
+
+
+{{#if pending}}
+
+<h3>Pending Client Authorization Decisions</h3>
+
+
+<table class="table table-striped">
+	<tbody class="authzPending">
+
+
+	{{#each pending}}
+
+		<tr class="client" data-clientid="{{client_id}}"><td>
+			<h4>{{client_name}} <code>{{client_id}}</code></h4>
+
+			<p><label><input type="checkbox" checked="checked" disabled="disabled"> Basic access permissions</label></p>
+
+			{{#each getScopes}}
+				<p><label><input data-scope="{{localScope}}" class="grantScopeItem" type="checkbox" checked="checked" > {{name}} <code>{{localScope}}</code></label></p>
+			{{/each}}
+
+			<!-- <p>Owner <code>{{uwap-userid}}</code></p> -->
+
+			<p>
+				<button class="actGrant btn btn-success">
+					<i class="icon-ok"></i> Grant selected permissions
+				</button>
+				<button class="actReject btn btn-danger">Reject any access</button>
+			</p>
+			
+		</td></tr>
+	{{/each}}
+
+	</tbody>
+</table>
+
+{{/if}}
+
+
+
+
+{{#if authorized}}
+
+<h3>Authorized Clients</h3>
+
+
+<table class="table table-striped">
+
+	<thead>
+		<tr>
+			<th>Client ID</th>
+			<th>Client name</th>
+			<th>Additional scopes</th>
+			<th></th>
+
+		</tr>
+	</thead>
+
+	<tbody class="authzPending">
+
+
+	{{#each authorized}}
+
+		<tr class="client" data-clientid="{{client_id}}">
+			<td>{{client_id}}</td>
+			<td>{{client_name}}</td>
+			<td>
+			{{#each getScopes}}
+				<span class="label">{{localScope}}</span>
+			{{/each}}
+			</td>
+			<td><a href="#" style="display: inline" class="btn btn-mini" title="" >Edit</a></td>
+		</tr>
+
+
+
+	{{/each}}
+
+	</tbody>
+</table>
+
+{{/if}}

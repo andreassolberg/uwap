@@ -1,0 +1,78 @@
+<div class="row-fluid">
+
+	<div class="span9">
+		<h2>{{name}} <span class="label label-success">API Gatekeeper</span></h2>
+
+		<p>{{descr}}</p>
+
+		<p><a href="/#!/config/{{id}}">Administration of this API (only for API admins)</a></p>
+
+
+
+	</div>
+	<div class="span3">
+		<p><img src="https://core.uwap.org/api/media/logo/app/{{id}}" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px; backgroud: #eee" /></p>
+	</div>
+
+</div>
+
+
+
+<div class="row-fluid">
+
+	<h3>Using this API</h3>
+
+
+	<p>Endpoints for OAuth flow and API access</p>
+	<dl>
+		{{#oauth}}
+			<dt>OAuth 2.0 Authorization Endpoint</dt>
+			<dd><code>{{authorization}}</code></dd>
+			<dt>OAuth 2.0 Token Endpoint</dt>
+			<dd><code>{{token}}</code></dd>
+		{{/oauth}}
+
+		<dt>API Base URL</dt>
+		<dd><code>{{url}}</code></dd>
+	</dl>
+
+	<p><a href="http://oauth.net/2/" target="_blank">Revisit the OAuth 2.0 specification</a> on how to setup your client to obtain valid OAuth 2.0 tokens for accessing the API.</p>
+
+	{{#proxy}}
+		<h4>OAuth 2.0 Scopes</h4>
+		<dl>
+			<dt><code>rest_{{../id}}</code></dt>
+			<dd>Basic API Access
+				{{#if policy.auto}}
+					<span class="label">Auto-accept</span>
+				{{else}}
+					<span class="label label-warning">Requires moderation</span>
+				{{/if}}
+			</dd>
+
+			<!-- Scope is added with update functionality using the scopes.html template.  -->
+			{{#each scopes}}
+				<dt><code>rest_{{../../id}}_{{@key}}</code></dt>
+				<dd>
+					{{name}}
+					{{#if auto}}
+						<span class="label">Auto-accept</span>
+					{{else}}
+						<span class="label label-warning">Requires moderation</span>
+					{{/if}}
+				</dd>
+			{{/each}}
+		</dl>
+	{{/proxy}}
+
+
+
+
+
+	
+	<p><button class="btn"><i class="icon-plus-sign"></i> Register a new client to access this API</button></p>
+
+	<div id="clientauthorizations"></div>
+
+</div>
+

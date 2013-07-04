@@ -57,7 +57,6 @@ requirejs.config({
 		// 'text'		: '<?php echo $corengine; ?>/_/js/text',
 		'uwap': '/_/js',
 	},
-	//baseUrl: "<?php echo $hosturl; ?>/js",
 	baseUrl: "<?php echo $hosturl; ?>/js",
 	shim: {
 		'uwap-core/js/jquery.tmpl': {deps: ['jquery'], exports: 'jQuery'},

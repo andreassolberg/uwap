@@ -130,7 +130,7 @@ class Config {
 	}
 
 	public function getOAuthClientConfig() {
-	 
+	
 		$id = $this->config['id'];
 
 		$redirect_uri = GlobalConfig::scheme() . '://' . $id . '.' . GlobalConfig::hostname() . '/';
@@ -289,35 +289,36 @@ class Config {
 	}
 
 
-	public function updateProxies($proxies, $userid) {
+
+	public function updateProxy($proxy, $userid) {
 		$current = $this->getConfig();
 
 		$allowedFields = array(
-			'endpoints', 'scopes', 'token', 'token_hdr', 'type', 'user'
+			'endpoints', 'scopes', 'token', 'token_hdr', 'type', 'user', 'policy'
 		);
-		foreach($proxies AS $key => $proxy) {
-			if (!preg_match('/^[a-z0-9]+$/', $key)) {
-				unset($proxies[$key]); continue;
-			}
-			foreach($proxies[$key] AS $k => $v) {
+		// foreach($proxies AS $key => $proxy) {
+			// if (!preg_match('/^[a-z0-9]+$/', $key)) {
+			// 	unset($proxies[$key]); continue;
+			// }
+			foreach($proxy AS $k => $v) {
 				if (!in_array($k, $allowedFields)) {
-					unset($proxies[$key][$k]);
+					unset($proxy[$k]);
 				}
 			}
-		}
+		// }
 
 		// if(empty($current['proxies'])) {
 		// 	$current['proxies'] = array();
 		// }
-		$this->config['proxies'] = $proxies;
+		$this->config['proxy'] = $proxy;
 
 		$criteria = array('id' => $this->config['id']);
 
-		$updates = array('proxies' => $proxies);
+		$updates = array('proxy' => $proxy);
 
-		UWAPLogger::info('core-dev', 'Updating proxies configuration', array(
+		UWAPLogger::info('core-dev', 'Updating proxy configuration', array(
 			'userid' => $userid,
-			'obj' => $proxies,
+			'obj' => $proxy,
 			'updates' => $updates,
 		));
 
@@ -328,7 +329,7 @@ class Config {
 			throw new Exception('Empty response from update() on storage. Indicates an error occured. Check logs.');;
 		}
 
-		return $proxies;
+		return $proxy;
 	}
 
 	public function updateAuthzHandler($id, $obj, $userid) {
@@ -454,6 +455,68 @@ class Config {
 		return $this->subid . '.' . GlobalConfig::hostname();
 	}
 
+	public function getPolicy() {
+		if (isset($this->config['policy']) && isset($this->config['policy']['auto'])) {
+			return $this->config['policy']['auto'];
+		}
+		return false;
+	}
+
+	public function getScopePolicy($scope) {
+		if (isset($this->config['proxy']) && 
+			isset($this->config['proxy']['scopes']) && 
+			isset($this->config['proxy']['scopes'][$scope])) {
+
+			return $this->config['proxy']['scopes'][$scope]['auto'];
+		}
+		return false;
+	}
+
+	public function scopePolicyAccept($scope = null) {
+		if ($scope === null) return $this->getPolicy();
+		return $this->getScopePolicy($scope);
+	}
+
+	public function getConfigLimited() {
+
+		$result = array();
+
+		$current = $this->config;
+		$hostname = $this->getHostname();
+		$current['url'] = GlobalConfig::scheme() . '://' . $hostname;
+
+		if (empty($current['status'])) {
+			$current['status'] = array();
+		}
+
+		$parameters = array('id', 'type', 'descr', 'name', 'url', 'uwap-userid');
+
+
+		if ($current['type'] === 'proxy') {
+
+			$result['oauth'] = array(
+				'authorization' => GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/oauth/authorization',
+				'token' => GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/oauth/token',
+			);
+		}
+
+		foreach($parameters AS $p) {
+			if (isset($current[$p])) $result[$p] = $current[$p];
+		}
+		if (isset($current['proxy'])) {
+			$result['proxy'] = array();
+			if (isset($current['proxy']['scopes'])) {
+				$result['proxy']['scopes'] = $current['proxy']['scopes'];
+			}
+			if (isset($current['proxy']['policy'])) {
+				$result['proxy']['policy'] = $current['proxy']['policy'];
+			}
+		}
+
+
+		return $result;
+	}
+
 	public function getConfig() {
 		$current = $this->config;
 		$hostname = $this->getHostname();
@@ -511,6 +574,12 @@ class Config {
 	}
 
 
+	public function requireOwner($userid) {
+		if ($this->config['uwap-userid'] !== $userid) {
+			throw new Exception('Operation not allowed. You are not the owner of this app.');
+		}
+
+	}
 
 
 

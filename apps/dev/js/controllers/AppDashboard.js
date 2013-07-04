@@ -1,5 +1,5 @@
-define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
-	
+define(function(require, exports, module) {
+
 	var in_array = function (key, array) {
 
 		var i;
@@ -16,32 +16,33 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 		var that = this;
 		this.handlers = {};
 
-		this.container = container;
+		this.container = $('<div class="eventlistener"></div>').appendTo(container);
+		
 		this.appconfig = appconfig;
 		this.templates = templates;
 
 		this.draw();		
 
-		$(this.element).find("tbody.authorizationhandlers")
+		$(this.container).find("tbody.authorizationhandlers")
 			.on("click", "a.handlerEdit", this.proxy(this.handlerEdit));
-		$(this.element).find("tbody.authorizationhandlers")
+		$(this.container).find("tbody.authorizationhandlers")
 			.on("click", "a.handlerReset", this.proxy(this.handlerReset));
-		$(this.element).find("tbody.authorizationhandlers")
+		$(this.container).find("tbody.authorizationhandlers")
 			.on("click", "a.handlerDelete", this.proxy(this.handlerDelete));
 
-		$(this.element).on("click", "div.appstatus button.appDelete", 
+		$(this.container).on("click", "div.appstatus button.appDelete", 
 			this.proxy(this.deleteApp));
 
-		$(this.element).on("click", "div.appstatus div.listing button.listingAdd", 
+		$(this.container).on("click", "div.appstatus div.listing button.listingAdd", 
 			this.proxy(this.listingAdd));
-		$(this.element).on("click", "div.appstatus div.listing button.listingRemove", 
+		$(this.container).on("click", "div.appstatus div.listing button.listingRemove", 
 			this.proxy(this.listingRemove));
 
 
-		$(this.element).on('click', '#addNewAuthzHandle', this.proxy(this.handlerNew));
+		$(this.container).on('click', '#addNewAuthzHandle', this.proxy(this.handlerNew));
 
 
-		$(this.element).on('click', 'div.bootstrapform button#bootstrap_action', this.proxy(this.bootstrap));
+		$(this.container).on('click', 'div.bootstrapform button#bootstrap_action', this.proxy(this.bootstrap));
 
 	};
 
@@ -97,7 +98,7 @@ define(['./AuthzHandlerEditor'], function(AuthzHandlerEditor) {
 			this.appconfig.appusage = this.appconfig['appdata-stats'].usage;
 		}
 
-		this.element = $(this.templates['appdashboard'].render(this.appconfig));
+		this.element = $(this.templates['appdashboard'](this.appconfig));
 
 		
 		console.log("this element", this.element);

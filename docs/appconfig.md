@@ -1,39 +1,7 @@
 # App config doc
 
 
-Example of a proxy entry.
 
-	{
-		"_id" : ObjectId("4fcdbc6d12637a1e36000008"),
-		"descr" : "A description of the test application.",
-		"id" : "vootprovider",
-		"logo" : "....==",
-		"name" : "VOOT Provider",
-		"owner" : {
-			"displayName" : "Andreas Åkre Solberg",
-			"email" : "andreas.solberg@uninett.no"
-		},
-		"uwap-userid" : "andreas@uninett.no"
-		"owner-userid" : "andreas@uninett.no",
-		"proxies" : {
-			"api" : {
-				"endpoints" : [
-					"https://beta.foodl.org/api/voot2/"
-				],
-				"scopes" : [
-					"voot"
-				],
-				"token_hdr" : "X-Auth",
-				"token" : "s2d72mfbsixh36fgdm39ssmx.shd1z",
-				"user" : true
-			}
-		},
-		"status" : [
-			"pendingDAV"
-		],
-		"type" : "proxy",
-
-	}
 
 Status tags:
 
@@ -44,7 +12,7 @@ Status tags:
 	pendingDelete
 
 
-Adding a new one:
+Adding a new proxy, POST this config:
 
 	{
 		"id" : "soademo",
@@ -70,4 +38,98 @@ Adding a new one:
 			"operational"
 		]
 	}
+
+
+## Data models
+
+Example of client stored in `oauth2-server-clients`:
+
+	{
+		"_id" : ObjectId("50bde58fe4f76be6880dcec5"),
+		"client_id" : "redmine",
+		"client_name" : "UNINETT RedMine",
+		"client_secret" : "sdfsdf96sdf765sdf45w8",
+		"groups" : [
+			"@realm:uninett.no"
+		],
+		"scopes" : [
+			"feedread",
+			"feedwrite"
+		]
+	}
+
+Example of a proxy entry.
+
+	{
+		"_id" : ObjectId("5140114212637a161f000000"),
+		"descr" : "Description",
+		"id" : "baluba2",
+		"name" : "Baluba2",
+		"status" : [
+			"operational"
+		],
+		"type" : "proxy",
+		"uwap-userid" : "andreas@uninett.no",
+		"policy": {auto: true},
+		"proxy" : {
+			"endpoints" : [
+				"http://foo.com"
+			],
+			"scopes": {
+				"scope1": {
+					name: "Write access",
+					policy: {
+						auto: false
+					}
+				}
+			},
+			"token_hdr" : "UWAP-X-Auth",
+			"token" : "13a3505e-0c59-41b4-8896-b51d48cd08f5",
+			"type" : "token",
+			"user" : true
+		}
+	}
+
+	
+
+
+## Methods
+
+All API access requires an OAuth token with scope `appconfig`.
+
+
+### Query applications
+
+Query a list of relevant applications
+
+	GET /appconfig/apps
+
+Query details about a specific application
+
+	GET /appconfig/app/([a-z0-9\-]+)
+
+
+### Posting application config
+
+	POST   /appconfig/apps
+	GET    /appconfig/app/([a-z0-9\-]+)/status
+	POST   /appconfig/app/([a-z0-9\-]+)/status
+	GET    /appconfig/app/([a-z0-9\-]+)/clients
+	POST   /appconfig/app/([a-z0-9\-]+)/davcredentials
+	POST   /appconfig/app/([a-z0-9\-]+)/bootstrap
+	POST   /appconfig/app/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)
+	DELETE /appconfig/app/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)
+
+Checking if an identifier is available.
+
+	GET /appconfig/check/([a-z0-9\-]+)
+
+
+
+
+
+
+
+
+
 

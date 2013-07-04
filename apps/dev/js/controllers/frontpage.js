@@ -4,7 +4,7 @@ define(function() {
 		this.callback = callback;
 		this.container = container;
 //		this.element = $("#frontpage").tmpl();
-		this.element = $(templates['frontpage'].render());
+		this.element = $(templates['frontpage']());
 
 		container.append(this.element);
 
@@ -18,7 +18,6 @@ define(function() {
 		this.container.empty();
 		this.container.append(this.element);
 	}
-
 
 	// frontpage.include(Spine.Events);
 	return frontpage;

@@ -1,0 +1,24 @@
+{{#each .}}
+
+	<div class="proxy" style="margin: .3em 0px 0px 0px; padding: .3em 1em; border-radius: 5px; border: 1px solid #ccc" data-clientid="{{id}}">
+		<h4>{{name}} <code>{{id}}</code></h4>
+
+		<p>{{descr}}</p>
+
+		<p><label><input type="checkbox" checked="checked" disabled="disabled"> Basic access permissions</label></p>
+
+		{{#each getScopes}}
+			<p><label><input data-scope="{{@key}}" class="grantScopeItem" type="checkbox"  > {{name}} <code>{{@key}}</code></label></p>
+		{{/each}}
+
+		<!-- <p>Owner <code>{{uwap-userid}}</code></p> -->
+
+		<p>
+			<button class="actRequest btn btn-mini actRequestAccess">
+				<i class="icon-plus-sign"></i> Request access
+			</button>
+		</p>
+		
+	</div>
+	
+{{/each}}

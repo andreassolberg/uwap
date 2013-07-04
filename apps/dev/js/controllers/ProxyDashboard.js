@@ -4,11 +4,29 @@ define(function(require, exports, module) {
 		$ = require('jquery'),
 		UWAP = require('uwap-core/js/core'),
 
-		hogan = require('uwap-core/js/hogan')
+		AuthorizedClient = require('../models/AuthorizedClient'),
+
+		hb = require('uwap-core/js/handlebars')
 		;
 
+
+	console.log(" -----> LOADED handlebars", hb);
+
 	var addScopeTmplText = require('uwap-core/js/text!templates/components/newScope.html');
-	var addScopeTmpl = hogan.compile(addScopeTmplText);
+	var addScopeTmpl = hb.compile(addScopeTmplText);
+	var scopesTmplText = require('uwap-core/js/text!templates/components/scopes.html');
+	var scopesTmpl = hb.compile(scopesTmplText);
+	var endpointsTmplText = require('uwap-core/js/text!templates/components/endpoints.html');
+	var endpointsTmpl = hb.compile(endpointsTmplText);
+
+	var authzclientsTmplText = require('uwap-core/js/text!templates/components/authorizedClients.html');
+	var authzclientsTmpl = hb.compile(authzclientsTmplText);
+
+	var count_keys = function(myobj) {
+		var c= 0;
+		for (k in myobj) if (myobj.hasOwnProperty(k)) c++;
+		return c;
+	}
 
 
 	var in_array = function (key, array) {
@@ -23,24 +41,97 @@ define(function(require, exports, module) {
 
 
 	var ProxyDashboard = function(container, appconfig, templates) {
-		this.container = container;
+		// this.container = container;
 		this.appconfig = appconfig;
 		this.templates = templates;
+
+		this.container = $('<div class="eventlistener"></div>').appendTo(container);
+
+		this.clients = [];
 
 		console.log("PROXY", appconfig);
 
 		this.draw();
+		this.getAppClients();
 
-		$(this.element).on("click", "ul.scopes li.scope a.removeScope", 
+		$(this.container).on("click", "div.scopes tr.scope a.removeScope", 
 			this.proxy(this.actRemoveScope));
-		$(this.element).on("click", "button.addScope", 
+		$(this.container).on("click", "button.addScope", 
 			this.proxy(this.actAddScope));
 
-		$(this.element).on("click", "ul.apis li.api button.actEdit", 
+		$(this.container).on("click", "ul.apis li.api button.actEdit", 
 			this.proxy(this.actAPIEdit));
-		$(this.element).on("click", "ul.apis li.api button.actSave", 
+		$(this.container).on("click", "ul.apis li.api button.actSave", 
 			this.proxy(this.actAPISave));
 
+		$(this.container).on("change", "input#proxyBasicAccessPolicy", 
+			this.proxy(this.actChangePolicy));
+
+		$(this.container).on('click', '.actGrant', this.proxy(this.actGrant));
+		$(this.container).on('click', '.actReject', this.proxy(this.actReject));
+
+	}
+
+	ProxyDashboard.prototype.getAppClients = function() {
+		var that = this;
+		UWAP.appconfig.getAppClients(this.appconfig.id, function(data) {
+			var ni;
+			var clientsPending = [];
+			var clientsAuthorized = [];
+			for(var i = 0; i < data.clients.length; i++) {
+				ni = new AuthorizedClient(that.appconfig, data.clients[i]);
+				if (ni.isPending()) {
+					clientsPending.push(ni);	
+				} else {
+					clientsAuthorized.push(ni);
+				}
+				
+			}
+			console.log("Get App Clients results", data);
+			that.clients = {
+				"pending": clientsPending,
+				"authorized": clientsAuthorized,
+			}
+			that.drawClients();
+		} );
+	}
+
+	ProxyDashboard.prototype.getClientPendingRef = function(id) {
+		for(var i = 0; i < this.clients.pending.length; i++) {
+			if (this.clients.pending[i].client_id === id) return this.clients.pending[i];
+		}
+	}
+
+	ProxyDashboard.prototype.actGrant = function(e) {
+		e.stopPropagation(); e.preventDefault();
+		var that = this;
+		var container = $(e.currentTarget).closest('tr.client');
+		var client_id = container.data('clientid');
+		var client = this.getClientPendingRef(client_id);
+
+		var prefix = "rest_" + that.appconfig.id;
+		var authz = {};
+		authz[prefix] = true;
+		
+		container.find("input.grantScopeItem").each(function(i, item) {
+			authz[prefix + '_' + $(item).data('scope')] = $(item).prop('checked');
+		});
+
+		UWAP.appconfig.authorizeClient(this.appconfig.id, client_id, authz, function(data) {
+			console.log("AUTHORIZED COMPLETED...", data);
+
+			that.getAppClients();		
+
+		});
+
+		console.log("Client identifier", client_id, client, authz);
+	}
+
+	ProxyDashboard.prototype.actReject = function(e) {
+		e.stopPropagation(); e.preventDefault();
+		var client_id = $(e.currentTarget).closest('tr.client').data('clientid');
+		var client = this.getClientPendingRef(client_id);
+		console.log("Client identifier", client_id, client);
 	}
 
 	ProxyDashboard.prototype.actAPIEdit = function(e) {
@@ -55,26 +146,53 @@ define(function(require, exports, module) {
 		var el = $(e.currentTarget).parent('li.api');
 		el.removeClass('edit');
 		console.log("Save", $(e.currentTarget).parent('li.api'));
+
+		var endpoints = [
+			el.find('input').val()
+		];
+		console.log("Endpoints is ", endpoints, el.find('input'));
+		this.appconfig.proxy.endpoints = endpoints;
+		this.updateProxy();
 	}
 
 	ProxyDashboard.prototype.actAddScope = function(e) {
 		var that = this;
 		e.stopPropagation();
 
-		var as = $(addScopeTmpl.render({}));
+		// Draw the modal editor for adding a new scope.
+		var as = $(addScopeTmpl({}));
 		as.appendTo("body").modal();
 		as.on('shown', function() {
 			as.find("input.newScopeValue").focus();
 		});
+
+		// When user has saved the new scope, obtain data and push.
 		as.on("click", "#addScopeSubmit", function(e) {
 			e.preventDefault(); e.stopPropagation();
-			var svalue = as.find("input.newScopeValue").val();
+			var scopeid = as.find("input.newScopeValue").val();
+			var scopedef = {};
+
+			scopedef.name = as.find("input.newScopeName").val();
+			if (as.find("input.newScopePolicy").prop('checked')) {
+				scopedef.policy = {auto: true};
+			} else {
+				scopedef.policy = {auto: false};
+			}
+
 			as.modal('hide');
 
-			// console.log("TEST TEST TEST", that.appconfig.proxies.api.scopes);
+			console.log("  ===== Before adding NEW Scope ", that.appconfig.proxy);
 
-			that.appconfig.proxies.api.scopes.push(svalue);
-			that.updateProxies();
+			if (!that.appconfig.proxy.scopes) {
+				that.appconfig.proxy.scopes = {};
+			}
+			that.appconfig.proxy.scopes[scopeid] = scopedef;
+
+			console.log("  ===== ADDING NEW Scope ", scopeid, scopedef, that.appconfig.proxy);
+			// return;
+
+			// that.appconfig.proxy.scopes.push(svalue);
+			that.updateProxy();
 
 		})
 		as.on('hidden', function() {
@@ -91,21 +209,37 @@ define(function(require, exports, module) {
 		// el.addClass('edit');
 		console.log("remove scope");
 
-		var t = $(e.currentTarget).parent("li.scope").data('scope');
+		var t = $(e.currentTarget).closest("tr.scope").data('scope');
 		console.log("currentTarget", t);
 
-		var remaining = [];
-		for(var i = 0; i < this.appconfig.proxies.api.scopes.length; i++) {
-			if (this.appconfig.proxies.api.scopes[i] !== t) {
-				remaining.push(this.appconfig.proxies.api.scopes[i]);
-			}
+		delete this.appconfig.proxy.scopes[t];
+		if (count_keys(this.appconfig.proxy.scopes) === 0) {
+			delete this.appconfig.proxy.scopes;
 		}
-		this.appconfig.proxies.api.scopes = remaining;
-		console.log("removing ", t, "remaining", remaining);
-		this.updateProxies();
+
+		console.log("DELETING SCOPE", t, this.appconfig)
+
+		// var remaining = [];
+		// for(var i = 0; i < this.appconfig.proxy.scopes.length; i++) {
+		// 	if (this.appconfig.proxy.scopes[i] !== t) {
+		// 		remaining.push(this.appconfig.proxy.scopes[i]);
+		// 	}
+		// }
+		// this.appconfig.proxy.scopes = remaining;
+		// console.log("removing ", t, "remaining", remaining);
+		this.updateProxy();
 
 	}
 
+	ProxyDashboard.prototype.actChangePolicy = function(e) {
+		e.stopPropagation(); e.preventDefault();
+		var auto = $(e.currentTarget).prop('checked');
+		console.log("Status is ", auto);
+
+		this.appconfig.proxy.policy = {"auto": auto};
+		this.updateProxy();
+
+	}
 
 	ProxyDashboard.prototype.proxy = function(func) {
 		return $.proxy(func, this);
@@ -114,6 +248,8 @@ define(function(require, exports, module) {
 	ProxyDashboard.prototype.updateStatus = function() {
 
 	}
+
+
 	
 	ProxyDashboard.prototype.bootstrap = function() {
 		var template = $(this.element).find("div.bootstrapform select#bootstrap_template").val();
@@ -131,11 +267,12 @@ define(function(require, exports, module) {
 		});
 	}
 
-	ProxyDashboard.prototype.updateProxies = function() {
+	ProxyDashboard.prototype.updateProxy = function() {
 		var that = this;
-		UWAP.appconfig.updateProxies(this.appconfig.id, this.appconfig.proxies, function(proxies) {
-			that.appconfig.proxies = proxies;
+		UWAP.appconfig.updateProxy(this.appconfig.id, this.appconfig.proxy, function(proxy) {
+			that.appconfig.proxy = proxy;
 			that.drawScopes();
+			that.drawEndpoints();
 		});
 	}
 
@@ -166,7 +303,7 @@ define(function(require, exports, module) {
 			this.appconfig.appcapacityH = this.appconfig['appdata-stats'].capacityH;
 			this.appconfig.appusage = this.appconfig['appdata-stats'].usage;
 		}
-		this.element = $(this.templates['proxydashboard'].render(this.appconfig));
+		this.element = $(this.templates['proxydashboard'](this.appconfig));
 
 		
 		console.log("this element", this.element);
@@ -174,23 +311,61 @@ define(function(require, exports, module) {
 		this.container.append(this.element);
 
 		this.drawScopes();
+		this.drawPolicy();
+		this.drawEndpoints();
 
 		this.drawAuthzHandlers();
 		this.drawAppStatus();
 	}
 
-	ProxyDashboard.prototype.drawScopes = function() {
-
-		var container = $(this.element).find('ul.scopes');
+	ProxyDashboard.prototype.drawClients = function() {
+		console.log("draw clients ", this.clients);
+		var container = $(this.element).find('div#clientauthorizations');
 		container.empty();
 
-		var tmpl = hogan.compile('<li class="scope" data-scope="{{scope}}"><code>{{scope}}</code> ' +
-			'<a href="#" style="display: inline" class="removeScope" title="Remove scope" >&times;</a></li>');
-		console.log(this.appconfig.proxies.api.scopes)
-		$.each(this.appconfig.proxies.api.scopes, function(i, scope) {
-			container.append(tmpl.render({scope: scope}));
-			console.log("Processing scopes", i, scope)
-		});
+		container.append(authzclientsTmpl(this.clients));
+		// container.append(authzclientsTmpl(this.clientsAuthorized));
+
+	}
+
+	ProxyDashboard.prototype.drawPolicy = function() {
+		var auto = false;
+		if (this.appconfig.proxy && this.appconfig.proxy.policy && this.appconfig.proxy.policy.auto) {
+			auto = true;
+		}
+
+		$(this.element).find('input#proxyBasicAccessPolicy').attr('checked', auto);
+
+	}
+
+	ProxyDashboard.prototype.drawEndpoints = function() {
+		var container = $(this.element).find('div.endpoints');
+		container.empty();
+
+		if(!this.appconfig.proxy) return;
+		if(!this.appconfig.proxy.endpoints) return;
+
+		container.append(endpointsTmpl(this.appconfig.proxy));
+	}
+
+	ProxyDashboard.prototype.drawScopes = function() {
+
+		var container = $(this.element).find('div.scopes');
+		container.empty();
+
+		// var tmpl = hb.compile('<li class="scope" data-scope="{{scope}}"><code>{{scope}}</code> ' +
+		// 	'<a href="#" style="display: inline" class="removeScope" title="Remove scope" >&times;</a></li>');
+		// console.log(this.appconfig.proxy.scopes)
+
+		if (!this.appconfig.proxy) return;
+		if (!this.appconfig.proxy.scopes) return;
+
+		container.append(scopesTmpl(this.appconfig.proxy.scopes));
+
+		// $.each(this.appconfig.proxy.scopes, function(i, scope) {
+		// 	container.append(tmpl({scope: scope}));
+		// 	console.log("Processing scopes", i, scope)
+		// });
 
 	}
 
@@ -261,7 +436,7 @@ define(function(require, exports, module) {
 				}
 //					handlertmpl = $("#authorizationhandlertmpl").tmpl(item);
 				console.log('authorizationhandler template-making');
-				handlertmpl = $(that.templates['authorizationhandler'].render(item));
+				handlertmpl = $(that.templates['authorizationhandler'](item));
 				$(that.element).find("tbody.authorizationhandlers").append(handlertmpl);
 				console.log("App has handlers", that.appconfig.handlers, handlertmpl);
 				// console.log(that.element.find("tbody.authorizationhandlers"));

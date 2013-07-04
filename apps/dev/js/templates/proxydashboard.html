@@ -9,7 +9,8 @@
 			<dt>API Endpoint</dt>
 			<dd><code>{{url}}</code></dd>
 		</dl>
-		<p></p>
+
+		<p><a href="/#!/view/{{id}}">Public dashboard for this API</a></p>
 
 	</div>
 	<div class="span3">
@@ -28,54 +29,48 @@
 
 		<dl>
 
-		{{#proxiesArr}}
+		{{#proxy}}
 			<dt>HTTP Authentication Header</dt>
 			<dd><code>{{token_hdr}}</code></dd>
 			<dt>HTTP Authentication Token</dt>
 			<dd><code>{{token}}</code></dd>
-		{{/proxiesArr}}
+		{{/proxy}}
 
 		</dl>
+
+
+		<h3>Endpoints</h3>
+		
+		<div class="endpoints">
+
+
+
+		</div>
+
+		<p>Editing and adding new endpoints is not supported yet.</p>
 
 	</div>
 
 	<div class="span6">
 
+		<h3>Basic access policy</h3>
+		<p>
+			<label class="checkbox" for="proxyBasicAccessPolicy">
+				Auto-grant basic access to this API
+				<input id="proxyBasicAccessPolicy" type="checkbox" value="" /> 
+			</label> 
+		</p>
+
+
 		<h3>Scopes</h3>
 		
-		{{#proxies}}
-			{{#api}}
-				<ul class="scopes">
-				{{#scopes}}
-					<li class="scope" data-scope="{{.}}"><code>{{.}}</code> <a href="#" style="display: inline" class="removeScope" title="Remove scope" >&times;</a></li>
-				{{/scopes}}
-				{{^scopes}} 
-					<li>No scopes configured</li>
-				{{/scopes}}
-
-				</ul>
-			{{/api}}
-		{{/proxies}}
+		{{#proxy}}
+			<div class="scopes">
+				<!-- Scope is added with update functionality using the scopes.html template.  -->
+			</div>
+		{{/proxy}}
 		
 		<p><button class="btn btn-mini addScope">Add scope</button></p>
-
-
-		<h3>Endpoints</h3>
-		
-
-		{{#proxiesArr}}
-			<p>API <code>/{{id}}</code></p>
-			<ul class="apis">
-				{{#endpoints}}
-					<li class="api">
-						<code class="api hideEdit">{{.}}</code> 
-						<input type="text" class="showEdit" name="api" value="{{.}}" />
-						<button class="btn actEdit hideEdit btn-mini">Edit</button>
-						<button class="btn actSave showEdit btn-mini">Save</button>
-					</li>
-				{{/endpoints}}
-			</ul>
-		{{/proxiesArr}}
 
 	</div>
 
@@ -100,5 +95,12 @@
 		<p>{{count}} registered users. ( <a href="">see more statistics</a> )</p>
 
 	</div>
+</div>
+
+
+<div class="row-fluid">
+
+	<div id="clientauthorizations"></div>
+
 </div>
 

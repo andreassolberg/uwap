@@ -12,7 +12,7 @@ define(function() {
 
 //		this.element = $("#newAppTemplate").tmpl();
 		console.log('newApp.html');
-		this.element = $(templates['newApp'].render());
+		this.element = $(templates['newApp']());
 
 		console.log("this element", this.element);
 		$("div#modalContainer").empty().append(this.element);

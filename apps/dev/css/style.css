@@ -1,0 +1,8 @@
+
+
+
+ul.apis li.api .showEdit { display: none; }
+ul.apis li.api .hideEdit { display: inline; }
+
+ul.apis li.api.edit .showEdit { display: inline; }
+ul.apis li.api.edit .hideEdit { display: none; }

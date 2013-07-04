@@ -302,6 +302,10 @@ try {
 
 
 
+
+
+
+
 	/**
 	 *  The appconfig API.
 	 */
@@ -315,11 +319,33 @@ try {
 
 
 
-
 		if (Utils::route('get', '^/appconfig/apps$', &$qs, &$parameters)) {
 
 			$listing = $appdirectory->getMyApps($userid);			
 			$response['data'] = $listing;
+
+		} else if (Utils::route('post', '^/appconfig/apps/query$', &$qs, &$parameters)) {
+
+			$listing = $appdirectory->queryApps($parameters, $userid);
+			$response['data'] = $listing;
+
+
+		} else if (Utils::route('post', '^/appconfig/clients$', &$qs, &$parameters)) {
+
+			$object = $parameters;
+			$id = Utils::genID();
+			$object['client_id'] = $id;
+			$object['client_secret'] = Utils::genID();
+			Utils::validateID($id);
+
+			// $config = Config::getInstance();
+			// $config->store($object, $userid);
+			// Config::store($object, $userid);
+
+			$response['data'] = $appdirectory->storeClient($object, $userid);
+
+			// $ac = Config::getInstance($id);
+			// $response['data'] = $ac->getConfig();
 
 
 		} else if (Utils::route('post', '^/appconfig/apps$', &$qs, &$parameters)) {
@@ -361,17 +387,17 @@ try {
 
 			$response['data'] = $c['status'];
 
-		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/proxies$', &$qs, &$object)) {
+		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/proxy$', &$qs, &$object)) {
 
 			$appid = $qs[1];
 			Utils::validateID($appid);
 
 			$ac = Config::getInstance($appid);
-			$ac->updateProxies($object, $userid);
+			$ac->updateProxy($object, $userid);
 
 			$c = $ac->getConfig();
 
-			$response['data'] = $c['proxies'];
+			$response['data'] = $c['proxy'];
 
 		} else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)/clients$', &$qs, &$parameters)) {
 
@@ -380,6 +406,22 @@ try {
 
 			$clients = $appdirectory->getClients($appid, $userid);
 			$response['data'] = $clients;
+
+		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/client/([a-z0-9\-]+)/authorize$', &$qs, &$object)) {
+
+			$appid = $qs[1];
+			$clientid = $qs[2];
+			Utils::validateID($appid);
+			Utils::validateID($clientid);
+
+			$a = Config::getInstance($appid);
+			$a->requireOwner($userid);
+
+			$store = new So_StorageServerUWAP();
+			// $ac = $store->getClient($qs[1]);
+
+			$response['data'] = $store->authorizeClient($clientid, $appid, $userid, $object);
+			// $response['data'] = $clients;
 
 		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/davcredentials$', &$qs, &$parameters)) {
 
@@ -404,6 +446,7 @@ try {
 			
 			Utils::validateID($appid);
 			$ac = Config::getInstance($appid);
+			$ac->requireOwner($userid);
 			$response['data'] = $ac->bootstrap($object);
 
 
@@ -416,6 +459,7 @@ try {
 
 			Utils::validateID($appid);
 			$ac = Config::getInstance($appid);
+			$ac->requireOwner($userid);
 			
 			Utils::validateID($authzid);
 
@@ -430,6 +474,7 @@ try {
 
 			Utils::validateID($appid);
 			$ac = Config::getInstance($appid);
+			$ac->requireOwner($userid);
 			
 			Utils::validateID($authzid);
 
@@ -445,22 +490,61 @@ try {
 			Utils::validateID($appid);
 			$response['data'] = !$appdirectory->exists($appid);
 
+		} else if (Utils::route('get', '^/appconfig/view/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+
+			$appid = $qs[1];
+			Utils::validateID($appid);
+			$ac = Config::getInstance($appid);
+			$response['data'] = $ac->getConfigLimited();
+
 		} else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)$', &$qs, &$parameters)) {
 
 			$appid = $qs[1];
 			Utils::validateID($appid);
 			$ac = Config::getInstance($appid);
+			$ac->requireOwner($userid);
 
 			$response['data'] = $ac->getConfig();
-				$response['data']['user-stats'] = $ac->getUserStats();
+			$response['data']['user-stats'] = $ac->getUserStats();
+
 			if ($response['data']['type'] === 'app') {
 	
 				$response['data']['davcredentials'] = $ac->getDavCredentials($userid);
 				$response['data']['appdata-stats'] = $ac->getStats();
 				$response['data']['files-stats'] = $ac->getFilestats();
 
-
 			}
+
+		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+
+			$appid = $qs[1];
+			Utils::validateID($appid);
+			$response['data'] = $appdirectory->getClient($appid, $userid);
+			// $ac = Config::getInstance($appid);
+
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/addScopes$', &$qs, &$parameters)) {
+
+			$appid = $qs[1];
+			Utils::validateID($appid);
+			$client = $appdirectory->getClient($appid, $userid);
+
+			$response['data'] = $appdirectory->addClientScopes($appid, $userid, $object);
+
+
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/removeScopes$', &$qs, &$parameters)) {
+
+			$appid = $qs[1];
+			Utils::validateID($appid);
+			$client = $appdirectory->getClient($appid, $userid);
+
+			$response['data'] = $appdirectory->removeClientScopes($appid, $userid, $object);
+
+			// $ac = Config::getInstance($appid);
+
+			
+
+			// $ac->requireOwner($userid);
+			
 
 		} else {
 			throw new Exception('Invalid request');
@@ -569,6 +653,10 @@ try {
 	} else if (Utils::route('post', '^/soa$', &$qs, &$args)) {
 
 
+		/**
+		 * TODO: Remote the list of proxie apis on each proxy. only one proxy item.
+		 */
+
 		if (empty($args['url'])) {
 			throw new Exception("Missing parameter [url]");
 		}
@@ -587,18 +675,17 @@ try {
 			throw new Exception('This host is not running a soaproxy.');
 		}
 
-		$proxyconfig = $remoteConfig->_getValue('proxies', null, true) ;
+		$proxyconfig = $remoteConfig->_getValue('proxy', null, true) ;
 
 		$rawpath = parse_url($url, PHP_URL_PATH);
-		if (preg_match('|^/([^/]+)(/.*)$|i', $rawpath, $matches)) {
-			$api = $matches[1];
-			$restpath = $matches[2];
+		if (preg_match('|^(/.*)$|i', $rawpath, $matches)) {
+			$restpath = $matches[1];
 
-			if (!isset($proxyconfig[$api])) {
-				throw new Exception('API Endpoint is not configured...');
-			}
+			// if (!isset($proxyconfig[$api])) {
+			// 	throw new Exception('API Endpoint is not configured...');
+			// }
 
-			$realurl = $proxyconfig[$api]['endpoints'][0] . $restpath;
+			$realurl = $proxyconfig['endpoints'][0] . $restpath;
 
 			error_log("REAL URL IS " . $realurl);
 		}
@@ -618,18 +705,16 @@ try {
 			
 			$clientid = $token->getClientID();
 			
-			$ensureScopes = array('soa_' . $providerID);
+			$ensureScopes = array('rest_' . $providerID);
 			$oauth->check(null, $ensureScopes);
-
-			// print_r($ensureScopes);  exit;
 
 
 			$userdata = $token->getUserdataWithGroups();
 			$client->setAuthenticated($userdata);
-			$scopes = $oauth->getApplicationScopes('soa', $providerID);
+			$scopes = $oauth->getApplicationScopes('rest', $providerID);
 			$client->setAuthenticatedClient($clientid, $scopes);
 		}
-		$response = $client->get($realurl, $args); 
+		$response = $client->get($realurl, $args);
 
 
 	/**

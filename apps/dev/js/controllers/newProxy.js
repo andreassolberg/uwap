@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 		this.verifytimer = null;
 
 		console.log('newProxy.html');
-		this.element = $(this.templates['newProxy'].render());
+		this.element = $(this.templates['newProxy']());
 
 		console.log("this element", this.element);
 		$("div#modalContainer").empty().append(this.element);
@@ -63,15 +63,13 @@ define(function(require, exports, module) {
 		console.log("scope string", scopestr);
 		console.log("scope array", scopes);
 
-		obj.proxies = {
-			"api": {
-				"endpoints": [$(this.element).find("#newProxyEndpoint").val()],
-				"scopes": newProxy.parseArray($(this.element).find("#newProxyScopes").val()),
-				"token_hdr": "UWAP-X-Auth",
-				"token": UWAP.utils.uuid(),
-				"type": "token",
-				"user": true
-			}
+		obj.proxy = {
+			"endpoints": [$(this.element).find("#newProxyEndpoint").val()],
+			"scopes": newProxy.parseArray($(this.element).find("#newProxyScopes").val()),
+			"token_hdr": "UWAP-X-Auth",
+			"token": UWAP.utils.uuid(),
+			"type": "token",
+			"user": true
 		};
 
 		// console.log("About to store proxy object", obj); return;

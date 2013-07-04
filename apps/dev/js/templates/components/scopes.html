@@ -1,0 +1,47 @@
+<table class="table table-striped">
+	<tbody class="scopeItems">
+
+
+	{{#each .}}
+
+		<tr class="scope" data-scope="{{@key}}"><td>
+			<p>
+				<code>{{@key}}</code>
+				{{#if policy.auto}}
+					<span class="label label-success">Auto-grant access</span>
+				{{else}}
+					<span class="label label-warning">Access needs confirmation</span>
+				{{/if}}
+				<a href="#" style="display: inline" class="btn btn-small removeScope" title="Remove scope" >Delete scope</a>
+			</p>
+			<p>{{name}}</p>
+
+			
+		</td></tr>
+
+		
+
+	{{else}}
+		<tr><td>
+			No scopes configured
+		</td></tr>
+	{{/each}}
+
+
+
+	</tbody>
+</table>
+
+
+
+
+<!-- 
+<ul>
+
+	{{#each .}}
+		<li class="scope" data-scope="{{@key}}"><code>{{@key}}</code> <a href="#" style="display: inline" class="removeScope" title="Remove scope" >&times;</a></li>
+	{{else}}
+		<li>No scopes configured</li>
+	{{/each}}
+
+</ul> -->

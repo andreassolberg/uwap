@@ -80,7 +80,7 @@ class Utils {
 	}
 
 	public static function validateID($id) {
-		if (preg_match('/^([a-zA-Z0-9]+)$/', $id, $matches)) {
+		if (preg_match('/^([a-zA-Z0-9\-]+)$/', $id, $matches)) {
 			return true;
 		}
 		throw new Exception('Invalid characters in provided app ID');
