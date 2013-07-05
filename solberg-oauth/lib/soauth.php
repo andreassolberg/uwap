@@ -744,6 +744,7 @@ class So_Server {
 		if ($request->response_type === 'token') {
 
 
+
 			$accesstoken = So_AccessToken::generate($clientconfig['client_id'], $userid, $userdata, $scopes, false, $expires_in);
 			$this->store->putAccessToken($request->client_id, $userid, $accesstoken);
 			error_log('Ive generated a token: ' . var_export($accesstoken->getToken(), true));
@@ -760,6 +761,8 @@ class So_Server {
 
 			$authcode = So_AuthorizationCode::generate($request->client_id, $userid, $userdata, $scopes, $expires_in);
 			$this->store->putCode($authcode);
+
+			// echo "put a code <pre>"; print_r($authcode); echo '</pre>'; exit;
 			
 			$response = $request->getResponse(array('code' => $authcode->code));
 			$response->sendRedirect($url);
@@ -790,7 +793,10 @@ class So_Server {
 			$clientconfig = $this->store->getClient($tokenrequest->client_id);
 			$tokenrequest->checkCredentials($clientconfig['client_id'], $clientconfig['client_secret']);
 			$code = $this->store->getCode($clientconfig['client_id'], $tokenrequest->code);
-			$accesstoken = So_AccessToken::generate($clientconfig['client_id'], $code->userid, $code->userdata, $code->scopes, $code->tokenexpiresin);
+
+			// echo "got a code <pre>"; print_r($code); echo '</pre>'; exit;
+
+			$accesstoken = So_AccessToken::generate($clientconfig['client_id'], $code->userid, $code->userdata, $code->scope, $code->tokenexpiresin);
 			$this->store->putAccessToken($clientconfig['client_id'], $code->userid, $accesstoken);
 			error_log('Ive generated a token: ' . var_export($accesstoken->getToken(), true));
 			$tokenresponse = new So_TokenResponse($accesstoken->getToken());
@@ -948,20 +954,24 @@ class So_AuthorizationCode {
 		if (isset($obj['tokenexpiresin'])) $n->tokenexpiresin = $obj['tokenexpiresin'];
 		if (isset($obj['code'])) $n->code = $obj['code'];
 		if (isset($obj['userid'])) $n->userid = $obj['userid'];
-		if (isset($obj['userdata'])) $n->userid = $obj['userdata'];
+		if (isset($obj['userdata'])) $n->userdata = $obj['userdata'];
 		if (isset($obj['client_id'])) $n->client_id = $obj['client_id'];
+		if (isset($obj['scope'])) $n->scope = $obj['scope'];
 		return $n;
 	}
 	
 	static function generate($client_id, $userid, $userdata, $scope, $expires_in = 3600) {
 		$n = new So_AuthorizationCode();
-		$n->userid = $userid;
 		$n->client_id = $client_id;
+		$n->userid = $userid;
+		$n->userdata = $userdata;
+		$n->scope = $scope;
+
+		$n->tokenexpiresin = $expires_in;
 		$n->issued = time();
 		$n->validuntil = time() + 3600;
-		$n->tokenexpiresin = $expires_in;
 		$n->code = So_Utils::gen_uuid();
-		$n->scope = $scope;
+
 		return $n;
 	}
 }
@@ -973,12 +983,18 @@ class So_AccessToken {
 	}
 	static function generate($client_id, $userid, $userdata, $scope = null, $refreshtoken = true, $expires_in = 3600) {
 		$n = new So_AccessToken();
-		$n->userid = $userid;
+
 		$n->client_id = $client_id;
+		$n->userid = $userid;
+		$n->userdata = $userdata;
 		$n->issued = time();
 		$n->validuntil = time() + $expires_in;
 		$n->access_token = So_Utils::gen_uuid();
-		$n->userdata = $userdata;
+
+		$n->clientdata = array(
+			'client_id' => $client_id
+		);
+
 		if ($refreshtoken) {
 			$n->refresh_token = So_Utils::gen_uuid();			
 		}
@@ -1118,7 +1134,12 @@ class So_Message {
 		if ($hash) {
 			$redirurl = $endpoint . '#' . $this->asQS();
 		} else {
-			$redirurl = $endpoint . '?' . $this->asQS();
+			if (strstr($endpoint, "?")) {
+				$redirurl = $endpoint . '&' . $this->asQS();
+			} else {
+				$redirurl = $endpoint . '?' . $this->asQS();
+			}
+			
 		}
 		return $redirurl;
 	}

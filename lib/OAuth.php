@@ -78,6 +78,10 @@ class OAuth {
 			$userdata['a'] = $search['a'];
 		}
 
+		// echo "userid " . $userid . "\n";
+		// echo "userdata ";
+		// print_r($userdata);
+
 
 		// TODO: Do we need to suport passive requests??
 		// TODO: Check first clients scopes, then check authorization consent.
