@@ -67,7 +67,7 @@ define(function(require, exports, module) {
 			"endpoints": [$(this.element).find("#newProxyEndpoint").val()],
 			"scopes": newProxy.parseArray($(this.element).find("#newProxyScopes").val()),
 			"token_hdr": "UWAP-X-Auth",
-			"token": UWAP.utils.uuid(),
+			"token_val": UWAP.utils.uuid(),
 			"type": "token",
 			"user": true
 		};
