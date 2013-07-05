@@ -495,8 +495,8 @@ class Config {
 		if ($current['type'] === 'proxy') {
 
 			$result['oauth'] = array(
-				'authorization' => GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/oauth/authorization',
-				'token' => GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/oauth/token',
+				'authorization' => GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/api/oauth/authorization',
+				'token' => GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/api/oauth/token',
 			);
 		}
 
