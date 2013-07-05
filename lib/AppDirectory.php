@@ -451,7 +451,7 @@ class AppDirectory {
 		$app['type'] = 'client';
 
 		$allowedFields = array(
-			'client_id', 'client_name', 'type', 'descr', 'redirect_uri'
+			'client_id', 'client_name', 'client_secret', 'type', 'descr', 'redirect_uri'
 		);
 
 		foreach($app AS $k => $v) {
