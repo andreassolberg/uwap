@@ -44,19 +44,19 @@ class Proxy_REST {
 					throw new Exception('This host is not running a soaproxy.');
 				}
 
-				$proxyconfig = $remoteConfig->_getValue('proxies', null, true) ;
+				$proxyconfig = $remoteConfig->_getValue('proxy', null, true) ;
 
 				// $rawpath = parse_url($url, PHP_URL_PATH);
 				$rawpath = $_SERVER['PATH_INFO'];
-				if (preg_match('|^/([^/]+)(/.*)$|i', $rawpath, $matches)) {
-					$api = $matches[1];
-					$restpath = $matches[2];
+				if (preg_match('|^(/.*)$|i', $rawpath, $matches)) {
+					// $api = $matches[1];
+					$restpath = $matches[1];
 
-					if (!isset($proxyconfig[$api])) {
+					if (!isset($proxyconfig)) {
 						throw new Exception('API Endpoint is not configured...');
 					}
 
-					$realurl = $proxyconfig[$api]['endpoints'][0] . $restpath;
+					$realurl = $proxyconfig['endpoints'][0] . $restpath;
 
 					if (!empty($_SERVER['QUERY_STRING'])) {
 						$realurl .= '?' . $_SERVER['QUERY_STRING'];
@@ -74,14 +74,18 @@ class Proxy_REST {
 				// // // Get provided Token on this request, if present.
 				$token = $oauth->getProvidedToken();
 
+				// echo "TOKEN used was : <pre>"; print_r($token); exit;
+
 				$providerID = $remoteConfig->getID();
 
-				$client = HTTPClient::getClientWithConfig($proxyconfig[$api], $providerID);
+				// echo "proxyconfig was : <pre>"; print_r($proxyconfig); exit;
+
+				$client = HTTPClient::getClientWithConfig($proxyconfig, $providerID);
 				if ($token) {
 					
 					$clientid = $token->getClientID();
 					
-					$ensureScopes = array('soa_' . $providerID);
+					$ensureScopes = array('rest_' . $providerID);
 					$oauth->check(null, $ensureScopes);
 
 					// print_r($ensureScopes);  exit;
@@ -89,13 +93,13 @@ class Proxy_REST {
 
 					$userdata = $token->getUserdataWithGroups();
 					$client->setAuthenticated($userdata);
-					$scopes = $oauth->getApplicationScopes('soa', $providerID);
+					$scopes = $oauth->getApplicationScopes('rest', $providerID);
 					$client->setAuthenticatedClient($clientid, $scopes);
 				}
 				$response = $client->get($realurl, $args); 
 
 				header('Content-Type: application/json; charset=utf-8');
-				echo json_encode($response);
+				echo json_encode($response['data']);
 
 			} else {
 				throw new Exception('Bad request.');
