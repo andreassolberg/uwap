@@ -123,6 +123,9 @@ class AuthBase {
 	function storeUser() {
 
 		$user = $this->getUserdata();
+
+		// echo '<pre>Userdata'; print_r($user); exit;
+
 		if (empty($user['userid'])) throw new Exception('Missing user attribute [userid]');
 
 		$search = $this->store->queryOne('users', array('userid' => $user['userid']));
@@ -219,6 +222,8 @@ class AuthBase {
 
 		$groups = array();
 
+		// echo '<pre>Attributes '; print_r($attributes); exit;
+
 
 		$realm = 'norealm_uwap_org';
 		if (!empty($attributes['eduPersonPrincipalName']) && !empty($attributes['eduPersonOrgDN:o'])) {
@@ -228,10 +233,10 @@ class AuthBase {
 				$groups['uwap:realm:' . $realm] = $orgname;
 			}
 		}
-		if (!empty($attributes['eduPersonOrgUnitDN']) && !empty($attributes['eduPersonOrgUnitDN:cn'])) {
+		if (!empty($attributes['eduPersonOrgUnitDN']) && !empty($attributes['eduPersonOrgUnitDN:ou'])) {
 			for($i = 0; $i < count($attributes['eduPersonOrgUnitDN']); $i++) {
 				$key = sha1($attributes['eduPersonOrgUnitDN'][$i]);
-				$name = $attributes['eduPersonOrgUnitDN:cn'][$i];
+				$name = $attributes['eduPersonOrgUnitDN:ou'][$i];
 				$groups['uwap:orgunit:' . $realm . ':' . $key] = $name;
 			}
 		}
@@ -265,6 +270,9 @@ class AuthBase {
 
 	public function getVerifier() {
 		$attributes = $this->as->getAttributes();
+
+		// echo 'Attributes';
+		// print_r($attributes);
 
 		if (empty($attributes['displayName'])) throw new Exception("Can not obtain displayName from authenticated user");
 		if (empty($attributes['eduPersonPrincipalName'])) throw new Exception("Can not obtain eduPersonPrincipalName from authenticated user");
