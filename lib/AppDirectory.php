@@ -442,6 +442,10 @@ class AppDirectory {
 		return (!empty($config));
 	}
 
+	public function clientExists($id) {
+		$config = $this->store->queryOne('oauth2-server-clients', array("client_id" => $id));
+		return (!empty($config));
+	}
 
 	public static function validateClientConfig(&$app) {
 		if (empty($app['client_id'])) throw new Exception('Missing parameter [id]');
@@ -451,7 +455,7 @@ class AppDirectory {
 		$app['type'] = 'client';
 
 		$allowedFields = array(
-			'client_id', 'client_name', 'client_secret', 'type', 'descr', 'redirect_uri'
+			'client_id', 'client_name', 'client_secret', 'type', 'descr', 'redirect_uri', 'scopes_requested'
 		);
 
 		foreach($app AS $k => $v) {
@@ -529,6 +533,26 @@ class AppDirectory {
 		$config['status'] = array('operational');
 
 		$id = $config["client_id"];
+		if ($this->clientExists($id)) {
+			throw new Exception('Client ID already exists, cannot create new app with this ID.');
+		}
+
+
+		$config['scopes'] = array();	
+
+		if (!isset($config['scopes_requested'])) {
+			$config['scopes_requested'] = array('userinfo');
+		}
+		$allowedScopes = array('userinfo' => 1, 'feedread' => 1, 'feedwrite' => 1, 'longterm' => 1);
+
+		foreach($config['scopes_requested'] AS $s) {
+			if (isset($allowedScopes[$s])) {
+				$config['scopes'][] = $s;
+			}
+		}
+
+		unset( $config['scopes_requested']);
+
 
 		// if ($this->exists($id)) {
 		// 	throw new Exception('Application ID already exists, cannot create new app with this ID.');

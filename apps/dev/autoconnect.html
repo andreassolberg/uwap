@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>UWAP - Developer Dashboard</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="UNINETT WebApp Park - Development Dashboard" />
+		<meta name="author" content="Andreas Åkre Solberg" />
+
+		<link href="css/style-authzhandler.css" rel="stylesheet" />
+		<style type="text/css">
+			body {
+				padding-top: 60px;
+				padding-bottom: 40px;
+			}
+			.sidebar-nav {
+				padding: 9px 0;
+			}
+		</style>
+
+		<script type="text/javascript" data-main="main-autoconnect" src="/_/js/require.js"></script>
+		<script type="text/javascript" src="js/spine.js"></script>
+		
+	</head>
+
+	<body>
+
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</a>
+					<a class="brand" href="#">UWAP</a>
+					<div class="btn-group pull-right">
+						<a class="btn "  href="#">
+							<i class="icon-user"></i> <span id="username"></span>
+						</a>
+					</div>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li class="active"><a href="#">Developers</a></li>
+						</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
+
+
+		<div class="container-fluid">
+
+
+
+			<div class="row-fluid">
+
+				<div id="notauthorized" style="display:none; padding: 3em">
+					<p>You have not yet authorized the UWAP feed Widget.</p>
+					<p><button class="btn">Authorize</button></p>
+				</div>
+				<div id="main"></div>
+
+			</div><!--/row-->
+
+
+
+		 </div><!--/.fluid-container-->
+
+			<hr>
+
+		
+
+
+
+			
+				<footer>
+					<div class="container-fluid">
+						<div class="row-fluid">
+							<p style="color: #ccc">UNINETT &copy; 2012-2013</p>
+						</div>
+					</div>
+				</footer>
+
+
+	</body>
+</html>

@@ -1,0 +1,30 @@
+<div>
+
+	<h3>Autoconnect application</h3>
+
+	<p>You are about to register a new application at UWAP using the autoconnect feature.</p>
+
+	<form class="registerform form-inline">  
+
+		<p><input disabled="disabled" style="width: 400px" id="newClientID" type="text" class="input" placeholder="ID" value="{{metadata.id}}" /></p>
+
+		<p><input style="width: 400px" id="newClientName" type="text" class="input" placeholder="Name" value="{{metadata.name}}" /></p>
+		<p><textarea style="width: 400px" id="newClientDescr" placeholder="Describe your client...">{{metadata.descr}}</textarea></p>
+
+		
+		<p>
+			OAuth 2.0 Authorization callback URL<br />
+			<input style="width: 400px" type="text" 
+				class="input" id="newClientRedirectURI" placeholder="http://yourservice.org/callback" 
+				value="{{metadata.return}}" />
+		</p>
+
+		<p>Client credentials will be sent back to <code>{{origin}}</code> 
+			<br /><strong>Please verify</strong> that this domain is correct before you register the application!</p>
+
+		<button class="btn btn-large btn-primary newClientBtn">Register this application at UWAP</button>
+
+	</form>
+
+
+</div>

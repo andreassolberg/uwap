@@ -333,16 +333,21 @@ try {
 		} else if (Utils::route('post', '^/appconfig/clients$', &$qs, &$parameters)) {
 
 			$object = $parameters;
-			$id = Utils::genID();
-			$object['client_id'] = $id;
+			
+			if (empty($object['client_id'])) {
+				$object['client_id'] = Utils::genID();
+			}
+			
 			$object['client_secret'] = Utils::genID();
-			Utils::validateID($id);
+			Utils::validateID($object['client_id']);
 
 			// $config = Config::getInstance();
 			// $config->store($object, $userid);
 			// Config::store($object, $userid);
 
-			$response['data'] = $appdirectory->storeClient($object, $userid);
+			$appdirectory->storeClient($object, $userid);
+			$response['data'] = $appdirectory->getClient($object['client_id'], $userid);
+
 
 			// $ac = Config::getInstance($id);
 			// $response['data'] = $ac->getConfig();
