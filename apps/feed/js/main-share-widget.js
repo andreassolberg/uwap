@@ -129,7 +129,7 @@ define(function(require, exports, module) {
 
 		UWAP.auth.checkPassive(function(user) {
 
-			$("#share-widget-main").show();
+			$("#main").show();
 			console.log("LOADING APP WITH USER", user);
 			var app = new App($("body"), user);
 			// app.setauth(user);
@@ -143,7 +143,7 @@ define(function(require, exports, module) {
 					UWAP.auth.checkPassive(function(user) {
 
 						$('#notauthorized').hide();
-						$("#share-widget-main").show();
+						$("#main").show();
 
 						var app = new App($("body"), user)
 						console.log("LOADING APP WITH USER", user);
