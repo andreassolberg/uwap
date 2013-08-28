@@ -65,9 +65,18 @@ class AuthenticatedToken {
 		$userid = $userdata['userid'];
 
 		$groupmanager = new GroupManager($userid);
-		// $adhocgroups = $groupmanager->getMyGroups();
+		$adhocgroups = $groupmanager->getMyGroups();
+
+		// echo '<pre>getUserdataWithGroups() ';
+		// print_r($userdata); 
+		// // print_r($adhocgroups); 
+		// exit; 
 
 		$userdata['groups'] = $groupmanager->getGroupNamesIndexed($userdata['groups']);
+
+
+
+		// $userdata['groups'] = $adhocgroups;
 
 		// if (!empty($adhocgroups)) {
 		// 	foreach($adhocgroups AS $adhocgroup) {

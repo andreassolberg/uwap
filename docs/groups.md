@@ -5,6 +5,14 @@
 
 
 
+group
+	id
+	name
+	descr
+	
+
+membership: true
+
 
 
 
@@ -12,7 +20,6 @@
 ## API
 
 Adding new group
-
 
 	var ng = {
 		'title': "Testing to add a new group 2",
