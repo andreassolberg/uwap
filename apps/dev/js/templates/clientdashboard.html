@@ -1,11 +1,11 @@
-<div class="row-fluid">
+<div class="row">
 
-	<div class="span9">
+	<div class="col-md-9">
 		<h2>{{client_name}} <span class="label label-success">Client</span></h2>
 		<p>{{descr}}</p>
 	</div>
 
-	<div class="span3">
+	<div class="col-md-3">
 		<p><img src="https://core.uwap.org/api/media/logo/app/{{id}}" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px; backgroud: #eee" /></p>
 	</div>
 
@@ -13,9 +13,9 @@
 
 
 
-<div class="row-fluid">
+<div class="row">
 
-	<div class="span4">
+	<div class="col-md-4">
 		<h3>OAuth details</h3>
 		<p>You may access your application area using WebDAV</p>
 
@@ -33,7 +33,7 @@
 		</dl>
 	</div>
 
-	<div class="span4">
+	<div class="col-md-4">
 
 		<h3>Authorized Scopes</h3>
 
@@ -45,7 +45,7 @@
 
 	</div>
 
-	<div class="span4">
+	<div class="col-md-4">
 		<h3>Usage Statistics</h3>
 
 		<p><img src="img/plot.jpg" style="border-radius: 5px"></p>
@@ -58,9 +58,9 @@
 
 
 
-<div class="row-fluid">
+<div class="row">
 
-	<div class="span12">
+	<div class="col-md-12">
 
 		<h3>Generic Authorization Scopes</h3>
 		<table class="table table-striped">
@@ -110,15 +110,15 @@
 
 </div>
 
-<div class="row-fluid">
-	<div class="span12">
+<div class="row">
+	<div class="col-md-12">
 
 		<h3>Application or API Scopes</h3>
 
 
-		<p>
-			<input id="proxysearch" type="search" class="input-large search-query" style="" placeholder="Search application or API" />
-		</p>
+		<form role="form">
+			<input id="proxysearch" type="search" class="form-control input-lg search-query" style="" placeholder="Search application or API" />
+		</form>
 
 		<div id="searchres"></div>
 

@@ -1,5 +1,12 @@
 define(function(require, exports, module) {
 
+	var 
+		$ = require('jquery'),
+
+		AuthzHandlerEditor = require('./AuthzHandlerEditor')
+    	;
+
+
 	var in_array = function (key, array) {
 
 		var i;
@@ -118,7 +125,7 @@ define(function(require, exports, module) {
 		if (this.hasStatus(['operational'])) {
 			$("div.appstatusMain").append('<p>Application is <span class="label label-success">operational</span>.</p>');
 		} else {
-			$("div.appstatusMain").append('<p>Application is <span class="label label-fail">not operational</span>.</p>');
+			$("div.appstatusMain").append('<p>Application is <span class="label label-danger">not operational</span>.</p>');
 		}
 
 		if (this.hasStatus(['pendingDAV'])) {
@@ -175,7 +182,7 @@ define(function(require, exports, module) {
 				}
 //					handlertmpl = $("#authorizationhandlertmpl").tmpl(item);
 				console.log('authorizationhandler template-making');
-				handlertmpl = $(that.templates['authorizationhandler'].render(item));
+				handlertmpl = $(that.templates['authorizationhandler'](item));
 				$(that.element).find("tbody.authorizationhandlers").append(handlertmpl);
 				console.log("App has handlers", that.appconfig.handlers, handlertmpl);
 				// console.log(that.element.find("tbody.authorizationhandlers"));
@@ -236,7 +243,7 @@ define(function(require, exports, module) {
 //			var object = $(eventObject.target).closest("tr").tmplItem().data;
 		var object = this.handlers[$(eventObject.target).attr('editid')];
 		var that = this;
-		console.log("HandlerDelete on object: ", object);
+		console.log("HandlerDelete on object: ", that.appconfig.id, object.id);
 
 		UWAP.appconfig.deleteAuthzHandler(that.appconfig.id, object.id, function(handlers) {
 			console.log("Autorization handler completed.", handlers);
@@ -259,7 +266,7 @@ define(function(require, exports, module) {
 		// this.trigger("submit", obj);
 		this.callback(obj);
 		$(this.element).modal("hide");
-		$(this.element).remove();
+		// $(this.element).remove();
 	}
 
 	AppDashboard.prototype.updateIdentifier = function() {

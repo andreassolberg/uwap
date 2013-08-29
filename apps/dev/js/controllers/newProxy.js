@@ -48,6 +48,19 @@ define(function(require, exports, module) {
 	}
 
 
+	newProxy.proxydefcontr = function(arr) {
+		var res = {};
+		for(var i = 0; i < arr.length; i++) {
+			res[arr[i]] = {
+				name: arr[i],
+				policy: {
+					auto: false
+				}
+			}
+		}
+		return res;
+	}
+
 	newProxy.prototype.submit = function() {
 
 		var obj = {};
@@ -59,13 +72,15 @@ define(function(require, exports, module) {
 
 		var scopestr = $(this.element).find("#newProxyScopes").val();
 		var scopes = newProxy.parseArray(scopestr);
+		var scopedef = newProxy.proxydefcontr(scopes);
 
 		console.log("scope string", scopestr);
 		console.log("scope array", scopes);
+		console.log("scope def", scopedef);
 
 		obj.proxy = {
 			"endpoints": [$(this.element).find("#newProxyEndpoint").val()],
-			"scopes": newProxy.parseArray($(this.element).find("#newProxyScopes").val()),
+			"scopes": scopedef,
 			"token_hdr": "UWAP-X-Auth",
 			"token_val": UWAP.utils.uuid(),
 			"type": "token",
@@ -77,7 +92,7 @@ define(function(require, exports, module) {
 		
 		this.callback(obj);
 		$(this.element).modal("hide");
-		$(this.element).remove();
+		// $(this.element).remove();
 
 	};
 

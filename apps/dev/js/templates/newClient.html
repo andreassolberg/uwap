@@ -1,29 +1,48 @@
-<div class="modal hide" id="myModal">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal">x</button>
-		<h3>Register a new client</h3>
-	</div>
-	<div class="modal-body">
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Register a new client</h4>
+      </div>
+      <div class="modal-body">
+
 		<p>You are about to create a client to access UNINETT WebApp Park.</p>
 
-		<form class="registerform form-inline">  
+			<form class="registerform" role="form">  
 
-			<p>Give your application a short desriptive name, and a longer descriptive text to explain what your application does.</p>
+				<p>Give your client application a short desriptive name, and a longer descriptive text to explain what your application does.</p>
 
-			<p><input style="width: 300px" id="newClientName" type="text" class="input" placeholder="Name"></p>
-			<p><textarea style="width: 300px" id="newClientDescr" placeholder="Describe your client..."></textarea></p>
+				<div class="form-group">
+					<label for="newClientName">Name</label>
+					<input style="" id="newClientName" type="text" class="form-control input" placeholder="">
+				</div>
 
-			<p>Enter the OAuth 2.0 <tt>redirect_uri</tt> of your application. This is the URL where the user will be redirected back after successfull authentication.</p>
+				<div class="form-group">
+					<label for="newClientDescr">Description of client</label>
+					<textarea style="" class="form-control" id="newClientDescr" placeholder="Describe your client..."></textarea>
+				</div>
 
-			<p>
-				<input style="width: 200px" type="text" class="input" id="newClientRedirectURI" placeholder="http://yourservice.org/callback">
-			</p>
 
-		</form>
+				<p>Enter the OAuth 2.0 <tt>redirect_uri</tt> of your application. This is the URL where the user will be redirected back after successfull authentication.</p>
 
-	</div>
-	<div class="modal-footer">
+				<div class="form-group">
+					<label for="newClientRedirectURI">OAuth 2.0 Redirect URL</label>
+					<input style="" id="newClientRedirectURI" type="text" class="form-control input" placeholder="http://yourservice.org/callback">
+				</div>
+
+	
+
+			</form>
+
+
+
+
+      </div>
+      <div class="modal-footer">
 		<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-		<a href="#" class="createNewBtn btn btn-primary">Create new application</a>
-	</div>
+		<a href="#" class="createNewBtn btn btn-primary">Register new client</a>
+      </div>
+    </div>
+  </div>
 </div>

@@ -3,19 +3,13 @@
 	<head>
 		<meta charset="utf-8">
 		<title>UWAP - Developer Dashboard</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="UNINETT WebApp Park - Development Dashboard" />
 		<meta name="author" content="Andreas Åkre Solberg" />
 
 		<link href="css/style-authzhandler.css" rel="stylesheet" />
 		<style type="text/css">
-			body {
-				padding-top: 60px;
-				padding-bottom: 40px;
-			}
-			.sidebar-nav {
-				padding: 9px 0;
-			}
+
 		</style>
 
 		<script type="text/javascript" data-main="main" src="/_/js/require.js"></script>
@@ -23,59 +17,60 @@
 		
 	</head>
 
+
 	<body>
 
-		<div class="navbar navbar-fixed-top">
-			<div class="navbar-inner">
-				<div class="container">
-					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</a>
-					<a class="brand" href="#">UWAP</a>
-					<div class="btn-group pull-right">
-						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-							<i class="icon-user"></i> <span id="username"></span>
-							<span class="caret"></span>
-						</a>
-						<ul class="dropdown-menu">
-							<li><a href="#">Profile</a></li>
-							<li class="divider"></li>
-							<li><a href="#">Sign Out</a></li>
-						</ul>
-					</div>
-					<div class="nav-collapse">
-						<ul class="nav">
-							<li><a href="https://store.uwap.org">App Store</a></li>
-							<li class="active"><a href="#">Developers</a></li>
-							<li><a href="https://docs.uwap.org">Documentation</a></li>
-							<li><a href="https://developers.uwap.org/">About</a></li>
-						</ul>
-					</div><!--/.nav-collapse -->
-				</div>
-			</div>
-		</div>
+      <!-- Static navbar -->
+      <div class="navbar navbar-default">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">UWAP</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+			<li><a href="https://store.uwap.org">App Store</a></li>
+			<li class="active"><a href="#">Developers</a></li>
+			<li><a href="https://docs.uwap.org">Documentation</a></li>
+			<li><a href="https://developers.uwap.org/">About</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> <span id="username"></span> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+				<li><a href="#">Profile</a></li>
+				<li class="divider"></li>
+				<li><a href="#">Sign Out</a></li>
+              </ul>
+            </li>
+
+          </ul>
+        </div>
+      </div>
 
 
-		<div class="container-fluid">
+
+		<div class="container">
 
 			<ul id="navigationlist" class="breadcrumb">
 			</ul>
 
 
-			<div class="row-fluid">
+			<div class="row">
 
-				<div class="span3">
-				 <div class="well sidebar-nav">
-					<ul class="nav nav-list applicationlist"></ul>
-				 </div><!--/.well -->
-				</div><!--/span-->
+				<div class="col-md-3">
+				 <!-- <div class="well sidebar-nav"> -->
+					<div class="list-group applicationlist"></div>
+				 <!-- </div> -->
+				</div>
 				
-				<div id="appmaincontainer" class="span9">
-				</div><!--/span-->
+				<div id="appmaincontainer" class="col-md-9">
+				</div>
 
-			</div><!--/row-->
+			</div>
 
 			<hr>
 
@@ -83,9 +78,10 @@
 				<p>UNINETT &copy; 2012-2013</p>
 			</footer>
 
-		 </div><!--/.fluid-container-->
+		</div>
 
-		 <div id="modalContainer"></div>
+		<div id="modalContainer"></div>
+
 
 
 	</body>

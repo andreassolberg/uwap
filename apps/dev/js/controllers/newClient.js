@@ -39,7 +39,7 @@ define(function() {
 		// this.trigger("submit", obj);
 		this.callback(obj);
 		$(this.element).modal("hide");
-		$(this.element).remove();
+		// $(this.element).remove();
 	};
 
 

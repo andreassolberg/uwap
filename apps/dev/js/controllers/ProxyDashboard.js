@@ -379,7 +379,7 @@ define(function(require, exports, module) {
 		if (this.hasStatus(['operational'])) {
 			$("div.appstatusMain").append('<p>Application is <span class="label label-success">operational</span>.</p>');
 		} else {
-			$("div.appstatusMain").append('<p>Application is <span class="label label-fail">not operational</span>.</p>');
+			$("div.appstatusMain").append('<p>Application is <span class="label label-danger">not operational</span>.</p>');
 		}
 
 		if (this.hasStatus(['pendingDAV'])) {

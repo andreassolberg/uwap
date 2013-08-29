@@ -22,9 +22,9 @@ define(function(require, exports, module) {
 	
 	require("uwap-core/js/uwap-people");
 
-	require('uwap-core/bootstrap/js/bootstrap');	
-	require('uwap-core/bootstrap/js/bootstrap-modal');	
-	require('uwap-core/bootstrap/js/bootstrap-dropdown');
+	require('uwap-core/bootstrap3/js/bootstrap');	
+	require('uwap-core/bootstrap3/js/modal');	
+	require('uwap-core/bootstrap3/js/dropdown');
 
 	
 	UWAP.utils.loadCSS('/css/style.css');
@@ -61,17 +61,18 @@ define(function(require, exports, module) {
 
 	$("document").ready(function() {
 
+		$('.dropdown-toggle').dropdown()
+
 		var App = function(el, user) {
 			
 			this.el = el;
 			this.user = user;
 
-			this.picker = new appPicker($("ul.applicationlist"));
+			this.picker = new appPicker($(".applicationlist"), $.proxy(this.actLoadApp, this));
 			this.fpage = new frontpage($("div#appmaincontainer"), function(){}, templates);
 
 			$("span#username").html(this.user.name);
 
-			this.picker.bind('selected', $.proxy(this.actLoadApp, this));
 
 			this.el.on("click", ".navDashboard", $.proxy(this.actFrontpage, this));
 			this.el.on("click", ".newAppBtn", $.proxy(this.actNewApp, this));
@@ -163,7 +164,7 @@ define(function(require, exports, module) {
 				if (i === obj.length-1) {
 					target.append('<li class="active">' + obj[i].title + '</li>');
 				} else {
-					target.append('<li><a class="navDashboard" href="' + obj[i].href + '">' + obj[i].title + '</a> <span class="divider">/</span></li>');
+					target.append('<li><a class="navDashboard" href="' + obj[i].href + '">' + obj[i].title + '</a> <span class="divider"></span></li>');
 				}
 			}
 		}
@@ -370,7 +371,7 @@ define(function(require, exports, module) {
 
 					UWAP.appconfig.list(function(list) {
 						that.picker.addList(list);
-						// that.picker.selectApp(no.id);
+						// that.picker.selectClient(no.client_id);
 					});
 
 				}, function(err) {

@@ -1,164 +1,165 @@
-<div class="modal hide" >
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">x</button>
-					<h3>Edit authorization handler</h3>
-				</div>
-				<div class="modal-body">
-					<p>Authorization handlers are mechamisms to protect REST messages exchanged using the <tt>UWAP.data</tt> API. This enables authentication of the client, and possible also the user by using OAuth version 1 or 2.</p>
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Edit authorization handler</h4>
+      </div>
+      <div class="modal-body">
+		<p>Authorization handlers are mechamisms to protect REST messages exchanged using the <tt>UWAP.data</tt> API. This enables authentication of the client, and possible also the user by using OAuth version 1 or 2.</p>
 
-					<form class="registerform form-horizontal">  
+		<form role="form" class="registerform">  
 
-
-
-						<div class="control-group">
-							<label class="control-label" for="handlerTitle">Title</label>
-							<div class="controls">
-								<input type="text" class="input-xlarge"  id="handlerTitle" value="{{title}}" placeholder="title">
-							</div>
-						</div>
-
-						<div class="control-group">
-							<label class="control-label" for="input01">Identifier</label>
-							<div class="controls">
-								<input type="text" class="input-xlarge"  id="handlerIdentifier" value="{{id}}" placeholder="Identifier">
-								<p class="help-block">A unique handle used to identify this authorization handler.</p>
-							</div>
-						</div>
-
-						<div class="control-group">
-							<label class="control-label" for="handlerType">Type</label>
-							<div class="controls">
-								<select class="handlerType" id="handlerType" name="handlerType">
-									<option value="oauth2">OAuth 2.0</option>
-									<option value="oauth1">OAuth 1.0</option>
-									<option value="token">Custom HTTP Header Token</option>
-									<option value="basic">Basic Authentication</option>
-								</select>
-								
-							</div>
-						</div>
-
-
-						<hr />
-
-						<div class="control-group authzproperty oauth2">
-							<label class="control-label" for="field_tokentransport">Token transport</label>
-							<div class="controls">
-								<select class="handlerType" id="field_tokentransport" name="field_tokentransport">
-									<option value="header">Authorization header</option>
-									<option value="query">Query string</option>
-								</select>
-							</div>
-						</div>
-
-
-						<div class="control-group authzproperty oauth2">
-							<label class="control-label" for="field_defaultscopes">Default requested scopes<br /><small>(separate by spaces)</small></label>
-							<div class="controls">
-								<input type="text" class="input-xlarge"  id="field_defaultscopes" value="{{defaultscopes}}" placeholder="">
-							</div>
-						</div>
-
-						<div class="control-group authzproperty oauth2">
-							<label class="control-label" for="field_defaultexpire">Default token expiration (seconds)</label>
-							<div class="controls">
-								<input type="text" class="input-medium"  id="field_defaultexpire" value="{{defaultexpire}}" placeholder="">
-							</div>
-						</div>
-
-
-
-						<div class="control-group authzproperty oauth2">
-							<label class="control-label" for="field_authorization">Authorization endpoint</label>
-							<div class="controls">
-								<input type="text" class="input-xlarge"  id="field_authorization" value="{{authorization}}" placeholder="https://">
-							</div>
-						</div>
-
-
-						<div class="control-group authzproperty oauth2">
-							<label class="control-label" for="field_token">Token endpoint</label>
-							<div class="controls">
-								<input type="text" class="input-xlarge"  id="field_token" value="{{token}}" placeholder="https://">
-							</div>
-						</div>
-
-
-						<div class="control-group authzproperty oauth1">
-							<label class="control-label" for="field_request">Request endpoint</label>
-							<div class="controls">
-								<input type="text" class="input-xlarge"  id="field_request" value="{{request}}" placeholder="https://">
-							</div>
-						</div>
-
-						<div class="control-group authzproperty oauth1">
-							<label class="control-label" for="field_authorize">Authorization endpoint</label>
-							<div class="controls">
-								<input type="text" class="input-xlarge"  id="field_authorize" value="{{authorize}}" placeholder="https://">
-							</div>
-						</div>
-
-						<div class="control-group authzproperty oauth1">
-							<label class="control-label" for="field_access">Access endpoint</label>
-							<div class="controls">
-								<input type="text" class="input-xlarge"  id="field_access" value="{{access}}" placeholder="https://">
-							</div>
-						</div>
-
-
-						<div class="control-group authzproperty oauth1 oauth2">
-							<label class="control-label" for="field_client_id">Client ID</label>
-							<div class="controls">
-								<input type="text" class="input-xlarge"  id="field_client_id" value="{{client_id}}" placeholder="">
-							</div>
-						</div>
-
-						<div class="control-group authzproperty basic">
-							<label class="control-label" for="field_client_user">Client username</label>
-							<div class="controls">
-								<input type="text" class="input-xlarge"  id="field_client_user" value="{{client_user}}" placeholder="">
-							</div>
-						</div>
-
-						<div class="control-group authzproperty oauth1 oauth2 basic">
-							<label class="control-label" for="field_client_secret">Client password</label>
-							<div class="controls">
-								<input type="text" class="input-xlarge"  id="field_client_secret" value="{{client_secret}}" placeholder="">
-							</div>
-						</div>
-
-
-
-						<div class="control-group authzproperty token">
-							<label class="control-label" for="field_token_hdr">Token HTTP Header</label>
-							<div class="controls">
-								<input type="text" class="input-xlarge"  id="field_token_hdr" value="{{token_hdr}}" placeholder="X-SpecialAPIKey">
-							</div>
-						</div>
-
-						<div class="control-group authzproperty token">
-							<label class="control-label" for="field_token_val">Token HTTP Value</label>
-							<div class="controls">
-								<input type="text" class="input-xlarge"  id="field_token_val" value="{{token_val}}" placeholder="">
-							</div>
-						</div>
-
-					<div class="control-group authzproperty oauth2">
-						<p>Register this redirect URI at your OAuth 2.0 provider.</p>
-						<p><code>{{redirect_uri2}}</code></p>
-					</div>
-
-					<div class="control-group authzproperty oauth1">
-						<p>Register this callback URL at your OAuth 1.0a provider.</p>
-						<p><code>{{redirect_uri1}}</code></p>
-					</div>
-
-
-					</form>
-
-				</div>
-				<div class="modal-footer">
-					<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-					<a href="#" class="saveAuthZHandler btn btn-primary">Save authorization handler</a>
+			<div class="form-group">
+				<label class="control-label" for="handlerTitle">Title</label>
+				<div class="controls">
+					<input type="text" class="form-control"  id="handlerTitle" value="{{title}}" placeholder="title">
 				</div>
 			</div>
+
+			<div class="form-group">
+				<label class="control-label" for="input01">Identifier</label>
+				<div class="controls">
+					<input type="text" class="form-control"  id="handlerIdentifier" value="{{id}}" placeholder="Identifier">
+					<p class="help-block">A unique handle used to identify this authorization handler.</p>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label" for="handlerType">Type</label>
+				<div class="controls">
+					<select class="handlerType" id="handlerType" name="handlerType">
+						<option value="oauth2">OAuth 2.0</option>
+						<option value="oauth1">OAuth 1.0</option>
+						<option value="token">Custom HTTP Header Token</option>
+						<option value="basic">Basic Authentication</option>
+					</select>
+					
+				</div>
+			</div>
+
+
+			<hr />
+
+			<div class="form-group authzproperty oauth2">
+				<label class="control-label" for="field_tokentransport">Token transport</label>
+				<div class="controls">
+					<select class="handlerType" id="field_tokentransport" name="field_tokentransport">
+						<option value="header">Authorization header</option>
+						<option value="query">Query string</option>
+					</select>
+				</div>
+			</div>
+
+
+			<div class="form-group authzproperty oauth2">
+				<label class="control-label" for="field_defaultscopes">Default requested scopes<br /><small>(separate by spaces)</small></label>
+				<div class="controls">
+					<input type="text" class="form-control"  id="field_defaultscopes" value="{{defaultscopes}}" placeholder="">
+				</div>
+			</div>
+
+			<div class="form-group authzproperty oauth2">
+				<label class="control-label" for="field_defaultexpire">Default token expiration (seconds)</label>
+				<div class="controls">
+					<input type="text" class="form-control"  id="field_defaultexpire" value="{{defaultexpire}}" placeholder="">
+				</div>
+			</div>
+
+
+
+			<div class="form-group authzproperty oauth2">
+				<label class="control-label" for="field_authorization">Authorization endpoint</label>
+				<div class="controls">
+					<input type="text" class="form-control"  id="field_authorization" value="{{authorization}}" placeholder="https://">
+				</div>
+			</div>
+
+
+			<div class="form-group authzproperty oauth2">
+				<label class="control-label" for="field_token">Token endpoint</label>
+				<div class="controls">
+					<input type="text" class="form-control"  id="field_token" value="{{token}}" placeholder="https://">
+				</div>
+			</div>
+
+
+			<div class="form-group authzproperty oauth1">
+				<label class="control-label" for="field_request">Request endpoint</label>
+				<div class="controls">
+					<input type="text" class="form-control"  id="field_request" value="{{request}}" placeholder="https://">
+				</div>
+			</div>
+
+			<div class="form-group authzproperty oauth1">
+				<label class="control-label" for="field_authorize">Authorization endpoint</label>
+				<div class="controls">
+					<input type="text" class="form-control"  id="field_authorize" value="{{authorize}}" placeholder="https://">
+				</div>
+			</div>
+
+			<div class="form-group authzproperty oauth1">
+				<label class="control-label" for="field_access">Access endpoint</label>
+				<div class="controls">
+					<input type="text" class="form-control"  id="field_access" value="{{access}}" placeholder="https://">
+				</div>
+			</div>
+
+
+			<div class="form-group authzproperty oauth1 oauth2">
+				<label class="control-label" for="field_client_id">Client ID</label>
+				<div class="controls">
+					<input type="text" class="form-control"  id="field_client_id" value="{{client_id}}" placeholder="">
+				</div>
+			</div>
+
+			<div class="form-group authzproperty basic">
+				<label class="control-label" for="field_client_user">Client username</label>
+				<div class="controls">
+					<input type="text" class="form-control"  id="field_client_user" value="{{client_user}}" placeholder="">
+				</div>
+			</div>
+
+			<div class="form-group authzproperty oauth1 oauth2 basic">
+				<label class="control-label" for="field_client_secret">Client password</label>
+				<div class="controls">
+					<input type="text" class="form-control"  id="field_client_secret" value="{{client_secret}}" placeholder="">
+				</div>
+			</div>
+
+
+
+			<div class="form-group authzproperty token">
+				<label class="control-label" for="field_token_hdr">Token HTTP Header</label>
+				<div class="controls">
+					<input type="text" class="form-control"  id="field_token_hdr" value="{{token_hdr}}" placeholder="X-SpecialAPIKey">
+				</div>
+			</div>
+
+			<div class="form-group authzproperty token">
+				<label class="control-label" for="field_token_val">Token HTTP Value</label>
+				<div class="controls">
+					<input type="text" class="form-control"  id="field_token_val" value="{{token_val}}" placeholder="">
+				</div>
+			</div>
+
+			<div class="form-group authzproperty oauth2">
+				<p>Register this redirect URI at your OAuth 2.0 provider.</p>
+				<p><code>{{redirect_uri2}}</code></p>
+			</div>
+
+			<div class="form-group authzproperty oauth1">
+				<p>Register this callback URL at your OAuth 1.0a provider.</p>
+				<p><code>{{redirect_uri1}}</code></p>
+			</div>
+
+
+		</form>
+      </div>
+      <div class="modal-footer">
+					<a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+					<a href="#" class="saveAuthZHandler btn btn-primary">Save authorization handler</a>
+      </div>
+    </div>
+  </div>
+</div>

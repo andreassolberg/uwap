@@ -14,8 +14,10 @@ define(function() {
 		console.log('newApp.html');
 		this.element = $(templates['newApp']());
 
+
+
 		console.log("this element", this.element);
-		$("div#modalContainer").empty().append(this.element);
+		$("body").append(this.element);
 
 		this.checkIfReady();
 
@@ -37,9 +39,10 @@ define(function() {
 		obj.type = 'app';
 
 		// this.trigger("submit", obj);
+		
 		this.callback(obj);
-		$(this.element).modal("hide");
-		$(this.element).remove();
+		this.element.modal("hide");
+		// this.element.remove();
 	};
 
 	newApp.prototype.updateIdentifier = function() {
@@ -102,7 +105,8 @@ define(function() {
 	}
 
 	newApp.prototype.activate = function() {
-		$(this.element).modal('show');
+		// console.log("MODAL() runs on ", this.element); 
+		this.element.modal('show');
 		$(this.element).find("#newAppIdentifier").focus();
 	}
 
