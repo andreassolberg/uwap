@@ -54,6 +54,7 @@ requirejs.config({
 		'jquery' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min',
 		'uwap-core' : '<?php echo $corengine; ?>/_',
 		'uwap-core/bootstrap/js/bootstrap': '<?php echo $corengine; ?>/_/bootstrap/js/bootstrap.min',
+		'uwap-core/bootstrap3/js/bootstrap3': '<?php echo $corengine; ?>/_/bootstrap3/js/bootstrap.min',
 		// 'text'		: '<?php echo $corengine; ?>/_/js/text',
 		'uwap': '/_/js',
 	},
@@ -63,6 +64,9 @@ requirejs.config({
 
 		'uwap-core/bootstrap/js/bootstrap': {
 			deps: ['jquery', 'uwap-core/bootstrap/js/bootstrap-loadcss']
+		},
+		'uwap-core/bootstrap3/js/bootstrap': {
+			deps: ['jquery', 'uwap-core/bootstrap3/js/loadcss']
 		},
 		'uwap-core/bootstrap/js/bootstrap-modal': {deps: ['jquery', 'uwap-core/bootstrap/js/bootstrap'], exports: 'jQuery'},
 		'uwap-core/bootstrap/js/bootstrap-button': {deps: ['jquery', 'uwap-core/bootstrap/js/bootstrap'], exports: 'jQuery'},
@@ -75,7 +79,20 @@ requirejs.config({
 		'uwap-core/bootstrap/js/bootstrap-tab': {deps: ['jquery', 'uwap-core/bootstrap/js/bootstrap'], exports: 'jQuery'},
 		'uwap-core/bootstrap/js/bootstrap-popover': {deps: ['jquery', 'uwap-core/bootstrap/js/bootstrap'], exports: 'jQuery'},
 		'uwap-core/bootstrap/js/bootstrap-carousel': {deps: ['jquery', 'uwap-core/bootstrap/js/bootstrap'], exports: 'jQuery'},
-		'uwap-core/bootstrap/js/bootstrap-typeahead': {deps: ['jquery', 'uwap-core/bootstrap/js/bootstrap'], exports: 'jQuery'}
+		'uwap-core/bootstrap/js/bootstrap-typeahead': {deps: ['jquery', 'uwap-core/bootstrap/js/bootstrap'], exports: 'jQuery'},
+
+		'uwap-core/bootstrap3/js/affix': {deps: ['jquery', 'uwap-core/bootstrap3/js/bootstrap'], exports: 'jQuery'},
+		'uwap-core/bootstrap3/js/alert': {deps: ['jquery', 'uwap-core/bootstrap3/js/bootstrap'], exports: 'jQuery'},
+		'uwap-core/bootstrap3/js/button': {deps: ['jquery', 'uwap-core/bootstrap3/js/bootstrap'], exports: 'jQuery'},
+		'uwap-core/bootstrap3/js/carousel': {deps: ['jquery', 'uwap-core/bootstrap3/js/bootstrap'], exports: 'jQuery'},
+		'uwap-core/bootstrap3/js/collapse': {deps: ['jquery', 'uwap-core/bootstrap3/js/bootstrap'], exports: 'jQuery'},
+		'uwap-core/bootstrap3/js/dropdown': {deps: ['jquery', 'uwap-core/bootstrap3/js/bootstrap'], exports: 'jQuery'},
+		'uwap-core/bootstrap3/js/modal': {deps: ['jquery', 'uwap-core/bootstrap3/js/bootstrap'], exports: 'jQuery'},
+		'uwap-core/bootstrap3/js/popover': {deps: ['jquery', 'uwap-core/bootstrap3/js/bootstrap'], exports: 'jQuery'},
+		'uwap-core/bootstrap3/js/scrollspy': {deps: ['jquery', 'uwap-core/bootstrap3/js/bootstrap'], exports: 'jQuery'},
+		'uwap-core/bootstrap3/js/tab': {deps: ['jquery', 'uwap-core/bootstrap3/js/bootstrap'], exports: 'jQuery'},
+		'uwap-core/bootstrap3/js/tooltip': {deps: ['jquery', 'uwap-core/bootstrap3/js/bootstrap'], exports: 'jQuery'},
+		'uwap-core/bootstrap3/js/transition': {deps: ['jquery', 'uwap-core/bootstrap3/js/bootstrap'], exports: 'jQuery'}
 	}
 });
 requirejs.enginehostname = '<?php echo GlobalConfig::hostname(); ?>';
