@@ -22,9 +22,9 @@ define(function(require, exports, module) {
 	
 	require("uwap-core/js/uwap-people");
 
-	require('uwap-core/bootstrap/js/bootstrap');	
-	require('uwap-core/bootstrap/js/bootstrap-modal');	
-	require('uwap-core/bootstrap/js/bootstrap-dropdown');
+	require('uwap-core/bootstrap3/js/bootstrap');	
+	require('uwap-core/bootstrap3/js/modal');	
+	require('uwap-core/bootstrap3/js/dropdown');
 
 	
 	UWAP.utils.loadCSS('/css/style.css');

@@ -1,23 +1,33 @@
 <div>
 
-	<h3>Autoconnect application</h3>
-
 	<p>You are about to register a new application at UWAP using the autoconnect feature.</p>
 
-	<form class="registerform form-inline">  
+	<form class="registerform" role="form">  
 
-		<p><input disabled="disabled" style="width: 400px" id="newClientID" type="text" class="input" placeholder="ID" value="{{metadata.id}}" /></p>
 
-		<p><input style="width: 400px" id="newClientName" type="text" class="input" placeholder="Name" value="{{metadata.name}}" /></p>
-		<p><textarea style="width: 400px" id="newClientDescr" placeholder="Describe your client...">{{metadata.descr}}</textarea></p>
+		<p>Give your client application a short desriptive name, and a longer descriptive text to explain what your application does.</p>
 
-		
-		<p>
-			OAuth 2.0 Authorization callback URL<br />
-			<input style="width: 400px" type="text" 
-				class="input" id="newClientRedirectURI" placeholder="http://yourservice.org/callback" 
-				value="{{metadata.return}}" />
-		</p>
+		<div class="form-group">
+			<label for="newClientID">Client identifier</label>
+			<input disabled="disabled" id="newClientID" type="text" class="input form-control" placeholder="ID" value="{{metadata.id}}" />
+		</div>
+
+		<div class="form-group">
+			<label for="newClientName">Name</label>
+			<input id="newClientName" type="text" class="form-control input" placeholder="Name of application" value="{{metadata.name}}">
+		</div>
+
+		<div class="form-group">
+			<label for="newClientDescr">Description of client</label>
+			<textarea class="form-control" id="newClientDescr" value="{{metadata.descr}}" placeholder="Describe your client..."></textarea>
+		</div>
+
+
+		<div class="form-group">
+			<label for="newClientRedirectURI">OAuth 2.0 Authorization callback URL</label>
+			<input id="newClientRedirectURI" type="text" class="form-control input" placeholder="http://yourservice.org/callback" value="{{metadata.return}}">
+		</div>
+
 
 		<p>Client credentials will be sent back to <code>{{origin}}</code> 
 			<br /><strong>Please verify</strong> that this domain is correct before you register the application!</p>
