@@ -643,10 +643,11 @@ define(function(require) {
 				object, 
 				null, callback, errorcallback);
 		},
+		
 		deleteAuthzHandler: function(appid, objectid, callback, errorcallback) {
 			UWAP._request(
 				'DELETE', 
-				UWAP.utils.getEngineURL('/api/appconfig/app/' + id + '/authorizationhandler/' + object.id),
+				UWAP.utils.getEngineURL('/api/appconfig/app/' + appid + '/authorizationhandler/' + objectid),
 				null, 
 				null, callback, errorcallback);
 		},
