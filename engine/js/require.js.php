@@ -3,8 +3,14 @@
 require_once(dirname(dirname(dirname(__FILE__))) . '/lib/autoload.php');
 header('Content-Type: application/javascript');
 
-$config = Config::getInstance();
-$hostname = $config->getHostname();
+// echo Utils::getSubID(); exit;
+
+if (Utils::getSubID() === 'core') {
+	$hostname = 'core.' . GlobalConfig::hostname();
+} else {
+	$config = Config::getInstance();
+	$hostname = $config->getHostname();	
+}
 
 
 $corengine = GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname();
