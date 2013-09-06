@@ -217,6 +217,15 @@ if (isset($scopes['longterm'])) {
 
 				<div class="col-md-1">
 
+					<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" 
+						style="margin-left: -28px; margin-top: 0px" height="165pt" width="70pt" 
+						version="1.1" viewBox="154 100 70 165" 
+						>
+						<!-- <g fill="none" fill-opacity="1" stroke="none" stroke-dasharray="none" stroke-opacity="1"> -->
+							<path d="M 163 109 L 215 182.5 L 163 256 Z" fill="#eaeaea"/>
+						<!-- </g> -->
+					</svg>
+
 				</div>
 
 
