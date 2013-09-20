@@ -145,6 +145,45 @@ if (isset($scopes['feedread']) || isset($scopes['feedwrite'])) {
 
 
 
+
+
+<?php
+/*
+ * Dealing with API Gatekeeper access
+ */
+
+
+foreach($scopes AS $k => $v) {
+	if (preg_match('/^rest_([^_]+($|_))/', $k, $matches)) {
+		$apiid = $matches[1];
+
+?>
+		<div class="panel panel-default">
+			<!-- <div class="panel-heading">Long term access</div> -->
+			<div class="panel-body" style="">
+
+				<p>
+					<span style="font-size: 150%" class="glyphicon glyphicon-record"></span> 
+					<b>API Accesss to <tt><?php echo $apiid; ?></tt></b>. The client may access this API on behalf of you.</p>
+
+			</div>
+		</div>
+
+
+<?php
+
+	}
+}
+?>
+
+
+
+
+
+
+
+
+
 <?php
 /*
  * Presenting UWAP Feed scope....
@@ -166,12 +205,8 @@ if (isset($scopes['longterm'])) {
 
 <?php
 }
-// echo '<pre>'; print_r($scopes); echo '</pre>';
+ // echo '<pre>'; print_r($scopes); echo '</pre>';
 ?>
-
-
-
-
 
 
 
