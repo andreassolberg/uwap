@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 		;
 
 	require('uwap-core/bootstrap/plugins/datepicker/bootstrap-datepicker');
+	require('uwap-core/bootstrap/plugins/datepicker/bootstrap-datepicker');
 	
 	var tmpl = {
 		"post": require('uwap-core/js/text!templates/post.html')
@@ -31,19 +32,22 @@ define(function(require, exports, module) {
 		
 		this.el.on("click", ".actPost", $.proxy(this.actPost, this));
 
-		this.el.find("button.posttype").on('click', $.proxy(this.actTypeSelect, this));
+		this.el.find(".posttypecontainer").on('click', '.posttype', $.proxy(this.actTypeSelect, this));
 
 		this.el.on('click', '#sharewithgrouplist a.actShareWith', $.proxy(this.shareWith, this));
 		this.el.on('click', 'a.resetsharedwith', $.proxy(this.resetShareWith, this));
 		
 
-		this.el.find("button#btn-message").button('toggle').click();
+		this.el.find("input#btn-message").parent().button('toggle').click();
+		$('.dropdown-toggle').dropdown();
 
 		this.el.find('.datepicker').datepicker({weekStart: 1});
 		this.el.on('load',$.proxy(this.responsiveEventUI, this));
 
 		this.el.on('click', '.responsiveEventUI', $.proxy(this.responsiveEventUI, this));
 		this.responsiveEventUI();
+
+
 
 	} 
 
@@ -62,7 +66,6 @@ define(function(require, exports, module) {
 	PostController.prototype.responsiveEventUI = function() {
 
 		var postcontainer = this.el.find("div.postc.post-event");
-
 
 		if (postcontainer.find(".field-deadline").prop('checked')) {
 			postcontainer.find(".section-deadline").show();
@@ -98,7 +101,7 @@ define(function(require, exports, module) {
 
 		this.selectedGroups[groupid] = true;
 
-		sharespan.append('<span class="label sharedwithgroup">' + this.groups[groupid] + '</span>');
+		sharespan.append('<span class="label label-primary sharedwithgroup">' + this.groups[groupid] + '</span>');
 		currentListItem.addClass('disabled');
 
 		// console.log('Adding group', groupid)
@@ -116,10 +119,10 @@ define(function(require, exports, module) {
 
 	PostController.prototype.actTypeSelect = function(e) {
 		e.preventDefault();
-		var id = $(e.currentTarget).attr('id');
+		var id = $(e.currentTarget).find('input').attr('id');
 
 		
-		// console.log("Selected something", id);
+		console.log("Selected something", id, $(e.currentTarget));
 
 		var mapping = {
 			'btn-link': 'link',

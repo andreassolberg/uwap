@@ -63,6 +63,7 @@ define(function(require, exports, module) {
 
 
 
+
 		// this.load();
 		setInterval($.proxy(this.update, this), 5000);
 
@@ -444,6 +445,7 @@ define(function(require, exports, module) {
 				that.pane.activate();
 
 				$("span.ts").prettyDate(); 
+				$('.dropdown-toggle').dropdown();
 			});
 
 		}
