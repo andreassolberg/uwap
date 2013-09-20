@@ -33,7 +33,7 @@ define(function(require, exports, module) {
 	newProxy.parseArray = function (str) {
 
 		if (str === '') {
-			return null;
+			return [];
 		}
 		var temp = str.split(' ');
 		var res = [];
