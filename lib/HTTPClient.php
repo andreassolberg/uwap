@@ -70,35 +70,56 @@ class HTTPClient {
 	// TODO: Security check on URL to not refer to local file system
 	protected function rawget($url, $headers = array(), $redir = true, $curl = false, $options = array()) {
 
-		if (isset($options['data'])) {
-			$headers['Content-type'] = 'application/json';
-		}
+		// if (isset($options['data'])) {
+		// 	$headers['Content-type'] = 'application/json';
+		// }
 
-		$headerstring = '';
-		foreach($headers AS $k => $v) {
-			$headerstring .= $k . ': ' . $v . "\r\n";
-		}
+
 		$method = "GET";
 		if (isset($options["method"])) {
 			$method = $options["method"];
+		}
+		if (isset($options['options']) && isset($options['options']['_method'])) {
+			$method = $options["options"]["_method"];
 		}
 		$opts = array(
 			// Documentation on http stream options available here:
 			// * http://www.php.net/manual/en/context.http.php
 			'http'=>array(
 				'method'=> $method,
-				'header'=> $headerstring,
 				'follow_location' => $redir,
 				'max_redirects' => ($redir ? 9 : 1)
 			)
 		);
+
+
+
+
+
 		if (isset($options['data'])) {
+
 			$opts['http']['content'] = json_encode($options['data']);
+			$headers['Content-Type'] = 'application/json';
 		}
-		error_log("Options: " . json_encode($opts));
+		if (isset($options['options']) && isset($options['options']['_data'])) {
+			$headers['Content-Type'] = 'application/json';
+			$opts['http']['content'] = json_encode($options['options']['_data']);
+		}
+
+		$headerstring = '';
+		foreach($headers AS $k => $v) {
+			$headerstring .= $k . ': ' . $v . "\r\n";
+		}
+		$opts['http']['header'] = $headerstring;
+
+
+		error_log("HTTPCLIENTOptions: " . json_encode($opts));
 		error_log("Header string: " . $headerstring);
 		error_log("HTTPClient      headers:" .  var_export($headers, true));
+
+
 		$context = stream_context_create($opts);
+
 
 		if ($curl) {
 			return $this->file_get_contents_curl($url, $headers, $redir);
