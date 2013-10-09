@@ -59,8 +59,10 @@ try {
 		$auth->authenticate();
 		$res = $auth->storeUser();
 
-		header('Content-Type: application/json; chat-set: utf-8');
-		echo json_encode(array('status' => 'ok', 'message' => 'updated user data', 'result' => $res));
+		// header('Content-Type: application/json; chat-set: utf-8');
+		// echo 
+
+		$response['data'] = array('status' => 'ok', 'message' => 'updated user data', 'result' => $res, 'userdata' => $auth->getUserdata());
 
 
 	/**
