@@ -25,6 +25,7 @@ define(function(require, exports, module) {
 
 		this.viewconfig = viewconfig || {};
 
+
 		this.groups = {};
 
 		this.currentRange = null;
@@ -243,7 +244,7 @@ define(function(require, exports, module) {
 			feedcontainer = this.pane.el.find('.feedcontainer');
 
 		if (item.activity) {
-			console.log("Adding post [activity] ", item);
+			// console.log("Adding post [activity] ", item);
 		}
 		
 		if (this.view.view === 'media') {
@@ -322,6 +323,28 @@ define(function(require, exports, module) {
 
 
 	FeedController.prototype.setSelector = function(selector) {
+
+		var prevGroup = (this.selector.group ? this.selector.group : null);
+		var newGroup = (selector.group ? selector.group : null);
+
+		if (prevGroup !== newGroup) {
+			
+			var message = {
+				"action": "setContext", 
+				"context": {
+					"group": newGroup
+				}
+			}
+			console.log("------> Postmessage", message, $("iframe#connect-widget"));
+			var ix = document.getElementById("connect-widget");
+			if (ix) {
+				ix.contentWindow.postMessage(message, '*');
+			}
+		}
+
+		console.log("Set selector", selector);
+
+
 		this.selector = selector;
 		this.load();
 	}
@@ -340,7 +363,7 @@ define(function(require, exports, module) {
 	}
 
 	FeedController.prototype.viewchange = function(opt) {
-		// console.log('View change', opt);
+		console.log(' =============> View change', opt);
 
 		this.pane.el.find('.feedcontainer').removeClass('view-' + this.view.view);
 		this.pane.el.find('.feedcontainer').addClass('view-' + opt.view);

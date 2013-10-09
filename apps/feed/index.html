@@ -19,13 +19,14 @@
 
 
 	<body>
-		<div class="loader-hideOnLoad" stlye="margin: 20%">
-			<p><img src="/img/ajax-loader.gif" /> Loading application...</p>
-		</div>
+
+	<div class="loader-hideOnLoad" stlye="margin: 20%">
+		<p><img src="/img/ajax-loader.gif" /> Loading application...</p>
+	</div>
 
 
-      <!-- Static navbar -->
-      <div class="navbar navbar-default loader-showOnLoad"  style="display: none">
+    <!-- Static navbar -->
+    <div class="navbar navbar-default loader-showOnLoad"  style="display: none">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="icon-bar"></span>
@@ -163,49 +164,49 @@
 			<div id="panecontainer">
 			</div>
 
+		</div>
 
-			</div>
+		<div class="sidebar hidden-phone col-md-4">
 
-			<div class="sidebar hidden-phone col-md-4">
-
-				<div class="sidebaritem">
+			<div class="sidebaritem">
 				<h4>About this group <i class="icon-reorder"></i></h4>
 				<p>This is the description of the group you are currently viewing...</p>
-				<p>36 group members - <a href="https://groupmanager.uwap.org">manage group</a></p>
-				</div>
-
-				<div class="sidebaritem">
-				<h4>Upcoming <i class="icon-calendar"></i></h4>
-				<div id="upcoming"></div>
-				</div>
-
-				
-
-				
-				<div class="sidebaritem">
-				<h4>Webconference <i class="icon-facetime-video"></i></h4>
-				<iframe src="http://connectwidget.app.bridge.uninett.no/widget.html#" style="border: 0px; margin: 0px; padding: 0px; height: 500px; width: 100%"></iframe>
-				</div>
-				
-
-				<div class="sidebaritem">
-				<h4>Subscribe to groups <i class="icon-group"></i></h4>
-				<div id="subscribeproposals"></div>
-				</div>
+				<p>36 group members - <a target="_blank" href="https://groupmanager.uwap.org">manage group</a></p>
 			</div>
 
+			<div class="sidebaritem">
+				<h4>Upcoming <i class="icon-calendar"></i></h4>
+				<div id="upcoming"></div>
+			</div>
 
+			
+
+			
+			<div class="sidebaritem">
+				<h4>Webconference <i class="icon-facetime-video"></i></h4>
+				<iframe id="connect-widget" src="http://connectwidget.app.bridge.uninett.no/widget.html#" 
+				style="position: relative; background-color: transparent; z-index: 9900; margin: 0px 0px -300px 0px; border: 0px;  padding: 0px; height: 500px; width: 100%"></iframe>
+			</div>
+			
+
+			<div class="sidebaritem">
+				<h4>Subscribe to groups <i class="icon-group"></i></h4>
+				<div id="subscribeproposals"></div>
+			</div>
 		</div>
 
 
+	</div>
 
 
 
 
-		</div><!--/.fluid-container-->
 
 
-		<div id="modalContainer"></div>
+	</div><!--/.fluid-container-->
+
+
+	<div id="modalContainer"></div>
 
 
 	</body>

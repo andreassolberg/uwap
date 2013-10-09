@@ -697,6 +697,8 @@ try {
 
 		
 
+		// error_log("SOA Config " . var_export($args, true));
+
 		// // // Initiate an Oauth server handler
 		$oauth = new OAuth();
 
@@ -705,7 +707,10 @@ try {
 
 		$providerID = $remoteConfig->getID();
 
-		$client = HTTPClient::getClientWithConfig($proxyconfig[$api], $providerID);
+		// echo "PRoviderID " . $providerID . "\n";
+		// echo "proxyconfig "; print_r($proxyconfig); echo "\n";
+
+		$client = HTTPClient::getClientWithConfig($proxyconfig, $providerID);
 		if ($token) {
 			
 			$clientid = $token->getClientID();

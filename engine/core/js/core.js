@@ -212,7 +212,7 @@ define(function(require) {
 						errorcallback(result.message);
 					}
 					console.error('Data request error (server side): ' + result.message);
-				}
+				}	
 				
 			},
 			error: function(err) {
@@ -223,9 +223,13 @@ define(function(require) {
 				console.error('Response text');
 				console.error(err.responseText);
 			}
+
 		};
 
 		if (data) {
+
+			// data.options = options;
+
 			ar.data = JSON.stringify(data);
 			ar.processData = false;
 			ar.contentType = 'application/json; charset=UTF-8';
@@ -488,9 +492,12 @@ define(function(require) {
 			data.returnTo = window.location.href;
 			data.appid = UWAP.utils.appid;
 
-			options = options || {};
 
-			console.log("UWAP.data options", options);
+
+			options = options || {};
+			data.options = options;
+
+			console.log("UWAP.data [" + url + "] options", options);
 			
 			UWAP._request(
 				'POST', UWAP.utils.getEngineURL("/api/soa"),

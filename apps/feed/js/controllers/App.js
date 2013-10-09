@@ -95,6 +95,9 @@ define(function(require, exports, module) {
 		});
 
 
+
+
+
 		// this.groupcontroller = new GroupSelectorController(this.el.find('ul#navfilter'));
 		// this.groupcontroller.onSelect($.proxy(this.mainnewsfeed.setSelector, this.mainnewsfeed));
 
@@ -161,6 +164,20 @@ define(function(require, exports, module) {
 			$(".loader-showOnLoad").hide();
 		})
 
+
+		$(window).on("message", function(e) {
+			var data = e.originalEvent.data;  // Should work.
+			console.log("UWAP Feed Received postMessage message from one of the iframes", data);
+
+			if(data.action === 'setSize') {
+				
+				var menupadding = data.extra + 50;
+				$("#connect-widget").height(data.size + 34 + menupadding);
+				$("#connect-widget").css('margin-bottom', '-' + menupadding);
+				console.log("RESIZE", data, "set to ", $("#connect-widget").height());
+			}
+
+		});
 
 
 
