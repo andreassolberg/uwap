@@ -58,6 +58,55 @@ class UWAPStore {
 		return $return;
 	}
 
+
+	public function upsert($collection, $criteria, $updates) {
+
+		UWAPLogger::debug('store', 'Updating (upsert) an object in [' . $collection . ']', array(
+			'collection' => $collection,
+			'criteria' => $criteria,
+			'updates' => $updates,
+		));
+
+		if (isset($userid)) {
+			$criteria["uwap-userid"] = $userid;	
+		}
+
+		$updatestmnt = array('$set' => $updates);
+
+		$return = $this->db->{$collection}->update(
+			$criteria, $updatestmnt, 
+			array("safe" => true, "upsert" => true)
+		);
+		// error_log("Return on update() : " . var_export($return, true));
+		return $return;
+	}
+
+
+	// public function insert($collection, $obj) {
+		
+	// 	if ($collection !== 'log') {
+	// 		UWAPLogger::debug('store', 'Storing a object in [' . $collection . ']', $obj);
+	// 	}
+
+	// 	$data = $this->db->{$collection}->insert($obj, array("safe" => true, "w" => 1));	
+
+	// 	echo 'returns:';
+	// 	print_r($obj);
+
+	// 	return $data['_id'];
+
+
+	// 	// error_log("STORING Object: ". var_export($obj, true));
+	// 	// } catch (Exception $e) {
+	// 	// 	print_r($e);
+	// 	// }
+		
+
+	// 	// save() returns an array of info about success of the save. TODO: translate to exception if needed.
+
+	// }
+
+
 	public function store($collection, $userid = null, $obj, $expiresin = null) {
 		
 		if ($collection !== 'log') {

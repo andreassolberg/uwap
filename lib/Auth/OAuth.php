@@ -10,12 +10,17 @@ class OAuth {
 	function __construct() {
 		$this->storage = new So_StorageServerUWAP();
 		$this->server  = new So_Server($this->storage);
-		$this->auth = new AuthBase();
+		// $this->auth = new AuthBase();
+
+		$this->auth = new Authenticator();
 	}
 
 	function processAuthorizationResponse() {
 
-		$verifier = $this->auth->getVerifier();
+
+		$this->auth->req(true, false);
+		$user = $this->auth->getUser();
+		$verifier = $user->getVerifier();
 
 		if (empty($_REQUEST['verifier'])) throw new Exception('Missing required parameter [verifier]');
 		if (empty($_REQUEST['scopes'])) throw new Exception('Missing required parameter [scopes]');
@@ -41,9 +46,9 @@ class OAuth {
 
 			// TODO Add support for deciding which scope to use...
 			// TODO additional verification that the client_id is not modified by the user.
-			$this->server->setAuthorization($_REQUEST["client_id"], $this->auth->getRealUserID(), $scopes);
+			$this->server->setAuthorization($_REQUEST["client_id"], $user->get('userid'), $scopes);
 
-			$this->auth->storeUser();
+			// $this->auth->storeUser();
 
 		}
 		$return = $_REQUEST['return'];
@@ -61,26 +66,18 @@ class OAuth {
 			// echo "Failed because user was not authenticated..."; exit;
 
 			$this->server->authorizationFailed('access_denied', 'https://core.uwap.org/oauth/noPassiveAuthentication', 'Unable to perform passive authentication');
+			return;
 
-
-		} else if ($passive) {
-			// echo "about to passive auth"; exit;
-			$this->auth->authenticatePassive();
 		} else {
-			$this->auth->authenticate();	
+
+			$this->auth->req($passive, true);
+
 		}
 
-		$userid = $this->auth->getRealUserID();
-		$userdata = $this->auth->getUserdata();
+		$user = $this->auth->getUser();
 
-		$search = $this->auth->getUserBasic($userid);
-		if(!empty($search) && !empty($search['a'])) {
-			$userdata['a'] = $search['a'];
-		}
-
-		// echo "userid " . $userid . "\n";
-		// echo "userdata ";
-		// print_r($userdata);
+		$userid = $user->get('userid');
+		$userdata = $user->getJSON(array('type' => 'basic'));
 
 
 		// TODO: Do we need to suport passive requests??
@@ -90,7 +87,11 @@ class OAuth {
 
 
 		try {
+
+
+
 			$this->server->authorization($userid, $userdata);
+
 		} catch(So_AuthorizationRequired $e) {
 
 
@@ -103,11 +104,10 @@ class OAuth {
 
 			$postdata["client_id"] = $e->client_id;
 			$postdata["return"] = SimpleSAML_Utilities::selfURL();
-			$postdata["verifier"] = $this->auth->getVerifier();
+			$postdata["verifier"] = $user->getVerifier();
 			$posturl = SimpleSAML_Utilities::selfURLNoQuery();
 
 			$scopes = array();
-
 
 			if (!empty($e->scopes)) {
 				$postdata["scopes"] = join(',', $e->scopes);
@@ -117,7 +117,8 @@ class OAuth {
 			// $data = $config->getConfig();
 			$data = $this->storage->getClient($e->client_id);
 
-			$owner = $this->auth->getUserBasic($data['uwap-userid']);
+			// $owner = $this->auth->getUserBasic($data['uwap-userid']);
+			$owner = User::getByID($data['uwap-userid']);
 			
 			$permissions = $this->getPermissionText($scopes);
 

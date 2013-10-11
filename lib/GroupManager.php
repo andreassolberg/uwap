@@ -7,10 +7,8 @@ class GroupManager {
 
 
 	public function __construct($userid) {
-
 		$this->userid = $userid;
 		$this->store = new UWAPStore();
-
 	}
 
 	public function getMyOwnGroups() {

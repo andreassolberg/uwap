@@ -6,6 +6,8 @@ class AuthBase {
 	protected $config;
 	protected $as;
 
+	protected $store;
+
 	protected static $basicusers = array();
 	protected static $basicactors = array();
 
@@ -15,7 +17,6 @@ class AuthBase {
 		$this->as = new SimpleSAML_Auth_Simple('default-sp');
 
 	}
-
 
 	/*
 		Authorization objects are stored in 'consent'
@@ -39,7 +40,7 @@ class AuthBase {
 
 	function getUserByID($a) {
 		$query = array('userid' => $a); 
-		$search = $this->store->queryOne('users', $query, array('name', 'mail', 'a', 'subscriptions') );
+		$search = $this->store->queryOne('users', $query, array('name', 'mail', 'a', 'groups', 'subscriptions') );
 		if (empty($search)) return false;
 
 		return $search;
@@ -332,27 +333,27 @@ class AuthBase {
 
 		if (!$this->as->isAuthenticated()) {
 			$this->as->login(array(
-	            'isPassive' => true,
-	            'ErrorURL' => SimpleSAML_Utilities::addURLparameter(SimpleSAML_Utilities::selfURL(), array(
-	            	"error" => 1,
-	            )),
-	        ));
+				'isPassive' => true,
+				'ErrorURL' => SimpleSAML_Utilities::addURLparameter(SimpleSAML_Utilities::selfURL(), array(
+					"error" => 1,
+				)),
+			));
 		}
 
 	}
 
-	public function req($allowRedirect = false, $return = null) {
-		if ($return === null) $return = SimpleSAML_Utilities::selfURL();
-		if (!$this->as->isAuthenticated()) {
-			if ($allowRedirect) {
-				SimpleSAML_Utilities::redirect(GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/login', array(
-					'return' => $return,
-					'app' => $this->config->getID()
-				));
-			}
-			throw new Exception("User is not authenticated");
-		}
-	}
+	// public function req($allowRedirect = false, $return = null) {
+	// 	if ($return === null) $return = SimpleSAML_Utilities::selfURL();
+	// 	if (!$this->as->isAuthenticated()) {
+	// 		if ($allowRedirect) {
+	// 			SimpleSAML_Utilities::redirect(GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname() . '/login', array(
+	// 				'return' => $return,
+	// 				'app' => $this->config->getID()
+	// 			));
+	// 		}
+	// 		throw new Exception("User is not authenticated");
+	// 	}
+	// }
 
 	public function getRealUserID() {
 		$attributes = $this->as->getAttributes();

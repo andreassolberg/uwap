@@ -53,16 +53,49 @@ try {
 		}
 
 
-	} else if  (Utils::route('get', '^/updateme$', &$parameters)) {
 
-		$auth = new AuthBase();
-		$auth->authenticate();
-		$res = $auth->storeUser();
+
+	/*
+	 *	Testing authentication using the auth libs
+	 *	Both API auth and 
+	 */
+	} else if  (Utils::route('get', '^/test$', &$parameters)) {
+
+		$auth = new Authenticator();
+		$auth->req(false, true); // require($isPassive = false, $allowRedirect = false, $return = null
+
+		$user = $auth->getUser();
+
+		// $res = $auth->storeUser();
 
 		// header('Content-Type: application/json; chat-set: utf-8');
 		// echo 
 
-		$response['data'] = array('status' => 'ok', 'message' => 'updated user data', 'result' => $res, 'userdata' => $auth->getUserdata());
+		$response['data'] = array('status' => 'ok', 'message' => 'TESTING');
+
+
+
+
+
+
+
+
+
+	} else if  (Utils::route('get', '^/updateme$', &$parameters)) {
+
+
+
+		$auth = new Authenticator();
+		$auth->req(false, true); // require($isPassive = false, $allowRedirect = false, $return = null
+
+		$user = $auth->getUser();
+
+		// $res = $auth->storeUser();
+
+		// header('Content-Type: application/json; chat-set: utf-8');
+		// echo 
+
+		$response['data'] = array('status' => 'ok', 'message' => 'updated user data', 'userdata' => $user->getJSON());
 
 
 	/**
@@ -73,9 +106,10 @@ try {
 		$oauth = new OAuth();
 		$token = $oauth->check(array(), array('userinfo'));
 
-		// header('Content-Type: application/json; chat-set: utf-8');
-		$response['data'] = $token->getUserdataWithGroups();
-		// echo json_encode($userdata);
+		$user = $token->getUser();
+
+
+		$response['data'] = $user->getJSON(array('type' => 'basic',  'groups' => true));
 
 
 	/**
@@ -123,10 +157,16 @@ try {
 
 		$oauth = new OAuth();
 		$token = $oauth->check();
+		$user => $token->getUser();
 
-		$groupmanager = new GroupManager($token->getUserID());
 
-		$groups = $token->getGroups();
+		$groupconnector = new GroupConnector($user);
+
+		$userdata = $user->getJSON(array(
+			'type' => 'basic',
+			'groups' => array('type' => 'key')
+		));
+
 
 		// Get a list of groups
 		if (Utils::route('get', '^/groups$', &$parameters)) {
@@ -137,6 +177,9 @@ try {
 			);
 
 		} else if (Utils::route('get', '^/groups/public$', &$parameters)) {
+
+
+			throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
 			$gres = $groupmanager->getPublicGroups($groups);
 
@@ -149,6 +192,8 @@ try {
 		// Add a new group
 		} else if (Utils::route('post', '^/groups$', &$parameters, &$body)) {
 
+			throw new NotImplementedException('Have to refactor and implement search for public groups.');
+
 			$res = $groupmanager->addGroup($body);
 
 			$response = array(
@@ -158,6 +203,8 @@ try {
 
 		// VOOT get a list of groups
 		} else if (Utils::route('get', '^/groups/@me$', &$parameters)) {
+
+			throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
 			$allgroups = $groupmanager->getGroups($groups);
 			$no = count($allgroups);
@@ -171,6 +218,8 @@ try {
 		// Get a specific group
 		} else if (Utils::route('get', '^/group/([@:.a-z0-9\-]+)$', &$parameters)) {
 
+			throw new NotImplementedException('Have to refactor and implement search for public groups.');
+
 			// TODO: ensure user is member of the group to extract memberlist
 			$groupid = $parameters[1];
 			$response = array(
@@ -180,6 +229,9 @@ try {
 
 		// Update some group data...
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)$', &$parameters, &$body)) {
+
+
+			throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
 			// TODO: ensure user is member of the group to extract memberlist
 			$groupid = $parameters[1];
@@ -191,6 +243,9 @@ try {
 		// Delete  group
 		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)$', &$parameters)) {
 
+
+			throw new NotImplementedException('Have to refactor and implement search for public groups.');
+
 			$groupid = $parameters[1];
 			$response = array(
 				'status' => 'ok',
@@ -200,6 +255,8 @@ try {
 		// Add a new member to a group
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/members$', &$parameters, &$body)) {
 
+			throw new NotImplementedException('Have to refactor and implement search for public groups.');
+
 			$groupid = $parameters[1];
 			$response = array(
 				'status' => 'ok',
@@ -207,6 +264,9 @@ try {
 			);
 
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/subscription$', &$parameters, &$body)) {
+
+
+			throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
 			$groupid = $parameters[1];
 
@@ -225,6 +285,8 @@ try {
 		// Update a membership to a group
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', &$parameters, &$obj)) {
 
+			throw new NotImplementedException('Have to refactor and implement search for public groups.');
+
 			$groupid = $parameters[1];
 			$userid = $parameters[2];
 			$response = array(
@@ -234,6 +296,8 @@ try {
 
 		// Remove a user from a group
 		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', &$parameters)) {
+
+			throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
 			$groupid = $parameters[1];
 			$userid = $parameters[2];
@@ -268,8 +332,22 @@ try {
 		// echo "TARGET APP IS " . $targetapp . " and clienti_id was " . $token->getClientID();
 
 		$token = $oauth->check(null, array('app_' . $targetapp . '_user'));
-		$userid = $token->getUserID();
-		$groups = $token->getGroups();
+
+		$user = $token->getUser();
+		$userid = $user->get('userid');
+		// $groups = $user->getGroups();
+
+		
+		$userdata = $user->getJSON(array(
+			'type' => 'basic',
+			'groups' => array('type' => 'key')
+		));
+
+
+		// echo '<pre>';
+		// echo $targetapp; 
+		// print_r($userdata);
+		// exit;
 
 		// print_r($token); exit;
 
@@ -292,12 +370,12 @@ try {
 				// TODO: Clean output before returning. In example remove uwap- namespace attributes...
 			case 'queryOne':
 				if (empty($parameters['query'])) throw new Exception("Missing required parameter [query] query");
-				$response['data'] = $store->queryOneUser("appdata-" . $targetapp, $userid, $groups, $parameters['query']);
+				$response['data'] = $store->queryOneUser("appdata-" . $targetapp, $userid, $userdata['groups'], $parameters['query']);
 				break;
 
 			case 'queryList':
 				if (empty($parameters['query'])) throw new Exception("Missing required parameter [query] query");
-				$response['data'] = $store->queryListUser("appdata-" . $targetapp, $userid, $groups, $parameters['query']);
+				$response['data'] = $store->queryListUser("appdata-" . $targetapp, $userid, $userdata['groups'], $parameters['query']);
 				break;
 
 		}
@@ -798,14 +876,17 @@ try {
 		$default = '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';
 		try {
 
-			$auth = new AuthBase();
-			$user = $auth->getUser($qs[1]);
+			$auth = new Authenticator();
+			$auth->req(false, true); // require($isPassive = false, $allowRedirect = false, $return = null
+
+			$targetUser = User::getByKey('a', $qs[1]);
+
 
 			if (empty($user)) {echo 'Not found'; exit;}
 
-			if (!empty($user["photo"])) {
+			if (! $targetUser->has("photo") ) {
 				header('Content-Type: image/jpeg');
-				echo base64_decode($user["photo"]);
+				echo base64_decode($targetUser->get("photo"));
 			} else {
 				header('Content-Type: image/png');
 				echo base64_decode($default);
