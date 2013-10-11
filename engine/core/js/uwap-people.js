@@ -11,8 +11,8 @@ define(['jquery'], function ($) {
 
 		this.formWrapEl
 			.wrap('<div class="uwap-people-main" />')
-			.wrap('<div class="navbar"></div>')
-			.wrap('<div class="navbar-inner"></div>');
+			.wrap('<div class="navbar navbar-default"></div>')
+			.wrap('<div class="navbar-collapse"></div>');
 
 		this.mainEl = $(this.formWrapEl).closest('div.uwap-people-main');
 
@@ -47,7 +47,7 @@ define(['jquery'], function ($) {
 
 			$.each(r, function(i, item) {
 				console.log("REALM FOUND", i, item);
-				if (item.default) {
+				if (item["default"]) {
 					l2.append('<option selected="selected" value="' + item.realm + '">' + item.name + '</option>');	
 				} else {
 					l2.append('<option value="' + item.realm + '">' + item.name + '</option>');	
