@@ -21,21 +21,21 @@
 
 	<div style="float: right" class="btn-group pull-right">
 		<a class="btn dropdown-toggle btn-small" data-toggle="dropdown" href="#">
-			<i class="icon-cog"></i> 
+			<!-- <i class="glyphicon glyphicon-cog"></i>  -->
 			<span class="caret"></span>
 		</a>
 		<ul class="dropdown-menu">
-			<li><a href="#!/item/{{id}}"><i class="icon-share-alt"></i> Open</a></li>
-			<li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-			<li><a class="actDelete" href="#"><i class="icon-trash"></i> Delete this item</a></li>
-			<li><a href="#"><i class="icon-ban-circle"></i> Report this issue</a></li>
+			<li><a href="#!/item/{{id}}"><i class="gly-share-alt"></i> Open</a></li>
+			<li><a href="#"><i class="glyphicon glyphicon-pencil"></i> Edit</a></li>
+			<li><a class="actDelete" href="#"><i class="glyphicon glyphicon-trash"></i> Delete this item</a></li>
+			<li><a href="#"><i class="glyphicon glyphicon-ban-circle"></i> Report this issue</a></li>
 			<li class="divider"></li>
-			<li><a href="#"><i class="icon-star"></i> Promote this item</a></li>
+			<li><a href="#"><i class="glyphicon glyphicon-star"></i> Promote this item</a></li>
 		</ul>
 	</div>
 
 	<div style="float: right" class=" pull-right">
-		<a id="" href="" style="text-decoration: none; margin: 5px; font-size: 20px; color: #999; " class=""><i style="margin-top: 3px" class="icon-star-empty"></i></a>
+		<!-- <a id="" href="" style="text-decoration: none; margin: 5px; font-size: 20px; color: #999; " class=""><i style="margin-top: 3px" class="glyphicon glyphicon-star-empty"></i></a> -->
 	</div>
 	{{/viewconfig.hide.actionMenu}}
 
@@ -45,11 +45,11 @@
 		{{#activity.actor}}
 			<span>
 				{{#type.person}}
-					<i class="icon-user"></i> 
+					<i class="glyphicon glyphicon-user"></i> 
 				{{/type.person}}
 
 				{{#type.client}}
-					<i class="icon-briefcase"></i> 
+					<i class="glyphicon glyphicon-briefcase"></i> 
 				{{/type.client}}
 
 				{{displayName}}</span>
@@ -57,7 +57,7 @@
 
 
 
-		<span><i class=" icon-time"></i> <span class="ts" data-ts="{{ts}}"></span></span>
+		<span><i class=" glyphicon glyphicon-time"></i> <span class="ts" data-ts="{{ts}}"></span></span>
 
 		<!-- 
 			<span><i class=" icon-time"></i> activity <span class="ts" data-ts="${lastActivity}"></span></span> 
@@ -65,15 +65,15 @@
 
 		{{^viewconfig.hide.groups}}
 			{{#groupnames}}
-				<span class="label">{{.}}</span>
+				<span class="label label-primary">{{.}}</span>
 			{{/groupnames}}
 
 			{{#public}}
-				<span class="label label-inverse"><i class="icon-eye-open icon-white"></i> Public</span>
+				<span class="label label-default"><i class="glyphicon glyphicon-eye-open icon-white"></i> Public</span>
 			{{/public}}
 
 			{{#promoted}}
-				<span class="label label-info"><i class="icon-star icon-white"></i> Promoted</span>
+				<span class="label label-success"><i class="glyphicon glyphicon-star icon-white"></i> Promoted</span>
 			{{/promoted}}
 		{{/viewconfig.hide.groups}}
 
@@ -90,7 +90,7 @@
 	{{/message}}
 
 	{{#thumbnail}}
-		<div><img class="thumb" src="{{thumbnail}}" /></div>
+		<div><img class="thumb " src="{{thumbnail}}" /></div>
 	{{/thumbnail}}
 
 
@@ -109,14 +109,14 @@
 			{{#allowSignup}}
 				<div class="span4 well responseBox event-signup">
 
-					<button data-status="yes" class="responseOption btn btn-mini btn-success">Attend</button>
-					<button data-status="maybe" class="responseOption btn btn-mini btn-warning">Maybe</button>
-					<button data-status="no" class="responseOption btn btn-mini btn-inverse">Appologize</button>
+					<button data-status="yes" class="responseOption btn btn-sm btn-success">Attend</button>
+					<button data-status="maybe" class="responseOption btn btn-sm btn-warning">Maybe</button>
+					<button data-status="no" class="responseOption btn btn-sm btn-danger">Appologize</button>
 
 					{{#hasDeadline}}
 						<div class="">
 							<p><strong>Deadline for signing up</strong><br />{{deadlineH}}</p>
-							<p><i class="icon-exclamation-sign"></i> {{deadlineUntil}}</p>
+							<p><i class="glyphicon glyphicon-exclamation-sign"></i> {{deadlineUntil}}</p>
 						</div>
 					{{/hasDeadline}}
 				</div>
@@ -126,12 +126,12 @@
 
 			<div class="span4" >
 				<p style="font-size: 130%" ><strong>{{getDT}}</strong></p>
-				<p><i class="icon-time"></i> {{getUntil}}</p>
+				<p><i class="glyphicon glyphicon-time"></i> {{getUntil}}</p>
 			</div>
 
 
 			<div class="span4">
-				<p><strong>{{location.local}}</strong><br /><i class="icon-map-marker"></i> {{location.address}}</p>
+				<p><strong>{{location.local}}</strong><br /><i class="glyphicon glyphicon-map-marker"></i> {{location.address}}</p>
 			</div>
 
 		</div>
@@ -181,7 +181,7 @@
 			<span> through 
 
 				{{#type.client}}
-					<i class="icon-briefcase"></i> 
+					<i class="glyphicon glyphicon-briefcase"></i> 
 				{{/type.client}}
 
 				{{displayName}}</span>
@@ -191,7 +191,7 @@
 		{{#object_.article}}
 
 			<div style="margin: 5px 0px 8px 2em; border-left: 3px solid #ccc; padding-left: 5px" class="sharedArticle">
-				<i class="icon-external-link" style="font-size: 170%; color: #666; float: left; margin-left: -30px"></i>
+				<i class="glyphicon glyphicon-external-link" style="font-size: 170%; color: #666; float: left; margin-left: -30px"></i>
 				<h4 style="margin:0px"><a target="_blank" href="{{url}}">{{displayName}}</a></h4>
 				<p style="margin: 0px; color: #335">{{hostname}}</p>
 			</div>
@@ -206,7 +206,7 @@
 		{{#object_.issue}}
 
 			<div style="margin: 5px 0px 8px 2em; border-left: 3px solid #ccc; padding-left: 5px" class="sharedArticle">
-				<i class="icon-tasks" style="font-size: 170%; color: #666; float: left; margin-left: -30px"></i>
+				<i class="glyphicon glyphicon-tasks" style="font-size: 170%; color: #666; float: left; margin-left: -30px"></i>
 				<h4 style="margin:0px"><a target="_blank" href="{{url}}">{{displayName}}</a></h4>
 				{{#content}}
 					<p>{{content}}</p>
@@ -219,7 +219,7 @@
 		{{#object_.page}}
 
 			<div style="margin: 5px 0px 8px 2em; border-left: 3px solid #ccc; padding-left: 5px" class="sharedArticle">
-				<i class="icon-file" style="font-size: 170%; color: #666; float: left; margin-left: -30px"></i>
+				<i class="glyphicon glyphicon-file" style="font-size: 170%; color: #666; float: left; margin-left: -30px"></i>
 				<h4 style="margin:0px"><a target="_blank" href="{{url}}">{{displayName}}</a></h4>
 				{{#content}}
 					<p>{{content}}</p>
@@ -234,13 +234,13 @@
 
 
 	{{#links}}
-        <span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="{{href}}">{{text}}</a></span> 
+        <span style="margin-right: 2em" class=""><i class="glyphicon glyphicon-share-alt"></i><a target="_blank" href="{{href}}">{{text}}</a></span> 
 	{{/links}}
 
 	{{#files}}
 		<ul class="nav nav-list">
 		{{#files}}
-			<li><a target="_blank" href="{{href}}"><i class="icon-file"></i> {{filename}}</a></li>
+			<li><a target="_blank" href="{{href}}"><i class="glyphicon glyphicon-file"></i> {{filename}}</a></li>
 		{{/files}}
 		</ul>
 	{{/files}}

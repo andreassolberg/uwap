@@ -23,10 +23,21 @@ define(function(require, exports, module) {
 		prettydate = require('uwap-core/js/pretty')
 		;
 
-	require('uwap-core/bootstrap/js/bootstrap');
-	require('uwap-core/bootstrap/js/bootstrap-collapse');
-	require('uwap-core/bootstrap/js/bootstrap-button');
-	require('uwap-core/bootstrap/js/bootstrap-dropdown');
+
+	require('uwap-core/bootstrap3/js/bootstrap');	
+	require('uwap-core/bootstrap3/js/collapse');
+	require('uwap-core/bootstrap3/js/button');
+	require('uwap-core/bootstrap3/js/dropdown');	
+
+	// require('uwap-core/bootstrap/js/bootstrap');
+	// require('uwap-core/bootstrap/js/bootstrap-collapse');
+	// require('uwap-core/bootstrap/js/bootstrap-button');
+	// require('uwap-core/bootstrap/js/bootstrap-dropdown');
+
+
+
+
+
 	// require('uwap-core/bootstrap/js/bootstrap-modal');
     // require('uwap-core/bootstrap/js/bootstrap-tooltip');
 	// require('uwap-core/bootstrap/js/bootstrap-transition');
@@ -51,6 +62,7 @@ define(function(require, exports, module) {
 		this.el = el;
 		this.groups = {};
 
+		$('.dropdown-toggle').dropdown()
 
 
 		this.templates = {
@@ -81,6 +93,9 @@ define(function(require, exports, module) {
 
 
 		});
+
+
+
 
 
 		// this.groupcontroller = new GroupSelectorController(this.el.find('ul#navfilter'));
@@ -149,6 +164,20 @@ define(function(require, exports, module) {
 			$(".loader-showOnLoad").hide();
 		})
 
+
+		$(window).on("message", function(e) {
+			var data = e.originalEvent.data;  // Should work.
+			console.log("UWAP Feed Received postMessage message from one of the iframes", data);
+
+			if(data.action === 'setSize') {
+				
+				var menupadding = data.extra + 50;
+				$("#connect-widget").height(data.size + 34 + menupadding);
+				$("#connect-widget").css('margin-bottom', '-' + menupadding);
+				console.log("RESIZE", data, "set to ", $("#connect-widget").height());
+			}
+
+		});
 
 
 

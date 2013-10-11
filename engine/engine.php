@@ -13,8 +13,6 @@
 require_once('../lib/autoload.php');
 
 
-
-
 if (Config::getValue('type') === 'app') {
 
 

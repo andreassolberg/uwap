@@ -9,6 +9,8 @@ class HTTPClientToken extends HTTPClient {
 
 		error_log('HTTPClientToken BEGIN');
 
+		// echo "Config: " ; print_r($this->config); echo "\n";
+
 		if (empty($this->config["token_hdr"])) throw new Exception("missing handler configuration [token_hdr]");
 		if (empty($this->config["token_val"])) throw new Exception("missing handler configuration [token_val]");
 
@@ -40,7 +42,6 @@ class HTTPClientToken extends HTTPClient {
 		// }
 
 		$this->getUserAuthHeaders($headers);
-
 
 		// error_log('HTTPClientToken Handler: ' . json_encode($options['handler']));
 		error_log('HTTPClientToken URL: ' . json_encode($options['url']));

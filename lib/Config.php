@@ -294,7 +294,7 @@ class Config {
 		$current = $this->getConfig();
 
 		$allowedFields = array(
-			'endpoints', 'scopes', 'token', 'token_hdr', 'type', 'user', 'policy'
+			'endpoints', 'scopes', 'token_val', 'token_hdr', 'type', 'user', 'policy'
 		);
 		// foreach($proxies AS $key => $proxy) {
 			// if (!preg_match('/^[a-z0-9]+$/', $key)) {

@@ -59,8 +59,10 @@ try {
 		$auth->authenticate();
 		$res = $auth->storeUser();
 
-		header('Content-Type: application/json; chat-set: utf-8');
-		echo json_encode(array('status' => 'ok', 'message' => 'updated user data', 'result' => $res));
+		// header('Content-Type: application/json; chat-set: utf-8');
+		// echo 
+
+		$response['data'] = array('status' => 'ok', 'message' => 'updated user data', 'result' => $res, 'userdata' => $auth->getUserdata());
 
 
 	/**
@@ -697,6 +699,8 @@ try {
 
 		
 
+		// error_log("SOA Config " . var_export($args, true));
+
 		// // // Initiate an Oauth server handler
 		$oauth = new OAuth();
 
@@ -705,7 +709,10 @@ try {
 
 		$providerID = $remoteConfig->getID();
 
-		$client = HTTPClient::getClientWithConfig($proxyconfig[$api], $providerID);
+		// echo "PRoviderID " . $providerID . "\n";
+		// echo "proxyconfig "; print_r($proxyconfig); echo "\n";
+
+		$client = HTTPClient::getClientWithConfig($proxyconfig, $providerID);
 		if ($token) {
 			
 			$clientid = $token->getClientID();
