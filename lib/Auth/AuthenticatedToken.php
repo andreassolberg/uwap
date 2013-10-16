@@ -27,6 +27,10 @@ class AuthenticatedToken {
 	}
 
 
+	public function getClientGroups() {
+		$clientdata = $this->token->clientdata;
+		return $clientdata['groups'];
+	}
 
 
 
@@ -110,10 +114,7 @@ class AuthenticatedToken {
 	
 
 
-	// public function getClientGroups() {
-	// 	$clientdata = $this->token->clientdata;
-	// 	return $clientdata['groups'];
-	// }
+
 
 
 }

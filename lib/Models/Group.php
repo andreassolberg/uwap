@@ -6,7 +6,7 @@ class Group extends Model {
 
 
 	protected static $validProps = array(
-		'id', 'type', 'title', 'description', 'members', 'admins', 'uwap-userid', 'source');
+		'id', 'type', 'title', 'description', 'members', 'admins', 'listable', 'uwap-userid', 'source');
 
 
 	public function __construct($properties) {
@@ -15,13 +15,12 @@ class Group extends Model {
 
 	}
 
+
+
 	public function getJSON($opts = array()) {
 
 		// echo 'group::getjson <pre>'; print_r($opts);
 		// throw new Exception();
-
-
-
 
 
 		$props = self::$validProps;
@@ -39,4 +38,9 @@ class Group extends Model {
 
 		return $ret;
 	}
+
+
+
+
+
 }

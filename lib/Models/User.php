@@ -6,7 +6,8 @@ class User extends Model {
 	protected static $collection = 'users';
 	protected static $primaryKey = 'userid';
 	protected static $validProps = array(
-		'userid', 'mail', 'name', 'a', 'photo', 'groups', 'subscriptions');
+		'userid', 'mail', 'name', 'a', 'photo', 'groups', 'subscriptions',
+		'shaddow-generator', 'shaddow');
 
 	protected $groupconnector;
 
@@ -23,10 +24,32 @@ class User extends Model {
 
 	}
 
+	public function getSubscriptions() {
+  
+		return $this->get('subscriptions');
+
+	}
+
+
+
+	public function subscribe(Group $group) {
+		$groupid = $group->get('id');
+		$subscriptions = $this->getSubscriptions();
+		$subscriptions = self::array_add($subscriptions, $groupid);		
+		$this->set('subscriptions', $subscriptions);
+	}
+
+	public function unsubscribe(Group $group) {
+		$groupid = $group->get('id');
+		$subscriptions = $this->getSubscriptions();
+		$subscriptions = self::array_remove($subscriptions, $groupid);		
+		$this->set('subscriptions', $subscriptions);
+	}
+
 	public function getJSON($opts = array()) {
 
 		$props = self::$validProps;
-		if ($opts['type'] === 'basic') {
+		if (isset($opts['type']) && $opts['type'] === 'basic') {
 			$props = array('userid', 'mail', 'name', 'a');
 		}
 
@@ -90,6 +113,10 @@ class User extends Model {
 			throw new Exception('Cannot obtain a proper name from identify provider');
 		}
 
+		if (isset($userattr['subscriptions'])) {
+			unset ($userattr['subscriptions']);
+		}
+
 
 		$newUser = new User($userattr);
 		$newUser->store();
@@ -99,6 +126,24 @@ class User extends Model {
 	}
 	
 
+	public static function generateShaddow($properties, $user) {
+	// public static function generate($properties, $user) {
+
+
+		$allowed = array('userid', 'mail', 'name', 'photo');
+		foreach($properties AS $k => $v) {
+			if (!in_array($k, $allowed)) {
+				unset($properties[$k]);
+			}
+		}
+
+		$properties['shaddow-generator'] = $user->get('userid');
+		$properties['shaddow'] = true;
+
+
+		$user = new User($properties);
+		return $user;
+	}
 
 
 

@@ -26,6 +26,7 @@ define(function(require, exports, module) {
 		// 	console.log(data);
 		// });
 
+	// alert('y');
 
 		$("input#smt").on("click", function() {
 			UWAP.auth.require(function(data) {
@@ -56,14 +57,44 @@ define(function(require, exports, module) {
 			// 	$("div#out").append('<pre>info: ' + JSON.stringify(data, null, 4) + '</pre>');
 			// });
 
-			UWAP.groups.listMyGroups(function(data) {
-				$.each(data, function(i, item) {
+
+			// UWAP.groups.listPublic(function(data) {
+			// 	$.each(data, function(i, item) {
+			// 		var e = '';
+			// 		e += '<p><span style="font-size: 16pt">' + item.title + '</span> - <span>' + (item.description ? item.description : '- no descr -') + '</span></p>';
+			// 		e += '<pre>' + JSON.stringify(item, undefined, 4) + '</pre>';
+			// 		$("div#out").append(e);
+			// 	});
+			// })
+
+			// UWAP.groups.listMyGroups(function(data) {
+			// 	$.each(data, function(i, item) {
+			// 		var e = '';
+			// 		e += '<p><span style="font-size: 16pt">' + item.title + '</span> - <span>' + (item.description ? item.description : '- no descr -') + '</span></p>';
+			// 		e += '<pre>' + JSON.stringify(item, undefined, 4) + '</pre>';
+			// 		$("div#out").append(e);
+			// 	});
+			// })
+
+
+			UWAP.groups.get('uwap:grp:uninett:org:orgunit:AVD-U2', function(item) {
 					var e = '';
 					e += '<p><span style="font-size: 16pt">' + item.title + '</span> - <span>' + (item.description ? item.description : '- no descr -') + '</span></p>';
 					e += '<pre>' + JSON.stringify(item, undefined, 4) + '</pre>';
 					$("div#out").append(e);
-				});
 			})
+
+			UWAP.groups.get('uwap:grp-ah:71dbfc30-5d4f-47f6-98d7-afeba257674d', function(item) {
+				// $.each(data, function(i, item) {
+					var e = '';
+					e += '<p><span style="font-size: 16pt">' + item.title + '</span> - <span>' + (item.description ? item.description : '- no descr -') + '</span></p>';
+					e += '<pre>' + JSON.stringify(item, undefined, 4) + '</pre>';
+					$("div#out").append(e);
+				// });
+			})
+
+			// uwap:grp:uninett:org:orgunit:AVD-U2
+			// uwap:grp-ah:71dbfc30-5d4f-47f6-98d7-afeba257674d
 
 
 			// UWAP.people.query('uninett.no', 'andreas', function(data) {

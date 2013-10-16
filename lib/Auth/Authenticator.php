@@ -70,12 +70,12 @@ class Authenticator {
 
 
 	// TODO: Make sure that the user is not updated to storage at each request...
-	public function getUser() {
+	public function getUser($update = false) {
 
 		if ($this->user !== null) return $this->user;
 
 		$attributes = $this->as->getAttributes();
-		$this->user = User::fromAttributes($attributes);
+		$this->user = User::fromAttributes($attributes, $update);
 
 		return $this->user;
 

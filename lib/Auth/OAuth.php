@@ -74,7 +74,7 @@ class OAuth {
 
 		}
 
-		$user = $this->auth->getUser();
+		$user = $this->auth->getUser(true);
 
 		$userid = $user->get('userid');
 		$userdata = $user->getJSON(array('type' => 'basic'));

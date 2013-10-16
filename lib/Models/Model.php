@@ -33,9 +33,14 @@ abstract class Model {
 	}
 
 
-	public function get($key) {
+	public function get($key, $default = '____NA') {
 		if (!$this->has($key)) {
-			echo '<pre>Do not have key id : '; print_r($this);
+			if ($default !== '____NA') {
+				return $default;
+			}
+			throw new Exception('Could not obtain object proeprty ' . $key);
+
+			// echo '<pre>Do not have key id : '; print_r($this);
 		}
 
 		return $this->properties[$key];
@@ -64,6 +69,19 @@ abstract class Model {
 			array(static::$primaryKey => $this->properties[static::$primaryKey]), 
 			$this->properties
 		);
+
+	}
+
+	public function remove() {
+
+		if (empty(static::$collection)) throw new Exception('Incomplete Model implementation: collection to storage not set');
+		if (empty(static::$primaryKey)) throw new Exception('Incomplete Model implementation: primaryKey to storage not set');
+
+		$query = array(
+			static::$primaryKey => $this->get(static::$primaryKey)
+		);
+		
+		return $this->store->remove(static::$collection, null, $query);
 
 	}
 
@@ -103,7 +121,26 @@ abstract class Model {
 		return self::getByKey(static::$primaryKey, $id);
 	}
 
+	public static function array_remove($arr, $key) {
+		$newarr = array();
 
+		foreach($arr AS $v) {
+			if ($v !== $key) $newarr[$v] = 1;
+		}
+
+		return array_keys($newarr);
+	}
+
+	public static function array_add($arr, $key) {
+		$newarr = array();
+
+		foreach($arr AS $v) {
+			$newarr[$v] = 1;
+		}
+		$newarr[$key] = 1;
+
+		return array_keys($newarr);
+	}
 	
 
 }

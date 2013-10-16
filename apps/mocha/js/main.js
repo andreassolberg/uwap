@@ -317,9 +317,9 @@ define(function(require, exports, module) {
 					
 					describe("#updateMember()", function(){
 						it("should run the example from docs.uwap.org (with an added comma)", function(done){
-							UWAP.groups.updateMember(createdGroup.id, 'andreas@uninett.no', {'admin': false},
+							UWAP.groups.updateMember(createdGroup.id, 'andreas@uninett.no', 'admin',
 							function() {
-								console.log("Andreas is no longer admin...");
+								console.log("Andreas is now admin...");
 								done();
 							}, function(err) {
 								console.log("Error:" + err);
@@ -374,9 +374,9 @@ define(function(require, exports, module) {
 					
 					describe("#subscribe()", function(){
 						it("should make you subscribe to Terena TF-EMC2", function(done){
-							UWAP.groups.subscribe("f7954059-690a-4904-9a5e-04f45b0fae41", function(d){
+							UWAP.groups.subscribe("uwap:grp-ah:f7954059-690a-4904-9a5e-04f45b0fae41", function(d){
 								console.log(d);
-								expect(d).not.to.be(null);
+								// expect(d).not.to.be(null);
 								done();
 							}, function(err){throw err;});
 						}
@@ -386,7 +386,7 @@ define(function(require, exports, module) {
 					
 					describe("#unsubscribe()", function(){
 						it("should make you unsubscribe to Terena TF-EMC2", function(done){
-							UWAP.groups.unsubscribe("f7954059-690a-4904-9a5e-04f45b0fae41o", function(d){
+							UWAP.groups.unsubscribe("uwap:grp-ah:f7954059-690a-4904-9a5e-04f45b0fae41", function(d){
 								console.log(d);
 //								expect(d).not.to.be(null);
 								done();

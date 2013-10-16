@@ -118,22 +118,28 @@ try {
 	} else if (Utils::route(false, '^/people', &$parameters)) {
 
 
+
 		$oauth = new OAuth();
 		$token = $oauth->check();
-		$people = new People($token->getUserID());
-		$realm = 'uninett.no';
-		if (preg_match('/^.*@(.*?)$/', $token->getUserID(), $matches)) {
-			$relam = $matches[1];
-		}
+		$user = $token->getUser();
+
+
+		$groupconnector = new GroupConnector($user);
+
+		// $people = new People($token->getUserID());
+		// $realm = 'uninett.no';
+		// if (preg_match('/^.*@(.*?)$/', $token->getUserID(), $matches)) {
+		// 	$relam = $matches[1];
+		// }
 
 		if (Utils::route('get', '^/people/realms$', &$parameters)) {
 
 			$response = array(
 				'status' => 'ok',
-				'data' => $people->listRealms($realm),
+				'data' => $groupconnector->peopleListRealms(),
 			);
 
-		} else if (Utils::route('get', '^/people/query/([a-z0-9\.]+)$', &$parameters)) {
+		} else if (Utils::route('get', '^/people/query/([a-z0-9\.\-]+)$', &$parameters)) {
 
 			// print_r($parameters); exit;
 
@@ -143,11 +149,10 @@ try {
 
 			$response = array(
 				'status' => 'ok',
-				'data' => $people->query($realm, $_REQUEST['query']),
+				'data' => $groupconnector->peopleQuery($realm, $_REQUEST['query']),
 			);
 
 		} 
-
 
 
 	/**
@@ -157,7 +162,7 @@ try {
 
 		$oauth = new OAuth();
 		$token = $oauth->check();
-		$user => $token->getUser();
+		$user = $token->getUser();
 
 
 		$groupconnector = new GroupConnector($user);
@@ -173,107 +178,96 @@ try {
 
 			$response = array(
 				'status' => 'ok',
-				'data' => $groupmanager->getGroups($groups),
+				'data' => $groupconnector->getGroupsJSON(),
 			);
 
 		} else if (Utils::route('get', '^/groups/public$', &$parameters)) {
 
+			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
-			throw new NotImplementedException('Have to refactor and implement search for public groups.');
-
-			$gres = $groupmanager->getPublicGroups($groups);
+			// $gres = $groupmanager->getPublicGroups($groups);
 
 			$response = array(
 				'status' => 'ok',
-				'data' => $gres,
+				'data' => $groupconnector->getPublicGroupsJSON(),
 			);
 
 
 		// Add a new group
 		} else if (Utils::route('post', '^/groups$', &$parameters, &$body)) {
 
-			throw new NotImplementedException('Have to refactor and implement search for public groups.');
+			// echo "About to create new group with "; print_r($body); exit;
 
-			$res = $groupmanager->addGroup($body);
+			$res = $groupconnector->addGroup($body);
 
 			$response = array(
 				'status' => 'ok',
-				'data' => $res,
+				'data' => $res->getJSON(),
 			);
 
-		// VOOT get a list of groups
-		} else if (Utils::route('get', '^/groups/@me$', &$parameters)) {
-
-			throw new NotImplementedException('Have to refactor and implement search for public groups.');
-
-			$allgroups = $groupmanager->getGroups($groups);
-			$no = count($allgroups);
-			$response = array(
-				"startIndex" => 0,
-				"totalResults" => $no,
-			    "itemsPerPage" => $no,
-			    "entry" => $allgroups
-			);
 
 		// Get a specific group
-		} else if (Utils::route('get', '^/group/([@:.a-z0-9\-]+)$', &$parameters)) {
+		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-]+)$', &$parameters)) {
 
-			throw new NotImplementedException('Have to refactor and implement search for public groups.');
+			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
 			// TODO: ensure user is member of the group to extract memberlist
 			$groupid = $parameters[1];
+			$group = $groupconnector->getByID($groupid);
+
 			$response = array(
 				'status' => 'ok',
-				'data' => $groupmanager->getGroup($groupid),
+				'data' => $group->getJSON(),
 			);
+
+			// if ($group === null) {
+			// 	$response = array(
+			// 		'status' => 'ok',
+			// 		'data' => null,
+			// 	);
+			// } else {
+			// 	$response = array(
+			// 		'status' => 'ok',
+			// 		'data' => $group->getJSON(),
+			// 	);
+			// }
+
 
 		// Update some group data...
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)$', &$parameters, &$body)) {
 
 
-			throw new NotImplementedException('Have to refactor and implement search for public groups.');
+			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
 			// TODO: ensure user is member of the group to extract memberlist
 			$groupid = $parameters[1];
 			$response = array(
 				'status' => 'ok',
-				'data' => $groupmanager->updateGroup($groupid, $body),
+				'data' => $groupconnector->update($groupid, $body),
 			);
 
 		// Delete  group
 		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)$', &$parameters)) {
 
 
-			throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
 			$groupid = $parameters[1];
 			$response = array(
 				'status' => 'ok',
-				'data' => $groupmanager->removeGroup($groupid),
+				'data' => $groupconnector->remove($groupid),
 			);
 
-		// Add a new member to a group
-		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/members$', &$parameters, &$body)) {
 
-			throw new NotImplementedException('Have to refactor and implement search for public groups.');
-
-			$groupid = $parameters[1];
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupmanager->addMember($groupid, $body),
-			);
 
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/subscription$', &$parameters, &$body)) {
 
 
-			throw new NotImplementedException('Have to refactor and implement search for public groups.');
-
 			$groupid = $parameters[1];
 
 			if ($body === true) {
-				$res = $groupmanager->subscribe($groupid, $body);
+				$res = $groupconnector->subscribe($groupid, $body);
 			} else {
-				$res = $groupmanager->unsubscribe($groupid, $body);
+				$res = $groupconnector->unsubscribe($groupid, $body);
 			}
 
 			$response = array(
@@ -282,28 +276,37 @@ try {
 			);
 
 
+		// Add a new member to a group
+		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/members$', &$parameters, &$body)) {
+
+			$groupid = $parameters[1];
+			$response = array(
+				'status' => 'ok',
+				'data' => $groupconnector->addMember($groupid, $body),
+			);
+
 		// Update a membership to a group
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', &$parameters, &$obj)) {
 
-			throw new NotImplementedException('Have to refactor and implement search for public groups.');
+			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
 			$groupid = $parameters[1];
 			$userid = $parameters[2];
 			$response = array(
 				'status' => 'ok',
-				'data' => $groupmanager->updateMember($groupid, $userid, $obj),
+				'data' => $groupconnector->updateMember($groupid, $userid, $obj),
 			);
 
 		// Remove a user from a group
 		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', &$parameters)) {
 
-			throw new NotImplementedException('Have to refactor and implement search for public groups.');
+			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
 			$groupid = $parameters[1];
 			$userid = $parameters[2];
 			$response = array(
 				'status' => 'ok',
-				'data' => $groupmanager->removeMember($groupid, $userid),
+				'data' => $groupconnector->removeMember($groupid, $userid),
 			);
 
 		} else {
@@ -647,15 +650,21 @@ try {
 
 		if ($token->isUser()) {
 			$clientid = null;
-			$userid = $token->getUserID();
-			$groups = $token->getGroups();
+
+			$user = $token->getUser();
+			$userid = $user->get('userid');
+
+
+			$userdata = $user->getJSON(array('type' => 'basic', 'groups' => array('type' => 'key')));
+			$groups = $userdata['groups'];
+
 		} else {
 			$clientid = $token->getClientID();
 			$userid = null;
 			$groups = $token->getClientGroups();
 		}
 
-		$subscriptions = $token->getSubscriptions();
+		$subscriptions = $user->getSubscriptions();
 
 		// echo 'groups: '; print_r($groups); exit;
 
@@ -799,7 +808,10 @@ try {
 			$oauth->check(null, $ensureScopes);
 
 
-			$userdata = $token->getUserdataWithGroups();
+			$user = $token->getUser();
+			$userdata = $user->getJSON(array('type' => 'basic', 'groups' => array('type' => 'key')));
+
+			// $userdata = $token->getUserdataWithGroups();
 			$client->setAuthenticated($userdata);
 			$scopes = $oauth->getApplicationScopes('rest', $providerID);
 			$client->setAuthenticatedClient($clientid, $scopes);
@@ -852,9 +864,9 @@ try {
 
 			// print_r($ensureScopes); exit;
 
-			// $oauth->check(null, $ensureScopes);
-			$userid = $token->getUserID();
-			$userdata = $token->getUserdataWithGroups();
+			$user = $token->getUser();
+			$userdata = $user->getJSON(array('type' => 'basic', 'groups' => array('type' => 'key')));
+
 			$client->setAuthenticated($userdata);
 		}
 
