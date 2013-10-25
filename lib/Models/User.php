@@ -1,6 +1,6 @@
 <?php
 
-class User extends Model {
+class User extends StoredModel {
 
 
 	protected static $collection = 'users';

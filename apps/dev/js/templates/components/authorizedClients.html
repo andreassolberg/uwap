@@ -1,5 +1,102 @@
 
 
+<h3>Client Authorizations</h3>
+
+
+
+
+<table class="table table-striped" class="authorizationList">
+
+	<thead>
+		<tr>
+			<th style="width: 40px">&nbsp;</th>
+			<th>Client</th>
+			<th>Status</th>
+
+
+		</tr>
+	</thead>
+
+	<tbody >
+
+	{{#each items}}
+
+		<tr class="client" data-clientid="{{client.id}}">
+
+			<td>
+				<span  style="color: #999" class="closed glyphicon glyphicon-chevron-right"></span>
+				<span  style="color: #999" class="open glyphicon glyphicon-chevron-down"></span>
+			</td>
+			<td>
+				<img class="clientlogo" style="" src="{{client.logo}}" alt="client logo" />
+				{{client.name}} 
+			</td>
+			<td></td>
+
+		</tr>
+
+
+		<tr class="clientDetails" data-clientid="{{client.id}}">
+
+			<td colspan="3">
+
+				<div class="clientDetailsBox">
+
+					<p class="well"> {{client.descr}}</p>
+
+
+					<p>This client is requesting access to these scopes</p>
+
+
+					<!--
+
+
+
+					{{client.id}}
+
+					<span style="color: #aaa; font-size: small; font-family: monospace">{{client.id}}</span>
+
+					<p><label><input type="checkbox" checked="checked" disabled="disabled"> Basic access permissions</label></p>
+
+					{{#each getScopes}}
+						<p><label><input data-scope="{{localScope}}" class="grantScopeItem" type="checkbox" checked="checked" > {{name}} <code>{{localScope}}</code></label></p>
+					{{/each}}
+
+
+-->
+					<!-- <p>Owner <code>{{uwap-userid}}</code></p> -->
+
+					<p>
+						<button class="actGrant btn btn-success">
+							<i class="icon-ok"></i> Grant selected permissions
+						</button>
+						<button class="actReject btn btn-danger">Reject any access</button>
+					</p>
+
+				</div>
+
+
+				
+
+			</td>
+		</tr>
+
+	{{/each}}
+
+	</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
 
 {{#if pending}}
 

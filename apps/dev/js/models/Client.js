@@ -11,7 +11,12 @@ define(function(require, exports, module) {
 			this[key] = opts[key];
 		}
 
+		console.log("CREATING NEW CLIENT", this.id);
+	}
 
+
+	Client.prototype.get = function(key) {
+		return this[key];
 	}
 
 	Client.prototype.getGenericScopes = function() {
@@ -54,6 +59,11 @@ define(function(require, exports, module) {
 		return scopes;
 	}
 
+	Client.prototype.logo = function() {
+		console.log("properties of client is", this.id);
+		return UWAP.utils.getEngineURL('/api/media/logo/app/' + this.id);
+	}
+
 	Client.prototype.getAppScopes = function() {
 		
 		var smatch = new RegExp('rest_([^_]+)(_([^_]+))?$');
@@ -64,7 +74,7 @@ define(function(require, exports, module) {
 		$.each([ [this.scopes, true], [this.scopes_requested, false] ], function(i, p) {
 			var scopes = p[0], access = p[1];
 
-			console.log("About to priocess sciopes", p, scopes);
+			console.log("About to process scopes", p, scopes);
 
 			if (scopes && scopes.length > 0) {
 				$.each(scopes, function(i, scope) {
@@ -101,6 +111,18 @@ define(function(require, exports, module) {
 		console.log("Result is ", results);
 		return results;
 		
+	}
+
+	Client.prototype.getView = function() {
+		var view = {};
+
+		for(var key in this) {
+			if (typeof this[key] !== 'function' ) {
+				view[key] = this[key];
+			}
+		}
+		view.logo = this.logo();
+		return view;
 	}
 
 

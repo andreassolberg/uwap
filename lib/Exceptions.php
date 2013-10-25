@@ -15,3 +15,9 @@ class NotImplementedException extends UWAPException {
 
 }
 
+
+class UWAPNotAuthorizedException extends UWAPException {
+
+	
+	
+}

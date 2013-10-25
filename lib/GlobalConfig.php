@@ -22,23 +22,36 @@ class GlobalConfig {
 		return $default;
 	}
 
-	public static function getAppHost() {
-		
-	}
 
 
-	public static function getAppID() {
+	// public static function getAppID() {
 
-		$id = Utils::getSubID();
-		// echo "ID is " . var_export($id, true); exit;
-		if ($id !== false) return $id;
 
-		$host = Utils::getHost();
-		return Config::getSubIDfromHost($host);
-	}
+	// 	return Config::getSubIDfromHost($host);
+	// }
+
+
 
 
 	// ------ ------ ------ ------ Class methods
+
+	public static function getApp() {
+
+		$id = Utils::getSubID();
+		$host = Utils::getHost();
+
+		if ($id === null) {
+			$id = ClientDirectory::getSubIDfromHost( $host );
+		}
+
+		if ($id === null) {
+			throw new Exception('Could not obtain an app configuration for the current host [' . $host . ']');
+		}
+
+		return Client::getByID($id);
+	}
+
+
 	public static function getInstance() {
 		if (is_null(self::$instance)) {
 			self::$instance = new GlobalConfig();
@@ -51,28 +64,10 @@ class GlobalConfig {
 		return $config->_getValue($key, $default, $required);
 	}
 
-	// TODO: Start using this from GlobalConfig
 	public static function hostname() {
 		return self::getValue('mainhost', null, true);
 	}
 
-	public static function scheme() {
-		if(!array_key_exists('HTTPS', $_SERVER)) {
-			/* Not a https-request. */
-			return 'http';
-		}
-
-		if($_SERVER['HTTPS'] === 'off') {
-			/* IIS with HTTPS off. */
-			return 'http';
-		}
-
-		/* Otherwise, HTTPS will be a non-empty string. */
-		if ($_SERVER['HTTPS'] !== '') {
-			return 'https';
-		}
-		return 'http';
-	}
 
 	
 }

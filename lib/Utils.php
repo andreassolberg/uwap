@@ -3,6 +3,14 @@
 
 class Utils {
 	
+
+	/**
+	 * Given the current hostname. Check if this is a valid subdomain of the main host
+	 * And return the 'subid'. In example foo.uwap.org will return foo.
+	 * 
+	 * @param  [type] $hostname [description]
+	 * @return [type]           [description]
+	 */
 	public static function getSubID($hostname = null) {
 
 		if(php_sapi_name() == 'cli' || empty($_SERVER['REMOTE_ADDR'])) {
@@ -10,7 +18,7 @@ class Utils {
 		}
 
 		if ($hostname === null) {
-			$hostname = $_SERVER['HTTP_HOST'];
+			$hostname = self::getHost();
 		}
 
 		$subhost = null;
@@ -19,15 +27,40 @@ class Utils {
 		if (preg_match('/^([a-zA-Z0-9]+).' . $mainhost . '$/', $hostname, $matches)) {
 			$subhost = $matches[1];
 		} else {
-			return false;
+			return null;
 		}
 		self::validateID($subhost);
 		return $subhost;
 	}
 
+
+
+
 	public static function getHost() {
 		return $_SERVER['HTTP_HOST'];
 	}
+
+	public static function getScheme() {
+		if(!array_key_exists('HTTPS', $_SERVER)) {
+			/* Not a https-request. */
+			return 'http';
+		}
+
+		if($_SERVER['HTTPS'] === 'off') {
+			/* IIS with HTTPS off. */
+			return 'http';
+		}
+
+		/* Otherwise, HTTPS will be a non-empty string. */
+		if ($_SERVER['HTTPS'] !== '') {
+			return 'https';
+		}
+		return 'http';
+	}
+
+
+
+
 
 
 	public static function route($method = false, $match, $parameters, $object = null) {

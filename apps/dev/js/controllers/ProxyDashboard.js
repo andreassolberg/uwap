@@ -4,6 +4,9 @@ define(function(require, exports, module) {
 		$ = require('jquery'),
 		UWAP = require('uwap-core/js/core'),
 
+		AuthorizationListController = require('./AuthorizationListController'),
+
+		AuthorizationList = require('../models/AuthorizationList'),
 		AuthorizedClient = require('../models/AuthorizedClient'),
 
 		hb = require('uwap-core/js/handlebars')
@@ -19,8 +22,6 @@ define(function(require, exports, module) {
 	var endpointsTmplText = require('uwap-core/js/text!templates/components/endpoints.html');
 	var endpointsTmpl = hb.compile(endpointsTmplText);
 
-	var authzclientsTmplText = require('uwap-core/js/text!templates/components/authorizedClients.html');
-	var authzclientsTmpl = hb.compile(authzclientsTmplText);
 
 	var count_keys = function(myobj) {
 		var c= 0;
@@ -47,12 +48,22 @@ define(function(require, exports, module) {
 
 		this.container = $('<div class="eventlistener"></div>').appendTo(container);
 
-		this.clients = [];
+		this.authorizationList = [];
 
 		console.log("PROXY", appconfig);
 
+		
+
 		this.draw();
+
+		this.authorizationlistcontroller = new AuthorizationListController(this.container.find("div#clientauthorizations"), function() {
+			alert("Done");
+		});
+
 		this.getAppClients();
+
+
+
 
 		$(this.container).on("click", "div.scopes tr.scope a.removeScope", 
 			this.proxy(this.actRemoveScope));
@@ -75,28 +86,41 @@ define(function(require, exports, module) {
 	ProxyDashboard.prototype.getAppClients = function() {
 		var that = this;
 		UWAP.appconfig.getAppClients(this.appconfig.id, function(data) {
-			var ni;
-			var clientsPending = [];
-			var clientsAuthorized = [];
-			for(var i = 0; i < data.clients.length; i++) {
-				ni = new AuthorizedClient(that.appconfig, data.clients[i]);
-				if (ni.isPending()) {
-					clientsPending.push(ni);	
-				} else {
-					clientsAuthorized.push(ni);
-				}
+
+			
+
+			that.authorizationList = new AuthorizationList(data);
+			console.log("Get App Clients results", that.authorizationList);
+
+
+			that.authorizationlistcontroller.setList(that.authorizationList);
+			that.authorizationlistcontroller.draw();
+			// that.drawClients();
+
+
+			// var ni;
+			// var clientsPending = [];
+			// var clientsAuthorized = [];
+			// for(var i = 0; i < data.clients.length; i++) {
+			// 	ni = new AuthorizedClient(that.appconfig, data.clients[i]);
+			// 	if (ni.isPending()) {
+			// 		clientsPending.push(ni);	
+			// 	} else {
+			// 		clientsAuthorized.push(ni);
+			// 	}
 				
-			}
-			console.log("Get App Clients results", data);
-			that.clients = {
-				"pending": clientsPending,
-				"authorized": clientsAuthorized,
-			}
-			that.drawClients();
+			// }
+
+			// that.clients = {
+			// 	"pending": clientsPending,
+			// 	"authorized": clientsAuthorized,
+			// }
+			// that.drawClients();
 		} );
 	}
 
 	ProxyDashboard.prototype.getClientPendingRef = function(id) {
+		throw new Error('getClientPendingRef()');
 		for(var i = 0; i < this.clients.pending.length; i++) {
 			if (this.clients.pending[i].client_id === id) return this.clients.pending[i];
 		}
@@ -318,15 +342,18 @@ define(function(require, exports, module) {
 		this.drawAppStatus();
 	}
 
-	ProxyDashboard.prototype.drawClients = function() {
-		console.log("draw clients ", this.clients);
-		var container = $(this.element).find('div#clientauthorizations');
-		container.empty();
+	// ProxyDashboard.prototype.drawClients = function() {
+	// 	console.log("draw authorizationList ", this.authorizationList);
+	// 	var container = $(this.element).find('div#clientauthorizations');
+	// 	container.empty();
 
-		container.append(authzclientsTmpl(this.clients));
-		// container.append(authzclientsTmpl(this.clientsAuthorized));
+	// 	console.log("  -----> View");
+	// 	console.log(this.authorizationList.getView());
 
-	}
+	// 	container.append(authzclientsTmpl(this.authorizationList.getView()));
+	// 	// container.append(authzclientsTmpl(this.clientsAuthorized));
+
+	// }
 
 	ProxyDashboard.prototype.drawPolicy = function() {
 		var auto = false;

@@ -54,12 +54,19 @@ class Authenticator {
 		if ($allowRedirect) {
 			if ($return === null) $return = SimpleSAML_Utilities::selfURL();
 
-			$defaultidp = GlobalConfig::getValue('idp');
-			$options = array('saml:idp' => $defaultidp);
-			if (isset($_COOKIE['idp'])) {
-				$options = array('saml:idp' => $_COOKIE['idp']);
+			$defaultidp = GlobalConfig::getValue('idp', false);
+			$options = array();
+
+			if ($defaultidp !== false) {
+				$options['saml:idp'] = $defaultidp;
 			}
+			if (isset($_COOKIE['idp'])) {
+				$options['saml:idp'] = $_COOKIE['idp'];
+			}
+
+			// echo "about to require authentication "; print_r($options); print_r($_COOKIE); exit;
 			$this->as->requireAuth($options);
+
 			return;
 
 		}

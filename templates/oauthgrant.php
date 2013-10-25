@@ -19,14 +19,14 @@
 
 <?php
 
-		$scopes = array();
-		if (!empty($data['scopes'])) {
-			foreach($data['scopes'] AS $scope) {
-				$scopes[$scope] = 1;
-			}
-		}
+	$cscopes = $oauthclient->get('scopes', array());
+	$scopes = array();
+	foreach($cscopes AS $scope) {
+		$scopes[$scope] = 1;
+	}
 
-		// print_r($scopes);
+
+	// print_r($scopes);
 ?>
 
 
@@ -40,7 +40,7 @@
 
 				<div class="col-md-6" style=" border-right: 3px solid #eee">
 
-					<p><strong><?php echo htmlspecialchars($data["client_name"]); ?></strong> requests the following permissions:</p>
+					<p><strong><?php echo htmlspecialchars($oauthclient->get('name', 'Unnamed client')); ?></strong> requests the following permissions:</p>
 
 
 					<div class="panel panel-default">
@@ -274,11 +274,13 @@ if (isset($scopes['longterm'])) {
 							</a>
 							<div class="media-body">
 
-								<h2 class="media-heading"><?php echo htmlspecialchars($data["client_name"]); ?></h2>
+								<h2 class="media-heading"><?php echo htmlspecialchars($oauthclient->get('name', 'Unnamed client')); ?></h2>
 								<?php
-								if (!empty($data["description"])) {
+								if ($oauthclient->has('descr')) {
 
-									echo '<p>' . htmlspecialchars($data["description"]) . '</p>';
+								// if (!empty($data["description"])) {
+
+									echo '<p>' . htmlspecialchars($oauthclient->get('descr')) . '</p>';
 
 								}
 								?>
@@ -301,21 +303,21 @@ if (isset($scopes['longterm'])) {
 							<div class="media">
 								<a class="pull-left" href="#">
 									<img style="width: 64px; height: 64px; border: 1px solid #aaa; border-radius: 3px" 
-										src="https://core.uwap.org/api/media/user/<?php echo htmlspecialchars($owner["a"]); ?>">
+										src="https://core.uwap.org/api/media/user/<?php echo htmlspecialchars($owner->get("a")); ?>">
 								</a>
 								<div class="media-body">
 									<h4 class="media-heading">
 										<!-- <span class="glyphicon glyphicon-user"></span> -->
-										<?php echo htmlspecialchars($owner["name"]); ?>
+										<?php echo htmlspecialchars($owner->get("name")); ?>
 									</h4>
 
 									
 									<p style="margin: 0px">
 										<span class="glyphicon glyphicon-envelope"></span> 
-										<?php echo htmlspecialchars($owner["mail"]); ?></p>
+										<?php echo htmlspecialchars($owner->get("mail", '')); ?></p>
 									<p style="margin: 0px">
 										
-										<a href="mailto:<?php echo htmlspecialchars($owner["mail"]); ?>">Send e-mail</a></p>
+										<a href="mailto:<?php echo htmlspecialchars($owner->get("mail", '')); ?>">Send e-mail</a></p>
 
 
 								</div><!-- media body -->
@@ -323,12 +325,6 @@ if (isset($scopes['longterm'])) {
 
 					  </div><!-- panel body -->
 					</div><!-- panel -->
-
-
-
-
-
-
 
 
 

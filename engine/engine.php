@@ -13,7 +13,21 @@
 require_once('../lib/autoload.php');
 
 
-if (Config::getValue('type') === 'app') {
+try {
+
+	$globalconfig = GlobalConfig::getInstance();
+	$app = $globalconfig->getApp();
+
+} catch(Exception $e) {
+	echo "Not found";
+	exit;
+}
+
+
+
+
+
+if ($app->get('type') === 'app') {
 
 
 	try {
@@ -29,7 +43,7 @@ if (Config::getValue('type') === 'app') {
 		echo "Error: " . $e->getMessage();
 	}
 
-} else if (Config::getValue('type') === 'proxy') {
+} else if ($app->get('type') === 'proxy') {
 
 	// Specify domains from which requests are allowed
 	header('Access-Control-Allow-Origin: *');

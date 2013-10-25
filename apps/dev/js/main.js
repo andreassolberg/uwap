@@ -44,7 +44,6 @@ define(function(require, exports, module) {
 		"newClient": require('uwap-core/js/text!templates/newClient.html'),
 	};
 	
-	console.log('making templates compile');
 	var templates = {
 		"appdashboard": hb.compile(tmpl.appdashboard),
 		"clientdashboard": hb.compile(tmpl.clientdashboard),
@@ -57,7 +56,7 @@ define(function(require, exports, module) {
 		"proxydashboard": hb.compile(tmpl.proxydashboard),
 		"proxyviewdashboard": hb.compile(tmpl.proxyviewdashboard)
 	};
-	console.log('done compile');
+	
 
 	$("document").ready(function() {
 
@@ -112,6 +111,9 @@ define(function(require, exports, module) {
 		 * @return {[type]}   [description]
 		 */
 		App.prototype.route = function(e) {
+
+			console.log(" -----> Route", window.location.hash);
+
 			if (!this.routingEnabled) return;
 			var hash = window.location.hash;
 
@@ -186,8 +188,8 @@ define(function(require, exports, module) {
 			// this.picker.empty();
 //			alert('Trying to list apps');
 			UWAP.appconfig.list(function(list) {
-				console.log("List of apps", list);
-				that.picker.addList(list);
+				console.log("List of clients", list);
+				that.picker.addList(list.items);
 			});
 		};
 
@@ -281,6 +283,11 @@ define(function(require, exports, module) {
 
 					adash = new ProxyDashboard($("div#appmaincontainer"), new Proxy(appconfig), templates);
 
+				} else if (appconfig.type === 'client') {
+
+					alert("opening a client");
+					// adash = new ProxyDashboard($("div#appmaincontainer"), new Proxy(appconfig), templates);
+
 				} else {
 
 					console.error('Does not reckognize this type of app');
@@ -308,10 +315,12 @@ define(function(require, exports, module) {
 			var na = new newApp(that.el, function(no) {
 				
 				UWAP.appconfig.store(no, function() {
-					console.log("Successully stored new app");
+					console.log("Successully stored new app", no);
+
+					// alert("new app stored");
 
 					UWAP.appconfig.list(function(list) {
-						that.picker.addList(list);
+						that.picker.addList(list.items);
 						that.picker.selectApp(no.id);
 					});
 
@@ -341,7 +350,7 @@ define(function(require, exports, module) {
 					console.log("Successully stored new app");
 
 					UWAP.appconfig.list(function(list) {
-						that.picker.addList(list);
+						that.picker.addList(list.items);
 						that.picker.selectApp(no.id);
 					});
 
@@ -370,7 +379,7 @@ define(function(require, exports, module) {
 					console.log("Successully stored new app");
 
 					UWAP.appconfig.list(function(list) {
-						that.picker.addList(list);
+						that.picker.addList(list.items);
 						// that.picker.selectClient(no.client_id);
 					});
 
@@ -386,11 +395,20 @@ define(function(require, exports, module) {
 
 		var app;
 
-
 		UWAP.auth.require(function(user) {
 
 			console.log("Logged in", user);
 			app = new App($("body"), user);
+
+			// var newapp = {
+			// 	'type': 'app',
+			// 	'id': 'testapp28374625',
+			// 	'name': 'Testapp 1',
+			// 	'descr': 'a nice description...'
+			// };
+			// UWAP.appconfig.store(newapp, function(data) {
+			// 	console.log("Done"); console.log(data);
+			// })
 
 		});
 

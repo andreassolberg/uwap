@@ -29,7 +29,11 @@ define(function() {
 	};
 
 
-	newApp.prototype.submit = function() {
+	newApp.prototype.submit = function(e) {
+		if (e) {
+			e.preventDefault(); e.stopPropagation();	
+		}
+		
 
 		var obj = {};
 
@@ -78,7 +82,7 @@ define(function() {
 		var id = $(this.element).find("#newAppIdentifier").val();
 
 		if (id === '') {
-			$(that.element).find("span.idlabels").empty().append('<span class="label label-important">Cannot be empty</span>');
+			$(that.element).find("span.idlabels").empty().append('<span class="label label-danger">Cannot be empty</span>');
 			return;
 		}
 
@@ -91,7 +95,7 @@ define(function() {
 				that.verified = true;
 				$(that.element).find("span.idlabels").empty().append('<span class="label label-success">Available</span>');
 			} else {
-				$(that.element).find("span.idlabels").empty().append('<span class="label label-important">Not available</span>');
+				$(that.element).find("span.idlabels").empty().append('<span class="label label-danger">Not available</span>');
 			}
 
 			that.checkIfReady();
@@ -100,7 +104,7 @@ define(function() {
 			console.log("Error ", error);
 			that.verifiedidentifier = id;
 			that.checkIfReady();
-			$(that.element).find("span.idlabels").empty().append('<span class="label label-important">' + error + '</span>');
+			$(that.element).find("span.idlabels").empty().append('<span class="label label-danger">' + error + '</span>');
 		});
 	}
 

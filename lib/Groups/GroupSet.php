@@ -1,11 +1,11 @@
 <?php
 
 
-class GroupSet {
+// class GroupSet {
 
-	function __construct() {
+// 	function __construct() {
 
-	}
+// 	}
 
 
-}
+// }

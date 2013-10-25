@@ -6,15 +6,18 @@ class Static_File {
 
 	function __construct() {
 
-		$this->config = Config::getInstance();
+		$this->globalconfig = GlobalConfig::getInstance();
+		$this->app = $this->globalconfig->getApp();
 
-		$acl = $this->config->getValue("access");
-		if (!empty($acl)) {
-			$this->authz();	
+		// $this->config = Config::getInstance();
+
+		$acl = $this->app->get("access", null);
+		if ($acl !== null) {
+			$this->authz($acl);	
 		}
 
-		if (!$this->config->hasStatus(array('operational'))) {
-			if ($this->config->hasStatus(array('pendingDAV'))) {
+		if (!$this->app->hasStatus(array('operational'))) {
+			if ($this->app->hasStatus(array('pendingDAV'))) {
 				echo 'Site is just created. It may take a few minutes before the site is operational.';
 			} else {
 				echo 'This site is disabled.';
@@ -24,8 +27,8 @@ class Static_File {
 
 	}	
 
-	function authz() {
-		$acl = $this->config->getValue("access");
+	function authz($acl) {
+		// $acl = $this->config->getValue("access");
 		if ($acl["ip"]) {
 			// echo '<PRE>'; print_r($_SERVER); echo '</PRE>' exit;
 			if (!in_array($_SERVER["REMOTE_ADDR"], $acl["ip"])) {
@@ -58,8 +61,8 @@ class Static_File {
 
 	function getInfo() {
 
-		$subhost = $this->config->getID();
-		$subhostpath = $this->config->getAppPath(''); //Utils::getPath('apps/' . $subhost);
+		$subhost = $this->app->get('id');
+		$subhostpath = $this->app->getAppPath(''); //Utils::getPath('apps/' . $subhost);
 
 		$localfile = self::getpath($_SERVER['REQUEST_URI']);
 		if ($localfile === '/') $localfile = '/index.html';
@@ -72,12 +75,13 @@ class Static_File {
 			'localfile' => $localfile,
 			'file' => $file,
  		);
+ 		
 	}
 
 	function show() {
 
-		$subhost = $this->config->getID();
-		$subhostpath = $this->config->getAppPath(''); //Utils::getPath('apps/' . $subhost);
+		$subhost = $this->app->get('id');
+		$subhostpath = $this->app->getAppPath(''); //Utils::getPath('apps/' . $subhost);
 
 		$localfile = self::getpath($_SERVER['REQUEST_URI']);
 		if ($localfile === '/') $localfile = '/index.html';

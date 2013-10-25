@@ -397,186 +397,397 @@ try {
 
 		$oauth = new OAuth();
 		$token = $oauth->check(null, array('appconfig'));
-		$userid = $token->getUserID();
-		$appdirectory = new AppDirectory();
+		$user = $token->getUser();
+		$clientdirectory = new ClientDirectory($user);
 
 
 
-		if (Utils::route('get', '^/appconfig/apps$', &$qs, &$parameters)) {
+		/*
+		 * APIs that allows querying a list of appconfig related objects
+		 */
 
-			$listing = $appdirectory->getMyApps($userid);			
-			$response['data'] = $listing;
+		if (Utils::route('get', '^/appconfig/clients$', &$qs, &$parameters)) {
 
-		} else if (Utils::route('post', '^/appconfig/apps/query$', &$qs, &$parameters)) {
+			// echo "GET APPCONFIG/Clients";
 
-			$listing = $appdirectory->queryApps($parameters, $userid);
-			$response['data'] = $listing;
+			$clients = $clientdirectory->getClients(array(
+				'mine' => true,
+				'status-' => 'pendingDelete'
+			));
+			$response['data'] = $clients->getJSON();
 
 
-		} else if (Utils::route('post', '^/appconfig/clients$', &$qs, &$parameters)) {
 
-			$object = $parameters;
-			
-			if (empty($object['client_id'])) {
-				$object['client_id'] = Utils::genID();
+		/*
+		 * APIs that allows retrieval of single entries
+		 */
+
+		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+
+
+			$appid = $qs[1];
+			Utils::validateID($appid);
+
+			$client = Client::getByID($appid);
+			$clientdirectory->authorize($client, 'owner');
+			$response['data'] = $client->getJSON(array(
+				'appinfo' => true
+			));
+
+			if ($client instanceof App) {
+
+				$apphosting = new AppHosting($user);
+				$response['data']['davcredentials'] = $apphosting->getDavCredentials($client);
+				/*
+				 * Deprecated properties that was previously present in the API result
+				 *
+				 * appdata-stats
+				 * files-stats
+				 * user-stats
+				 */
+
 			}
-			
-			$object['client_secret'] = Utils::genID();
-			Utils::validateID($object['client_id']);
-
-			// $config = Config::getInstance();
-			// $config->store($object, $userid);
-			// Config::store($object, $userid);
-
-			$appdirectory->storeClient($object, $userid);
-			$response['data'] = $appdirectory->getClient($object['client_id'], $userid);
 
 
-			// $ac = Config::getInstance($id);
-			// $response['data'] = $ac->getConfig();
-
-
-		} else if (Utils::route('post', '^/appconfig/apps$', &$qs, &$parameters)) {
-
-			$object = $parameters;
-			$id = $object["id"];
-			Utils::validateID($id);
-
-			// $config = Config::getInstance();
-			// $config->store($object, $userid);
-			// Config::store($object, $userid);
-
-			$appdirectory->store($object, $userid);
-
-			$ac = Config::getInstance($id);
-			$response['data'] = $ac->getConfig();
-
-
-		} else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)/status$', &$qs, &$parameters)) {
+		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)/status$', &$qs, &$parameters)) {
 
 			$appid = $qs[1];
 			Utils::validateID($appid);
-			$ac = Config::getInstance($appid);
-			$c = $ac->getConfig();
+			$client = Client::getByID($appid);
 
-			$response['data'] = $c['status'];
+			$clientdirectory->authorize($client, 'owner');
 
-		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/status$', &$qs, &$parameters)) {
-
-			$appid = $qs[1];
-			Utils::validateID($appid);
-
-			$object = $parameters;
-
-			$ac = Config::getInstance($appid);
-			$ac->updateStatus($object, $userid);
-
-			$c = $ac->getConfig();
-
-			$response['data'] = $c['status'];
-
-		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/proxy$', &$qs, &$object)) {
-
-			$appid = $qs[1];
-			Utils::validateID($appid);
-
-			$ac = Config::getInstance($appid);
-			$ac->updateProxy($object, $userid);
-
-			$c = $ac->getConfig();
-
-			$response['data'] = $c['proxy'];
-
-		} else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)/clients$', &$qs, &$parameters)) {
-
-			$appid = $qs[1];
-			Utils::validateID($appid);
-
-			$clients = $appdirectory->getClients($appid, $userid);
-			$response['data'] = $clients;
-
-		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/client/([a-z0-9\-]+)/authorize$', &$qs, &$object)) {
-
-			$appid = $qs[1];
-			$clientid = $qs[2];
-			Utils::validateID($appid);
-			Utils::validateID($clientid);
-
-			$a = Config::getInstance($appid);
-			$a->requireOwner($userid);
-
-			$store = new So_StorageServerUWAP();
-			// $ac = $store->getClient($qs[1]);
-
-			$response['data'] = $store->authorizeClient($clientid, $appid, $userid, $object);
-			// $response['data'] = $clients;
-
-		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/davcredentials$', &$qs, &$parameters)) {
-
-			$appid = $qs[1];
-			Utils::validateID($appid);
-			$ac = Config::getInstance($appid);
-
-			$response['data'] = $ac->getDavCredentials($userid);
-
-
-		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/bootstrap$', &$qs, &$parameters)) {
-
-			$appid = $qs[1];
-			$object = $parameters;
-
-			if (!is_string($object) || empty($object)) {
-				throw new Exception('Invalid template input to bootstrap application data');
-			}
-			if (!in_array($object, array('twitter', 'boilerplate'))) {
-				throw new Exception('Not valid template to bootstrap application data');	
-			}
-			
-			Utils::validateID($appid);
-			$ac = Config::getInstance($appid);
-			$ac->requireOwner($userid);
-			$response['data'] = $ac->bootstrap($object);
-
-
-
-		} else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', &$qs, &$parameters)) {
-
-			$appid = $qs[1];
-			$authzid = $qs[2];
-			$object = $parameters;
-
-			Utils::validateID($appid);
-			$ac = Config::getInstance($appid);
-			$ac->requireOwner($userid);
-			
-			Utils::validateID($authzid);
-
-			$handlers = $ac->updateAuthzHandler($authzid, $object, $userid);
-			$response['data'] = $handlers;
-
-
-		} else if (Utils::route('delete', '^/appconfig/app/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', &$qs, &$parameters)) {
-
-			$appid = $qs[1];
-			$authzid = $qs[2];
-
-			Utils::validateID($appid);
-			$ac = Config::getInstance($appid);
-			$ac->requireOwner($userid);
-			
-			Utils::validateID($authzid);
-
-			$res = $ac->deleteAuthzHandler($authzid, $userid);
-			$response['data'] = $res;
-
-
+			$clientdata = $client->getJSON();
+			$response['data'] = $clientdata['status'];
 
 
 		} else if (Utils::route('get', '^/appconfig/check/([a-z0-9\-]+)$', &$qs, &$parameters)) {
 
 			$appid = $qs[1];
 			Utils::validateID($appid);
-			$response['data'] = !$appdirectory->exists($appid);
+			$response['data'] = !$clientdirectory->exists($appid);
+
+
+
+
+		/*
+		 * APIs that allows modifications of appconfig related items.
+		 */
+
+		} else if (Utils::route('post', '^/appconfig/clients$', &$parameters, &$object)) {
+			
+
+			$client = Client::generate($object, $user);
+			$response['data'] = $client->getJSON();
+
+			// echo "OK. Done";
+
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/status$', &$parameters, &$bodyobject)) {
+
+			$appid = $parameters[1];
+			Utils::validateID($appid);
+			$client = Client::getByID($appid);
+
+			$clientdirectory->authorize($client, 'owner');
+
+			$client->updateStatus($bodyobject);
+
+			$clientdata = $client->getJSON();
+			$response['data'] = $clientdata['status'];
+
+
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/bootstrap$', &$parameters, &$object)) {
+
+			$appid = $parameters[1];
+			Utils::validateID($appid);
+			$client = App::getByID($appid);
+			$clientdirectory->authorize($client, 'owner');
+
+			$apphosting = new AppHosting($user);
+			$response['data'] = $apphosting->bootstrap($client, $object);
+
+
+
+			// Update an authorization handler
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', &$parameters, &$object)) {
+
+
+			$appid = $parameters[1];
+			Utils::validateID($appid);
+			$client = Client::getByID($appid);
+			$clientdirectory->authorize($client, 'owner');
+
+			$authzid = $parameters[2];
+			Utils::validateID($authzid);
+
+			$response['data'] = $client->updateAuthzHandler($authzid, $object);
+
+
+			// Delete an authorization handler
+		} else if (Utils::route('delete', '^/appconfig/client/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', &$parameters, &$object)) {
+
+			$appid = $parameters[1];
+			Utils::validateID($appid);
+			$client = Client::getByID($appid);
+			$clientdirectory->authorize($client, 'owner');
+
+			$authzid = $parameters[2];
+			Utils::validateID($authzid);
+
+			$response['data'] = $client->deleteAuthzHandler($authzid);
+
+
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/proxy$', &$parameters, &$object)) {
+
+
+			$appid = $parameters[1];
+			Utils::validateID($appid);
+			$client = Client::getByID($appid);
+			$clientdirectory->authorize($client, 'owner');
+
+			$response['data'] = $client->updateProxy($object); 
+
+
+
+
+		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)/clients$', &$parameters, &$object)) {
+
+			$appid = $parameters[1];
+			Utils::validateID($appid);
+			$app = App::getByID($appid);
+			$clientdirectory->authorize($app, 'owner');
+
+			$authorizationList = $clientdirectory->getAuthorizationQueue($app);
+
+			$response['data'] = $authorizationList->getJSON();
+
+
+
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/client/([a-z0-9\-]+)/authorization$', &$parameters, &$object)) {
+
+			$appid = $parameters[1];
+			Utils::validateID($appid);
+			$client = Client::getByID($appid);
+			$clientdirectory->authorize($client, 'owner');
+
+			$clientid = $parameters[2];
+			Utils::validateID($clientid);
+
+			$response['data'] = $client->authorizeClient($clientid, $object);
+
+
+
+
+
+		// } else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/proxy/scopes$', &$parameters, &$object)) {
+
+		// 	$appid = $parameters[1];
+		// 	Utils::validateID($appid);
+		// 	$client = APIProxy::getByID($appid);
+		// 	$clientdirectory->authorize($client, 'owner');
+
+
+		// 	$response['data'] = $client->addProxyScopes($object);
+
+
+		// } else if (Utils::route('delete', '^/appconfig/client/([a-z0-9\-]+)/proxy/scopes/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+
+		// 	$appid = $qs[1];
+		// 	Utils::validateID($appid);
+		// 	$client = $appdirectory->getClient($appid);
+
+		// 	$response['data'] = $appdirectory->removeClientScopes($appid, $object);
+
+
+
+
+
+		} else {
+			throw new Exception('Not implemented');
+		}
+
+
+
+
+
+
+		
+
+
+
+		if (true)  {
+
+		// } else if (Utils::route('get', '^/appconfig/apps$', &$qs, &$parameters)) {
+
+		// 	$listing = $appdirectory->getMyApps();			
+		// 	$response['data'] = $listing;
+
+		} else if (Utils::route('post', '^/appconfig/apps/query$', &$qs, &$parameters)) {
+
+			$listing = $appdirectory->queryApps($parameters );
+			$response['data'] = $listing;
+
+
+		// } else if (Utils::route('post', '^/appconfig/clients$', &$qs, &$parameters)) {
+
+		// 	$object = $parameters;
+			
+		// 	if (empty($object['client_id'])) {
+		// 		$object['client_id'] = Utils::genID();
+		// 	}
+			
+		// 	$object['client_secret'] = Utils::genID();
+		// 	Utils::validateID($object['client_id']);
+
+		// 	// $config = Config::getInstance();
+		// 	// $config->store($object, $userid);
+		// 	// Config::store($object, $userid);
+
+		// 	$appdirectory->storeClient($object);
+		// 	$response['data'] = $appdirectory->getClient($object['client_id']);
+
+
+			// $ac = Config::getInstance($id);
+			// $response['data'] = $ac->getConfig();
+
+
+		// } else if (Utils::route('post', '^/appconfig/apps$', &$qs, &$parameters)) {
+
+		// 	$object = $parameters;
+		// 	$id = $object["id"];
+		// 	Utils::validateID($id);
+
+		// 	// $config = Config::getInstance();
+		// 	// $config->store($object, $userid);
+		// 	// Config::store($object, $userid);
+
+		// 	$appdirectory->store($object);
+
+		// 	$ac = Config::getInstance($id);
+		// 	$response['data'] = $ac->getConfig();
+
+
+		// } else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)/status$', &$qs, &$parameters)) {
+
+		// 	$appid = $qs[1];
+		// 	Utils::validateID($appid);
+		// 	$ac = Config::getInstance($appid);
+		// 	$c = $ac->getConfig();
+
+		// 	$response['data'] = $c['status'];
+
+		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/status$', &$qs, &$parameters)) {
+
+		// 	$appid = $qs[1];
+		// 	Utils::validateID($appid);
+
+		// 	$object = $parameters;
+
+		// 	$ac = Config::getInstance($appid);
+		// 	$ac->updateStatus($object);
+
+		// 	$c = $ac->getConfig();
+
+		// 	$response['data'] = $c['status'];
+
+		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/proxy$', &$qs, &$object)) {
+
+		// 	$appid = $qs[1];
+		// 	Utils::validateID($appid);
+
+		// 	$ac = Config::getInstance($appid);
+		// 	$ac->updateProxy($object);
+
+		// 	$c = $ac->getConfig();
+
+		// 	$response['data'] = $c['proxy'];
+
+		// } else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)/clients$', &$qs, &$parameters)) {
+
+		// 	$appid = $qs[1];
+		// 	Utils::validateID($appid);
+
+		// 	$clients = $appdirectory->getClients($appid);
+		// 	$response['data'] = $clients;
+
+		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/client/([a-z0-9\-]+)/authorize$', &$qs, &$object)) {
+
+		// 	$appid = $qs[1];
+		// 	$clientid = $qs[2];
+		// 	Utils::validateID($appid);
+		// 	Utils::validateID($clientid);
+
+		// 	$a = Config::getInstance($appid);
+		// 	$a->requireOwner($user->get('userid'));
+
+		// 	$store = new So_StorageServerUWAP();
+		// 	// $ac = $store->getClient($qs[1]);
+
+		// 	$response['data'] = $store->authorizeClient($clientid, $appid, $userid, $object);
+			// $response['data'] = $clients;
+
+		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/davcredentials$', &$qs, &$parameters)) {
+
+		// 	$appid = $qs[1];
+		// 	Utils::validateID($appid);
+		// 	$ac = Config::getInstance($appid);
+
+		// 	$response['data'] = $ac->getDavCredentials();
+
+
+		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/bootstrap$', &$qs, &$parameters)) {
+
+		// 	$appid = $qs[1];
+		// 	$object = $parameters;
+
+		// 	if (!is_string($object) || empty($object)) {
+		// 		throw new Exception('Invalid template input to bootstrap application data');
+		// 	}
+		// 	if (!in_array($object, array('twitter', 'boilerplate'))) {
+		// 		throw new Exception('Not valid template to bootstrap application data');	
+		// 	}
+			
+		// 	Utils::validateID($appid);
+		// 	$ac = Config::getInstance($appid);
+		// 	$ac->requireOwner($user->get('userid'));
+		// 	$response['data'] = $ac->bootstrap($object);
+
+
+
+		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+
+		// 	$appid = $qs[1];
+		// 	$authzid = $qs[2];
+		// 	$object = $parameters;
+
+		// 	Utils::validateID($appid);
+		// 	$ac = Config::getInstance($appid);
+		// 	$ac->requireOwner($user->get('userid'));
+			
+		// 	Utils::validateID($authzid);
+
+		// 	$handlers = $ac->updateAuthzHandler($authzid, $object, $user->get('userid'));
+		// 	$response['data'] = $handlers;
+
+
+		// } else if (Utils::route('delete', '^/appconfig/app/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+
+		// 	$appid = $qs[1];
+		// 	$authzid = $qs[2];
+
+		// 	Utils::validateID($appid);
+		// 	$ac = Config::getInstance($appid);
+		// 	$ac->requireOwner($user->get('userid'));
+			
+		// 	Utils::validateID($authzid);
+
+		// 	$res = $ac->deleteAuthzHandler($authzid, $user->get('userid'));
+		// 	$response['data'] = $res;
+
+
+
+
+
 
 		} else if (Utils::route('get', '^/appconfig/view/([a-z0-9\-]+)$', &$qs, &$parameters)) {
 
@@ -585,47 +796,47 @@ try {
 			$ac = Config::getInstance($appid);
 			$response['data'] = $ac->getConfigLimited();
 
-		} else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+		// } else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)$', &$qs, &$parameters)) {
 
-			$appid = $qs[1];
-			Utils::validateID($appid);
-			$ac = Config::getInstance($appid);
-			$ac->requireOwner($userid);
+		// 	$appid = $qs[1];
+		// 	Utils::validateID($appid);
+		// 	$ac = Config::getInstance($appid);
+		// 	$ac->requireOwner($user->get('userid'));
 
-			$response['data'] = $ac->getConfig();
-			$response['data']['user-stats'] = $ac->getUserStats();
+		// 	$response['data'] = $ac->getConfig();
+		// 	$response['data']['user-stats'] = $ac->getUserStats();
 
-			if ($response['data']['type'] === 'app') {
+		// 	if ($response['data']['type'] === 'app') {
 	
-				$response['data']['davcredentials'] = $ac->getDavCredentials($userid);
-				$response['data']['appdata-stats'] = $ac->getStats();
-				$response['data']['files-stats'] = $ac->getFilestats();
+		// 		$response['data']['davcredentials'] = $ac->getDavCredentials($user->get('userid'));
+		// 		$response['data']['appdata-stats'] = $ac->getStats();
+		// 		$response['data']['files-stats'] = $ac->getFilestats();
 
-			}
+		// 	}
 
 		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)$', &$qs, &$parameters)) {
 
 			$appid = $qs[1];
 			Utils::validateID($appid);
-			$response['data'] = $appdirectory->getClient($appid, $userid);
+			$response['data'] = $appdirectory->getClient($appid);
 			// $ac = Config::getInstance($appid);
 
-		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/addScopes$', &$qs, &$parameters)) {
+		// } else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/addScopes$', &$qs, &$parameters)) {
 
-			$appid = $qs[1];
-			Utils::validateID($appid);
-			$client = $appdirectory->getClient($appid, $userid);
+		// 	$appid = $qs[1];
+		// 	Utils::validateID($appid);
+		// 	$client = $appdirectory->getClient($appid);
 
-			$response['data'] = $appdirectory->addClientScopes($appid, $userid, $object);
+		// 	$response['data'] = $appdirectory->addClientScopes($appid, $object);
 
 
-		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/removeScopes$', &$qs, &$parameters)) {
+		// } else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/removeScopes$', &$qs, &$parameters)) {
 
-			$appid = $qs[1];
-			Utils::validateID($appid);
-			$client = $appdirectory->getClient($appid, $userid);
+		// 	$appid = $qs[1];
+		// 	Utils::validateID($appid);
+		// 	$client = $appdirectory->getClient($appid);
 
-			$response['data'] = $appdirectory->removeClientScopes($appid, $userid, $object);
+		// 	$response['data'] = $appdirectory->removeClientScopes($appid, $object);
 
 			// $ac = Config::getInstance($appid);
 
@@ -634,9 +845,12 @@ try {
 			// $ac->requireOwner($userid);
 			
 
-		} else {
-			throw new Exception('Invalid request');
-		}
+		} 
+
+
+
+
+
 
 
 
@@ -893,10 +1107,14 @@ try {
 
 			$targetUser = User::getByKey('a', $qs[1]);
 
+			// echo "Get by id " . $qs[1]; print_r($targetUser); exit;
 
-			if (empty($user)) {echo 'Not found'; exit;}
 
-			if (! $targetUser->has("photo") ) {
+			if (empty($targetUser)) {echo 'Not found'; exit;}
+			// echo '<pre>';
+			// print_r($targetUser); exit;
+
+			if ($targetUser->has("photo") ) {
 				header('Content-Type: image/jpeg');
 				echo base64_decode($targetUser->get("photo"));
 			} else {
@@ -915,19 +1133,22 @@ try {
 	/**
 	 *  Media files
 	 */
-	} else if (Utils::route('get', '^/media/logo/app/([a-z0-9\-]+)$', &$qs, &$args)) {
+	} else if (Utils::route('get', '^/media/logo/app/([a-z0-9\-]+)$', &$parameters, &$object)) {
 
 
 		$default = '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';
 
 
-		$c = Config::getInstance($qs[1]);
-		$ac = $c->getConfig();
+		$appid = $parameters[1];
+		Utils::validateID($appid);
+
+		$client = Client::getByID($appid);
+
 		
-		if (!empty($ac["logo"])) {
+		if ($client->has("logo")) {
 
 			header('Content-Type: image/png');
-			echo base64_decode($ac["logo"]);
+			echo base64_decode($client->get('logo'));
 		} else {
 
 			header('Content-Type: image/png');

@@ -94,16 +94,16 @@ define(function(require, exports, module) {
 
 	AppDashboard.prototype.draw = function() {
 		console.log("DRAW", this.appconfig);
-		this.appconfig.sizeH = this.appconfig['files-stats'].sizeH;
-		this.appconfig.capacityH = this.appconfig['files-stats'].capacityH;
-		this.appconfig.usage = this.appconfig['files-stats'].usage;
-		this.appconfig.count = this.appconfig['user-stats'].count;
-		this.appconfig.appstats = (this.appconfig['appdata-stats'] != null);
-		if(this.appconfig.appstats){
-			this.appconfig.appsizeH = this.appconfig['appdata-stats'].sizeH;
-			this.appconfig.appcapacityH = this.appconfig['appdata-stats'].capacityH;
-			this.appconfig.appusage = this.appconfig['appdata-stats'].usage;
-		}
+		// this.appconfig.sizeH = this.appconfig['files-stats'].sizeH;
+		// this.appconfig.capacityH = this.appconfig['files-stats'].capacityH;
+		// this.appconfig.usage = this.appconfig['files-stats'].usage;
+		// this.appconfig.count = this.appconfig['user-stats'].count;
+		// this.appconfig.appstats = (this.appconfig['appdata-stats'] != null);
+		// if(this.appconfig.appstats){
+		// 	this.appconfig.appsizeH = this.appconfig['appdata-stats'].sizeH;
+		// 	this.appconfig.appcapacityH = this.appconfig['appdata-stats'].capacityH;
+		// 	this.appconfig.appusage = this.appconfig['appdata-stats'].usage;
+		// }
 
 		this.element = $(this.templates['appdashboard'](this.appconfig));
 

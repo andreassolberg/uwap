@@ -22,10 +22,12 @@ class OAuth {
 		$user = $this->auth->getUser();
 		$verifier = $user->getVerifier();
 
-		if (empty($_REQUEST['verifier'])) throw new Exception('Missing required parameter [verifier]');
-		if (empty($_REQUEST['scopes'])) throw new Exception('Missing required parameter [scopes]');
-		if (empty($_REQUEST['client_id'])) throw new Exception('Missing required parameter [client_id]');
+		// echo '<pre>Got this request '; print_r($_REQUEST);
 
+		if (empty($_REQUEST['verifier'])) throw new Exception('Missing required parameter [verifier]');
+		if (empty($_REQUEST['client_id'])) throw new Exception('Missing required parameter [client_id]');
+		// if (empty($_REQUEST['scopes'])) throw new Exception('Missing required parameter [scopes]');
+		
 		if (isset($_REQUEST["verifier"])) {
 			if ($verifier !== $_REQUEST["verifier"]) {
 				throw new Exception("Invalid verifier code.");
@@ -37,10 +39,13 @@ class OAuth {
 			// print_r($auth->getRealUserID());
 			
 			// exit;
-			$scopes = null;
-			if (!empty($_REQUEST['scopes'])) {
-				$scopes = explode(',', $_REQUEST['scopes']);
-			}
+			// $scopes = null;
+			// if (!empty($_REQUEST['scopes'])) {
+			// 	$scopes = explode(',', $_REQUEST['scopes']);
+			// }
+
+			$oauthclient = $this->storage->getClient($_REQUEST['client_id']);
+			$scopes = $oauthclient->get('scopes');
 
 			// echo 'about to set scopes '; print_r($scopes);exit;
 
@@ -57,6 +62,8 @@ class OAuth {
 	}
 
 	function authorization() {
+
+		// echo '<pre>'; 
 
 		$passive = false;
 		if (isset($_REQUEST["passive"]) && $_REQUEST["passive"] === 'true') $passive = true;
@@ -115,11 +122,19 @@ class OAuth {
 			}
 
 			// $data = $config->getConfig();
-			$data = $this->storage->getClient($e->client_id);
+			// $data = $this->storage->getClient($e->client_id);
+
+			$oauthclient = $this->storage->getClient($e->client_id);
+			// $scopes = $oauthclient->get('scopes', array());
+
+			// echo '<pre>'; print_r($oauthclient); exit;
+
 
 			// $owner = $this->auth->getUserBasic($data['uwap-userid']);
-			$owner = User::getByID($data['uwap-userid']);
+			$owner = User::getByID($oauthclient->get('uwap-userid'));
 			
+			// echo "Owner of this application is <pre>"; print_r($owner->get('name')); exit;
+
 			$permissions = $this->getPermissionText($scopes);
 
 			// header("Content-Type: text/plain"); 

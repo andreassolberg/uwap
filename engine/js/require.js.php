@@ -5,16 +5,25 @@ header('Content-Type: application/javascript');
 
 // echo Utils::getSubID(); exit;
 
-if (Utils::getSubID() === 'core') {
-	$hostname = 'core.' . GlobalConfig::hostname();
-} else {
-	$config = Config::getInstance();
-	$hostname = $config->getHostname();	
+
+
+$id = Utils::getSubID();
+$host = Utils::getHost();
+if ($id === null) {
+	$id = ClientDirectory::getSubIDfromHost( $host );
 }
 
 
-$corengine = GlobalConfig::scheme() . '://core.' . GlobalConfig::hostname();
-$hosturl = GlobalConfig::scheme() . '://' . $hostname;
+if ($id === 'core') {
+	$hostname = 'core.' . GlobalConfig::hostname();
+} else {
+	// $config = Config::getInstance();
+	$hostname = $host;
+}
+
+
+$corengine = Utils::getScheme() . '://core.' . GlobalConfig::hostname();
+$hosturl = Utils::getScheme() . '://' . $hostname;
  // UWAP.utils.scheme + '://core.' + UWAP.utils.enginehostname +
 
 ?>
@@ -103,6 +112,6 @@ requirejs.config({
 });
 requirejs.enginehostname = '<?php echo GlobalConfig::hostname(); ?>';
 requirejs.hostname = '<?php echo $hostname; ?>';
-requirejs.scheme = '<?php echo GlobalConfig::scheme(); ?>';
-requirejs.appid = '<?php echo GlobalConfig::getAppID(); ?>';
+requirejs.scheme = '<?php echo Utils::getScheme(); ?>';
+requirejs.appid = '<?php echo $id; ?>';
 

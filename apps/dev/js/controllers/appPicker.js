@@ -79,10 +79,18 @@ define(function(require, exports, module) {
 		return ji;
 	};
 
-	appPicker.prototype.addList = function(list) {
+	appPicker.prototype.addList = function(items) {
 		var i;
 		console.log("adding list of apps to be selected...", list);
 		$(this.element).empty();
+
+		var list = {
+			"app": [], "proxy": [], "client": []
+		};
+		for(var i = 0; i < items.length; i++) {
+			list[items[i].type].push(items[i]);
+		}
+
 
 		if (list.app) {
 			$(this.element).append('<h4 class="list-group-item">Applications</h4>');

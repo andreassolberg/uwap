@@ -15,41 +15,37 @@ define(function(require, exports, module) {
 		return false;
 	}
 
-	var AuthorizedClient = function(appconfig, opts) {
-		this.appconfig = appconfig;
-		for(var key in opts) {
-			this[key] = opts[key];
-		}
+	var AuthorizedClient = function(properties, client, targetApp) {
+		this.properties = properties;
+		this.client = client;
+		this.targetApp = targetApp;
 
-		if (!this.scopes) this.scopes = [];
-		if (!this.scopes_requested) this.scopes_requested = [];
-
-
-		// if (this.proxies) {
-		// 	this.proxiesArr = [];
-		// 	for(var key in this.proxies) {
-		// 		this.proxies[key]['id'] = key;
-		// 		this.proxiesArr.push(this.proxies[key]);
-		// 	}
-		// }
+		// console.log("CREATING A NEW AuthorizedClient");
+		// console.log(properties, client, targetApp)
 
 	}
 
-	AuthorizedClient.prototype.isPending = function() {
-		console.log("Checking is in_array()", "rest_" + this.appconfig.id, this.scopes);
+	// AuthorizedClient.prototype.isPending = function() {
+	// 	console.log("Checking is in_array()", "rest_" + this.properties.id, this.scopes);
 
-		return !in_array("rest_" + this.appconfig.id, this.scopes);
+	// 	return !in_array("rest_" + this.properties.id, this.scopes);
+	// }
+
+	AuthorizedClient.prototype.debug = function() {
+		return 'Debug: ' + JSON.stringify(this, undefined, 2);
 	}
+
 
 	AuthorizedClient.prototype.getScopes = function() {
-		
+		return ;
+
 		var result = {};
 		var that = this;
-		var prefix = "rest_" + this.appconfig.id;
+		var prefix = "rest_" + this.properties.id;
 
 		var smatch = new RegExp(prefix + '_([^_]+)$');
 
-		// console.log ('------ loooking for scopes in ', that.appconfig.proxy.scopes);
+		// console.log ('------ loooking for scopes in ', that.properties.proxy.scopes);
 
 
 		$.each([ [this.scopes, true], [this.scopes_requested, false] ], function(i, p) {
@@ -63,9 +59,9 @@ define(function(require, exports, module) {
 				} else {
 					return;
 				}
-				console.log("LOCAL scope of " + scope + " using prefix " + prefix + " is " + localScope, that.appconfig.proxy.scopes);
-				if (that.appconfig.proxy && that.appconfig.proxy.scopes && that.appconfig.proxy.scopes[localScope]) {
-					result[scope] = that.appconfig.proxy.scopes[localScope];
+				console.log("LOCAL scope of " + scope + " using prefix " + prefix + " is " + localScope, that.properties.proxy.scopes);
+				if (that.properties.proxy && that.properties.proxy.scopes && that.properties.proxy.scopes[localScope]) {
+					result[scope] = that.properties.proxy.scopes[localScope];
 				} else {
 					result[scope] = {
 						name: "Unknown name"
@@ -82,6 +78,18 @@ define(function(require, exports, module) {
 		return result;
 		
 	}
+
+	AuthorizedClient.prototype.getView = function() {
+
+		var view = {
+			properties: this.properties
+		};
+
+		view.client = this.client.getView();
+		return view;
+
+	}
+
 
 	return AuthorizedClient;
 });

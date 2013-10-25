@@ -6,10 +6,11 @@
  */
 class AppDirectory {
 
-	protected $store;
+	protected $store, $user;
 	
-	public function __construct() {
+	public function __construct($user) {
 		$this->store = new UWAPStore();
+		$this->user = $user;
 	}
 
 	/**
@@ -32,12 +33,12 @@ class AppDirectory {
 		return $listing;
 	}
 
-	public function generateDavCredentials($userid) {
-		$username = Utils::generateCleanUsername($userid);
+	public function generateDavCredentials() {
+		$username = Utils::generateCleanUsername($this->user->get('userid'));
 		$password = Utils::generateRandpassword();
 		// echo 'password: ' . $password; exit;
 		$credentials = array(
-			'uwap-userid' => $userid,
+			'uwap-userid' => $this->user->get('userid'),
 			'username' => $username,
 			'password' => $password
 		);
@@ -46,7 +47,7 @@ class AppDirectory {
 
 
 
-	public function getMyApps($userid) {
+	public function getMyApps() {
 		$fields = array(
 			'id' => true,
 			'name' => true,
@@ -59,7 +60,7 @@ class AppDirectory {
 		);
 
 		$query = array(
-			"uwap-userid" => $userid,
+			"uwap-userid" => $this->user->get('userid'),
 			"status" => array(
 				'$ne' => "pendingDelete"
 			),
@@ -85,7 +86,7 @@ class AppDirectory {
 			'uwap-userid' => true,
 		);
 		$query = array(
-			"uwap-userid" => $userid
+			"uwap-userid" => $this->user->get('userid')
 		);
 		$listing = $this->store->queryList('oauth2-server-clients',$query, $fields);
 		foreach($listing AS $k => $v) {
@@ -99,7 +100,7 @@ class AppDirectory {
 		return $sorted;
 	}
 
-	public function queryApps($query, $userid) {
+	public function queryApps($query) {
 
 		$fields = array(
 			'id' => true,
@@ -139,7 +140,7 @@ class AppDirectory {
 	}
 
 
-	public function getClient($appid, $userid) {
+	public function getClient($appid) {
 
 		$fields = array(
 			'client_id' => true,
@@ -150,7 +151,7 @@ class AppDirectory {
 		);
 		$query = array(
 			"client_id" => $appid,
-			"uwap-userid" => $userid
+			"uwap-userid" => $this->user->get('userid')
 		);
 		return $this->store->queryOne('oauth2-server-clients', $query, array());
 
@@ -167,7 +168,7 @@ class AppDirectory {
 	}
 
 
-	public function addClientScopes($appid, $userid, $scopes) {
+	public function addClientScopes($appid, $scopes) {
 		$fields = array(
 			'client_id' => true,
 			'client_name' => true,
@@ -180,7 +181,7 @@ class AppDirectory {
 		$appregexmatch = "rest_" . $appid . "($|[_])";
 		$query = array(
 			"client_id" => $appid,
-			"uwap-userid" => $userid
+			"uwap-userid" => $this->user->get('userid')
 		);
 		$client = $this->store->queryOne('oauth2-server-clients', $query, array());
 
@@ -238,7 +239,7 @@ class AppDirectory {
 	}
 
 
-	public function removeClientScopes($appid, $userid, $removeScopes) {
+	public function removeClientScopes($appid, $removeScopes) {
 		$fields = array(
 			'client_id' => true,
 			'client_name' => true,
@@ -250,7 +251,7 @@ class AppDirectory {
 
 		$query = array(
 			"client_id" => $appid,
-			"uwap-userid" => $userid
+			"uwap-userid" => $this->user->get('userid')
 		);
 		$client = $this->store->queryOne('oauth2-server-clients', $query, array());
 		if (empty($client)) throw new Exception('Cannot find client' . var_export($query, true));
@@ -291,7 +292,7 @@ class AppDirectory {
 
 	}
 
-	public function getClients($appid, $userid) {
+	public function getClients($appid) {
 
 		/**
 		 * TODO
@@ -388,13 +389,13 @@ class AppDirectory {
 		return $results;
 	}
 
-	public function getMyAppIDs($userid) {
+	public function getMyAppIDs() {
 		$fields = array(
 			'id' => true
 		);
 
 		$query = array(
-			"uwap-userid" => $userid,
+			"uwap-userid" => $this->user->get('userid'),
 			"status" => array(
 				'$ne' => "pendingDelete"
 			),
@@ -501,7 +502,7 @@ class AppDirectory {
 
 	}
 
-	public function store($config, $userid) {
+	public function store($config) {
 
 		self::validateAppConfig(&$config);
 
@@ -518,15 +519,15 @@ class AppDirectory {
 		}
 
 		UWAPLogger::info('core-dev', 'Store application configuration', array(
-			'userid' => $userid,
+			'userid' => $this->user->get('userid'),
 			'id' => $id,
 			'config' => $config,
 		));
-		return $this->store->store('appconfig', $userid, $config);
+		return $this->store->store('appconfig', $this->user->get('userid'), $config);
 
 	}
 
-	public function storeClient($config, $userid) {
+	public function storeClient($config) {
 
 		self::validateClientConfig(&$config);
 
@@ -559,11 +560,11 @@ class AppDirectory {
 		// }
 
 		UWAPLogger::info('core-dev', 'Store application configuration', array(
-			'userid' => $userid,
+			'userid' => $this->user->get('userid'),
 			'id' => $id,
 			'config' => $config,
 		));
-		return $this->store->store('oauth2-server-clients', $userid, $config);
+		return $this->store->store('oauth2-server-clients', $this->user->get('userid'), $config);
 
 	}
 	

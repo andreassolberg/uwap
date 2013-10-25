@@ -87,138 +87,6 @@ abstract class So_Storage {
 	public abstract function getClient($client_id);
 }
 
-/**
- * A MongoDB implementation of the Storage API is 
- */
-class So_StorageMongo extends So_Storage {
-	protected $db;
-	function __construct() {
-		parent::__construct();
-		$m = new Mongo();
-		$this->db = $m->oauth;
-	}
-	private function extractOne($collection, $criteria) {
-		$cursor = $this->db->{$collection}->find($criteria);
-		if ($cursor->count() < 1) return null;
-		return $cursor->getNext();
-	}
-
-	private function extractList($collection, $criteria) {
-		$cursor = $this->db->{$collection}->find($criteria);
-		if ($cursor->count() < 1) return null;
-		
-		$result = array();
-		foreach($cursor AS $element) $result[] = $element;
-		return $result;
-	}
-
-	/*
-	 * Return an associated array or throws an exception.
-	 */
-	public function getClient($client_id) {
-		$result = $this->extractOne('clients', array('client_id' => $client_id));
-		if ($result === null) throw new So_Exception('invalid_client', 'Unknown client identifier');
-		return $result;
-	}
-
-	/*
-	 * Return an associated array or throws an exception.
-	 */
-	public function getProviderConfig($provider_id) {
-		$result = $this->extractOne('providers', array('provider_id' => $provider_id));
-		if ($result === null) throw new Exception('Unknown provider identifier');
-		return $result;
-	}
-	
-	public function getAuthorization($client_id, $userid) {
-		$result = $this->extractOne('authorization', 
-			array(
-				'client_id' => $client_id,
-				'userid' => $userid
-			)
-		);
-		error_log('Extracting authz ' . var_export($result, true));
-		if ($result === null) return null;
-		return So_Authorization::fromObj($result);
-	}
-	
-	public function setAuthorization(So_Authorization $auth) {
-		if ($auth->stored) {
-			// UPDATE
-			error_log('update obj auth ' . var_export($auth->getObj(), true) );
-			$this->db->authorization->update(
-				array('userid' => $auth->userid, 'client_id' => $auth->client_id),
-				$auth->getObj()
-			);
-		} else {
-			// INSERT
-			error_log('insert obj auth ' . var_export($auth->getObj(), true) );
-			$this->db->authorization->insert($auth->getObj());
-		}
-	}
-
-
-	
-	public function putAccessToken($id, $userid, So_AccessToken $accesstoken) {
-		$obj = $accesstoken->getObj();
-		$obj['id'] = $id;
-		$obj['userid'] = $userid;
-		$this->db->tokens->insert($obj);
-
-		// $this->db->tokens->insert(array(
-		// 	'provider_id' => $provider_id,
-		// 	'userid' => $userid,
-		// 	'token' => $accesstoken->getObj()
-		// ));
-	}
-	
-	/*
-	 * Returns null or an array of So_AccessToken objects.
-	 */
-	public function getTokens($id, $userid) {
-		$result = $this->extractList('tokens', array('id' => $id, 'userid' => $userid));
-		if ($result === null) return null;
-		
-		$objs = array();
-		foreach($result AS $res) {
-			$objs[] = So_AccessToken::fromObj($res);
-		}
-		return $objs;
-	}
-	
-	/*
-	 * Returns null or a specific access token.
-	 */
-	public function getToken($token) {
-		error_log('Storage › getToken(' . $token . ')');
-		$result = $this->extractOne('tokens', array('access_token' => $token));
-		if ($result === null) throw new Exception('Could not find the specified token.');
-		
-		return So_AccessToken::fromObj($result);
-	}
-		
-	public function putCode(So_AuthorizationCode $code) {
-		$this->db->codes->insert($code->getObj());
-	}
-	public function getCode($client_id, $code) {
-		$result = $this->extractOne('codes', array('client_id' => $client_id, 'code' => $code));
-		if ($result === null) throw new So_Exception('invalid_grant', 'Invalid authorization code.');
-		$this->db->codes->remove($result, array("safe" => true));
-		return So_AuthorizationCode::fromObj($result);
-	}
-	
-	public function putState($state, $obj) {
-		$obj['state'] = $state;
-		$this->db->states->insert($obj);
-	}
-	public function getState($state) {
-		$result = $this->extractOne('states', array('state' => $state));
-		if ($result === null) throw new So_Exception('invalid_grant', 'Invalid authorization code.');
-		$this->db->states->remove($result, array("safe" => true));
-		return $result;
-	}
-
-}
 
 
 class So_RedirectException extends Exception {
@@ -626,28 +494,30 @@ class So_Server {
 	
 	private function validateRedirectURI(So_AuthRequest $request, $clientconfig) {
 
+		$configuredRedirectURI = $clientconfig->get('redirect_uri', null);
 
-		if (is_array($clientconfig['redirect_uri'])) {
+
+		if (is_array($configuredRedirectURI)) {
 			if (empty($request->redirect_uri)) {
 				// url not specified in request, returning first entry from config
-				return $clientconfig['redirect_uri'][0];
+				return $configuredRedirectURI[0];
 				
 			} else {
 				// url specified in request, returning if is substring match any of the entries in config
-				foreach($clientconfig['redirect_uri'] AS $su) {
+				foreach($configuredRedirectURI AS $su) {
 					if (strpos($request->redirect_uri, $su) === 0) {
 						return $request->redirect_uri;
 					}
 				}
 			}
-		} else if (!empty($clientconfig['redirect_uri'])) {
+		} else if (!empty($configuredRedirectURI)) {
 			if (empty($request->redirect_uri)) {
 				// url not specified in request, returning the only entry from config
-				return $clientconfig['redirect_uri'];
+				return $configuredRedirectURI;
 				
 			} else {
 				// url specified in request, returning if is substring match the entry in config
-				if (strpos($request->redirect_uri, $clientconfig['redirect_uri']) === 0) {
+				if (strpos($request->redirect_uri, $configuredRedirectURI) === 0) {
 					return $request->redirect_uri;
 				}	
 			}
@@ -661,7 +531,7 @@ class So_Server {
 
 		error_log('setAuthorization($client_id, $userid, $scopes) ' . "($client_id, $userid, $scopes)");
 		$clientconfig = $this->store->getClient($client_id);
-		$acceptedScopes = array_intersect($scopes, $clientconfig['scopes']);
+		$acceptedScopes = array_intersect($scopes, $clientconfig->get('scopes', array()));
 
 		$authorization = $this->store->getAuthorization($client_id, $userid);
 		if ($authorization === null) {
@@ -697,16 +567,18 @@ class So_Server {
 
 	public function authorization($userid, $userdata = null) {
 		
+		// echo "authorization()"; exit;
+
 		$request = new So_AuthRequest($_REQUEST);
 		$clientconfig = $this->store->getClient($request->client_id);
 		$url = $this->validateRedirectURI($request, $clientconfig);
 		
 		$authorization = $this->store->getAuthorization($request->client_id, $userid);
 
-		$scopes = $clientconfig['scopes'];
+		$scopes = $clientconfig->get('scopes', array());
 		if (!empty($request->scope)) {
 			// Only consider scopes that the client is authorized to ask for.
-			$scopes = array_intersect($request->scope, $clientconfig['scopes']);
+			$scopes = array_intersect($request->scope, $scopes);
 		}
 
 		// echo '<pre>';
@@ -714,7 +586,7 @@ class So_Server {
 
 
 
-
+		// echo "authorization()<pre>"; print_r($authorization); exit;
 
 		if ($authorization === null || !$authorization->includeScopes($scopes)) {
 
@@ -745,7 +617,7 @@ class So_Server {
 
 
 
-			$accesstoken = So_AccessToken::generate($clientconfig['client_id'], $userid, $userdata, $scopes, false, $expires_in);
+			$accesstoken = So_AccessToken::generate($clientconfig->get('id'), $userid, $userdata, $scopes, false, $expires_in);
 			$this->store->putAccessToken($request->client_id, $userid, $accesstoken);
 			error_log('Ive generated a token: ' . var_export($accesstoken->getToken(), true));
 			$tokenresponse = new So_TokenResponse($accesstoken->getToken());
@@ -791,13 +663,13 @@ class So_Server {
 		if ($tokenrequest->grant_type === 'authorization_code') {
 			
 			$clientconfig = $this->store->getClient($tokenrequest->client_id);
-			$tokenrequest->checkCredentials($clientconfig['client_id'], $clientconfig['client_secret']);
-			$code = $this->store->getCode($clientconfig['client_id'], $tokenrequest->code);
+			$tokenrequest->checkCredentials($clientconfig->get('id'), $clientconfig->get('client_secret'));
+			$code = $this->store->getCode($clientconfig->get('id'), $tokenrequest->code);
 
 			// echo "got a code <pre>"; print_r($code); echo '</pre>'; exit;
 
-			$accesstoken = So_AccessToken::generate($clientconfig['client_id'], $code->userid, $code->userdata, $code->scope, $code->tokenexpiresin);
-			$this->store->putAccessToken($clientconfig['client_id'], $code->userid, $accesstoken);
+			$accesstoken = So_AccessToken::generate($clientconfig->get('id'), $code->userid, $code->userdata, $code->scope, $code->tokenexpiresin);
+			$this->store->putAccessToken($clientconfig->get('id'), $code->userid, $accesstoken);
 			error_log('Ive generated a token: ' . var_export($accesstoken->getToken(), true));
 			$tokenresponse = new So_TokenResponse($accesstoken->getToken());
 			
@@ -807,27 +679,27 @@ class So_Server {
 
 			$clientconfig = $this->store->getClient($tokenrequest->client_id);
 
-			if ($clientconfig['client_id'] !== $_SERVER['PHP_AUTH_USER']) {
+			if ($clientconfig->get('id') !== $_SERVER['PHP_AUTH_USER']) {
 				throw new So_Exception('invalid_grant', 'Invalid client_id.');
 			}
-			if ($clientconfig['client_secret'] !== $_SERVER['PHP_AUTH_PW']) {
+			if ($clientconfig->get('client_secret') !== $_SERVER['PHP_AUTH_PW']) {
 				throw new So_Exception('invalid_grant', 'Invalid secret.');
 			}
 
 			// echo "Juhuuuu \n";
 
-			if (empty($clientconfig['scopes'])) {
+			$scopes = $clientconfig->get('scopes', null);
+			if (empty($scopes)) {
 				throw new Exception('Client configuration is missing a list of [scopes] for this client.');
 			}
 
-
 			$expiresin = time() + 3600;
-			$accesstoken = So_AccessToken::generate($clientconfig['client_id'], null, null, $clientconfig['scopes'], $expiresin);
-			$accesstoken->clientdata = $clientconfig;
+			$accesstoken = So_AccessToken::generate($clientconfig->get('client_id'), null, null, $clientconfig->get('scopes', array()), $expiresin);
+			$accesstoken->clientdata = $clientconfig->get('client_id');
 
 			// error_log("AT: " . json_encode($accesstoken)); 
 
-			$this->store->putAccessToken($clientconfig['client_id'], null, $accesstoken);
+			$this->store->putAccessToken($clientconfig->get('client_id'), null, $accesstoken);
 			error_log('Ive generated a token: ' . var_export($accesstoken->getToken(), true));
 			$tokenresponse = new So_TokenResponse($accesstoken->getToken());
 			

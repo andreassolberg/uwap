@@ -16,7 +16,7 @@ App:
 
 class So_StorageServerUWAP extends So_Storage {
 
-	protected $store, $subid, $config;
+	protected $store, $subid;
 
 	function __construct($subid = null) {
 		parent::__construct();
@@ -27,36 +27,40 @@ class So_StorageServerUWAP extends So_Storage {
 		// $this->subid = $this->config->getID();
 	}
 
-	/*
-	 * Return an associated array or throws an exception.
-	 */
 	public function getClient($client_id) {
-		// notimplemented();
-
-		// TODO: Add impliccit app clients, with redirect_uri...
-		if (preg_match('/^app_([a-z0-9]+)/', $client_id, $matches)) {
-			$app = $matches[1];
-			$config = Config::getInstance($app);
-
-
-			return $config->getOAuthClientConfig();
-			// echo "app was " . $app; exit;
-		}
-
-		$query = array(
-			"client_id" => $client_id,
-			// "app" => $this->subid
-		);
-
-		// print_r("Query");
-		// print_r($query);
-		// exit;
-
-		$result = $this->store->queryOne("oauth2-server-clients", $query);
-
-		if ($result === null) throw new So_Exception('invalid_client', 'Unknown client identifier [' . $client_id . ']');
-		return $result;
+		return Client::getByID($client_id);
 	}
+
+	// /*
+	//  * Return an associated array or throws an exception.
+	//  */
+	// public function getClient($client_id) {
+	// 	// notimplemented();
+
+	// 	// TODO: Add impliccit app clients, with redirect_uri...
+	// 	if (preg_match('/^app_([a-z0-9]+)/', $client_id, $matches)) {
+	// 		$app = $matches[1];
+	// 		$config = Config::getInstance($app);
+
+
+	// 		return $config->getOAuthClientConfig();
+	// 		// echo "app was " . $app; exit;
+	// 	}
+
+	// 	$query = array(
+	// 		"client_id" => $client_id,
+	// 		// "app" => $this->subid
+	// 	);
+
+	// 	// print_r("Query");
+	// 	// print_r($query);
+	// 	// exit;
+
+	// 	$result = $this->store->queryOne("oauth2-server-clients", $query);
+
+	// 	if ($result === null) throw new So_Exception('invalid_client', 'Unknown client identifier [' . $client_id . ']');
+	// 	return $result;
+	// }
 
 
 
@@ -141,12 +145,12 @@ class So_StorageServerUWAP extends So_Storage {
 		// notimplemented();
 
 		$obj = $auth->getObj();
-		$obj["app"] = $this->subid;
+		// $obj["app"] = $this->subid;
 
 
 		$query = array(
 			"client_id" => $obj["client_id"],
-			"app" => $this->subid,
+			// "app" => $this->subid,
 			"userid" => $obj["userid"]
 		);
 		$oldone = $this->store->queryOne('oauth2-server-authorization', $query);

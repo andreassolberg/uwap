@@ -3,42 +3,50 @@
 
 // App engine core
 $base = dirname(__FILE__);
-require_once($base . '/Config.php');
+
 require_once($base . '/Utils.php');
 require_once($base . '/Exceptions.php');
 
-require_once($base . '/Auth/Authenticator.php');
 
-
-
-// Replace this.
-
-require_once($base . '/GroupManager.php');
-// require_once($base . '/AuthBase.php');
-// require_once($base . '/Auth.php');
-
-
+// Authentication
 require_once(dirname($base) . '/solberg-oauth/lib/soauth.php');
 require_once($base . '/Auth/OAuth.php');
 require_once($base . '/Auth/AuthenticatedToken.php');
+require_once($base . '/Auth/Authenticator.php');
 
 
+// Groups
 require_once($base . '/Groups/GroupConnector.php');
 require_once($base . '/Groups/AdHocGroups.php');
 require_once($base . '/Groups/ExtGroups.php');
 require_once($base . '/Groups/GroupSet.php');
 
 
-// require_once($base . '/GroupFetcherAgora.php');
-// require_once($base . '/GroupFetcherRedmine.php');
+require_once($base . '/Clients/ClientDirectory.php');
+
+require_once($base . '/AppHosting/AppHosting.php');
+
 
 
 // Models
 require_once($base . '/Models/Model.php');
+require_once($base . '/Models/StoredModel.php');
 require_once($base . '/Models/User.php');
 require_once($base . '/Models/Group.php');  
 require_once($base . '/Models/AdHocGroup.php');
 require_once($base . '/Models/Role.php');
+require_once($base . '/Models/Client.php');
+require_once($base . '/Models/App.php');
+require_once($base . '/Models/APIProxy.php');
+require_once($base . '/Models/ClientAuthorization.php');
+
+require_once($base . '/Sets/Set.php');
+require_once($base . '/Sets/ClientSet.php');
+require_once($base . '/Sets/UserSet.php');
+require_once($base . '/Sets/GroupSet.php');
+require_once($base . '/Sets/AuthorizationList.php');
+
+
 
 require_once($base . '/GlobalConfig.php');
 
@@ -47,7 +55,7 @@ require_once($base . '/Notifications.php');
 require_once($base . '/Upcoming.php');
 
 
-require_once($base . '/AppDirectory.php');
+// require_once($base . '/AppDirectory.php');
 require_once($base . '/UWAPStore.php');
 require_once($base . '/UWAPLogger.php');
 

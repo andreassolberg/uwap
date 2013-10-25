@@ -1,6 +1,6 @@
 <?php
 
-class Group extends Model {
+class Group extends StoredModel {
 	
 
 
