@@ -27,7 +27,41 @@ define(function(require, exports, module) {
 		}
 	}
 
+	Proxy.prototype.get = function(key) {
+		return this[key];
+	}
 
+
+	Proxy.prototype.getScopeName = function(key) {
+		
+		// console.error("getScopeName", key, this);
+
+		if (key === null) return 'Generic access';
+
+		if (!this.proxy.scopes[key]) return 'Unknown';
+
+		return this.proxy.scopes[key].name;
+
+		// console.log("oo scope", this.proxy.scopes[key]);
+
+	}
+
+	Proxy.prototype.logo = function() {
+		console.log("properties of client is", this.id);
+		return UWAP.utils.getEngineURL('/api/media/logo/app/' + this.id);
+	}
+
+	Proxy.prototype.getView = function() {
+		var view = {};
+
+		for(var key in this) {
+			if (typeof this[key] !== 'function' ) {
+				view[key] = this[key];
+			}
+		}
+		view.logo = this.logo();
+		return view;
+	}
 
 	Proxy.prototype.getScopes = function() {
 		

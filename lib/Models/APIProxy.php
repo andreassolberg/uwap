@@ -24,6 +24,8 @@ class APIProxy extends App {
 
 	public function __construct($properties) {
 
+		// header('Content-Type: text/plain'); print_r($properties); exit;
+
 		if (!isset($properties['status'])) {
 			$properties['status'] = array('operational');
 		}
@@ -57,6 +59,48 @@ class APIProxy extends App {
 	}
 
 
+	/**
+	 * Get generic access policy- true or false for whether to accept new clients.
+	 * @return [type] [description]
+	 */
+	protected function getPolicy() {
+		if (isset($this->properties['policy']) && isset($this->properties['policy']['auto'])) {
+			return $this->properties['policy']['auto'];
+		}
+		return false;
+	}
+
+	/**
+	 * Get a boolean response to a local scope $scope, which cannot be nulll.
+	 * @param  [type] $scope [description]
+	 * @return [type]        [description]
+	 */
+	protected function getScopePolicy($scope) {
+		if (isset($this->properties['proxy']) && 
+			isset($this->properties['proxy']['scopes']) && 
+			isset($this->properties['proxy']['scopes'][$scope]) &&
+			isset($this->properties['proxy']['scopes'][$scope]['policy']) && 
+			isset($this->properties['proxy']['scopes'][$scope]['policy']['auto'])
+			) {
+
+			return $this->properties['proxy']['scopes'][$scope]['policy']['auto'];
+		}
+		return false;
+	}
+
+	/**
+	 * Get a boolean response to whether the localScope $scope is automatically accepted or not
+	 * If [null] then generic scope, like rest_studweb is implicit.
+	 * @param  [type] $scope [description]
+	 * @return [type]        [description]
+	 */
+	public function scopePolicyAccept($scope = null) {
+		if ($scope === null) return $this->getPolicy();
+		return $this->getScopePolicy($scope);
+	}
+
+
+
 	public function getJSON($opts = array()) {
 
 		$props = self::$validProps;
@@ -68,6 +112,14 @@ class APIProxy extends App {
 		foreach($props AS $p) {
 			if (isset($this->properties[$p])) {
 				$ret[$p] = $this->properties[$p];
+			}
+		}
+
+		if (isset($opts['type']) && $opts['type'] === 'basic') {
+			if (isset($this->properties['proxy']) && isset($this->properties['proxy']['scopes'])) {
+				$ret['proxy'] = array(
+					'scopes' => $this->properties['proxy']['scopes'],
+				);
 			}
 		}
 

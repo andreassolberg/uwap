@@ -31,7 +31,7 @@ define(function(require, exports, module) {
 			},
 			"appconfig": {
 				"name": "Application config",
-				"descr": "Give access to manage set of applicaitons. Used by 'dev' application."
+				"descr": "Give access to manage set of applications. Used by 'dev' application."
 			},
 			"feedread": {
 				"name": "Gives read access to activity stream API"
@@ -113,6 +113,24 @@ define(function(require, exports, module) {
 		
 	}
 
+	Client.prototype.hasScope = function(scope) {
+
+		console.error("Checking whether " + this.get('id') + ' client has scope ' + scope, this.scopes, this.scopes_requested);
+
+		var i;
+		if (this.scopes) {
+			for(i = 0; i < this.scopes.length; i++) {
+				if (scope === this.scopes[i]) return true;
+			}			
+		}
+		if (this.scopes_requested) {
+			for(i = 0; i < this.scopes_requested.length; i++) {
+				if (scope === this.scopes_requested[i]) return false;
+			}
+		}
+		return null;
+	}
+
 	Client.prototype.getView = function() {
 		var view = {};
 
@@ -121,6 +139,7 @@ define(function(require, exports, module) {
 				view[key] = this[key];
 			}
 		}
+		view.genericScopes = this.getGenericScopes();
 		view.logo = this.logo();
 		return view;
 	}

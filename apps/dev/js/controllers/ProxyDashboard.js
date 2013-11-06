@@ -5,6 +5,7 @@ define(function(require, exports, module) {
 		UWAP = require('uwap-core/js/core'),
 
 		AuthorizationListController = require('./AuthorizationListController'),
+		PendingAuthorizationListController = require('./PendingAuthorizationListController'),
 
 		AuthorizationList = require('../models/AuthorizationList'),
 		AuthorizedClient = require('../models/AuthorizedClient'),
@@ -12,8 +13,6 @@ define(function(require, exports, module) {
 		hb = require('uwap-core/js/handlebars')
 		;
 
-
-	console.log(" -----> LOADED handlebars", hb);
 
 	var addScopeTmplText = require('uwap-core/js/text!templates/components/newScope.html');
 	var addScopeTmpl = hb.compile(addScopeTmplText);
@@ -43,6 +42,9 @@ define(function(require, exports, module) {
 
 	var ProxyDashboard = function(container, appconfig, templates) {
 		// this.container = container;
+		
+		var that = this;
+
 		this.appconfig = appconfig;
 		this.templates = templates;
 
@@ -56,8 +58,12 @@ define(function(require, exports, module) {
 
 		this.draw();
 
-		this.authorizationlistcontroller = new AuthorizationListController(this.container.find("div#clientauthorizations"), function() {
-			alert("Done");
+		this.authorizationlistcontroller = new AuthorizationListController(this.container.find("div#clientauthorizations"), function(data) {
+			that.updateAppClients(data);
+		});
+
+		this.pendingauthorizationlistcontroller = new PendingAuthorizationListController(this.container.find("div#pendingclientauthorizations"), function(data) {
+			that.updateAppClients(data);
 		});
 
 		this.getAppClients();
@@ -83,39 +89,30 @@ define(function(require, exports, module) {
 
 	}
 
+
+	ProxyDashboard.prototype.updateAppClients = function(data) {
+
+		var that = this;
+
+		that.authorizationList = new AuthorizationList(data, that.appconfig);
+		console.log("Get App Clients results", that.authorizationList);
+
+		that.authorizationlistcontroller.setList(that.authorizationList);
+		that.authorizationlistcontroller.draw();
+
+		that.pendingauthorizationlistcontroller.setList(that.authorizationList);
+		that.pendingauthorizationlistcontroller.draw();
+
+	}
+
+
+
 	ProxyDashboard.prototype.getAppClients = function() {
 		var that = this;
 		UWAP.appconfig.getAppClients(this.appconfig.id, function(data) {
 
-			
+			that.updateAppClients(data);
 
-			that.authorizationList = new AuthorizationList(data);
-			console.log("Get App Clients results", that.authorizationList);
-
-
-			that.authorizationlistcontroller.setList(that.authorizationList);
-			that.authorizationlistcontroller.draw();
-			// that.drawClients();
-
-
-			// var ni;
-			// var clientsPending = [];
-			// var clientsAuthorized = [];
-			// for(var i = 0; i < data.clients.length; i++) {
-			// 	ni = new AuthorizedClient(that.appconfig, data.clients[i]);
-			// 	if (ni.isPending()) {
-			// 		clientsPending.push(ni);	
-			// 	} else {
-			// 		clientsAuthorized.push(ni);
-			// 	}
-				
-			// }
-
-			// that.clients = {
-			// 	"pending": clientsPending,
-			// 	"authorized": clientsAuthorized,
-			// }
-			// that.drawClients();
 		} );
 	}
 

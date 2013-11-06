@@ -62,6 +62,160 @@ class ClientDirectory {
 
 
 
+
+
+	/**
+	 * Get list of all available apis for this client.
+	 * 
+	 * @param  [type] $appid The client in question that clients requests access to.
+	 * @return [type]           [description]
+	 */
+	public function getAuthorizedAPIs(Client $client, $query = null) {
+
+
+		$clientScopes = $client->get('scopes', array());
+		$clientScopesRequested = $client->get('scopes_requested', array());
+
+		$cscopes = array_merge($clientScopes, $clientScopesRequested);
+
+		$targetApps = array();
+		foreach($cscopes AS $scope) {
+			if (preg_match('/^rest_([a-z0-9\-]+)(_([a-z0-9\-]+))?/', $scope, $matches)) {
+				try {
+					if (isset($targetApps[$matches[1]])) continue;
+					$targetApps[$matches[1]] = APIProxy::getByID($matches[1]);
+				} catch(Exception $e) {
+					error_log("Skipping to process nonexisting apiproxy " . $matches[1]);
+				}
+				
+			}
+		}
+
+		// header('Content-Type: text/plain'); print_r($targetApps); exit;
+
+		$authorizationListData = array();
+
+		foreach($targetApps AS $app) {
+
+			$authData = array(
+				'client' => $client,
+				'targetApp' => $app,
+			);
+
+			$appscopePrefix = 'rest_' . $app->get('id');
+
+			$authData['scopes'] = self::filterScopeWithPrefix($appscopePrefix, $clientScopes);
+			$authData['scopes_requested'] = self::filterScopeWithPrefix($appscopePrefix, $clientScopesRequested);
+
+			$authorizationListData[] = $authData;
+		}
+
+		
+		// header('Content-Type: text/plain'); 
+		// // echo (json_encode($listing)); 
+		// print_r($authorizationListData);
+		// exit;
+
+		$authorizationqueue = new AuthorizationList($authorizationListData);
+
+
+
+		// header('Content-Type: text/plain'); print_r($authorizationqueue); exit;
+		return $authorizationqueue;
+
+	}
+
+
+
+	/**
+	 * Get list of all available apis for this client.
+	 * 
+	 * @param  [type] $appid The client in question that clients requests access to.
+	 * @return [type]           [description]
+	 */
+	public function getPublicAPIs(Client $client, $q = array()) {
+
+
+
+		$clientScopes = $client->get('scopes', array());
+		$clientScopesRequested = $client->get('scopes_requested', array());
+
+
+		$query = array(
+			'type' => 'proxy',
+			'status' => array(
+				'$all' => array('listing', 'operational'),
+			),
+		);
+
+
+		if (isset($q['query'])) {
+
+			$regex = '.*' . $q['query'] . '.*';
+
+			$query['$or'] = array(
+				array('name' => array('$regex' => $regex, '$options' => 'i')),
+				array('descr' => array('$regex' => $regex, '$options' => 'i')),
+			);
+		}
+
+
+		$fields = array(
+			'id',
+			'name',
+			'descr',
+			'status',
+			'proxy',
+			'type',
+		);
+
+
+		$options = array(
+			'limit' => 100,
+		);
+		if (isset($q['startsWith'])) {
+			$options['startsWith'] = $q['startsWith'];
+		}
+		if (isset($q['limit'])) {
+			$options['limit'] = $q['limit'];
+		}
+
+
+		$listing = $this->store->queryListMeta('clients', $query, $fields, $options);
+
+
+
+		$authorizationListData = array();
+
+		foreach($listing['items'] AS $i => $item) {
+
+			$authData = array(
+				'client' => $client,
+			);
+
+			$authData['targetApp'] = new APIProxy($item);
+
+			$appscopePrefix = 'rest_' . $authData['targetApp']->get('id');
+
+			$authData['scopes'] = self::filterScopeWithPrefix($appscopePrefix, $clientScopes);
+			$authData['scopes_requested'] = self::filterScopeWithPrefix($appscopePrefix, $clientScopesRequested);
+
+			$authorizationListData[] = $authData;
+		}
+
+		
+		// header('Content-Type: text/plain'); 
+		// // echo (json_encode($listing)); 
+		// print_r($authorizationListData);
+		// exit;
+
+		$authorizationqueue = new AuthorizationList($authorizationListData);
+		$authorizationqueue->setMeta($listing);
+		// header('Content-Type: text/plain'); print_r($authorizationqueue); exit;
+		return $authorizationqueue;
+	}
+
+
 	/**
 	 * Get list of all clients that have requested authorization for scopes that involves this
 	 * specific client.
@@ -100,6 +254,8 @@ class ClientDirectory {
 
 		);
 		$listing = $this->store->queryList('clients', $query);
+
+		// header('Content-Type: text/plain'); print_r($listing); exit;
 
 
 		$authorizationListData = array();
@@ -149,6 +305,107 @@ class ClientDirectory {
 		// }
 		// return $sorted;
 	}
+
+
+
+	public function authorizeClientScopes(App $app, Client $client, $scopes) {
+
+		// header('Content-Type: text/plain');
+		// echo "<pre>About to authorize client scopes: ";
+		// print_r($scopes); print_r($client->getJSON());
+		
+
+		foreach($scopes AS $scope => $value) {
+
+			if ($app->controlsScope($scope)) {
+
+				if ($value) {
+					// echo "Adding scope [" . $scope . "]";
+					$client->setScope($scope, true); // add scope as accepted
+
+				} else {
+
+					$client->setScope($scope, null); // remove scope
+
+				}
+
+			} else {
+				// echo ("Ignoring this scope, as app does not control it " . $scope);
+				error_log("Ignoring this scope, as app does not control it " . $scope);
+			}
+
+				
+		}
+
+		$client->store();
+
+		// print_r($scopes); print_r($client->getJSON());
+		// exit;
+
+		return $client->getJSON();
+
+	}
+
+
+
+
+
+	public function requestScopes(Client $client, $scopes) {
+
+		// header('Content-Type: text/plain');
+		// echo "Request scopes"; print_r($scopes); exit;
+
+
+		// $updates = array('scopes' => array(), 'scopes_requested' => array());
+		// if (isset($client['scopes'])) $updates['scopes'] = $client['scopes'];
+		// if (isset($client['scopes_requested'])) $updates['scopes_requested'] = $client['scopes_requested'];
+
+		foreach($scopes AS $scope => $value) {
+
+			// $value  : true ; request
+			// $value  : false; remove
+
+			if (preg_match('/rest_([a-z0-9\-]+)(_([a-z0-9\-]+))?/', $scope, $matches)) {
+
+				$appid = $matches[1];
+				Utils::validateID($appid);
+				$proxy = APIProxy::getByID($appid);
+
+				$localScope = (isset($matches[2]) ? $matches[2] : null);
+
+				$autoaccept = $proxy->scopePolicyAccept($localScope);
+
+				if ($value) {
+					$client->setScope($scope, $autoaccept);
+				} else {
+					$client->setScope($scope, null);
+				}
+				
+
+			} else if (preg_match('/app_([a-z0-9\-]+)_user/', $scope, $matches)) {
+
+				// $updates['scopes_requested'] = self::array_add_unique($updates['scopes_requested'], $scope);
+
+			} else {
+
+				if ($value) {
+					$client->requestScopes(array($scope));
+				} else {
+					$client->setScope($scope, null);
+				}
+
+
+			}
+
+
+		}
+
+		$client->store(array('scopes', 'scopes_requested'));
+
+	}
+
+
+
 
 
 

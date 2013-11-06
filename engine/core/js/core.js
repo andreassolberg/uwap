@@ -41,6 +41,14 @@ define(function(require) {
 	}
 
 
+	UWAP.utils.escape = function(string) {
+		var pre = document.createElement('pre');
+		var text = document.createTextNode( string );
+		pre.appendChild(text);
+		return pre.innerHTML;
+	}
+
+
 	// jso.jso_registerRedirectHandler(function(p, callback) {
 
 	// 	console.log("About to redirect to: ", p);
@@ -679,11 +687,36 @@ define(function(require) {
 				null, 
 				null, callback, errorcallback);
 		},
+
 		authorizeClient: function(id, clientid, authz, callback, errorcallback) {
 			UWAP._request(
 				'POST', 
 				UWAP.utils.getEngineURL('/api/appconfig/client/' + id + '/client/' + clientid + '/authorization'),
 				authz, 
+				null, callback, errorcallback);
+		},
+
+		requestScopes: function(clientid, scopes, callback, errorcallback) {
+			UWAP._request(
+				'POST', 
+				UWAP.utils.getEngineURL('/api/appconfig/client/' + clientid + '/scopes'),
+				scopes, 
+				null, callback, errorcallback);
+		},
+
+
+		getPublicAPIs: function(clientid, query, callback, errorcallback) {
+			UWAP._request(
+				'POST', 
+				UWAP.utils.getEngineURL('/api/appconfig/client/' + clientid + '/publicapis'),
+				query, 
+				null, callback, errorcallback);
+		},
+		getAuthorizedAPIs: function(clientid, callback, errorcallback) {
+			UWAP._request(
+				'GET', 
+				UWAP.utils.getEngineURL('/api/appconfig/client/' + clientid + '/authorizedapis'),
+				null, 
 				null, callback, errorcallback);
 		},
 
@@ -696,13 +729,13 @@ define(function(require) {
 		// 		null, callback, errorcallback);
 		// },
 
-		storeClient: function(object, callback, errorcallback) {
-			console.error('››› NOT IMPLEMENTED updates to this API call for appconfig after refactoring');
-			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/api/appconfig/clients"),
-				object, 
-				null, callback, errorcallback);
-		},
+		// storeClient: function(object, callback, errorcallback) {
+		// 	console.error('››› NOT IMPLEMENTED updates to this API call for appconfig after refactoring');
+		// 	UWAP._request(
+		// 		'POST', UWAP.utils.getEngineURL("/api/appconfig/clients"),
+		// 		object, 
+		// 		null, callback, errorcallback);
+		// },
 
 
 
@@ -715,20 +748,7 @@ define(function(require) {
 		// 		null, 
 		// 		null, callback, errorcallback);
 		// },
-		addClientScopes: function(id, object, callback, errorcallback) {
-			console.error('››› NOT IMPLEMENTED updates to this API call for appconfig after refactoring');
-			UWAP._request(
-				'POST', UWAP.utils.getEngineURL('/api/appconfig/client/' + id + '/addScopes'),
-				object, 
-				null, callback, errorcallback);
-		},
-		removeClientScopes: function(id, object, callback, errorcallback) {
-			console.error('››› NOT IMPLEMENTED updates to this API call for appconfig after refactoring');
-			UWAP._request(
-				'POST', UWAP.utils.getEngineURL('/api/appconfig/client/' + id + '/removeScopes'),
-				object, 
-				null, callback, errorcallback);
-		},
+
 		getView: function(id, callback, errorcallback) {
 			console.error('››› NOT IMPLEMENTED updates to this API call for appconfig after refactoring');
 			UWAP._request(

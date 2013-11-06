@@ -73,9 +73,9 @@ define(function(require, exports, module) {
 	}
 
 	appPicker.prototype.getAppItem = function(item) {
-		var ji = $('<a class="list-group-item" href="#">' + item.name + '</a>');
-		ji.attr('data-itemid', item.id);
-		ji.attr('data-type', item.type);
+		var ji = $('<a class="list-group-item" href="#">' + UWAP.utils.escape(item.name) + '</a>');
+		ji.attr('data-itemid', UWAP.utils.escape(item.id));
+		ji.attr('data-type', UWAP.utils.escape(item.type));
 		return ji;
 	};
 

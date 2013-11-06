@@ -8,7 +8,7 @@ ul.apis li.api.edit .showEdit { display: inline; }
 ul.apis li.api.edit .hideEdit { display: none; }
 
 
-div#clientauthorizations table tr.client td {
+div.clientauthorizations table tr.client td {
 	background-color: #fafafa;
 
 }
@@ -21,35 +21,35 @@ table.authorizationList tr.client td {
 */
 
 
-div#clientauthorizations table tr.client:hover td {
+div.clientauthorizations table tr.client:hover td {
 	background-color: #fff;
 }
 
-div#clientauthorizations table tr.client td {
+div.clientauthorizations table tr.client td {
 	cursor:pointer;
 	cursor:hand;
 }
 
-div#clientauthorizations img.clientlogo {
+div.clientauthorizations img.clientlogo {
 	max-height: 24px; 
 	max-width: 24px
 }
 
-div#clientauthorizations table tr.client span.closed { display: inline; }
-div#clientauthorizations table tr.client span.open { display: none; }
+div.clientauthorizations table tr.client span.closed { display: inline; }
+div.clientauthorizations table tr.client span.open { display: none; }
 
 
-div#clientauthorizations table tr.client.open span.closed { display: none; }
-div#clientauthorizations table tr.client.open span.open { display: inline; }
+div.clientauthorizations table tr.client.open span.closed { display: none; }
+div.clientauthorizations table tr.client.open span.open { display: inline; }
 
-div#clientauthorizations table tr.clientDetails { display: none;}
-div#clientauthorizations table tr.clientDetails.open { display: table-row;}
+div.clientauthorizations table tr.clientDetails { display: none;}
+div.clientauthorizations table tr.clientDetails.open { display: table-row;}
 
 
-div#clientauthorizations table tr.clientDetails, div#clientauthorizations table tr.clientDetails td {
+div.clientauthorizations table tr.clientDetails, div.clientauthorizations table tr.clientDetails td {
 	padding: 0px;
 }
-div#clientauthorizations table tr.clientDetails div.clientDetailsBox { 
+div.clientauthorizations table tr.clientDetails div.clientDetailsBox { 
 
 	border-top: none;
 	border-right: 1px solid #eee;
@@ -61,5 +61,32 @@ border-bottom-left-radius: 5px;
 	padding: 5px .5em 10px 1em;
 	margin: 0px 0px 10px 0px;
 
+
+}
+
+
+.authorizationlistcontainer h3 {
+	padding: 0px; margin: 0px;
+
+}
+.authorizationlistcontainer .panel-body {
+	padding: 0px;
+
+}
+.authorizationlistcontainer .pagination {
+	margin-top: 5px;
+}
+
+
+.minitron {
+
+	border-radius: 8px;
+	/*border: 1px solid #ddd;*/
+	background: #eee;
+
+	padding: 1em;
+	margin: 10px 6px;
+
+	font-size: large;
 
 }

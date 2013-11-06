@@ -409,6 +409,69 @@ class UWAPStore {
 		return $q;
 	}
 
+
+	public function queryListMeta($collection, $criteria, $fields = array(), $options = array()) {
+
+		if ($collection !== 'log') {
+			UWAPLogger::debug('store', 'Query list in [' . $collection . ']', array(
+				'collection' => $collection,
+				'criteria' => $criteria,
+				'options'  => $options,
+			));
+		}
+
+
+		
+		$result = array('items' => array());
+
+		$criteria = self::idify($criteria);
+
+
+
+		$cursor = $this->db->{$collection}->find($criteria, $fields);
+		// if ($cursor->count() < 1) return null;
+
+		$result['count'] = $cursor->count();
+
+
+		if (isset($options['sort'])) {
+			$cursor->sort($options['sort']);
+		} else {
+			$cursor->sort(array('$natural' => 1));
+		}
+		if (isset($options['limit'])) {
+			$cursor->limit($options['limit']);
+			$result['limit'] = $options['limit'];
+		}
+		if (isset($options['startsWith'])) {
+			$cursor->skip($options['startsWith']);
+			$result['startsWith'] = $options['startsWith'];
+
+
+		}
+		
+		// header('Content-Type: text/plain'); print_r($options); exit;
+
+
+		if (!$cursor->hasNext()) return $result;
+
+
+
+		foreach($cursor AS $element) $result['items'][] = $element;	
+
+
+		// echo "Criteria: \n";
+		// // print_r($criteria);
+		// var_export($criteria);
+
+		// echo "\ndb.feed.find("; echo json_encode($criteria); echo ");\n";
+		// echo "\n\n";
+		// echo "RESULT\n"; print_r(count($result)); echo "\n\n\n\n-------------------\n";
+
+		return $result;
+	}
+
+
 	public function queryList($collection, $criteria, $fields = array(), $options = array()) {
 
 		if ($collection !== 'log') {

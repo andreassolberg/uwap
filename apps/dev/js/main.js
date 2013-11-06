@@ -25,11 +25,9 @@ define(function(require, exports, module) {
 	require('uwap-core/bootstrap3/js/bootstrap');	
 	require('uwap-core/bootstrap3/js/modal');	
 	require('uwap-core/bootstrap3/js/dropdown');
-
 	
 	UWAP.utils.loadCSS('/css/style.css');
 
-	console.log(" -----> LOADED handlebars", hb);
 
 	var tmpl = {
 		"appdashboard": require('uwap-core/js/text!templates/appdashboard.html'),
@@ -139,10 +137,10 @@ define(function(require, exports, module) {
 
 				this.actLoadAppRO(parameters[1]);
 
-			} else if (parameters = hash.match(/^\/client\/([0-9a-z\-]+)$/)) {
-				console.log("Item ", parameters[1]);
+			// } else if (parameters = hash.match(/^\/client\/([0-9a-z\-]+)$/)) {
+			// 	console.log("Item ", parameters[1]);
 
-				this.actLoadClient(parameters[1]);
+			// 	this.actLoadClient(parameters[1]);
 
 			} else {
 				console.error('No match found for router...');
@@ -237,33 +235,33 @@ define(function(require, exports, module) {
 
 		}
 
-		App.prototype.actLoadClient = function(appid) {
-			var that = this;
-			console.log("Selected an app:", appid);
-			$("div#appmaincontainer").empty();
+		// App.prototype.actLoadClient = function(appid) {
+		// 	var that = this;
+		// 	console.log("Selected an app:", appid);
+		// 	$("div#appmaincontainer").empty();
 
-			UWAP.appconfig.getClient(appid, function(appconfig) {
+		// 	UWAP.appconfig.getClient(appid, function(appconfig) {
 
-				var adash;
-				console.log("Appconfig", appconfig);
+		// 		var adash;
+		// 		console.log("Appconfig", appconfig);
 
-				that.setHash('/client/' + appconfig["client_id"]);
+		// 		that.setHash('/client/' + appconfig["client_id"]);
 
-				adash = new ClientDashboard($("div#appmaincontainer"), new Client(appconfig), templates);
+		// 		adash = new ClientDashboard($("div#appmaincontainer"), new Client(appconfig), templates);
 
-				that.setNavigationBar([
-					{title: "Dashboard", href: "#!/"},
-					{title: appconfig["client_name"]}
-				]);
-			});
-		};
+		// 		that.setNavigationBar([
+		// 			{title: "Dashboard", href: "#!/"},
+		// 			{title: appconfig["client_name"]}
+		// 		]);
+		// 	});
+		// };
 
 		App.prototype.actLoadApp = function(appid, type) {
 			var that = this;
 
 			// console.log("actLoadApp", appid, type)
 
-			if (type === 'client') return this.actLoadClient(appid);
+			// if (type === 'client') return this.actLoadClient(appid);
 
 			console.log("Selected an app:", appid);
 			$("div#appmaincontainer").empty();
@@ -285,7 +283,9 @@ define(function(require, exports, module) {
 
 				} else if (appconfig.type === 'client') {
 
-					alert("opening a client");
+					adash = new ClientDashboard($("div#appmaincontainer"), new Client(appconfig), templates);
+
+					// alert("opening a client");
 					// adash = new ProxyDashboard($("div#appmaincontainer"), new Proxy(appconfig), templates);
 
 				} else {

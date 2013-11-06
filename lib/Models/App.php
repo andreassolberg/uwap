@@ -91,5 +91,13 @@ class App extends Client {
 	}
 
 
+	public function controlsScope($scope) {
+
+		$searchForPrefix = 'rest_' . $this->get('id');
+
+		return (strpos($scope, $searchForPrefix) === 0);
+	}
+
+
 
 }

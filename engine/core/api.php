@@ -17,6 +17,9 @@ header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: HEAD, GET, OPTIONS, POST, DELETE, PATCH");
 header("Access-Control-Allow-Headers: Authorization, X-Requested-With, Origin, Accept, Content-Type");
 
+
+
+
 $profiling = microtime(true);
 error_log("Time START    :     ======> " . (microtime(true) - $profiling));
 
@@ -314,6 +317,8 @@ try {
 		}
 
 
+
+
 	/**
 	 *  The storage API.
 	 */
@@ -549,8 +554,8 @@ try {
 
 
 
-
 		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)/clients$', &$parameters, &$object)) {
+
 
 			$appid = $parameters[1];
 			Utils::validateID($appid);
@@ -563,19 +568,65 @@ try {
 
 
 
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/scopes$', &$parameters, &$object)) {
+
+			$clientid = $parameters[1];
+			Utils::validateID($clientid);
+			$client = Client::getByID($clientid);
+			
+			$clientdirectory->authorize($client, 'owner');
+			
+			$clientdirectory->requestScopes($client, $object);
+
+			$response['data'] = $client->getJSON();
+
+
+
+
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/publicapis$', &$parameters, &$object)) {
+
+			$clientid = $parameters[1];
+			Utils::validateID($clientid);
+			$client = Client::getByID($clientid);
+			
+			$clientdirectory->authorize($client, 'owner');
+
+			// echo "About to query getpublic api "; print_r($object); exit;
+
+			$authorizationList = $clientdirectory->getPublicAPIs($client, $object);
+			$response['data'] = $authorizationList->getJSON();
+
+
+		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)/authorizedapis$', &$parameters, &$object)) {
+
+			$clientid = $parameters[1];
+			Utils::validateID($clientid);
+			$client = Client::getByID($clientid);
+			
+			$clientdirectory->authorize($client, 'owner');
+
+			$authorizationList = $clientdirectory->getAuthorizedAPIs($client, null);
+			$response['data'] = $authorizationList->getJSON();
+
+
+
+
 		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/client/([a-z0-9\-]+)/authorization$', &$parameters, &$object)) {
 
 			$appid = $parameters[1];
 			Utils::validateID($appid);
-			$client = Client::getByID($appid);
-			$clientdirectory->authorize($client, 'owner');
+			$app = Client::getByID($appid);
+			
+			$clientdirectory->authorize($app, 'owner');
 
 			$clientid = $parameters[2];
 			Utils::validateID($clientid);
+			$client = Client::getByID($clientid);
 
-			$response['data'] = $client->authorizeClient($clientid, $object);
+			$clientdirectory->authorizeClientScopes($app, $client, $object);
 
-
+			$authorizationList = $clientdirectory->getAuthorizationQueue($app);
+			$response['data'] = $authorizationList->getJSON();
 
 
 
@@ -814,11 +865,14 @@ try {
 
 		// 	}
 
-		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+		// } else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)$', &$qs, &$parameters)) {
 
-			$appid = $qs[1];
-			Utils::validateID($appid);
-			$response['data'] = $appdirectory->getClient($appid);
+		// 	$appid = $qs[1];
+		// 	Utils::validateID($appid);
+		// 	$response['data'] = $appdirectory->getClient($appid);
+
+
+
 			// $ac = Config::getInstance($appid);
 
 		// } else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/addScopes$', &$qs, &$parameters)) {
@@ -1160,23 +1214,23 @@ try {
 	/**
 	 *  Media files
 	 */
-	} else if (Utils::route('get', '^/media/logo/client/([a-z0-9\-]+)$', &$qs, &$args)) {
+	// } else if (Utils::route('get', '^/media/logo/client/([a-z0-9\-]+)$', &$qs, &$args)) {
 
 
-		$store = new So_StorageServerUWAP();
-		$ac = $store->getClient($qs[1]);
+	// 	$store = new So_StorageServerUWAP();
+	// 	$ac = $store->getClient($qs[1]);
 
-		if (!empty($ac["logo"])) {
+	// 	if (!empty($ac["logo"])) {
 
-			header('Content-Type: image/png');
-			echo base64_decode($ac["logo"]);
-		} else {
+	// 		header('Content-Type: image/png');
+	// 		echo base64_decode($ac["logo"]);
+	// 	} else {
 
-			header('Content-Type: image/png');
-			echo base64_decode($default);
-		}
+	// 		header('Content-Type: image/png');
+	// 		echo base64_decode($default);
+	// 	}
 
-		exit;
+	// 	exit;
 
 
 	} else {

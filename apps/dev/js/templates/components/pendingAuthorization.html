@@ -1,0 +1,205 @@
+
+
+<h3>Pending Client Authorizations</h3>
+
+
+<div class="authzPending">
+
+{{#each items}}
+
+
+
+<!--
+
+		<tr class="client" data-clientid="{{client_id}}"><td>
+			<h4>{{client_name}} <code>{{client_id}}</code></h4>
+
+			<p><label><input type="checkbox" checked="checked" disabled="disabled"> Basic access permissions</label></p>
+
+			{{#each getScopes}}
+				<p><label><input data-scope="{{localScope}}" class="grantScopeItem" type="checkbox" checked="checked" > {{name}} <code>{{localScope}}</code></label></p>
+			{{/each}}
+
+			<p>
+				<button class="actGrant btn btn-success">
+					<i class="icon-ok"></i> Grant selected permissions
+				</button>
+				<button class="actReject btn btn-danger">Reject any access</button>
+			</p>
+			
+		</td></tr>
+-->
+
+
+
+{{#if scopes.pending}}
+
+
+
+	
+	<div class="panel panel-primary client" data-clientid="{{client.id}}">
+		<div class="panel-heading">
+
+			<img class="clientlogo" style="float: left; margin-right: 5px" src="{{client.logo}}" alt="client logo" />
+
+			<h3 class="panel-title">
+				{{client.name}} 
+				<span class="pull-right">Authorization Request</span>
+			</h3>
+		</div>
+		<div class="panel-body">
+
+
+				<div class="pull-right">
+
+					<span class="glyphicon glyphicon-user"></span> <tt>{{client.uwap-userid}}</tt>
+
+				</div>
+
+				
+				<!--
+
+				{{#if scopes.generic_accepted }}
+					<span class="label label-success">Access granted</span>
+
+					{{#if scopes.scopes_requested}}
+						<span class="label label-warning">Additional access pending</span>
+					{{/if}}
+
+
+				{{/if}}
+				{{#if scopes.generic_requested }}
+					<span class="label label-warning">Pending request</span>
+				{{/if}}
+
+				-->
+
+
+				{{#if client.descr}}
+					<p class="text-info"> {{client.descr}}</p>
+				{{/if}}
+
+
+
+				{{#if scopes.scopes}}
+
+					<p>This client is already granted access to these scopes:</p>
+
+					<table class="table table-hover">
+
+					{{#if scopes.generic_accepted }}
+						<tr>
+							<td style="width: 24px"><span class="glyphicon glyphicon-ok"></span></td>
+							<td></td>
+							<td><b>Generic access</b></td>
+						</tr>
+					{{/if}}
+
+
+					{{#each scopes.scopes}}
+						<tr>
+
+
+
+							<td style="width: 24px"><span class="glyphicon glyphicon-ok"></span></td>
+							{{#if localScope}} 
+								<td><tt>{{localScope}}</tt></td>
+								<td>{{scopeName}}</td>
+							{{else}}
+								<td colspan="2">Generic access</td>
+							{{/if}}
+							
+						</tr>
+						
+					{{/each}}
+
+					</table>
+
+
+
+				{{/if}}
+
+
+
+
+				
+
+				<div class="minitron">
+
+					<p>This client is requesting access to these scopes</p>
+
+					<table class="table table-hover">
+
+
+					{{#if scopes.generic_requested }}
+						<tr>
+							<td style="width: 24px"><span class="glyphicon glyphicon-ok"></span></td>
+							<td colspan="2">Generic access</td>
+						</tr>
+					{{/if}}
+
+					{{#if scopes.scopes_requested}}
+
+						{{#each scopes.scopes_requested}}
+							<tr>
+								<td style="width: 24px"><span class="glyphicon glyphicon-ok"></span></td>
+							
+							{{#if localScope}} 
+								<td>{{scopeName}}</td>
+								<td><tt>{{localScope}}</tt></td>
+
+							{{else}}
+								<td colspan="2">Generic access</td>
+							{{/if}}
+
+							</tr>
+							
+
+						{{/each}}
+
+					{{/if}}
+
+					</table>
+
+					<div>
+						<p>
+							<button class="actGrant btn btn-success">
+								<span class="glyphicon glyphicon-ok"></span> Grant requested access
+							</button>
+							<button class="actReject btn btn-danger">
+								<span class="glyphicon glyphicon-remove"></span> Reject</button>
+						</p>
+					</div>
+
+
+
+				</div>
+				
+
+
+
+
+			</div>
+
+
+
+	</div>
+	
+
+
+
+
+{{/if}}
+
+
+
+{{/each}}
+
+
+
+</div>
+
+
+
+
+	

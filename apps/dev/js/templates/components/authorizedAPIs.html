@@ -1,0 +1,173 @@
+
+
+<table class="table table-striped" class="authorizationList">
+
+<!-- 	<thead>
+		<tr>
+			<th style="width: 40px">&nbsp;</th>
+			<th>Client</th>
+			<th>Status</th>
+		</tr>
+	</thead> -->
+
+
+	<tbody >
+
+	{{#each items}}
+
+		<tr class="client" data-clientid="{{app.id}}">
+
+			<td>
+				<span  style="color: #999" class="closed glyphicon glyphicon-chevron-right"></span>
+				<span  style="color: #999" class="open glyphicon glyphicon-chevron-down"></span>
+			</td>
+			<td>
+				<img class="clientlogo" style="" src="{{app.logo}}" alt="client logo" />
+				{{app.name}} 
+			</td>
+
+			<td>
+				{{#if scopes.generic_accepted }}
+					<span class="label label-success">Access granted</span>
+
+					{{#if scopes.scopes_requested}}
+						<span class="label label-warning">Additional access pending</span>
+					{{/if}}
+
+
+				{{/if}}
+				{{#if scopes.generic_requested }}
+					<span class="label label-warning">Pending request</span>
+				{{/if}}
+			</td>
+
+
+		</tr>
+
+
+		<tr class="clientDetails" data-clientid="{{app.id}}">
+
+			<td colspan="3">
+
+				<div class="clientDetailsBox">
+
+					<div class="pull-right">
+						<span class="glyphicon glyphicon-user"></span> <tt>{{app.uwap-userid}}</tt>
+					</div>
+
+
+					{{#if app.descr}}
+						<p class="text-info"> {{app.descr}}</p>
+					{{/if}}
+
+
+
+					<table class="table table-hover">
+
+					{{#if app.proxy.scopes}}
+
+							<tr class="scopeRequest" >
+								<td><input type="checkbox" disabled="disabled" checked="checked" name="" /></td>
+
+								<td>
+									{{#if scopes.generic_accepted }}
+										<span class="label label-success">Granted</span>
+									{{/if}}
+									{{#if scopes.scopes_requested}}
+										<span class="label label-warning">Requested</span>
+									{{/if}}
+								</td>
+
+								<td colspan="2">Basic access</td>
+							</tr>
+
+						{{#each app.proxy.scopes}}
+							<tr class="scopeRequest" data-scope="{{@key}}" >
+
+
+									{{#if authorized }}
+										<td><input type="checkbox" data-scope="{{@key}}" class="scopeInput" checked="checked" name="" /></td>
+										<td>
+											<span class="label label-success">Granted</span>
+										</td>
+
+									{{else}}
+
+										{{#if requested}}
+											<td><input type="checkbox" data-scope="{{@key}}" class="scopeInput" checked="checked" name="" /></td>
+											<td>
+												<span class="label label-warning">Requested</span>
+											</td>
+										{{else}}
+
+
+											<td><input type="checkbox" data-scope="{{@key}}" class="scopeInput" name="" /></td>
+											<td>
+												&nbsp;
+											</td>
+
+										{{/if}}
+
+
+									{{/if}}
+
+
+								<td>{{name}}</td>
+								<td>{{@key}}</td>
+							</tr>
+						{{/each}}
+
+					{{/if}}
+
+					</table>
+
+
+
+					<div>
+						
+						{{#if scopes.generic_accepted }}
+
+							<button class="request btn btn-success">Save changes</button>
+							<button class="revokeAll btn btn-danger">Remove granted permission</button>
+
+						{{else}}
+
+							{{#if scopes.scopes_requested}}
+
+								<button class="request btn btn-success">Save changes</button>
+								<button class="revokeAll btn btn-danger">Reject requested permission</button>
+
+							{{else}}
+
+								<button class="request btn btn-success">Request selected permission</button>
+
+							{{/if}}
+
+
+						{{/if}}
+
+					</div>
+
+				</div>
+
+
+				
+
+			</td>
+
+		</tr>
+
+	{{/each}}
+
+	</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+

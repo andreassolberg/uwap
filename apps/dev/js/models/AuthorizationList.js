@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 		AuthorizedClient = require('./AuthorizedClient'),
 
 		App = require('./App'),
+		Proxy = require('./Proxy'),
 		Client = require('./Client')
 		;
 
@@ -20,18 +21,40 @@ define(function(require, exports, module) {
 	// 	return false;
 	// }
 
-	var AuthorizationList = function(data) {
+	var AuthorizationList = function(data, proxy) {
 		this.data = data;
 
 		this.clients = {};
 		this.targetApps = {};
 		this.items = [];
+		this.proxy = proxy;
+
+		this.count = null;
+		this.startsWith = null;
+		this.limit = null;
+
+		if (data.count) {
+			this.count = data.count;
+		}
+		if (data.startsWith) {
+			this.startsWith = data.startsWith;
+		}
+		if (data.limit) {
+			this.limit = data.limit;
+		}
 
 		console.log("Getting elemenet ", this.data);
 
 		if (this.data.targetApps) {
 			for(var appid in this.data.targetApps) {
-				this.targetApps[appid] = new App(this.data.targetApps[appid]);
+				if (this.data.targetApps[appid].type === 'app') {
+					this.targetApps[appid] = new App(this.data.targetApps[appid]);
+				} else if (this.data.targetApps[appid].type === 'proxy') {
+					this.targetApps[appid] = new Proxy(this.data.targetApps[appid]);
+				} else {
+					throw "Missing [type] property on targetApp";
+				}
+				
 			}			
 		}
 
@@ -48,7 +71,8 @@ define(function(require, exports, module) {
 				this.items.push(new AuthorizedClient(
 					this.data.items[i], 								// properties
 					this.clients[this.data.items[i].client], 			// client
-					this.targetApps[this.data.items[i].targetApp] 		// targetApp
+					// this.targetApps[this.data.items[i].targetApp] 		// targetApp
+					this.targetApps[this.data.items[i].targetApp]
 				));
 
 			}
@@ -57,9 +81,47 @@ define(function(require, exports, module) {
 
 	}
 
+	AuthorizationList.prototype.getPager = function() {
+		var meta = {
+			count: this.count,
+			startsWith: this.startsWith,
+			limit: this.limit
+		};
+		return meta;
+	}
+
+	AuthorizationList.prototype.getApp = function() {
+		return this.proxy;
+	}
+
+	AuthorizationList.prototype.getAuthorizedScopes = function(clientid) {
+		for(var i = 0; i < this.items.length; i++) {
+			// console.log("looking for scopes in this client " + this.items[i].getClientID() + ' === ' + clientid);
+			if (this.items[i].getClientID() === clientid) {
+
+				return this.items[i].getAuthorizedScopes();
+			}
+		}
+		return null;
+	}
+
+	AuthorizationList.prototype.getRequestedScopes = function(clientid) {
+		for(var i = 0; i < this.items.length; i++) {
+			// console.log("looking for scopes in this client " + this.items[i].getClientID() + ' === ' + clientid);
+			if (this.items[i].getClientID() === clientid) {
+
+				return this.items[i].getRequestedScopes();
+			}
+		}
+		return null;
+	}
+
 	AuthorizationList.prototype.getView = function() {
 
 		var view = {
+			count: this.count,
+			limit: this.limit,
+			startsWith: this.startsWith,
 			items: []
 		};
 

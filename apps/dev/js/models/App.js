@@ -25,12 +25,29 @@ define(function(require, exports, module) {
 		// }
 	}
 
+
+	App.prototype.get = function(key) {
+		return this.properties[key];
+	}
+	
 	App.prototype.getName = function() {
 		return this.properties.name;
 	}
 
 	App.prototype.logo = function() {
 		return UWAP.utils.getEngineURL('/api/media/logo/app/' + this.properties.id);
+	}
+
+	App.prototype.getView = function() {
+		var view = {};
+
+		for(var key in this.properties) {
+			if (typeof this.properties[key] !== 'function' ) {
+				view[key] = this.properties[key];
+			}
+		}
+		view.logo = this.logo();
+		return view;
 	}
 
 

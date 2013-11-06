@@ -1,12 +1,12 @@
 <div class="row">
 
 	<div class="col-md-9">
-		<h2>{{client_name}} <span class="label label-success">Client</span></h2>
+		<h2>{{name}} <span class="label label-success">Client</span></h2>
 		<p>{{descr}}</p>
 	</div>
 
 	<div class="col-md-3">
-		<p><img src="https://core.uwap.org/api/media/logo/app/{{id}}" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px; backgroud: #eee" /></p>
+		<p><img src="{{logo}}" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px; backgroud: #eee" /></p>
 	</div>
 
 </div>
@@ -15,13 +15,13 @@
 
 <div class="row">
 
-	<div class="col-md-4">
+	<div class="col-md-6">
 		<h3>OAuth details</h3>
 		<p>You may access your application area using WebDAV</p>
 
 		<dl>
 			<dt>Client ID</dt>
-			<dd><code>{{client_id}}</code></dd>
+			<dd><code>{{id}}</code></dd>
 
 			<dt>Client Secret</dt>
 			<dd><code>{{client_secret}}</code></dd>
@@ -33,18 +33,18 @@
 		</dl>
 	</div>
 
-	<div class="col-md-4">
+	<div class="col-md-6">
 
 		<h3>Authorized Scopes</h3>
 
 		<ul>
 		{{#each scopes}}
-			{{.}}
+			<li><code>{{.}}</code></li>
 		{{/each}}
 		</ul>
 
 	</div>
-
+<!--
 	<div class="col-md-4">
 		<h3>Usage Statistics</h3>
 
@@ -53,6 +53,7 @@
 		<p>{{count}} registered users. ( <a href="">see more statistics</a> )</p>
 
 	</div>
+-->
 
 </div>
 
@@ -76,7 +77,7 @@
 
 			<tbody>
 
-				{{#each getGenericScopes}}
+				{{#each genericScopes}}
 					<tr class="scope" data-scope="{{@key}}">
 						<td><code>{{@key}}</code></td>
 						<td>{{name}}. {{descr}}</td>
@@ -110,70 +111,73 @@
 
 </div>
 
+
+
+
+
 <div class="row">
+
 	<div class="col-md-12">
 
-		<h3>Application or API Scopes</h3>
 
 
-		<form role="form">
-			<input id="proxysearch" type="search" class="form-control input-lg search-query" style="" placeholder="Search application or API" />
-		</form>
-
-		<div id="searchres"></div>
-
-		<table class="table table-striped">
-
-			<thead>
-				<tr>
-					<th>API</th>
-					<th>Scope</th>
-					<th>Status</th>
-					<th>Action</th>
-				</tr>
-			</thead>
-
-			<tbody class="authorizedList">
-
-				{{#each getAppScopes}}
-
-					<tr class="appscope" data-scope="rest_{{@key}}">
-						<td>{{@key}}</td>
-						<td>Generic access</td>
-						<td>
-							{{#if access}}
-								<span class="label label-success">Granted</span>
-							{{else}}
-								<span class="label label-danger">Requested</span>
-							{{/if}}
-						</td>
-						<td><button class="btn btn-mini actRemoveAccess">Remove</button></td>
-					</tr>
-
-					{{#each subscopes}}
-						<tr class="appscope" data-scope="rest_{{app}}_{{@key}}">
-							<td>&nbsp;</td>
-							<td>{{@key}}</td>
-							<td>
-								{{#if access}}
-									<span class="label label-success">Granted</span>
-								{{else}}
-									<span class="label label-danger">Requested</span>
-								{{/if}}
-							</td>
-							<td><button class="btn btn-mini actRemoveAccess">Remove</button></td>
-						</tr>
-					{{/each}}
+		<div class="panel panel-default authorizationlistcontainer" id="authorizedAPIContainer">
+			<div class="panel-heading">
 
 
-				{{/each}}
+
+				<h3>Authorized APIs</h3>
+
+			</div>
+			<div class="panel-body">
+			
+			
+
+				<p style="margin: .8em .6em">These APIs are already authorized for your client, or pending moderation.</p>
+			
+
+				<div class="panel-body clientauthorizations" id="authorizedAPIlisting">
+					<div class="items"></div>
+				</div>
+				<div style="margin: 0px; padding: 0px; text-align: center" class="listpager"></div>
+
+			</div>
+		</div>
 
 
-			</tbody>
-		</table>
+
+
+
+
+		<div class="panel panel-default authorizationlistcontainer" id="availableAPIContainer">
+			<div class="panel-heading">
+
+				<form class=" pull-right" role="search">
+			      <div class="form-group">
+			        <input id="apiSearch" type="text" class="form-control" placeholder="Search">
+			      </div>
+			      <!-- <button type="submit" class="btn btn-default">Submit</button> -->
+			    </form>
+
+				<h3>Available APIs</h3>
+
+			</div>
+			<div class="panel-body">
+
+				<p style="margin: .8em .6em">Navigate through available APIs, and request permissions.</p>
+			
+				<div class="panel-body clientauthorizations" id="publicAPIlisting">
+					<div class="items"></div>
+				</div>
+				<div style="margin: 0px; padding: 0px; text-align: center" class="listpager"></div>
+
+			</div>
+		</div>
+
 
 	</div>
 
-
-
 </div>
+
+
+

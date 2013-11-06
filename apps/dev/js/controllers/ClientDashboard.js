@@ -9,8 +9,13 @@ define(function(require, exports, module) {
 		Client = require('models/Client'),
 		Proxy = require('models/Proxy'),
 
-		hb = require('uwap-core/js/handlebars'),
-		uwapsearch = require('search')
+		APIAuthorizationListController = require('./APIAuthorizationListController'),
+		PublicAuthorizationListController = require('./PublicAuthorizationListController'),
+
+		AuthorizationList = require('../models/AuthorizationList'),
+		AuthorizedClient = require('../models/AuthorizedClient'),
+
+		hb = require('uwap-core/js/handlebars')
 		;
 
 	var proxyTmplText = require('uwap-core/js/text!templates/components/proxyListing.html');
@@ -19,8 +24,8 @@ define(function(require, exports, module) {
 
 	var ClientDashboard = function(container, appconfig, templates) {
 
-		var handlertmpl;
 		var that = this;
+
 		this.handlers = {};
 		this.currentTerm = null;
 
@@ -31,9 +36,38 @@ define(function(require, exports, module) {
 
 		this.draw();
 
-		$("#proxysearch").uwapsearch($.proxy(this.search, this), function() {
-			return $("#proxysearch").val();
+		this.authorizedAPIlisting = new APIAuthorizationListController(this.appconfig, this.container.find("div#authorizedAPIContainer"), $.proxy(this.update, this));
+		this.publicAPIlisting = new PublicAuthorizationListController(this.appconfig, this.container.find("div#availableAPIContainer"), $.proxy(this.update, this));
+
+
+
+		UWAP.appconfig.getAuthorizedAPIs(appconfig.get('id'), function(data) {
+			console.log("Set data for authorizedAPIlisting", data);
+
+			that.authorizedAPIlist = new AuthorizationList(data, that.appconfig);
+
+			that.authorizedAPIlisting.setList(that.authorizedAPIlist);
+			that.authorizedAPIlisting.draw();
 		});
+
+		this.publicAPIlisting.update();
+
+		// UWAP.appconfig.getPublicAPIs(appconfig.get('id'), null, function(data) {
+		// 	console.log("Set data for publicAPIlisting", data);
+
+		// 	that.publicAPIlist = new AuthorizationList(data, that.appconfig);
+
+		// 	console.log("Public API LIST", that.publicAPIlist);
+
+		// 	that.publicAPIlisting.setList(that.publicAPIlist);
+		// 	that.publicAPIlisting.draw();
+		// });
+
+
+		// $("#proxysearch").uwapsearch($.proxy(this.search, this), function() {
+		// 	return $("#proxysearch").val();
+		// });
+		
 
 		$(this.container).on('click', '.actRequestAccess', $.proxy(this.actRequestAccess, this));
 		$(this.container).on('click', '.actRemoveAccess', $.proxy(this.actRemoveAccess, this));
@@ -42,12 +76,36 @@ define(function(require, exports, module) {
 
 	};
 
+	ClientDashboard.prototype.update = function(appconfig) {
+		var that = this;
+		var client = new Client(appconfig);
+		this.appconfig = client;
+
+		// this.draw();
+
+		UWAP.appconfig.getAuthorizedAPIs(this.appconfig.get('id'), function(data) {
+			console.error("UPDATE ===== Set data for authorizedAPIlisting", data);
+			console.log(that.appconfig);
+
+			that.authorizedAPIlist = new AuthorizationList(data, that.appconfig);
+
+			that.authorizedAPIlisting.setList(that.authorizedAPIlist);
+			that.authorizedAPIlisting.draw();
+		});
+
+		this.publicAPIlisting.update();
+
+
+
+	}
+
 
 	ClientDashboard.prototype.actRequestAccessGeneric = function(event) {
 		event.preventDefault(); event.stopPropagation();
 		var that = this;
-		var scope = $(event.currentTarget).closest('.scope').data('scope');
-		UWAP.appconfig.addClientScopes(this.appconfig['client_id'], [scope], function(data) {
+		var scoperequest = {};
+		scoperequest[$(event.currentTarget).closest('.scope').data('scope')] = true;
+		UWAP.appconfig.requestScopes(this.appconfig.get('id'), scoperequest, function(data) {
 			console.log("client added scopes");
 			that.appconfig = new Client(data);
 			that.draw();
@@ -61,14 +119,15 @@ define(function(require, exports, module) {
 	ClientDashboard.prototype.actRemoveAccessGeneric = function(event) {
 		event.preventDefault(); event.stopPropagation();
 		var that = this;
-		var scope = $(event.currentTarget).closest('.scope').data('scope');
-		UWAP.appconfig.removeClientScopes(this.appconfig['client_id'], [scope], function(data) {
+		var scoperequest = {};
+		scoperequest[$(event.currentTarget).closest('.scope').data('scope')] = false;
+		UWAP.appconfig.requestScopes(this.appconfig.get('id'), scoperequest, function(data) {
 			console.log("client remove scopes");
 			that.appconfig = new Client(data);
 			that.draw();
 		});
 
-		console.log("remove Access", this.appconfig['client_id'], scope);
+		console.log("remove Access", this.appconfig.get('id'), scoperequest);
 
 
 	}
@@ -80,22 +139,24 @@ define(function(require, exports, module) {
 		var that = this;
 		var t = $(event.currentTarget).closest('.proxy');
 		var proxyid = t.data('clientid');
-		var scopes = ["rest_" + proxyid];
+
+		var scoperequest = {};
+		scoperequest["rest_" + proxyid] = true;
 		t.find('input.grantScopeItem').each(function(i, item) {
 			if ($(item).attr('checked')) {
-				scopes.push('rest_' + proxyid + '_' + $(item).data('scope'));
+				scoperequest['rest_' + proxyid + '_' + $(item).data('scope')] = true;
 			}
 		});
 
 		$("#proxysearch").val('');
 		$("div#searchres").empty();
-		UWAP.appconfig.addClientScopes(this.appconfig['client_id'], scopes, function(data) {
+		UWAP.appconfig.requestScopes(this.appconfig.get('id'), scoperequest, function(data) {
 			console.log("client added scopes");
 			that.appconfig = new Client(data);
 			that.draw();
 		});
 
-		console.log("Request Access", this.appconfig['client_id'], scopes);
+		console.log("Request Access", this.appconfig.get('id'), scoperequest);
 
 
 	}
@@ -106,13 +167,16 @@ define(function(require, exports, module) {
 		var t = $(event.currentTarget).closest('.appscope');
 		var scope = t.data('scope');
 
-		UWAP.appconfig.removeClientScopes(this.appconfig['client_id'], [scope], function(data) {
+		var scoperequest = {};
+		scoperequest[scope] = false;
+
+		UWAP.appconfig.requestScopes(this.appconfig.get('id'), scoperequest, function(data) {
 			console.log("client remove scopes");
 			that.appconfig = new Client(data);
 			that.draw();
 		});
 
-		console.log("remove Access", this.appconfig['client_id'], scope);
+		console.log("remove Access", this.appconfig.get('id'),  scoperequest);
 
 
 
@@ -148,8 +212,10 @@ define(function(require, exports, module) {
 	ClientDashboard.prototype.draw = function() {
 		console.log("DRAW", this.appconfig, this.appconfig.getAppScopes());
 
+		var clientview = this.appconfig.getView();
+		console.log("CLIENT VIEW CLIENT VIEW ", clientview);
 
-		this.element = $(this.templates['clientdashboard'](this.appconfig));
+		this.element = $(this.templates['clientdashboard'](clientview));
 
 		
 		console.log("this element", this.element);

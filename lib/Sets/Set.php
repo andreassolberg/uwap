@@ -4,6 +4,10 @@ abstract class Set {
 
 	protected $entries = array();
 
+	protected $startsWith = 0;
+	protected $count = 0;
+	protected $limit = null;
+
 	function __construct($datalist = null) {
 
 		if ($datalist !== null) {
@@ -25,6 +29,19 @@ abstract class Set {
 		}
 	}
 
+	function setMeta($meta) {
+		if (isset($meta['startsWith'])) {
+			$this->startsWith = $meta['startsWith'];
+		}
+		if (isset($meta['count'])) {
+			$this->count = $meta['count'];
+		}
+
+		if (isset($meta['limit'])) {
+			$this->limit = $meta['limit'];
+		}
+
+	}
 
 
 	function getJSON($opts = array()) {
@@ -37,8 +54,13 @@ abstract class Set {
 			$result['items'][] = $e->getJSON($opts);
 		}
 
-		$result['count'] = count($result['items']);
-		$result['startsWith'] = 1;
+		if (!isset($this->count)) {
+			$this->count = count($result['items']);
+		}
+
+		$result['count'] = $this->count;
+		$result['startsWith'] = $this->startsWith;
+		$result['limit'] = $this->limit;
 		$result['complete'] = true;
 		return $result;
 	}

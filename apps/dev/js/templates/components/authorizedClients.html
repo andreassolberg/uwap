@@ -1,21 +1,15 @@
 
 
-<h3>Client Authorizations</h3>
-
-
-
-
 <table class="table table-striped" class="authorizationList">
 
-	<thead>
+<!-- 	<thead>
 		<tr>
 			<th style="width: 40px">&nbsp;</th>
 			<th>Client</th>
 			<th>Status</th>
-
-
 		</tr>
-	</thead>
+	</thead> -->
+
 
 	<tbody >
 
@@ -31,7 +25,22 @@
 				<img class="clientlogo" style="" src="{{client.logo}}" alt="client logo" />
 				{{client.name}} 
 			</td>
-			<td></td>
+
+			<td>
+				{{#if scopes.generic_accepted }}
+					<span class="label label-success">Access granted</span>
+
+					{{#if scopes.scopes_requested}}
+						<span class="label label-warning">Additional access pending</span>
+					{{/if}}
+
+
+				{{/if}}
+				{{#if scopes.generic_requested }}
+					<span class="label label-warning">Pending request</span>
+				{{/if}}
+			</td>
+
 
 		</tr>
 
@@ -42,36 +51,67 @@
 
 				<div class="clientDetailsBox">
 
-					<p class="well"> {{client.descr}}</p>
+					<div class="pull-right">
+						<span class="glyphicon glyphicon-user"></span> <tt>{{client.uwap-userid}}</tt>
+					</div>
 
 
-					<p>This client is requesting access to these scopes</p>
+					{{#if client.descr}}
+						<p class="text-info"> {{client.descr}}</p>
+					{{/if}}
 
 
-					<!--
+					{{#if scopes.scopes}}
+
+						<p>This client is already granted access to these scopes:</p>
+
+						<table class="table table-hover">
+						{{#each scopes.scopes}}
+
+							{{#if localScope}} 
+								<tr class="scope" data-scope="{{localScope}}">
+							{{else}}
+								<tr class="scope" >
+							{{/if}}
+
+
+							{{#if localScope}} 
+								<td>{{scopeName}}</td>
+								<td><tt>{{localScope}}</tt></td>
+
+							{{else}}
+								<td colspan="2">Generic access</td>
+							{{/if}}
+
+								<td><span class="revokeScope btn btn-xs btn-danger">Revoke</span></td>
+								
+							</tr>
+							
+						{{/each}}
+						</table>
 
 
 
-					{{client.id}}
-
-					<span style="color: #aaa; font-size: small; font-family: monospace">{{client.id}}</span>
-
-					<p><label><input type="checkbox" checked="checked" disabled="disabled"> Basic access permissions</label></p>
-
-					{{#each getScopes}}
-						<p><label><input data-scope="{{localScope}}" class="grantScopeItem" type="checkbox" checked="checked" > {{name}} <code>{{localScope}}</code></label></p>
-					{{/each}}
 
 
--->
-					<!-- <p>Owner <code>{{uwap-userid}}</code></p> -->
+					{{/if}}
 
-					<p>
-						<button class="actGrant btn btn-success">
-							<i class="icon-ok"></i> Grant selected permissions
-						</button>
-						<button class="actReject btn btn-danger">Reject any access</button>
-					</p>
+
+
+					{{#if scopes.generic_accepted }}
+						<div>
+							<button class="revokeAll btn btn-danger">Revoke all access</button>
+						</div>
+					{{/if}}
+
+
+
+					{{#if scopes.scopes_requested}}
+
+					{{/if}}
+
+
+
 
 				</div>
 
@@ -79,6 +119,7 @@
 				
 
 			</td>
+
 		</tr>
 
 	{{/each}}
@@ -95,87 +136,3 @@
 
 
 
-
-
-
-{{#if pending}}
-
-<h3>Pending Client Authorization Decisions</h3>
-
-
-<table class="table table-striped">
-	<tbody class="authzPending">
-
-
-	{{#each pending}}
-
-		<tr class="client" data-clientid="{{client_id}}"><td>
-			<h4>{{client_name}} <code>{{client_id}}</code></h4>
-
-			<p><label><input type="checkbox" checked="checked" disabled="disabled"> Basic access permissions</label></p>
-
-			{{#each getScopes}}
-				<p><label><input data-scope="{{localScope}}" class="grantScopeItem" type="checkbox" checked="checked" > {{name}} <code>{{localScope}}</code></label></p>
-			{{/each}}
-
-			<!-- <p>Owner <code>{{uwap-userid}}</code></p> -->
-
-			<p>
-				<button class="actGrant btn btn-success">
-					<i class="icon-ok"></i> Grant selected permissions
-				</button>
-				<button class="actReject btn btn-danger">Reject any access</button>
-			</p>
-			
-		</td></tr>
-	{{/each}}
-
-	</tbody>
-</table>
-
-{{/if}}
-
-
-
-
-{{#if authorized}}
-
-<h3>Authorized Clients</h3>
-
-
-<table class="table table-striped">
-
-	<thead>
-		<tr>
-			<th>Client ID</th>
-			<th>Client name</th>
-			<th>Additional scopes</th>
-			<th></th>
-
-		</tr>
-	</thead>
-
-	<tbody class="authzPending">
-
-
-	{{#each authorized}}
-
-		<tr class="client" data-clientid="{{client_id}}">
-			<td>{{client_id}}</td>
-			<td>{{client_name}}</td>
-			<td>
-			{{#each getScopes}}
-				<span class="label">{{localScope}}</span>
-			{{/each}}
-			</td>
-			<td><a href="#" style="display: inline" class="btn btn-mini" title="" >Edit</a></td>
-		</tr>
-
-
-
-	{{/each}}
-
-	</tbody>
-</table>
-
-{{/if}}

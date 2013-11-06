@@ -15,7 +15,7 @@ class Client extends StoredModel {
 
 	protected static $validProps = array(
 		'id', 'name', 'descr', 'type', 'uwap-userid', 'handlers', 'status', 'scopes', 'scopes_requested', 'logo',
-		'redirect_uri', 
+		'redirect_uri', 'client_secret'
 		);
 
 
@@ -163,9 +163,12 @@ class Client extends StoredModel {
 		foreach($curArr AS $c) {
 			$indexed[$c] = 1;
 		}
-		$indexed[$key] = 1;
+		$indexed[$value] = 1;
 
 		$curArr = array_keys($indexed);
+
+
+		// echo "setting [" . $key . "] add [" . $value . "] to "; print_r($curArr);
 		$this->set($key, $curArr);
 	}
 
@@ -176,8 +179,8 @@ class Client extends StoredModel {
 		foreach($curArr AS $c) {
 			$indexed[$c] = 1;
 		}
-		if (isset($indexed[$key])) {
-			unset($indexed[$key]);
+		if (isset($indexed[$value])) {
+			unset($indexed[$value]);
 		}
 
 		$curArr = array_keys($indexed);
@@ -192,7 +195,7 @@ class Client extends StoredModel {
 		return false;
 	}
 
-	protected function setScope($scope, $accepted = true) {
+	public function setScope($scope, $accepted = true) {
 
 		// Delete
 		if ($accepted === null) {
@@ -200,12 +203,13 @@ class Client extends StoredModel {
 			$this->removeArrValue('scopes', $scope);
 			$this->removeArrValue('scopes_requested', $scope);
 
+		//  Upgrade from requested to accepted
 		} else if ($accepted === true) {
 
 			$this->addArrValue('scopes', $scope);
 			$this->removeArrValue('scopes_requested', $scope);
 
-
+		// Add as requested...
 		} else if ($accepted === false) {
 
 			if ($this->hasScope($scope)) {
@@ -226,6 +230,8 @@ class Client extends StoredModel {
 
 	protected function requestScope($scope) {
 
+		// echo "request scope " . $scope;
+
 		$allowedScopes = array('userinfo' => 1, 'feedread' => 1, 'feedwrite' => 1, 'longterm' => 1);
 
 		if (isset($allowedScopes[$scope]) && $allowedScopes[$scope]) {
@@ -242,13 +248,13 @@ class Client extends StoredModel {
 		foreach($scopes AS $scope) {
 			$this->requestScope($scope);
 		}
-		$this->store(array('scopes', 'scopes_requested'));
+		// $this->store(array('scopes', 'scopes_requested'));
 
 	}
 
 	public function removeScope($scope) {
 		$this->setScope($scope, null);
-		$this->store(array('scopes', 'scopes_requested'));
+		// $this->store(array('scopes', 'scopes_requested'));
 	}
 
 
