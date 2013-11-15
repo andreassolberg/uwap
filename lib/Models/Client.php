@@ -39,6 +39,12 @@ class Client extends StoredModel {
 	}
 
 
+	public function getOwner() {
+
+		$userid = $this->get('uwap-userid');
+		$user = User::getByID($userid);
+		return $user;
+	}
 
 
 	/**
@@ -199,6 +205,15 @@ class Client extends StoredModel {
 		return false;
 	}
 
+	public function hasStatus($status) {
+		$curArr = $this->get('status', array());
+		foreach($curArr AS $s) {
+			if ($s === $status) return true;
+		}
+		return false;
+	}
+
+
 	public function setScope($scope, $accepted = true) {
 
 		// Delete
@@ -339,12 +354,7 @@ class Client extends StoredModel {
 		return $client;
 	}
 
-
-	public static function getByID($id) {
-		$data = self::getRawByID($id);
-
-		// echo "Type " . get_called_class() . "\n\n";
-
+	public static function restoreFromProperties($data) {
 		$obj = null;
 
 		if ($data['type'] === 'client') {
@@ -363,6 +373,15 @@ class Client extends StoredModel {
 
 		if (!is_a($obj, get_called_class())) throw new Exception('The obtained object is of wrong type.');
 		return $obj;
+	}
+
+
+	public static function getByID($id) {
+		$data = self::getRawByID($id);
+		return self::restoreFromProperties($data);
+		// echo "Type " . get_called_class() . "\n\n";
+
+
 
 	}
 

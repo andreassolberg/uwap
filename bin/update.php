@@ -66,55 +66,71 @@ file_put_contents($uwapBaseDir . '/passwords', $pwdfile);
 
 
 
-
-
-
-
-$ac = new AppDirectory();
+$ac = new ClientDirectory(null);
 $listing = $ac->getAllApps();
 
+// print_r($listing->getJSON()); exit;
 
-foreach($listing["app"] AS $app) {
+
+foreach($listing->getItems() AS $app) {
 
 
-	$current = Config::getInstance($app["id"]);
-	$config = $current->getConfig();
+	// print_r($app->getJSON()); exit;
 
-	if (empty($config['uwap-userid'])) {
-		Utils::cliLog($app['id'], "Skipping [" . $config["name"] . "] without owner.");
+	// $current = Config::getInstance($app["id"]);
+	// $config = $current->getConfig();
+
+	if (!$app->has('uwap-userid')) {
+		Utils::cliLog($app->get('id'), "Skipping [" . $app->get('name') . "] without owner.");
 		// print_r($config);
 		continue;
 	}
 
-	$p = $current->getAppPath('/');
-	$credentials = $current->getDavCredentials();
 
-	Utils::cliLog($app['id'], "Processing " . $config["name"]);
-	
+
+
+	if (!$app instanceof App) {
+		Utils::cliLog($app->get('id'), "Skipping app that is not an app" . $app->get('name'));
+		continue;
+	}
+
+	$p = $app->getAppPath('/');
+
+	$apphosting = new AppHosting($app->getOwner());
+	$credentials = $apphosting->getDavCredentials($app);
+
+
+	Utils::cliLog($app->get('id'), "Processing " . $app->get("name") . " at " . $p);
+
+
 
 	if (is_dir($p)) {
 		// Utils::cliLog($app['id'], " Directory " . $p . " exists.");
 	} else {
 		mkdir($p);
 		chmod($p, 0777);
-		Utils::cliLog($app['id'], " Creating dir " . $p . "");
+		Utils::cliLog($app->get('id'), " Creating dir " . $p . "");
 		UWAPLogger::info('bin-update', " Creating dir " . $p . "");
 	}
 
 	$hta = $p . '.htaccess';
 
+
+	// print_r($credentials);
+	// exit;	
+
 	if (file_exists($hta )) {
 		// echo " .htaccess file exists\n";
 	} else {
-		Utils::cliLog($app['id'], " Creating file " . $hta . "");
+		Utils::cliLog($app->get('id'), " Creating file " . $hta . "");
 		file_put_contents($hta, "Require user " . $credentials["username"] . "\n");
 		chmod($hta, 0644);
 		UWAPLogger::info('bin-update', "Adding .htpasswd file. Require user " . $credentials["username"] . "\n");
 	}
 
-	if ($current->hasStatus(array('pendingDAV'))) {
-		$current->updateStatus(array('pendingDAV' => false, 'operational' => true));
-		Utils::cliLog($app['id'], "Setting WebApp status from pendingDAV to operational");
+	if ($app->hasStatus(array('pendingDAV'))) {
+		$app->updateStatus(array('pendingDAV' => false, 'operational' => true));
+		Utils::cliLog($app->get('id'), "Setting WebApp status from pendingDAV to operational");
 		UWAPLogger::info('bin-update', "Setting WebApp status from pendingDAV to operational");
 	}
 

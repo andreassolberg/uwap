@@ -12,7 +12,7 @@ class ClientSet extends Set {
 	}
 
 	public function addData($entry) {
-		$this->add(new Client($entry));
+		$this->add(Client::restoreFromProperties($entry));
 	}
 
 

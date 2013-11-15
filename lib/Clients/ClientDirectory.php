@@ -20,6 +20,9 @@ class ClientDirectory {
 
 	}
 
+
+
+
 	public function authorize($client, $req) {
 
 		if ($req === 'owner') {
@@ -60,6 +63,27 @@ class ClientDirectory {
 		return new ClientSet($res);
 	}
 
+
+	public function getAllApps() {
+		$fields = array();
+		// 	'id' => true,
+		// 	'name' => true,
+		// 	'descr' => true,
+		// 	'type' => true,
+		// 	'owner-userid' => true,
+		// 	'owner' => true,
+		// 	'name' => true,
+		// );
+		$query = array(
+			"status" => array(
+				'$ne' => "pendingDelete"
+			),
+			"type" => "app",
+		);
+		$listing = $this->store->queryList('clients', $query, $fields);
+
+		return new ClientSet($listing);
+	}
 
 
 
