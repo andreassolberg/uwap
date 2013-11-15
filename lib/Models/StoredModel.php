@@ -4,10 +4,13 @@
 abstract class StoredModel extends Model {
 
 	protected static $collection = null;
-	protected static $primaryKey = null;	
-	
+	protected static $primaryKey = null;
+	protected static $mongoID = false;
+
 	protected $store;
 
+
+	protected static $cache = array();
 
 	public function __construct($properties) {
 
@@ -42,6 +45,10 @@ abstract class StoredModel extends Model {
 			}
 		}
 
+		$timenow = floor(microtime(true)*1000.0);
+
+
+
 
 		// error_log("__STORE updates " . var_export($update, true));
 		
@@ -50,10 +57,36 @@ abstract class StoredModel extends Model {
 			return;
 		}
 
-		
+		$matchValue = null;
+		if(static::$primaryKey === '_id') {
+
+			if (isset($this->properties['id'])) {
+				$matchValue = new MongoId($this->properties['id']);	
+			}
+		} else {
+			$matchValue = $this->properties[static::$primaryKey];
+		}
+
+
+		if (!isset($this->properties['created'])) {
+			$update['created'] = $timenow;
+		} else {
+			$update['updated'] = $timenow;
+		}
+
+
+		if (!isset($matchValue)) {
+			$this->store->store(static::$collection, null, $update);
+			return;
+		}
+
+
+
+		// echo "about to store a new object: "; print_r($update); exit;
+
 
 		$this->store->upsert(static::$collection, 
-			array(static::$primaryKey => $this->properties[static::$primaryKey]), 
+			array(static::$primaryKey => $matchValue),
 			$update
 		);
 
@@ -81,12 +114,26 @@ abstract class StoredModel extends Model {
 
 		if (empty(static::$collection)) throw new Exception('Incomplete Model implementation: collection to storage not set');
 
-		if (!in_array($key, static::$validProps)) {
-			throw new Exception('Cannot obtain a model of [' . __CLASS__ . '] by this key [' . $key . ']');
+
+
+		if($key === 'id' && static::$primaryKey === '_id') {
+			$query = array('_id' => new MongoId($value));
+			
+		} else {
+
+			if (!in_array($key, static::$validProps)) {
+				throw new Exception('Cannot obtain a model of [' . __CLASS__ . '] by this key [' . $key . ']');
+			}
+			
+			$query = array($key => $value); 
 		}
 
+		// if ($key === 'oid') {
+		// 	echo "Query "; print_r($query); exit;	
+		// }
+		
 
-		$query = array($key => $value); 
+		
 		// $search = $store->queryOne(static::$collection, $query, static::$validProps );
 		$search = $store->queryOne(static::$collection, $query);
 
@@ -109,6 +156,8 @@ abstract class StoredModel extends Model {
 
 	public static function getByKey($key, $value) {
 		$data = self::getRawByKey($key, $value);
+
+		if (empty($data)) return null;
 		return new static($data);
 	}
 
@@ -120,7 +169,15 @@ abstract class StoredModel extends Model {
 
 	public static function getByID($id) {
 
+		if (isset(self::$cache[$id])) {
+			return self::$cache[$id];
+		}
+
 		$data = self::getRawByID($id);
-		return new static($data);
+		$item = new static($data);
+
+		self::$cache[$id] = $item;
+
+		return $item;
 	}
 }

@@ -5,17 +5,51 @@ define(function(require, exports, module) {
 
 		$ = require('jquery');
 
-		/*
-		
-			<div id="panecontainer">
-				<div id="navbar"></div>
-				<div id="panes"></div>
-			</div>
-
-		 */
 
 
+	/**
+	 * The NAVBar is ...
+	 */
 
+	panes.NavBar = function(el) {
+		this.el = el;
+		// this.pc = pc;
+
+		this.el.on('click', '.paneselector', function(e) {
+			console.log("Click paneselector", e);
+		});
+	};
+
+	panes.NavBar.prototype.set = function(entries) {
+		var that = this, c;
+
+		this.el.empty();
+		for(var i= 0; i < entries.length; i++) {
+			c = entries[i];
+			if (i === entries.length-1) {
+				this.el.append('<li class="active"><a href="#">' + c.title + '</a></li>');
+			} else {
+				this.el.append('<li><a href="#!' + c.href + '">' + c.title + '</a></li>');
+			}
+			
+		}	
+
+	}
+
+
+
+
+	/**
+	 * The PaneController controls a set of 'panes' that may only be active one at the time.
+	 * Here is the html that is representing the structure:
+	 * 
+	 * 		<div id="panecontainer">
+	 *			<div id="navbar"></div>
+	 *			<div id="panes"></div>
+	 *		</div>
+	 * 
+	 * @param {[type]} el [description]
+	 */
 	panes.PaneController = function(el) {
 	
 		this.panelist = {};
@@ -50,35 +84,12 @@ define(function(require, exports, module) {
 
 
 
-
-
-	panes.NavBar = function(el) {
-		this.el = el;
-		// this.pc = pc;
-
-		this.el.on('click', '.paneselector', function(e) {
-			console.log("Click paneselector", e);
-		});
-	};
-
-	panes.NavBar.prototype.set = function(entries) {
-		var that = this, c;
-
-		this.el.empty();
-		for(var i= 0; i < entries.length; i++) {
-			c = entries[i];
-			if (i === entries.length-1) {
-				this.el.append('<li class="active"><a href="#">' + c.title + '</a></li>');
-			} else {
-				this.el.append('<li><a href="#!' + c.href + '">' + c.title + '</a></li>');
-			}
-			
-		}	
-
-	}
-
-
-
+	/**
+	 * The Pane represent one 'pane'
+	 * @param {[type]} el [description]
+	 * @param {[type]} id [description]
+	 * @param {[type]} pc [description]
+	 */
 	panes.Pane = function(el, id, pc) {
 		this.pc = pc;
 		this.id = id;
@@ -90,7 +101,6 @@ define(function(require, exports, module) {
 			'deactivate': []
 		};
 
-
 		this.el.attr('id', 'uwapfeedpane-' + id);
 
 		this.active = false;
@@ -99,12 +109,12 @@ define(function(require, exports, module) {
 	panes.Pane.prototype.on = function(r, callback) {
 		this.callbacks[r].push(callback);
 	}
+	
 	panes.Pane.prototype.emit = function(r, data) {
 		$.each(this.callbacks[r], function(i, callback) {
 			callback(data);
 		});
 	}
-
 
 	panes.Pane.prototype.deactivate = function() {
 		this.active = false;

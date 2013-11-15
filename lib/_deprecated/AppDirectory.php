@@ -1,6 +1,11 @@
 <?php
 
 /**
+ *
+ *
+ * 					DEPRECATED DEPRECATED	DEPRECATED DEPRECATED	DEPRECATED DEPRECATED	DEPRECATED DEPRECATED DEPRECATED	DEPRECATED 
+ *
+ * 
  * AppDirectory allows you to get information about applications.
  * Used by dev and store.
  */

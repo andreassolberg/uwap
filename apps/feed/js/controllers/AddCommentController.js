@@ -18,11 +18,14 @@ define(function(require, exports, module) {
 			"postComment": hogan.compile(tmpl.postComment)
 		}
 
-		if (user) {
-			user.profileimg = UWAP.utils.getEngineURL('/api/media/user/' + user.a);
-		}
+		
+		var tmpview = {
+			user: user.getView()
+		};
 
-		$(this.templates.postComment.render({user: user})).appendTo(this.el);
+		console.log("Enable add comment AddCommentController ", tmpview);
+
+		$(this.templates.postComment.render(tmpview)).appendTo(this.el);
 
 		this.el.on('click', '.actPostComment', $.proxy(this.actPostComment, this));
 
@@ -38,14 +41,14 @@ define(function(require, exports, module) {
 	AddCommentController.prototype.actPostComment = function(e) {
 		e.preventDefault();
 		var msg = {
-			"class": "comment"
+			"class": ["comment"]
 		};
 		// var groups = [];
 		// this.el.find("div.groups input:checked").each(function(i, item) {
 		// 	groups.push($(item).attr('value'));
 		// });
 		// msg['groups'] = this.item.groups;
-		msg.groups = this.item.groups;
+		msg.audience = this.item.audience;
 		msg.message = this.el.find('textarea').val();
 		msg.inresponseto = this.item.id;
 

@@ -10,6 +10,8 @@ abstract class Model {
 	protected static $validProps = array();
 
 
+	
+
 	public function __construct($properties) {
 
 
@@ -20,6 +22,16 @@ abstract class Model {
 				$toset[$p] = $properties[$p];
 			}
 		}
+
+		$more = array('created', 'updated');
+
+		foreach($more AS $p) {
+			if (isset($properties[$p])) {
+				$toset[$p] = $properties[$p];
+			}
+		}
+
+
 		$this->properties = $toset;
 
 	}

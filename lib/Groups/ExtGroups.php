@@ -41,7 +41,7 @@ class ExtGroups {
 
 		// echo "return value"; print_r($cmd);
 
-		// echo "About to start"; print_r($input);
+		// echo "About to start"; print_r(json_encode($input));
 
 		if (is_resource($process)) {
 			// $pipes now looks like this:
@@ -59,8 +59,12 @@ class ExtGroups {
 			// proc_close in order to avoid a deadlock
 			$return_value = proc_close($process);
 
+			 // echo "raw data is $result $return_value";
+
 			if ($return_value === 0) {
 				$parsedData = json_decode($result, true);
+
+				// echo "raw data is $result";
 
 				return $parsedData;
 
@@ -95,6 +99,9 @@ class ExtGroups {
 		// echo "data"; print_r($parsedgroups);exit;
 
 		$gos = array();
+
+		// print_r($parsedgroups); exit;
+
 		foreach($parsedgroups['groups'] AS $groupid => $pg) {
 
 			// print_r($parsedgroups); exit;

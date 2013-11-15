@@ -6,15 +6,19 @@ define(function(require, exports, module) {
 		UWAP = require('uwap-core/js/core'),
 		jso = require('uwap-core/js/oauth'),
 
-		FeedController = require('controllers/FeedController'),
-		ItemController = require('controllers/ItemController'),
+		models = require('uwap-core/js/models'),
 
-		PostController = require('PostController'),
+		FeedController = require('./FeedController'),
+		ItemController = require('./ItemController'),
 
-		GroupSelectorController = require('GroupSelectorController'),
-		GroupSelectorControllerBar = require('GroupSelectorControllerBar'),
+		PostController = require('./PostController'),
 
-		NotificationsController = require('NotificationsController'),
+		FeedSelector = require('./FeedSelector'),
+
+		// GroupSelectorController = require('GroupSelectorController'),
+		// GroupSelectorControllerBar = require('GroupSelectorControllerBar'),
+
+		NotificationsController = require('./NotificationsController'),
 
 		panes = require('controllers/panes'),
 
@@ -28,25 +32,6 @@ define(function(require, exports, module) {
 	require('uwap-core/bootstrap3/js/collapse');
 	require('uwap-core/bootstrap3/js/button');
 	require('uwap-core/bootstrap3/js/dropdown');	
-
-	// require('uwap-core/bootstrap/js/bootstrap');
-	// require('uwap-core/bootstrap/js/bootstrap-collapse');
-	// require('uwap-core/bootstrap/js/bootstrap-button');
-	// require('uwap-core/bootstrap/js/bootstrap-dropdown');
-
-
-
-
-
-	// require('uwap-core/bootstrap/js/bootstrap-modal');
-    // require('uwap-core/bootstrap/js/bootstrap-tooltip');
-	// require('uwap-core/bootstrap/js/bootstrap-transition');
-	// require('uwap-core/bootstrap/js/bootstrap-alert');
-	// require('uwap-core/bootstrap/js/bootstrap-scrollspy');
-	// require('uwap-core/bootstrap/js/bootstrap-tab');
-	// require('uwap-core/bootstrap/js/bootstrap-popover');
-	// require('uwap-core/bootstrap/js/bootstrap-carousel');
-	// require('uwap-core/bootstrap/js/bootstrap-typeahead');
 
 
 	var tmpl = {
@@ -70,57 +55,19 @@ define(function(require, exports, module) {
 			"upcomingItem": hogan.compile(tmpl.upcomingItem)
 		};
 
-		this.navbar = new panes.NavBar(this.el.find('#navbar'));
+		// this.navbar = new panes.NavBar(this.el.find('#navbar'));
 
 
+		// Pane Controller
 		this.pc = new panes.PaneController(this.el.find('#panecontainer'));
+
+		// The main newsfeed pane is the one containing the default feed.
 		this.mainnewsfeedPane = this.pc.get('newsfeed');
 		this.mainnewsfeed = new FeedController(this.mainnewsfeedPane, this);
 		this.mainnewsfeedPane.activate();
-
-		this.singleitemcontroller = null;
-
-		UWAP.feed.upcoming({}, function(data) {
-			console.log("Upcoming response"); console.log(data);
-			if (!data.items) return;
-
-			var container = $("#upcoming").empty();
-			$.each(data.items, function(i, item) {
-				// var h = $("#itemUpcomingTmpl").tmpl(item);
-				$(that.templates.upcomingItem.render(item)).data('object', item).appendTo(container);
-				// container.append(h);
-			});
-
-
-		});
-
-
-
-
-
-		// this.groupcontroller = new GroupSelectorController(this.el.find('ul#navfilter'));
-		// this.groupcontroller.onSelect($.proxy(this.mainnewsfeed.setSelector, this.mainnewsfeed));
-
-		this.groupcontrollerbar = new GroupSelectorControllerBar(this.el.find('#feedmenu'));
-		this.groupcontrollerbar.onSelect($.proxy(this.mainnewsfeed.setSelector, this.mainnewsfeed));
-
-		this.postpane = this.pc.get('post');
-
-		this.postcontroller = new PostController(this.postpane);
-		this.postcontroller.onPost($.proxy(this.mainnewsfeed.post, this.mainnewsfeed));
-
-		this.notificationsController = new NotificationsController(this.el.find('#feednotifications'));
-
-		this.routingEnabled = true;
-		$(window).bind('hashchange', $.proxy(this.route, this));
-		this.route();
-
 		this.mainnewsfeedPane.on('activate', function() {
-			that.navbar.set([
-				{'title': 'Newsfeed', 'href': '/'}
-			]);		
+			// that.setHash('/');
 		});
-
 		this.mainnewsfeedPane.on('deactivate', function() {
 			$("#viewbarcontroller").hide();
 		});
@@ -129,15 +76,66 @@ define(function(require, exports, module) {
 		});
 
 
-		this.postpane.on('deactivate', function() {
-			$("#postEnable").show();
+		// The post pane is the pane that allows you to post a new item.
+		this.postpane = this.pc.get('post');
+		this.postcontroller = new PostController(this.postpane);
+		this.postcontroller.onPost(function(d) {
+			that.mainnewsfeed.post(d);
 
 		});
-		// $("#postEnable").on('click', '#postEnableBtn', $.proxy(this.postEnable, this));
+
+		this.postpane.on('deactivate', function() {
+			$("#postEnable").show();
+		});
 		this.postpane.el.on('click', '#postDisableBtn', $.proxy(function() {
 			this.mainnewsfeedPane.activate();
 			this.postDisable();
 		}, this));
+
+
+		// The group controller is the dropdown that allows you to selec tgroup.
+		// this.groupcontrollerbar = new GroupSelectorControllerBar(this.el.find('#feedmenu'));
+		// this.groupcontrollerbar.onSelect($.proxy(this.mainnewsfeed.setSelector, this.mainnewsfeed));
+
+		this.feedselector = new FeedSelector(this, this.el.find('#feedselector'));
+		this.feedselector.onSelect($.proxy(this.mainnewsfeed.setSelector, this.mainnewsfeed));
+
+
+		// Single item controller is ....
+		this.singleitemcontroller = null;
+
+		// Load the upcoming feed. That means event in near future.
+		UWAP.feed.upcoming({}, function(data) {
+			// console.log("Upcoming response"); console.log(data);
+			if (!data.items) return;
+
+			var container = $("#upcoming").empty();
+			$.each(data.items, function(i, item) {
+				// var h = $("#itemUpcomingTmpl").tmpl(item);
+				// 
+				var itemview = that.mainnewsfeed.getItemView(item);
+				$(that.templates.upcomingItem.render(itemview)).data('object', item).appendTo(container);
+				// container.append(h);
+			});
+
+		});
+
+
+
+		// this.groupcontroller = new GroupSelectorController(this.el.find('ul#navfilter'));
+		// this.groupcontroller.onSelect($.proxy(this.mainnewsfeed.setSelector, this.mainnewsfeed));
+
+
+		// The notifications controller is the dropdown of notifications in the header navbar.
+		this.notificationsController = new NotificationsController(this, this.el.find('#feednotifications'));
+
+
+		// Routing
+		this.routingEnabled = true;
+		$(window).bind('hashchange', $.proxy(this.route, this));
+		this.route();
+
+
 
 		$(".loader-hideOnLoad").hide();
 		$(".loader-showOnLoad").show();
@@ -180,7 +178,6 @@ define(function(require, exports, module) {
 		});
 
 
-
 		setInterval(function(){ 
 			$("span.ts").prettyDate(); 
 		}, 8000);
@@ -194,6 +191,11 @@ define(function(require, exports, module) {
 			table.empty();
 			$.each(items, function(i, item) {
 				// table.append($("#groupItem").tmpl(item));
+				if (that.user.subscriptions[item.id]) {
+					item.subscribed = true;
+				} else {
+					item.subscribed = false;
+				}
 				$(that.templates.subscriptionList.render(item)).data('object', item).appendTo(table);
 				// table.append('<tr><td>' + item.title + '</td></tr>');
 			});
@@ -203,32 +205,46 @@ define(function(require, exports, module) {
 
 	App.prototype.subscribe = function(e) {
 		var that = this;
-		if (e) e.preventDefault();
+		if (e) {
+			e.preventDefault();
+			e.stopPropagation();
+		}
 
 		var targetItem = $(e.currentTarget).closest('div.group');
 		var item = targetItem.data('object');
 
-		console.log("Subscribe to ", item);
+		// console.log("Subscribe to ", item);
 
 		UWAP.groups.subscribe(item.id, function() {
-			that.loadSubscriptions();
-			that.mainnewsfeed.load();
+			UWAP.auth.require(function(user) {
+				that.user = user;
+				that.loadSubscriptions();
+				that.mainnewsfeed.load();
+			});
+			
+			
 		});
 
 	}
 
 	App.prototype.unsubscribe = function(e) {
 		var that = this;
-		if (e) e.preventDefault();
+		if (e) {
+			e.preventDefault();
+			e.stopPropagation();
+		}
 
 		var targetItem = $(e.currentTarget).closest('div.group');
 		var item = targetItem.data('object');
 
-		console.log("unsubscribe to ", item);
+		// console.log("unsubscribe to ", item);
 
 		UWAP.groups.unsubscribe(item.id, function() {
-			that.loadSubscriptions();
-			that.mainnewsfeed.load();
+			UWAP.auth.require(function(user) {
+				that.user = user;
+				that.loadSubscriptions();
+				that.mainnewsfeed.load();
+			});
 		});
 
 	}
@@ -241,10 +257,10 @@ define(function(require, exports, module) {
 		this.postpane.activate();
 		$("#postEnable").hide();
 		
-		that.navbar.set([
-			{'title': 'Newsfeed', 'href': '/'},
-			{'title': 'Post new content', 'href': '/'}
-		]);				
+		// that.navbar.set([
+		// 	{'title': 'Newsfeed', 'href': '/'},
+		// 	{'title': 'Post new content', 'href': '/'}
+		// ]);				
 		
 	}
 
@@ -266,13 +282,32 @@ define(function(require, exports, module) {
 
 	App.prototype.setHash = function(hash) {
 		this.routingEnabled = false;
+		var that = this;
+
 		window.location.hash = '#!' + hash;
-		// console.log("Setting hash to " + hash);
-		this.routingEnabled = true;
+		console.log("Setting hash to " + hash);
+
+		var e = new Error('dummy');
+		var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
+		    .replace(/^\s+at\s+/gm, '')
+		    .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
+		    .split('\n');
+		console.log(stack);
+
+		setTimeout(function() {
+			that.routingEnabled = true;
+		}, 0); // Add to end of current events stack, in order to work with immediate callback oriented functions...
+		
+		
 	}
 
 	App.prototype.route = function(e) {
+
+		console.log("Routing", this.routingEnabled);
 		if (!this.routingEnabled) return;
+		// console.log("Routing continue", this.routingEnabled);
+
+
 		var hash = window.location.hash;
 		// console.log("Routing...");
 		if (hash.length < 3) {
@@ -285,14 +320,32 @@ define(function(require, exports, module) {
 
 		if (hash.match(/^\/$/)) {
 
+			this.mainnewsfeed.setSelector({});
 			this.mainnewsfeed.load();
 
 		} else if (parameters = hash.match(/^\/post$/)) {
 
 			this.postEnable();
 
+		} else if (parameters = hash.match(/^\/user\/([0-9A-Za-z\-:_@]+)$/)) {
+			// console.log("Group ", parameters[1]);
+
+			// this.mainnewsfeed.setSelector({user: parameters[1]});
+			// this.mainnewsfeed.load();
+
+			this.feedselector.selectUser(parameters[1]);
+
+
+		} else if (parameters = hash.match(/^\/group\/([0-9A-Za-z\-:_]+)$/)) {
+			// console.log("Group ", parameters[1]);
+
+			this.feedselector.selectGroup(parameters[1]);
+
+			// this.mainnewsfeed.setSelector({group: parameters[1]});
+			// this.mainnewsfeed.load();
+
 		} else if (parameters = hash.match(/^\/item\/([0-9a-z]+)$/)) {
-			console.log("Item ", parameters[1]);
+			// console.log("Item ", parameters[1]);
 
 			this.openSingleItem(parameters[1]);
 
@@ -311,17 +364,26 @@ define(function(require, exports, module) {
 	App.prototype.openSingleItem = function(id) {
 		var that = this;
 
+		console.log("Open single item", id);
+
 		if (this.singleitemcontroller === null) {
 			var osipane = this.pc.get('singleitem');
 			this.singleitemcontroller = new ItemController(osipane, this);
+
+
+			// this.singleitemcontroller.setgroups(this.user.groups);
+			// this.singleitemcontroller.setsubscriptions(this.user.subscriptions);
+			// this.singleitemcontroller.setuser(this.user);
+
+
 		}
 
-		this.navbar.set([
-			{'title': 'Newsfeed', 'href': '/'},
-			{'title': 'View post', 'href': '/'},
-		]);
+		// this.navbar.set([
+		// 	{'title': 'Newsfeed', 'href': '/'},
+		// 	{'title': 'View post', 'href': '/'},
+		// ]);
 
-		console.log("App.prototype.openSingleItem", id)
+		// console.log("App.prototype.openSingleItem", id)
 		this.singleitemcontroller.load(id);
 
 	}
@@ -336,9 +398,14 @@ define(function(require, exports, module) {
 		// console.error('setauth');
 
 		this.postcontroller.setgroups(user.groups);
-		this.groupcontrollerbar.setgroups(user.groups);
+		// this.groupcontrollerbar.setgroups(user.groups);
+
+		this.feedselector.setgroups(user.groups, user.subscriptions);
+
 		this.mainnewsfeed.setgroups(user.groups);
+		this.mainnewsfeed.setsubscriptions(user.subscriptions);
 		this.mainnewsfeed.setuser(user);
+
 	}
 
 	App.prototype.getUser = function () {
@@ -352,10 +419,12 @@ define(function(require, exports, module) {
 	App.init = function() {
 		var app;
 		$("document").ready(function() {
-			console.log("App.init()");
-			UWAP.auth.require(function(user) {
-				console.log("Is authenticated, now start the app.");
+			// console.log("App.init()");
+			UWAP.auth.require(function(data) {
+				// console.log("Is authenticated, now start the app.");
 				app = new App($("body"))
+
+				var user = new models.User(data);
 				app.setauth(user);
 			});
 		});

@@ -22,6 +22,7 @@ require_once($base . '/Groups/ExtGroups.php');
 require_once($base . '/Groups/GroupSet.php');
 
 
+
 require_once($base . '/Clients/ClientDirectory.php');
 
 require_once($base . '/AppHosting/AppHosting.php');
@@ -32,9 +33,7 @@ require_once($base . '/AppHosting/AppHosting.php');
 require_once($base . '/Models/Model.php');
 require_once($base . '/Models/StoredModel.php');
 require_once($base . '/Models/User.php');
-require_once($base . '/Models/Group.php');  
-require_once($base . '/Models/AdHocGroup.php');
-require_once($base . '/Models/Role.php');
+
 require_once($base . '/Models/Client.php');
 require_once($base . '/Models/App.php');
 require_once($base . '/Models/APIProxy.php');
@@ -46,16 +45,27 @@ require_once($base . '/Sets/UserSet.php');
 require_once($base . '/Sets/GroupSet.php');
 require_once($base . '/Sets/AuthorizationList.php');
 
+require_once($base . '/Models/Group.php');  
+require_once($base . '/Models/AdHocGroup.php');
+require_once($base . '/Models/Role.php');
+
+
+
+// Feed
+
+require_once($base . '/Feed/Notification.php');
+require_once($base . '/Feed/Notifications.php');
+require_once($base . '/Feed/Feed.php');
+require_once($base . '/Feed/FeedItem.php');
+require_once($base . '/Feed/FeedReader.php');
+
 
 
 require_once($base . '/GlobalConfig.php');
 
-require_once($base . '/Feed.php');
-require_once($base . '/Notifications.php');
-require_once($base . '/Upcoming.php');
 
 
-// require_once($base . '/AppDirectory.php');
+
 require_once($base . '/UWAPStore.php');
 require_once($base . '/UWAPLogger.php');
 

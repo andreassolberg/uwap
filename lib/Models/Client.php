@@ -15,7 +15,8 @@ class Client extends StoredModel {
 
 	protected static $validProps = array(
 		'id', 'name', 'descr', 'type', 'uwap-userid', 'handlers', 'status', 'scopes', 'scopes_requested', 'logo',
-		'redirect_uri', 'client_secret'
+		'redirect_uri', 'client_secret',
+		'groups' // A client can be member of groups... if acting on own.
 		);
 
 
@@ -36,6 +37,9 @@ class Client extends StoredModel {
 		parent::__construct($properties);
 
 	}
+
+
+
 
 	/**
 	 * updateStatus adds and removes statuses

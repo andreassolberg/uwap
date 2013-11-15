@@ -34,7 +34,7 @@ class RSS {
 							"text" => "read more",
 						)
 					),
-					"oid" => sha1($link),
+					"oid" => (string) $link,
 				);
 			}
 		}

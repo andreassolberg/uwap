@@ -41,18 +41,34 @@ define(function(require, exports, module) {
 			this.el.on('click', '.actSubscribe', $.proxy(this.subscribe, this));
 			this.el.on('click', '.actUnsubscribe', $.proxy(this.unsubscribe, this));
 
-			this.load();
 
 		}
 		App.prototype.load = function() {
 			var that = this;
 			UWAP.groups.listPublic(function(items) {
+
+				console.log("Loaded public groups", items);
+
 				var table = that.el.find('.t');
 				table.empty();
-				$.each(items, function(i, item) {
+
+				console.log(that.user);
+
+				$.each(items, function(groupid, item) {
+
+					if (that.user.groups[item.id]) {
+						// return;
+					}
+
+					if (that.user.subscriptions[item.id]) {
+						item.subscribed = true;
+					} else {
+						item.subscribed = false;
+					}
 					table.append($("#groupItem").tmpl(item));
 					// table.append('<tr><td>' + item.title + '</td></tr>');
 				});
+
 			});
 		}
 
@@ -67,7 +83,9 @@ define(function(require, exports, module) {
 			console.log("Subscribe to ", item);
 
 			UWAP.groups.subscribe(item.id, function() {
-				that.load();
+				console.log("Subscribed");
+				UWAP.auth.require($.proxy(that.setauth, that));
+				
 			});
 
 		}
@@ -82,18 +100,19 @@ define(function(require, exports, module) {
 			console.log("Subscribe to ", item);
 
 			UWAP.groups.unsubscribe(item.id, function() {
-				that.load();
+				UWAP.auth.require($.proxy(that.setauth, that));
+
 			});
 
 		}
 
 		App.prototype.setauth = function(user) {
 			this.user = user;
-			this.groups = user.groups;
 
 			$(".myname").empty().append(user.name);
 
-			
+			this.load();
+
 		}
 
 

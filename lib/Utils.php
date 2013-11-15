@@ -34,7 +34,24 @@ class Utils {
 	}
 
 
+	public static function dump($tag, $object, $exit = true) {
+		global $UWAP_DUMP;
+		if ($UWAP_DUMP !== true) {
+			header('Content-Type: text/plain; charset: utf-8');	
+		}
+		
+		echo "----------------- \n";
+		echo "]" . $tag . ": " . gettype($object) . "\n";
+		echo "----------------- \n";
 
+		print_r($object);
+
+		echo "----------------- \n\n\n";
+
+		if ($exit) exit;
+
+		$UWAP_DUMP = true;
+	}
 
 	public static function getHost() {
 		return $_SERVER['HTTP_HOST'];

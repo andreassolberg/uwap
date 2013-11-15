@@ -1,6 +1,5 @@
 # UNINETT WebApp Park
 
-
 core.uwap.org
 
 	Alias /login /var/www/uwap/engine/login-core.php
@@ -14,6 +13,7 @@ core.uwap.org
 	Alias /_/login /var/www/uwap/engine/login.php
 	Alias / /var/www/uwap/engine/engine.php/
 
+	
 
 The endpoints:
 

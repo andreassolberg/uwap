@@ -9,17 +9,6 @@ define(function(require, exports, module) {
 		;
 
 
-	// $(function() {
-	// 	var hogan = require('uwap-core/js/hogan-2.0.0.min.amd');
-	// 	var template = 'Hello {{world}}!';
-	// 	var data = {world: "foo"};
-
-	// 	var hello = hogan.compile(template);
-
-	// 	$("body").append(hello.render(data));
-	// });
-	
-
 
 	App.init();
 

@@ -25,6 +25,8 @@ error_log("Time START    :     ======> " . (microtime(true) - $profiling));
 
 try {
 
+	$globalconfig = GlobalConfig::getInstance();
+
 	if (Utils::route('options', '.*', &$parameters)) {
 		header('Content-Type: application/json; charset=utf-8');
 		exit;
@@ -112,7 +114,7 @@ try {
 		$user = $token->getUser();
 
 
-		$response['data'] = $user->getJSON(array('type' => 'basic',  'groups' => true));
+		$response['data'] = $user->getJSON(array('type' => 'extended',  'groups' => true, 'subscriptions' => true));
 
 
 	/**
@@ -267,10 +269,12 @@ try {
 
 			$groupid = $parameters[1];
 
-			if ($body === true) {
-				$res = $groupconnector->subscribe($groupid, $body);
+			if (!isset($body['subscribe'])) throw new Exception('Missing property subscribe');
+
+			if ($body['subscribe'] === true) {
+				$res = $groupconnector->subscribe($groupid, $body['subscribe']);
 			} else {
-				$res = $groupconnector->unsubscribe($groupid, $body);
+				$res = $groupconnector->unsubscribe($groupid, $body['subscribe']);
 			}
 
 			$response = array(
@@ -916,92 +920,96 @@ try {
 		$oauth = new OAuth();
 		$token = $oauth->check(null, array('feedread'));
 
-		if ($token->isUser()) {
-			$clientid = null;
-
-			$user = $token->getUser();
-			$userid = $user->get('userid');
+		$user = $token->getUser();
+		$client = $token->getClient();
 
 
-			$userdata = $user->getJSON(array('type' => 'basic', 'groups' => array('type' => 'key')));
-			$groups = $userdata['groups'];
+		$feedReader = new FeedReader($client, $user);
 
-		} else {
-			$clientid = $token->getClientID();
-			$userid = null;
-			$groups = $token->getClientGroups();
-		}
 
-		$subscriptions = $user->getSubscriptions();
+		// Utils::dump('feedReader', $feedReader);
 
-		// echo 'groups: '; print_r($groups); exit;
 
-		$feed = new Feed($userid, $clientid, $groups, $subscriptions);
-
-		if (Utils::route('post', '^/feed$', &$qs, &$parameters)) {
+		if (Utils::route('post', '^/feed$', &$parameters, &$object)) {
 			
-			$response['data'] = $feed->read($parameters);
+			$response['data'] = $feedReader->read($object)->getJSON();
 
-		} else if (Utils::route('post', '^/feed/upcoming$', &$qs, &$parameters)) {
 
-			// $parameters;
-			$no = new Upcoming($userid, $groups, $subscriptions);
-			$response['data'] = $no->read($parameters);
 
-		} else if (Utils::route('post', '^/feed/notifications$', &$qs, &$parameters)) {
+		} else if (Utils::route('post', '^/feed/upcoming$', &$parameters, &$object)) {
 
 			// $parameters;
-			$no = new Notifications($userid, $groups, $subscriptions);
-			$response['data'] = $no->read($parameters);
+			// $no = new Upcoming($userid, $groups, $subscriptions);
+			// $response['data'] = $no->read($parameters);
+
+
+			$response['data'] = $feedReader->readUpcoming($object)->getJSON();
+
+		} else if (Utils::route('post', '^/feed/notifications$',  &$parameters, &$object)) {
+
+			// $parameters;
+			// $no = new Notifications($userid, $groups, $subscriptions);
+			// $response['data'] = $no->read($parameters);
+
+
+			$response['data'] = $feedReader->readNotifications($object)->getJSON();
 
 			// header('Content-Type: text/plain; charset: utf-8'); echo "poot"; print_r($response); exit;
 
 		} else if (Utils::route('post', '^/feed/notifications/markread$', &$qs, &$ids)) {
 
 
-			$no = new Notifications($userid, $groups, $subscriptions);
-			$response['data'] = $no->markread($ids);
+			// $no = new Notifications($userid, $groups, $subscriptions);
+			$response['data'] = $feedReader->markNotificationsRead($ids);
 
 
-		} else if (Utils::route('post', '^/feed/post$', &$qs, &$args)) {
+		} else if (Utils::route('post', '^/feed/post$', &$parameters, &$object)) {
 
 			$oauth->check(null, array('feedwrite'));
 
-			if (empty($args['msg'])) throw new Exception("missing required [msg] property");
-			$msg = $args['msg'];
+			// if (empty($args['msg'])) throw new Exception("missing required [msg] property");
+			// $msg = $args['msg'];
 
-			$groups = array();
-			if (!empty($msg['groups'])) $groups = $msg['groups']; unset($msg['groups']);
+			// $groups = array();
+			// if (!empty($msg['groups'])) $groups = $msg['groups']; unset($msg['groups']);
 
-			error_log("About to post groups: " . json_encode($msg));
-			error_log("About to post groups: " . json_encode($groups));
+			// error_log("About to post groups: " . json_encode($msg));
+			// error_log("About to post groups: " . json_encode($groups));
 
-			$response['data'] = $feed->post($msg, $groups);
+			$feedItem = $feedReader->post($object);
+			$response['data'] = $feedItem->getJSON();
 
-		} else if (Utils::route('delete', '^/feed/item/([a-z0-9\-]+)$', &$qs, &$args)) {
+
+
+		} else if (Utils::route('delete', '^/feed/item/([a-z0-9\-]+)$',  &$parameters, &$object)) {
 
 			$oauth->check(null, array('feedwrite'));
 
 			// echo "About to delete an item: " . $qs[1];
-			$response['data'] = $feed->delete($qs[1]);
+			// $response['data'] = $feed->delete($qs[1]);
+			
+			$response['data'] = $feedReader->delete($parameters[1]);
 
-		} else if (Utils::route('post', '^/feed/item/([a-z0-9\-]+)/respond$', &$qs, &$args)) {
 
-			if (empty($args['msg'])) throw new Exception("missing required [msg] property");
-			$msg = $args['msg'];
-			if ($qs[1] !== $msg['inresponseto']) {
+		} else if (Utils::route('post', '^/feed/item/([a-z0-9\-]+)/response$',  &$parameters, &$object)) {
+
+			if ($parameters[1] !== $object['inresponseto']) {
 				throw new Exception('inresponseto property does not match url endpoint item.');
 			}
 
-			$response['data'] = $feed->respond($msg);
+			$feedItem = $feedReader->respond($object);;
+
+			$response['data'] = $feedItem->getJSON();
 
 
-		} else if (Utils::route('get', '^/feed/item/([a-z0-9\-]+)$', &$qs, &$args)) {
+
+
+		} else if (Utils::route('get', '^/feed/item/([a-z0-9\-]+)$', &$parameters, &$object)) {
 
 			// $oauth->check(null, array('feedwrite'));
 			// echo "About to delete an item: " . $qs[1];
 			
-			$response['data'] = $feed->readItem($qs[1]);
+			$response['data'] = $feedReader->read(array('id_' => $parameters[1]))->getJSON();
 
 		} else {
 
@@ -1031,17 +1039,21 @@ try {
 		$handler = "plain";
 
 		$remoteHost = parse_url($url, PHP_URL_HOST);
-		$remoteConfig = Config::getInstanceFromHost($remoteHost);
+		$proxy = $globalconfig->getApp($remoteHost);
 
-		if ($remoteConfig->_getValue('type', null, true) !== 'proxy') {
+		if ($proxy->get('type') !== 'proxy') {
 			throw new Exception('This host is not running a soaproxy.');
 		}
 
-		$proxyconfig = $remoteConfig->_getValue('proxy', null, true) ;
+		$proxyconfig = $proxy->get('proxy');
 
 		$rawpath = parse_url($url, PHP_URL_PATH);
 		if (preg_match('|^(/.*)$|i', $rawpath, $matches)) {
 			$restpath = $matches[1];
+
+			if (empty($proxyconfig['endpoints'])) {
+				throw new Exception('Missing [endpoints] in configuration of this API Proxy.');
+			}
 
 			// if (!isset($proxyconfig[$api])) {
 			// 	throw new Exception('API Endpoint is not configured...');
@@ -1056,35 +1068,43 @@ try {
 
 		// error_log("SOA Config " . var_export($args, true));
 
-		// // // Initiate an Oauth server handler
+		// Initiate an Oauth server handler
 		$oauth = new OAuth();
+		$token = $oauth->check(null, null);
+		$user = $token->getUser();
 
 		// // // Get provided Token on this request, if present.
-		$token = $oauth->getProvidedToken();
+		// $token = $oauth->getProvidedToken();
 
-		$providerID = $remoteConfig->getID();
+		$proxyID = $proxy->get('id');
 
-		// echo "PRoviderID " . $providerID . "\n";
+		// echo "ProviderID " . $providerID . "\n";
 		// echo "proxyconfig "; print_r($proxyconfig); echo "\n";
 
-		$client = HTTPClient::getClientWithConfig($proxyconfig, $providerID);
+		$httpclient = HTTPClient::getClientWithConfig($proxyconfig, $proxyID);
 		if ($token) {
 			
 			$clientid = $token->getClientID();
 			
-			$ensureScopes = array('rest_' . $providerID);
+			$ensureScopes = array('rest_' . $proxyID);
 			$oauth->check(null, $ensureScopes);
-
 
 			$user = $token->getUser();
 			$userdata = $user->getJSON(array('type' => 'basic', 'groups' => array('type' => 'key')));
 
+			// header('Content-Type: text/plain'); print_r($userdata); exit;
+
+			// --- TODO
+
 			// $userdata = $token->getUserdataWithGroups();
-			$client->setAuthenticated($userdata);
-			$scopes = $oauth->getApplicationScopes('rest', $providerID);
-			$client->setAuthenticatedClient($clientid, $scopes);
+			$httpclient->setAuthenticated($userdata);
+			$scopes = $oauth->getApplicationScopes('rest', $proxyID);
+			$httpclient->setAuthenticatedClient($clientid, $scopes);
 		}
-		$response = $client->get($realurl, $args);
+		$response = $httpclient->get($realurl, $args);
+
+
+
 
 
 	/**
@@ -1153,22 +1173,23 @@ try {
 	 */
 	} else if (Utils::route('get', '^/media/user/([a-z0-9\-]+)$', &$qs, &$args)) {
 
-		$default = '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';
+		$default = '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';
 		try {
 
-			$auth = new Authenticator();
-			$auth->req(false, true); // require($isPassive = false, $allowRedirect = false, $return = null
+			// $auth = new Authenticator();
+			// $auth->req(false, true); // require($isPassive = false, $allowRedirect = false, $return = null
 
 			$targetUser = User::getByKey('a', $qs[1]);
 
 			// echo "Get by id " . $qs[1]; print_r($targetUser); exit;
 
 
-			if (empty($targetUser)) {echo 'Not found'; exit;}
-			// echo '<pre>';
-			// print_r($targetUser); exit;
+			if (empty($targetUser)) {
 
-			if ($targetUser->has("photo") ) {
+				header('Content-Type: image/png');
+				echo base64_decode($default);
+
+			} else if ($targetUser->has("photo") ) {
 				header('Content-Type: image/jpeg');
 				echo base64_decode($targetUser->get("photo"));
 			} else {

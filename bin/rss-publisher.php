@@ -28,17 +28,20 @@ if (!is_array($config)) {
 function process($c) {
 	echo "====> Processing " . $c['client_id'] . "\n";
 	$client = new Client($c['client_id'], $c['secret']);
-	$res = $client->oauth_http('http://core.app.bridge.uninett.no/api/feed');
+	// $res = $client->oauth_http('http://core.app.bridge.uninett.no/api/feed');
 
 	$rss = new RSS($c['url']);
 	$entries = $rss->get();
 	foreach($entries AS $entry) {
-		$entry['groups'] = $c['groups'];
+		$entry['audience'] = $c['audience'];
+
 		// $entry['public'] = true;
-		echo "Posting ››››\n";
+		echo "Posting › " . $c['client_id'] . " ›››\n";
 		print_r($entry);
-		echo "\n\n\n";
-		$res = $client->oauth_http('http://core.app.bridge.uninett.no/api/feed/post', array("msg" => $entry));
+		echo json_encode($entry); 
+		echo "\n\n\n"; 
+		$res = $client->oauth_http('http://core.app.bridge.uninett.no/api/feed/post', $entry);
+		// exit;
 	}
 }
 

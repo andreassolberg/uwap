@@ -4,9 +4,10 @@ define(function(require, exports, module) {
 		$ = require('jquery'),
 		UWAP = require('uwap-core/js/core'),
 
-		AddCommentController = require('AddCommentController'),
-		MediaPlayerController = require('MediaPlayerController'),
-		ViewController = require('ViewController'),
+
+		AddCommentController = require('./AddCommentController'),
+		// MediaPlayerController = require('MediaPlayerController'),
+		// ViewController = require('ViewController'),
 		moment = require('uwap-core/js/moment'),
 		hogan = require('uwap-core/js/hogan')
 		;
@@ -19,14 +20,12 @@ define(function(require, exports, module) {
 	};
 
 
-	var FeedController = function(pane, app, viewconfig) {
+	var FeedController = function(pane, app) {
 		this.pane = pane;
 		this.app = app;
 
-		this.viewconfig = viewconfig || {};
-
-
 		this.groups = {};
+		this.subscriptions = {};
 
 		this.currentRange = null;
 		this.loadeditems = {};
@@ -40,11 +39,10 @@ define(function(require, exports, module) {
 
 		this.pane.el.find('.feedcontainer').addClass('view-' + this.view.view);
 
-		this.viewcontroller = new ViewController($("#viewbarcontroller"));
-		this.viewcontroller.onChange($.proxy(this.viewchange, this));
+		// this.viewcontroller = new ViewController($("#viewbarcontroller"));
+		// this.viewcontroller.onChange($.proxy(this.viewchange, this));
 
-
-		this.mediaplayer = new MediaPlayerController(this.pane.el);
+		// this.mediaplayer = new MediaPlayerController(this.pane.el);
 
 		this.pane.el.on('click', '.actEnableComment', $.proxy(this.enableComment, this));
 		this.pane.el.on('click', '.actDelete', $.proxy(this.deleteItem, this));
@@ -62,11 +60,12 @@ define(function(require, exports, module) {
 			"participant": hogan.compile(tmpl.participant)
 		};
 
-
+		// console.log("Feed controller loaded.")
 
 
 		// this.load();
-		setInterval($.proxy(this.update, this), 5000);
+		
+		setInterval($.proxy(this.update, this), 10000);
 
 	}
 
@@ -113,18 +112,24 @@ define(function(require, exports, module) {
 		var targetItem = $(e.currentTarget).closest('div.item');
 		var item = targetItem.data('object');
 		var status = $(e.currentTarget).data('status');
-		console.log("Response with ", status, item);
+		
 
 		var response = {};
-		response['uwap-acl-read'] = item['uwap-acl-read'];
+		response['audience'] = item['audience'];
 		response.inresponseto = item.id;
 		response.status = status;
+		response.class = ['response'];
+
+		// console.log("Response with ", status, item, response);
+
+		// return;
 
 
-
-		UWAP.feed.respond(response, function() {
-			console.log("RESPOND COMPLETE");
+		UWAP.feed.respond(response, function(feed) {
+			// console.log("RESPOND COMPLETE", feed);
 			that.setMyResponse(targetItem, status);
+
+			that.processFeedResponse(feed);
 		});
 
 	}
@@ -136,6 +141,9 @@ define(function(require, exports, module) {
 	FeedController.prototype.setgroups = function(groups) {
 		this.groups = groups;
 	}
+	FeedController.prototype.setsubscriptions = function(subscriptions) {
+		this.subscriptions = subscriptions;
+	}
 
 	FeedController.prototype.enableComment = function(e) {
 		e.preventDefault();
@@ -143,7 +151,7 @@ define(function(require, exports, module) {
 		var targetItem = $(e.currentTarget).closest('div.item');
 		$(e.currentTarget).hide();
 		var item = targetItem.data('object');
-		// console.log("About to enable comment", this.app.user, targetItem, item);
+		// console.log(" ===== About to enable comment", this.app.user, targetItem, item);
 		var cc = new AddCommentController(this.app.user, item, targetItem.find('div.postcomment'));
 		cc.onPost($.proxy(this.post, this));
 
@@ -154,11 +162,18 @@ define(function(require, exports, module) {
 		e.preventDefault();
 		var currentItem = $(e.currentTarget).closest('.item');
 		var item = currentItem.data('object');
-		console.log('About to delete ', currentItem.data());
+		// console.log('About to delete ', currentItem.data());
 
 		UWAP.feed.delete(item.id, function(data) {
-			console.log("Delete response Received", data);
-			that.load();
+			// console.log("Delete response Received", data);
+			// that.load();
+			if (data) {
+				that.loadeditems[item.id].detach();	
+			} else {
+				alert("error deleting this entry");
+			}
+			
+
 		});
 
 	}
@@ -168,57 +183,16 @@ define(function(require, exports, module) {
 	FeedController.prototype.addItem = function(item) {
 		var that = this;
 
-
-		// console.log ("  ›››› ADD ITEM »›››››");
-		item.timestamp = moment(item.ts).format();
-		// console.log("Working with ", item.ts, item.timestamp);
-
 		item.groupnames = [];
 		if (item.groups) {
 			$.each(item.groups, function(i, g) {
-				if (that.groups[g]) {
-					item.groupnames.push(that.groups[g]);
+				if (that.groups[i]) {
+					item.groupnames.push(that.groups[g].title);
 				} else {
 					item.groupnames.push(g);
 				}
 			});
 		}
-
-		if (item.activity && item.activity.actor) {
-			if (item.activity.actor.objectType === 'person') {
-				item.activity.actor.image = {url: UWAP.utils.getEngineURL('/api/media/user/' + item.activity.actor.a)}
-			} else if (item.activity.actor.objectType === 'client') {
-				item.activity.actor.image = {url: UWAP.utils.getEngineURL('/api/media/logo/client/' + item.activity.actor.id)}
-			}
-
-			item.activity.actor.type = {};
-			item.activity.actor.type[item.activity.actor.objectType] = true;
-
-		}
-
-		if (item.activity.verb) {
-			item.activity.verb_ = {};
-			item.activity.verb_[item.activity.verb] = true;
-		}
-
-		if (item.activity.object) {
-			item.activity.object_ = {};
-			item.activity.object_[item.activity.object.objectType] = item.activity.object;
-		}
-
-
-		item.viewconfig = this.viewconfig;
-
-
-		/*
-		if (item.user) {
-			item.user.profileimg = UWAP.utils.getEngineURL('/api/media/user/' + item.user.a);
-		}
-		if (item.client) {
-			item.client.profileimg = UWAP.utils.getEngineURL('/api/media/logo/client/' + item.client['client_id']);
-		}
-		*/
-
 
 		// console.log("Testing article class", item.class)
 		if ($.isArray(item.class) && $.inArray('article', item.class) !== -1) {
@@ -228,6 +202,7 @@ define(function(require, exports, module) {
 		}
 
 		if (item.hasClass('comment')) {
+			// console.log("Has class comment", item);
 			this.addComment(item);
 		} else if (item.hasClass('response')) {
 			this.addResponse(item);
@@ -243,59 +218,127 @@ define(function(require, exports, module) {
 			h,
 			feedcontainer = this.pane.el.find('.feedcontainer');
 
-		if (item.activity) {
-			// console.log("Adding post [activity] ", item);
-		}
-		
-		if (this.view.view === 'media') {
-			// TODO TODO ADD TEMPLATE FOR MEDIA ITEMS. Look in DeprecatedJQUery templates folder to find old template...
-			// h = $("#itemMediaTmpl").tmpl(item);
-			// feedcontainer.find('ul').prepend(h);
-
-		} else if (this.view.view === 'file') {
-
-			// h = $("#itemFileTmpl").tmpl(item);
-			// feedcontainer.prepend(h);
-
-			// DISABLED BECAUSE NOT YET TESTED.
-			// h = $(this.templates['itemTmplFile'].render(item));
-			// h.data('object', item).prependTo(feedcontainer);
-
-		} else {
-
-			h = $(this.templates['itemTmpl'].render(item));
-			h.data('object', item).prependTo(feedcontainer);
+		if (this.loadeditems[item.id]) {
+			// console.error("Post is already loaded. No need to load it again.");
+			this.loadeditems[item.id].detach();
 		}
 
+		var itemview = this.getItemView(item);
+		h = $(this.templates['itemTmpl'].render(itemview));
+		h.data('object', item).prependTo(feedcontainer);
 		
+		// console.log("Adding post", itemview);
+
 		this.loadeditems[item.id] = h;
+	}
+
+	FeedController.prototype.getItemView = function(item) {
+
+		var ts;
+		if (item.ts) {
+			ts = item.ts;
+		} else if (item.created) {
+			ts = item.created;
+		}
+
+		if (item.user) {
+			item.icon = item.user.photourl();
+		} else {
+			item.icon = item.client.logo();
+		}
+
+
+		item.timestamp = moment(ts).format();
+		item.ts = ts;
+		
+		if (item.audience.groups) {
+			item.groups = {};
+			for(var i = 0; i < item.audience.groups.length; i++) {
+				var group = item.audience.groups[i];
+				if (this.groups[group]) {
+					item.groups[group] = this.groups[group];
+				} else if (this.subscriptions[group]) {
+					item.groups[group] = this.subscriptions[group];
+				} else {
+					item.groups[group] = {name: group};
+				}
+				
+			}
+
+			// item.groupnames = {};
+			item.groupnames = [];
+			for(var key in item.groups) {
+				// item.groupnames[key] = item.groups[key].title;
+				item.groupnames.push(item.groups[key].title);
+			}
+		}
+
+
+
+
+		// console.log(" - o - o - o getItemView()", item);
+		// console.log("item group", item.audience.groups);
+
+		return item;
 	}
 
 	FeedController.prototype.addResponse = function(item) {
 		// console.log("Adding a response", item['uwap-userid'], item['inresponseto']);
+		// console.log(this.loadeditems);
+
+		if (this.loadeditems[item.id]) {
+			console.error("Adding a response that is already loaded.")
+			// console.error("Post is already loaded. No need to load it again.");
+			this.loadeditems[item.id].detach();
+		}
+
+
+		// 
 		if (this.loadeditems[item.inresponseto]) {
+
+			// console.log(this.loadeditems[item.inresponseto]);
+
 			// console.log("Adding YES", this.loadeditems[item.inresponseto]);
 			if (item['uwap-userid'] === this.app.user.userid) {
 				// console.log("MY RESPONSE", item);
 				this.setMyResponse(this.loadeditems[item.inresponseto], item.status);
 			}
 			
+			var itemview = this.getItemView(item);
+			// var h = $(this.templates['commentTmpl'].render(itemview));
+
 			item.statusItem = {};
 			item.statusItem[item.status] = true;
 
-			var h = $(this.templates.participant.render(item)).data('object', item);
+			var h = $(this.templates.participant.render(itemview)).data('object', item);
 			// var h = $("#participantTmpl").tmpl(item);
 			this.loadeditems[item.inresponseto].find('table.participants').append(h);
 		}
 	}
 
 	FeedController.prototype.addComment = function(item) {
-		// console.log("Add comment");
+		// console.log("Add comment", item, this.loadeditems);
+
+		if (this.loadeditems[item.id]) {
+			// console.log("Adding a response that is already loaded.")
+			console.error("Comment is already loaded. No need to load it again.");
+			this.loadeditems[item.id].detach();
+		}
+
 		if (this.loadeditems[item.inresponseto]) {
 			// console.log("found item", item);
 			// var h = $("#commentTmpl").tmpl(item);
-			var h = $(this.templates['commentTmpl'].render(item));
+			
+			
+			var itemview = this.getItemView(item);
+			var h = $(this.templates['commentTmpl'].render(itemview));
+
+			// console.log("ITEM VIEW IS ", itemview);
+
+			// h = $(this.templates['itemTmpl'].render(itemview));
+			h.data('object', item);
 			this.loadeditems[item.inresponseto].find('div.comments').append(h);
+
 		}
 	}
 
@@ -307,22 +350,14 @@ define(function(require, exports, module) {
 				s[k] = this.selector[k]
 			}
 		}
-		
-		if (this.view.view === 'media') {
-			s['class'] = ['media'];
-		}
-		if (this.view.view === 'file') {
-			s['class'] = ['file'];
-		}
-		if (this.view.view === 'calendar') {
-			s['class'] = ['calendar'];
-		}
+
 
 		return s;
 	}
 
 
 	FeedController.prototype.setSelector = function(selector) {
+
 
 		var prevGroup = (this.selector.group ? this.selector.group : null);
 		var newGroup = (selector.group ? selector.group : null);
@@ -335,14 +370,24 @@ define(function(require, exports, module) {
 					"group": newGroup
 				}
 			}
-			console.log("------> Postmessage", message, $("iframe#connect-widget"));
+			// console.log("------> Postmessage", message, $("iframe#connect-widget"));
 			var ix = document.getElementById("connect-widget");
 			if (ix) {
 				ix.contentWindow.postMessage(message, '*');
 			}
 		}
 
-		console.log("Set selector", selector);
+		// console.log("Set selector", selector);
+
+
+		if (selector.group) {
+
+			// this.app.navbar.set([
+			// 	{'title': 'Newsfeed', 'href': '/'},
+			// 	{'title': 'Group'}
+			// ]);		
+			// this.app.setHash('/group/' + selector.group);
+		}
 
 
 		this.selector = selector;
@@ -363,7 +408,7 @@ define(function(require, exports, module) {
 	}
 
 	FeedController.prototype.viewchange = function(opt) {
-		console.log(' =============> View change', opt);
+		// console.log(' =============> View change', opt);
 
 		this.pane.el.find('.feedcontainer').removeClass('view-' + this.view.view);
 		this.pane.el.find('.feedcontainer').addClass('view-' + opt.view);
@@ -384,102 +429,72 @@ define(function(require, exports, module) {
 		var s = this.getSettings();
 		s.from = this.currentRange.to;
 
+		// console.log(" ======> About to read feed");
+		// console.log(s);
+		// return;
 
-		UWAP.feed.read(s, function(data) {
-			// console.log("FEED Update Received", data);
-			// $(".feedtype").empty();
-			if (!data.range) return;
-			that.currentRange.to = data.range.to;
-			$.each(data.items, function(i, item) {
-				if (!item.hasOwnProperty('promoted')) {
-					item.promoted = false;
-				}
-				that.addItem(item);
-			});
-			$("span.ts").prettyDate(); 
-		});
+		UWAP.feed.read(s, $.proxy(this.processFeedResponse, this));
 
 	};
 
+	FeedController.prototype.processFeedResponse = function(data) {
+		var that = this;
+		if (!data.range) return;
+		that.currentRange = data.range;
+
+		$.each(data.items, function(i, item) {
+			if (item.inresponseto) return;
+			that.addItem(item);
+		});
+
+		$.each(data.items, function(i, item) {
+			if (!item.inresponseto) return;
+			// console.log("=== ABOUT to load a comment inresponse to", item);
+			that.addItem(item);
+		});
+
+		that.pane.activate();
+
+
+		var groupcounter = {};
+		$.each(data.items, function(i, item) {
+			if (item.audience && item.audience.groups) {
+				$.each(item.audience.groups, function(j, group) {
+					if (!groupcounter[group]) groupcounter[group] = 0;
+					groupcounter[group]++;
+				});
+			}
+		});
+
+		
+
+		this.app.feedselector.setFeedActivity(groupcounter);
+
+
+		$("span.ts").prettyDate(); 
+		$('.dropdown-toggle').dropdown();
+	}
+
 	FeedController.prototype.load = function() {
 		var that = this;
-		var 
-			feedcontainer = this.pane.el.find('.feedcontainer');
-
+		var feedcontainer = this.pane.el.find('.feedcontainer');
 		var s = this.getSettings();
 
-		// console.log("Load ", this.view.view);
-		if (this.view.view === 'members' && s.group) {
-			
+		// console.log(" =====> Load ", s);
 
-			// console.log("Load members", s);
+		feedcontainer.empty();
 
-			var gr = s.group;
+		// console.log("About to uwap.feed.read()");
+		UWAP.feed.read(s, $.proxy(this.processFeedResponse, this));
 
-			UWAP.groups.get(gr, function(data) {
-				// console.log("Group data received.", data);
-
-				if (data.userlist) {
-					feedcontainer.empty();
-
-					for(var uid in data.userlist) {
-						feedcontainer.append('<div>' + data.userlist[uid]['name'] + '</div>');
-					}
-
-				}
-				that.pane.activate();
-
-				// $.each(data, function(i, item) {
-				// 	that.addItem(item);
-				// });
-				// $("span.ts").prettyDate(); 
-			}, function() {
-				console.error("Could not get list");
-			});
-
-		} else {
-			UWAP.feed.read(s, function(data) {
-				// console.log("FEED Received", data);
-				
-				feedcontainer.empty();
-
-				if (!data.range) return;
-				that.currentRange = data.range;
-
-				if (that.view.view === 'media') {
-					feedcontainer.append('<ul></ul>');	
-				}
-
-				$.each(data.items, function(i, item) {
-					if (item.inresponseto) return;
-					that.addItem(item);
-					
-				});
-
-				$.each(data.items, function(i, item) {
-					if (!item.inresponseto) return;
-					that.addItem(item);
-				});
-
-				// $.each(data.items, function(i, item) {
-				// 	that.addItem(item);
-				// });
-
-				that.pane.activate();
-
-				$("span.ts").prettyDate(); 
-				$('.dropdown-toggle').dropdown();
-			});
-
-		}
 
 		
 	}
 	FeedController.prototype.post = function(msg) {
 		var that = this;
 		// console.log("POSTING", msg);
-		UWAP.feed.post(msg, function() {
-			that.load();
+		UWAP.feed.post(msg, function(data) {
+			that.update();
 		});
 	}
 

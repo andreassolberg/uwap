@@ -26,12 +26,27 @@ define(function(require, exports, module) {
 		// 	console.log(data);
 		// });
 
-	// alert('y');
+		UWAP.feed.read({}, function(f) {
+			console.log("feed");
+			console.log(f);
+			$("div#out").append('<pre>' + JSON.stringify(f, undefined, 3) + '</pre>');
+
+		})
+
+
 
 		$("input#smt").on("click", function() {
 			UWAP.auth.require(function(data) {
 				$("div#out").append("<h2>You are logged in (required check) as - <i>" + data.name + "</i></h2>");
 			});
+		});
+
+
+		$("input#setidp").on("click", function() {
+			var entityid = 'https://openidp.feide.no';
+			// document.cookie = 'idp=' + entityid + '';
+			document.cookie = 'idp=' + entityid + '; expires=Thu, 2 Aug 2014 20:47:11 UTC; path=/';
+			console.log("Have now set the idp to ");
 		});
 
 		UWAP.auth.checkPassive(function(data) {
@@ -77,21 +92,30 @@ define(function(require, exports, module) {
 			// })
 
 
-			UWAP.groups.get('uwap:grp:uninett:org:orgunit:AVD-U2', function(item) {
-					var e = '';
-					e += '<p><span style="font-size: 16pt">' + item.title + '</span> - <span>' + (item.description ? item.description : '- no descr -') + '</span></p>';
-					e += '<pre>' + JSON.stringify(item, undefined, 4) + '</pre>';
-					$("div#out").append(e);
-			})
 
-			UWAP.groups.get('uwap:grp-ah:71dbfc30-5d4f-47f6-98d7-afeba257674d', function(item) {
-				// $.each(data, function(i, item) {
-					var e = '';
-					e += '<p><span style="font-size: 16pt">' + item.title + '</span> - <span>' + (item.description ? item.description : '- no descr -') + '</span></p>';
-					e += '<pre>' + JSON.stringify(item, undefined, 4) + '</pre>';
-					$("div#out").append(e);
-				// });
-			})
+
+
+
+
+			// UWAP.groups.get('uwap:grp:uninett:org:orgunit:AVD-U2', function(item) {
+			// 		var e = '';
+			// 		e += '<p><span style="font-size: 16pt">' + item.title + '</span> - <span>' + (item.description ? item.description : '- no descr -') + '</span></p>';
+			// 		e += '<pre>' + JSON.stringify(item, undefined, 4) + '</pre>';
+			// 		$("div#out").append(e);
+			// })
+
+			// UWAP.groups.get('uwap:grp-ah:71dbfc30-5d4f-47f6-98d7-afeba257674d', function(item) {
+			// 	// $.each(data, function(i, item) {
+			// 		var e = '';
+			// 		e += '<p><span style="font-size: 16pt">' + item.title + '</span> - <span>' + (item.description ? item.description : '- no descr -') + '</span></p>';
+			// 		e += '<pre>' + JSON.stringify(item, undefined, 4) + '</pre>';
+			// 		$("div#out").append(e);
+			// 	// });
+			// });
+
+
+
+
 
 			// uwap:grp:uninett:org:orgunit:AVD-U2
 			// uwap:grp-ah:71dbfc30-5d4f-47f6-98d7-afeba257674d

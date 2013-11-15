@@ -8,7 +8,6 @@ define(function(require, exports, module) {
 		;
 
 	require('uwap-core/bootstrap/plugins/datepicker/bootstrap-datepicker');
-	require('uwap-core/bootstrap/plugins/datepicker/bootstrap-datepicker');
 	
 	var tmpl = {
 		"post": require('uwap-core/js/text!templates/post.html')
@@ -25,7 +24,6 @@ define(function(require, exports, module) {
 		this.templates = {
 			"post": hogan.compile(tmpl.post)
 		};
-
 
 		$(this.templates.post.render({today: moment().add('days', 1).format('DD-MM-YYYY')  })).appendTo(this.el);
 
@@ -101,7 +99,7 @@ define(function(require, exports, module) {
 
 		this.selectedGroups[groupid] = true;
 
-		sharespan.append('<span class="label label-primary sharedwithgroup">' + this.groups[groupid] + '</span>');
+		sharespan.append('<span class="label label-primary sharedwithgroup">' + UWAP.utils.escape(this.groups[groupid].title) + '</span>');
 		currentListItem.addClass('disabled');
 
 		// console.log('Adding group', groupid)
@@ -122,7 +120,7 @@ define(function(require, exports, module) {
 		var id = $(e.currentTarget).find('input').attr('id');
 
 		
-		console.log("Selected something", id, $(e.currentTarget));
+		// console.log("Selected something", id, $(e.currentTarget));
 
 		var mapping = {
 			'btn-link': 'link',
@@ -157,11 +155,13 @@ define(function(require, exports, module) {
 			"class": [this.type]
 		}
 
-		msg['groups'] = this.getGroups();
-
+		msg['audience'] = {
+			"groups": this.getGroups(),
+			"public": this.el.find('input.field-public').prop("checked")
+		};
 
 		msg.promoted = this.el.find('input.field-promoted').prop("checked");
-		msg.public = this.el.find('input.field-public').prop("checked");
+		// msg.public = this.el.find('input.field-public').prop("checked");
 		// if (public) {
 		// 	msg['groups'].push('!public');
 		// }
@@ -224,7 +224,7 @@ define(function(require, exports, module) {
 
 		var str = this.el.find("textarea").val();
 
-		if (!msg.groups || msg.groups.length < 1) {
+		if (!msg.audience.groups || msg.audience.groups.length < 1) {
 			alert('You must share with one or more groups!');
 			return;
 		} 
@@ -253,7 +253,7 @@ define(function(require, exports, module) {
 
 		$.each(groups, function(i, item) {
 			// that.el.find("div.groups").append('<label class="checkbox inline"><input type="checkbox" id="grp_' + i + '" value="' + i + '">' + item + '</label>');
-			$('<li><a class="actShareWith" href="#">' + item + '</a></li>').data('groupid', i).appendTo(grouplist);
+			$('<li><a class="actShareWith" href="#">' + UWAP.utils.escape(item.title) + '</a></li>').data('groupid', i).appendTo(grouplist);
 		});
 	}
 

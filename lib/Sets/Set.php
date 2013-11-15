@@ -2,11 +2,14 @@
 
 abstract class Set {
 
-	protected $entries = array();
+	protected $items = array();
 
 	protected $startsWith = 0;
-	protected $count = 0;
+	protected $count = null;
 	protected $limit = null;
+
+
+
 
 	function __construct($datalist = null) {
 
@@ -16,17 +19,33 @@ abstract class Set {
 	}
 
 	function add(Model $entry) {
-		$this->entries[] = $entry;
+		$this->items[] = $entry;
+	}
+
+	public function getItems() {
+		return $this->items;
 	}
 
 	abstract public function addData($entry);
 
-	function addDataList($list) {
+	public function addDataList($list) {
 		if (!empty($list)) {
 			foreach($list AS $entry) {
 				$this->addData($entry);
 			}
 		}
+	}
+
+	public function mergeInto(Set $set) {
+		// TODO: Verify that sets is of same type.
+
+		if (!empty($this->items)) {
+			foreach($this->items AS $entry) {
+				// echo "merging in "; print_r($entry);
+				$set->add($entry);
+			}
+		}
+
 	}
 
 	function setMeta($meta) {
@@ -50,13 +69,14 @@ abstract class Set {
 			'items' => array()
 		);
 
-		foreach($this->entries AS $e) {
+		foreach($this->items AS $e) {
 			$result['items'][] = $e->getJSON($opts);
 		}
 
 		if (!isset($this->count)) {
 			$this->count = count($result['items']);
 		}
+
 
 		$result['count'] = $this->count;
 		$result['startsWith'] = $this->startsWith;

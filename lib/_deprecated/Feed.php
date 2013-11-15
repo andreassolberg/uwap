@@ -1,17 +1,18 @@
 <?php
 
-		function uwapfeedsort($a, $b) {
-			// return $a['lastActivity'] < $b['lastActivity'];
-			return ($a['lastActivity'] < $b['lastActivity']) ? -1 : 1;
-		}
+function uwapfeedsort($a, $b) {
+	// return $a['lastActivity'] < $b['lastActivity'];
+	return ($a['lastActivity'] < $b['lastActivity']) ? -1 : 1;
+}
 
 class Feed {
 
-	protected $store, $clientid, $userid, $groups, $subscriptions;
+	
+	protected $store, $clientid, $user, $groups, $subscriptions;
 
-	public function __construct($userid = null, $clientid = null, $groups = array(), $subscriptions = array()) {
+	public function __construct(User $user = null, $clientid = null, $groups = array(), $subscriptions = array()) {
 
-		$this->userid = $userid;
+		$this->user = $user;
 		$this->clientid = $clientid;
 		$this->groups = $groups;
 		$this->store = new UWAPStore();
@@ -38,6 +39,7 @@ class Feed {
 
 		return $this->read(array('id_' => $id));
 	}
+
 
 	public function read($selector) {
 

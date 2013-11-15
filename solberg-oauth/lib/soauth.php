@@ -484,7 +484,7 @@ class So_Server {
 		try {
 			$token->requireValid($scope);
 		} catch(Exception $e) {
-			throw new So_UnauthorizedRequest('unauthorized_client', 'Insufficient scope on provided token.');	
+			throw new So_UnauthorizedRequest('unauthorized_client', 'Insufficient scope on provided token. Missing [' . join(',', $scope) . ']');	
 		}
 		
 		
@@ -694,12 +694,12 @@ class So_Server {
 			}
 
 			$expiresin = time() + 3600;
-			$accesstoken = So_AccessToken::generate($clientconfig->get('client_id'), null, null, $clientconfig->get('scopes', array()), $expiresin);
-			$accesstoken->clientdata = $clientconfig->get('client_id');
+			$accesstoken = So_AccessToken::generate($clientconfig->get('id'), null, null, $clientconfig->get('scopes', array()), $expiresin);
+			$accesstoken->clientdata = $clientconfig->get('id');
 
 			// error_log("AT: " . json_encode($accesstoken)); 
 
-			$this->store->putAccessToken($clientconfig->get('client_id'), null, $accesstoken);
+			$this->store->putAccessToken($clientconfig->get('id'), null, $accesstoken);
 			error_log('Ive generated a token: ' . var_export($accesstoken->getToken(), true));
 			$tokenresponse = new So_TokenResponse($accesstoken->getToken());
 			

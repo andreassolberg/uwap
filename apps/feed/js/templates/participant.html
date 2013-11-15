@@ -1,17 +1,17 @@
 <tr>
 	<td style="width: 24px">
-	{{#activity.actor}}
-		<img class="" style="width: 26px; border: 1px solid #ccc" src="{{image.url}}" />
-	{{/activity.actor}}
+
+		<img style="width: 26px; border: 1px solid #ccc" class="" src="{{icon}}" />
 
 	</td>
 
-	{{#activity.actor}}
-		<td><span>{{displayName}}</span></td>
-		<td><i class="icon-envelope"></i> <span>{{mail}}</span></td>
-	{{/activity.actor}}
 
-
+	
+	{{#user}}
+		<td><i class="glyphicon glyphicon-user"></i> {{name}}</td>
+		<td><i class="glyphicon glyphicon-envelope"></i> <span>{{mail}}</span></td>
+	{{/user}}
+	
 
 	<td>
 		{{#statusItem.yes}}
@@ -23,7 +23,7 @@
 		{{/statusItem.maybe}}
 
 		{{#statusItem.no}}
-			<span class="label label-inverse">Appologized</span>
+			<span class="label label-danger">Appologized</span>
 		{{/statusItem.no}}
 	</td>
 

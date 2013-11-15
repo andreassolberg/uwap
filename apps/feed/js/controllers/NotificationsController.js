@@ -2,8 +2,11 @@ define([
 
 ], function() {
 
-	var NotificationsController = function(el) {
+	var NotificationsController = function(app,el) {
 		this.el = el;
+		this.app = app;
+
+		this.notifications = null;
 
 		// this.el.on("click", ".actPost", $.proxy(this.actPost, this));
 		// this.el.find("button.posttype").on('click', $.proxy(this.actTypeSelect, this));
@@ -17,14 +20,22 @@ define([
 		this.items = null;
 
 		this.load();
+
+		setInterval($.proxy(this.load, this), 30 * 1000); // Every 30 seconds...
 	} 
 
 
 	NotificationsController.prototype.load = function() {
 		var that = this;
 
+		// var settings = this.app.mainnewsfeed.getSettings();
+		// console.log("Seetings", settings);
+
 		UWAP.feed.notifications({}, function(data) {
 			that.updateNotifications(data);
+			that.app.feedselector.setNotifications(data.groups);
+			// console.log("Updating group notifiations ", data.groups);
+
 		});
 	}
 
@@ -42,10 +53,16 @@ define([
 		console.log('mark all read', e.currentTarget);
 		console.log(this.items);
 
+		// return;
+
 		var allids = [];
 		$.each(this.items, function(i, item) {
-			if (!item.isread) {
-				allids.push(item.id);
+			allids.push(item.item.id);
+			if (item.responses) {
+				$.each(item.responses, function(j, response) {
+					console.log("ABOUT TO MARK RESPONSE", response);
+					allids.push(response.id);
+				});
 			}
 		});
 
@@ -57,6 +74,9 @@ define([
 
 	NotificationsController.prototype.markRead = function(ids) {
 		var that = this;
+
+		console.log("About to mark read for ", ids);
+
 		UWAP.feed.notificationsMarkRead(ids, function(data) {
 			that.load();
 		});
@@ -95,8 +115,9 @@ define([
 		this.items = n.slice(0);
 
 
+
 		// n = this.processNotifications(n);
-		// console.log(" ››››› Proicessed", n);
+		// console.log(" ››››› Processed", n);
 
 		var length = n.length;
 		if (n.length > 0)  {
@@ -113,30 +134,26 @@ define([
 
 		$.each(n, function(i, item) {
 			if (i > 10) return;
-			var linked = item.id;
-			var icon = 'icon-chevron-right';
-
-			if ($.inArray('comment', item.class) !== -1) {
-				icon = 'icon-comment-alt';
-			} else if ($.inArray('event', item.class) !== -1) {
-				icon = 'icon-calendar';
+			var id = item.item.id;
+			var icon = 'glyphicon-chevron-right';
+			if ($.inArray('comment', item.item.class) !== -1) {
+				icon = 'glyphicon-comment-alt';
+			} else if ($.inArray('event', item.item.class) !== -1) {
+				icon = 'glyphicon-calendar';
 			}
 			
-			if (item.inresponseto) {
-				linked = item.inresponseto;
-			}
 
 			if (item.isread) {
-				$(".notificationlist").prepend('<li class="isread notificationentry"><a href="#!/item/' + linked + '"><i class="' + icon + '"></i> ' + item.summary + '</a></li>');
+				$(".notificationlist").prepend('<li class="isread notificationentry"><a href="#!/item/' + id + '"><i class="glyphicon ' + icon + '"></i> ' + item.summary + '</a></li>');
 			} else {
-				$(".notificationlist").prepend('<li class="notificationentry"><a href="#!/item/' + linked + '"><i class="' + icon + '"></i> ' + item.summary + '</a></li>');
+				$(".notificationlist").prepend('<li class="notificationentry"><a href="#!/item/' + id + '"><i class="glyphicon ' + icon + '"></i> ' + item.summary + '</a></li>');
 			}
 			
 		});
 
 		var ncount = $(".notificationcount").empty().hide();
-		if (data.unreadcount > 0) {
-			ncount.text(data.unreadcount).show();
+		if (this.items.length > 0) {
+			ncount.text(this.items.length).show();
 		} 
 		
 	}

@@ -35,10 +35,13 @@ class GlobalConfig {
 
 	// ------ ------ ------ ------ Class methods
 
-	public static function getApp() {
+	public static function getApp($host = null) {
 
-		$id = Utils::getSubID();
-		$host = Utils::getHost();
+		$id = Utils::getSubID($host);
+
+		if (empty($host)) {
+			$host = Utils::getHost();	
+		}
 
 		if ($id === null) {
 			$id = ClientDirectory::getSubIDfromHost( $host );

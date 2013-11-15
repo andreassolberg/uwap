@@ -10,6 +10,8 @@ class GroupConnector {
 	protected $user;
 	protected $adhoc, $ext;
 
+	protected $cachedGroups = null;
+
 	public function __construct($user) {
 		$this->user = $user;
 
@@ -204,17 +206,24 @@ class GroupConnector {
 
 	public function getGroups() {
 
+		if ($this->cachedGroups !== null)  {
+			return $this->cachedGroups;
+		}
+
 		$groups = array();
 
 		$m = $this->adhoc->getGroups();
 		foreach($m AS $me) {
-			$groups[] = $me;
+			// print_r($me);
+			$groups[$me->group->get('id')] = $me;
 		}
 
 		$m = $this->ext->getGroups();
 		foreach($m AS $me) {
-			$groups[] = $me;
+			$groups[$me->group->get('id')] = $me;
 		}
+
+		$this->cachedGroups = $groups;
 
 		return $groups;
 	}	
@@ -259,25 +268,27 @@ class GroupConnector {
 
 	}
 
+	public function getGroupsByID($ids) {
+		$ret = array();
+		foreach($ids AS $id) {
+			$ret[$id] = $this->getByID($id);
+		}
+		// echo "about to get by id"; print_r($ret);
+
+		return $ret;
+	}
+
 
 	public function getByID($id) {
 
-		// return 'ap';
-
 		if (preg_match('/^uwap:grp-ah:/', $id)) {
-			
 
 			return $this->adhoc->getByID($id);
-
 			// return AdHocGroup::getByID($id);
 
 		}
 		$data = $this->ext->getByID($id);
-
-		
-
 		return $data;
-		// return parent::getByID($id);
 
 	}
 

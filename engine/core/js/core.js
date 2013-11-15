@@ -119,7 +119,7 @@ define(function(require) {
 		// 	var x = window.open(p);
 		// 	x.focus();
 		// });
-		console.log("Registering redirect handler...");
+		// console.log("Registering redirect handler...");
 	}
 
 
@@ -215,11 +215,11 @@ define(function(require) {
 
 				if (result.status === 'ok') {
 					if (typeof callback === 'function') {
-
+						var x = result.data;
 						if (typeof dataprocess === 'function') {
-							dataprocess(result.data);
-						}
-						callback(result.data);
+							var x = dataprocess(result.data);
+						} 
+						callback(x);
 					}
 				} else if (result.status === 'redirect') {
 					// console.log("Redirecting user to " + result.url);
@@ -415,15 +415,18 @@ define(function(require) {
 				'POST', UWAP.utils.getEngineURL("/api/feed/upcoming"),
 				selector, 
 				null, callback, errorcallback, function(data) {
-					var items = data.items;
-					if (data.items && data.items.length) {
-						data.items = [];
+
+					return new models.Feed(data);
+
+					// var items = data.items;
+					// if (data.items && data.items.length) {
+					// 	data.items = [];
 					
-						for(var i = 0; i < items.length; i++) {
-							// data.items.push('1');
-							data.items.push(new models.FeedItem(items[i]));
-						}						
-					}
+					// 	for(var i = 0; i < items.length; i++) {
+					// 		// data.items.push('1');
+					// 		data.items.push(new models.FeedItem(items[i]));
+					// 	}						
+					// }
 				});
 		},
 		notifications: function(selector, callback, errorcallback) {
@@ -435,18 +438,19 @@ define(function(require) {
 		post: function(object, callback, errorcallback) {
 			UWAP._request(
 				'POST', UWAP.utils.getEngineURL("/api/feed/post"),
-				{
-					msg: object
-				}, 
+				object, 
 				null, callback, errorcallback);
 		},
 		respond: function(object, callback, errorcallback) {
 			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/api/feed/item/" + object.inresponseto + '/respond'),
-				{
-					msg: object
-				}, 
-				null, callback, errorcallback);
+				'POST', UWAP.utils.getEngineURL("/api/feed/item/" + object.inresponseto + '/response'),
+				object, 
+				null, callback, errorcallback, function(data) {
+					// console.log("    ==> CREATING new feed.");
+					var x = new models.Feed(data);
+					// console.log(x);
+					return x;
+				});
 		},
 		delete: function(oid, callback, errorcallback) {
 			UWAP._request(
@@ -459,22 +463,22 @@ define(function(require) {
 				'POST', UWAP.utils.getEngineURL("/api/feed"),
 				selector, 
 				null, callback, errorcallback, function(data) {
-					var items = data.items;
-					if (data.items && data.items.length) {
-						data.items = [];
-					
-						for(var i = 0; i < items.length; i++) {
-							// data.items.push('1');
-							data.items.push(new models.FeedItem(items[i]));
-						}						
-					}
+					// console.log("    ==> CREATING new feed.");
+					var x = new models.Feed(data);
+					// console.log(x);
+					return x;
 				});
 		},
 		readItem: function(oid, callback, errorcallback) {
 			UWAP._request(
 				'GET', UWAP.utils.getEngineURL("/api/feed/item/" + oid),
 				null, 
-				null, callback, errorcallback);
+				null, callback, errorcallback, function(data) {
+					// console.log("    ==> CREATING new feed.");
+					var x = new models.Feed(data);
+					// console.log(x);
+					return x;
+				});
 		}
 	};
 
@@ -556,13 +560,13 @@ define(function(require) {
 		subscribe: function(groupid, callback, errorcallback) {
 			UWAP._request(
 			 	'POST', UWAP.utils.getEngineURL("/api/group/" + groupid + '/subscription'),
-			 	true,
+			 	{subscribe: true},
 			 	null, callback, errorcallback);
 		},
 		unsubscribe: function(groupid, callback, errorcallback) {
 			UWAP._request(
 			 	'POST', UWAP.utils.getEngineURL("/api/group/" + groupid + '/subscription'),
-			 	false,
+			 	{subscribe: false},
 			 	null, callback, errorcallback);
 		},
 		listMyGroups: function(callback, errorcallback) {

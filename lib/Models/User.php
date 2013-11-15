@@ -24,24 +24,34 @@ class User extends StoredModel {
 
 	}
 
-	public function getSubscriptions() {
-  
-		return $this->get('subscriptions');
+	public function isMemberOf($groupid) {
+		$groups = $this->getGroups();
+		return in_array($groupid, $groups);
+	}
 
+	public function isSubscribedTo($groupid) {
+		$groups = $this->get('subscriptions');
+		return in_array($groupid, $groups);
+	}
+
+	public function getSubscriptions() {
+  		$subids = $this->get('subscriptions', array());
+		$subs = $this->groupconnector->getGroupsByID($subids);
+		return $subs;
 	}
 
 
 
 	public function subscribe(Group $group) {
 		$groupid = $group->get('id');
-		$subscriptions = $this->getSubscriptions();
+		$subscriptions = $this->get('subscriptions');
 		$subscriptions = self::array_add($subscriptions, $groupid);		
 		$this->set('subscriptions', $subscriptions);
 	}
 
 	public function unsubscribe(Group $group) {
 		$groupid = $group->get('id');
-		$subscriptions = $this->getSubscriptions();
+		$subscriptions = $this->get('subscriptions');
 		$subscriptions = self::array_remove($subscriptions, $groupid);		
 		$this->set('subscriptions', $subscriptions);
 	}
@@ -59,12 +69,24 @@ class User extends StoredModel {
 				$ret[$p] = $this->properties[$p];
 			}
 		}
+			
+		if (isset($opts['subscriptions'])) {
+
+			$ret['subscriptions'] = array();
+			$subs = $this->getSubscriptions();
+
+			// print_r($subs); exit;
+
+			foreach($subs AS $groupid => $group) {
+				$ret['subscriptions'][$group->get('id')] = $group->getJSON($opts['groups']);
+			}
+		}
 
 		if (isset($opts['groups'])) {
 			$ret['groups'] = array();
 			$groups = $this->getGroups();
 			foreach($groups AS $g) {
-				$ret['groups'][] = $g->getJSON($opts['groups']);
+				$ret['groups'][$g->group->get('id')] = $g->getJSON($opts['groups']);
 			}
 		}
 

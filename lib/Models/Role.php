@@ -2,7 +2,7 @@
 
 class Role extends Model {
 	
-	protected $user, $group, $role;
+	public $user, $group, $role;
 	protected static $validProps = array('role');
 
 	

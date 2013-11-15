@@ -142,6 +142,24 @@ class UWAPStore {
 	}
 
 
+	// public function removeQuery($collection, $query) {
+	// 	UWAPLogger::debug('store', 'Removing an by this query in  [' . $collection . ']', array(
+	// 		'collection' => $collection,
+	// 		'query' => $query,
+	// 	));
+
+	// 	$result = $this->db->{$collection}->remove($query, array("safe" => true));
+	// 	if (is_array($result)) {
+	// 		foreach($result AS $r) {
+	// 			if ($r === false) throw new Exception('Error removing object from MongoDB storage');
+	// 		}
+	// 	} else if (is_bool($result)) {
+	// 		if (!$result) throw new Exception('Error removing object from MongoDB storage');
+	// 	}
+	// 	return true;		
+
+
+	// }
 
 
 	public function remove($collection, $userid, $obj) {
@@ -215,10 +233,8 @@ class UWAPStore {
 		// 
 		$sc = array(
 			'$and' => array(
-				array("uwap-acl-read" => array(
-					'$in' => array('!public')
-				)),
-				array("uwap-acl-read" => array(
+				array("audience.public" => true),
+				array("audience.groups" => array(
 					'$in' => $subs
 				))
 			)
@@ -227,7 +243,7 @@ class UWAPStore {
 		$criteria = array();
 		// $criteria[] = array("uwap-userid" => $userid);
 		$criteria[] = array(
-			"uwap-acl-read" => array(
+			"audience.groups" => array(
 				'$in' => $grps,
 			),
 		);
@@ -285,8 +301,79 @@ class UWAPStore {
 		return $ret;
 	}
 
+	public function queryListUserAdvanced($collection, User $user, $criteria = array(), $fields = array(), $options = array() ) {
 
-	public function queryListUserAdvanced($collection, $userid, $groups, $subscriptions, $criteria = array(), $fields = array(), $options = array() ) {
+		$start = microtime(true);
+
+		$userid = $user->get('userid');
+		$groups = $user->getGroups();
+		$subscriptions = $user->get('subscriptions', array());
+
+
+		if (isset($criteria['$or'])) {
+
+			$criteria['$and'] = array(
+				array('$or' => $this->getACLwithSubscriptions($userid, $groups, $subscriptions)),
+				array('$or' => $criteria['$or']),
+			) ;
+			unset($criteria['$or']);
+		} else {
+			$criteria['$or'] = $this->getACLwithSubscriptions($userid, $groups, $subscriptions);
+		}		
+		
+		if ($collection !== 'log') {
+			UWAPLogger::debug('store', 'Query list userobject in [' . $collection . ']', array(
+				'collection' => $collection,
+				'userid' => $userid,
+				'criteria' => $criteria,
+			));
+		}
+
+		// echo json_encode($criteria); exit;
+		// print_r($criteria); exit;
+
+
+		$criteria = self::idify($criteria);
+
+
+
+		$cursor = $this->db->{$collection}->find($criteria, $fields);
+
+		// echo(json_encode($criteria)); exit;
+
+		$result = array();
+		$result['count'] = $cursor->count();
+
+
+		if (isset($options['sort'])) {
+			$cursor->sort($options['sort']);
+		} else {
+			$cursor->sort(array('$natural' => 1));
+		}
+		if (isset($options['limit'])) {
+			$cursor->limit($options['limit']);
+			$result['limit'] = $options['limit'];
+		}
+		if (isset($options['startsWith'])) {
+			$cursor->skip($options['startsWith']);
+			$result['startsWith'] = $options['startsWith'];
+
+		}
+
+
+		if (!$cursor->hasNext()) return $result;
+
+		foreach($cursor AS $element) $result['items'][] = $element;	
+
+		$result['time'] = microtime(true) - $start;
+
+
+		return $result;
+
+	}
+
+
+	public function queryListUserAdvanced_OLD($collection, $userid, $groups, $subscriptions, $criteria = array(), $fields = array(), $options = array() ) {
 
 		// $criteria = array(
 		// 	'$or' => $this->getACLwithSubscriptions($userid, $groups, $subscriptions)

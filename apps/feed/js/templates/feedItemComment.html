@@ -1,12 +1,21 @@
 <div id="{{id}}" class="comment">
 
 
-	{{#activity.actor}}
-		<img class="profileimg img-polaroid" src="{{image.url}}" />
-	{{/activity.actor}}
+
+
+		<img class="profileimg img-polaroid" src="{{icon}}" />
+
+
 
 
 	<div class="footer">
+
+		{{#user}}
+			<i class="glyphicon glyphicon-user"></i> {{name}}
+		{{/user}}
+		{{#client}}
+			<i class="glyphicon glyphicon-briefcase"></i> {{name}}
+		{{/client}}
 
 		{{#activity.actor}}
 			<span>
@@ -22,7 +31,7 @@
 		{{/activity.actor}}
 
 		
-		<span><i class=" icon-time"></i> <span class="ts" data-ts="{{ts}}"></span></span>
+		<span><i class=" glyphicon glyphicon-time"></i> <span class="ts" data-ts="{{ts}}"></span></span>
 		
 	</div>
 

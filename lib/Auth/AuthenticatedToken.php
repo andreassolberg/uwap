@@ -3,13 +3,20 @@
 
 class AuthenticatedToken {
 	
-	var $token, $user;
+	protected 
+		$token, 
+		$client,
+		$user = null;
 
 	public function __construct($token) {
 		$this->token = $token;
 
 		if (!empty($this->token->userdata)) {
 			$this->user = User::getByID($this->token->userdata['userid']);
+		}
+
+		if (!empty($this->token->client_id)) {
+			$this->client = Client::getByID($this->token->client_id);
 		}
 	}
 
@@ -24,6 +31,10 @@ class AuthenticatedToken {
 
 	public function getUser() {
 		return $this->user;
+	}
+
+	public function getClient() {
+		return $this->client;
 	}
 
 

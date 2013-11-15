@@ -47,7 +47,7 @@ class Client {
 	 
 		$ret = json_decode($output, true);
 
-		// echo ("Received ");
+		// echo ("Received \n-----\n");
 		// print_r($output);
 
 		return $ret;
@@ -88,6 +88,7 @@ class Client {
 		curl_close($ch);
 
 		// echo "Raw out \n" . $output . "\n\n";
+		// exit;
 	 
 		$ret = json_decode($output, true);
 

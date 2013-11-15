@@ -1,12 +1,9 @@
 <div class="comment">
 	<form class="form-horizontal">
 
-		{{#user}}
-			<img class="profileimg img-polaroid" src="{{profileimg}}" />
-		{{/user}}
-		{{#client}}
-			<img class="profileimg img-polaroid" src="{{profileimg}}" />
-		{{/client}}
+
+		<img class="profileimg img-polaroid" src="{{user.photourl}}" />
+
 		
 		<textarea class="form-control focusfield field-message" style="" placeholder="Write a comment..."></textarea>
 		<div class="btn-group">
