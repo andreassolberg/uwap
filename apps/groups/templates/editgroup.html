@@ -1,0 +1,99 @@
+<div>
+
+	<a href="#!/" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-chevron-left"></span> Back</a>
+
+
+	<div class="showInfo">
+
+
+
+		<div class="pull-right">
+		<button class="actEditInfo btn btn-primary">
+			<span class="glyphicon glyphicon-pencil"></span>
+			Edit name and description</button>
+		</div>
+
+		<h2><abbr style="text-decoration: none; border: none" title="{{id}}">{{title}}</abbr></h2>
+
+		<p>{{description}}</p>
+
+		<div class="pull-right">
+			<p>{{typeText}}</p>
+		</div>
+		
+		<p class="clearfix">
+			{{#if listable}}
+				<span class="label label-success">
+					<span class="glyphicon glyphicon-eye-open"></span> 
+					Publicly listable</span>
+			{{else}}
+				<span class="label label-default">
+					<span class="glyphicon glyphicon-eye-close"></span> 
+					Not listable</span>
+			{{/if}}
+		</p>
+
+
+	</div>
+
+	<div class="editInfo" style="display: none">
+
+
+		<form role="form" class="registerform">  
+
+			<div class="form-group">
+				<label for="groupname">Name</label>
+				<input style="" id="groupname" type="text" class="inputFocus form-control input" value="{{title}}">
+			</div>
+
+			<div class="form-group">
+				<label for="groupdescription">Description</label>
+				<textarea id="groupdescription" type="text" class="form-control input" value="">{{description}}</textarea>
+			</div>
+
+			<div class="form-group">
+				<label class="checkbox">  
+					<input id="grouplisting" 
+					{{#if listable}}checked="checked"{{/if}}
+					type="checkbox" > Enable public listing of this group</label>
+				Allow anyone to be able to subscribe to follow the public content associated with this group.
+			</div>
+
+			<button class="actSaveInfo btn btn-primary">
+				<span class="glyphicon glyphicon-pencil"></span>
+				Save changes</button>
+
+		</form>
+
+
+	</div>
+
+
+
+	<h3>Group members</h3>
+
+	<div id="peoplesearchContainer" class="search">
+
+	</div>
+
+	<div class="memberlist"></div>
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

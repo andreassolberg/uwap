@@ -1,0 +1,111 @@
+
+<div class="selectableItems">
+<table class="table table-striped" class="itemList">
+
+<!-- 	<thead>
+		<tr>
+			<th style="width: 40px">&nbsp;</th>
+			<th>Client</th>
+			<th>Status</th>
+		</tr>
+	</thead> -->
+
+
+	<tbody >
+
+	{{#each groups}}
+
+		<tr class="item" data-itemid="{{id}}">
+
+			<td>
+				<span  style="color: #999" class="closed glyphicon glyphicon-chevron-right"></span>
+				<span  style="color: #999" class="open glyphicon glyphicon-chevron-down"></span>
+			</td>
+			<td>
+				{{title}} 
+			</td>
+			<td>
+				{{typeText.title}}
+			</td>
+
+			<td>
+				{{#if roleType.owner}}
+					<span style="color: #933"><span class="glyphicon glyphicon-user"></span> Owner</span>
+				{{/if}}
+				{{#if roleType.admin}}
+					<span style="color: #335"><span class="glyphicon glyphicon-user"></span> Admin</span>
+				{{/if}}
+				{{#if roleType.member}}
+					<span style="color: #999"><span class="glyphicon glyphicon-user"></span> Member</span>
+				{{/if}}
+			</td>
+
+		</tr>
+
+
+		<tr class="itemDetails" data-itemid="{{id}}">
+
+			<td colspan="4">
+
+				<div class="itemDetailsBox">
+
+					<div class="pull-right">
+						<span class="glyphicon glyphicon-user"></span> <tt>{{uwap-userid}}</tt>
+					</div>
+
+
+					{{#if description}}
+						<p class="text-info"> {{description}}</p>
+					{{/if}}
+
+					
+					<div class="pull-right">
+
+						{{#if roleType.admin}}
+							<button class="btn btn-primary actEditGroup btn-sm">
+								<span class="glyphicon glyphicon-pencil"></span>
+								Edit</button>
+						{{/if}}
+
+						{{#if roleType.owner}}
+							<button class="btn btn-primary actEditGroup btn-sm">
+								<span class="glyphicon glyphicon-pencil"></span>
+								Edit</button>
+							<button class="btn btn-danger actDeleteGroup btn-sm">
+								<span class="glyphicon glyphicon-remove"></span>
+								Delete</button>
+						{{/if}}
+
+
+						
+
+					</div>
+
+
+					<div class="clearfix"></div>
+
+				</div>
+
+
+				
+
+			</td>
+
+		</tr>
+
+	{{/each}}
+
+
+
+	</tbody>
+</table>
+
+</div>
+
+
+
+
+
+
+
+

@@ -1,0 +1,35 @@
+
+<tr {{#owner}} class="warning" {{/owner}}>
+	<td>
+	{{#admin}} 
+			<a href="#" class="adminIcon" rel="tooltip" title="You are an administrator in this group"><img src="img/admin.png" alt="Admin" height="16" width="16"/></a> 
+	{{/admin}}
+	{{^admin}}
+		{{#member}}
+			<a href="#" class="memberIcon" rel="tooltip" title="You are a regular member of this group"><img src="img/user.png" alt="Member" height="16" width="16" /></a>
+		{{/member}}
+	{{/admin}}
+	</td>
+	<td>
+	<h4>{{title}}</h4>
+	
+	{{#description}}
+	<span>{{description}}</span>
+{{/description}}
+	</td>
+	<td align="right" class="buttonTD">
+		<div class="actionButtons" align="right">
+			<div class="groupView">
+				<!-- 	{{^myBool}} -->
+				<!-- 	{{#subscribed}} -->
+				<!-- 			<button class="actUnsubscribe btn btn-success btn-mini">Unsubscribe</button>				 -->
+				<!-- 	{{/subscribed}} -->
+				<!-- 	{{^subscribed}} -->
+				<!-- 			<button class="actSubscribe btn btn-mini">Subscribe</button> -->
+				<!-- 	{{/subscribed}} -->
+				<!-- 	{{/myBool}}	 -->
+			</div>
+		</div>
+	</td>
+</tr>
+

@@ -22,7 +22,6 @@ define(function() {
 		this.element.on('keyup change', '#newClientName', $.proxy(this.checkIfReady, this));
 		this.element.on('click', '.createNewBtn', $.proxy(this.submit, this));
 
-
 	};
 
 
@@ -39,6 +38,7 @@ define(function() {
 		// this.trigger("submit", obj);
 		this.callback(obj);
 		$(this.element).modal("hide");
+
 		// $(this.element).remove();
 	};
 

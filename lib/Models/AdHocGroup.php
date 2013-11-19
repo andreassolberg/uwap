@@ -96,7 +96,6 @@ class AdHocGroup extends Group {
 		$isMember = true;
 		$isAdmin = ($member === 'admin');
 
-
 		$members = $this->get('members', array());
 
 		if ($isMember) {

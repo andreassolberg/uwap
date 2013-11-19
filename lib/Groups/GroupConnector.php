@@ -34,13 +34,19 @@ class GroupConnector {
 
 
 	public function peopleListRealms() {
-		$realms = array();
-		$r = array(
-			'name' => '',
-			'realm' => '',
-			'default' => false,
-		);
-		$realms[] = $r;
+
+		global $UWAP_BASEDIR;
+		$realms = json_decode(file_get_contents($UWAP_BASEDIR . '/config/realms.json'), true);
+
+
+		foreach($realms AS $k => $r) {
+			if (isset($r['realm']) && $this->user->hasRealm($r['realm'])) {
+				$realms[$k]['default'] = true;
+			} else {
+				$realms[$k]['default'] = false;
+			}
+		}
+
 		return $realms;
 	}
 
@@ -52,7 +58,7 @@ class GroupConnector {
 
 	public function addMember($groupid, $userprops) {
 
-
+		// echo "Adding member"; print_r($userprops); exit;
 
 		$group = $this->getByID($groupid);
 		
@@ -67,15 +73,17 @@ class GroupConnector {
 			throw new Exception('UserID missing from ');
 		}
 
+		
+
 		$targetUser = User::getByID($userprops['userid']);
+		// echo "Found user [" . $userprops['userid'] . "] <pre>"; echo(var_export($targetUser, true)); exit;
 		if ($targetUser === null) {
 			$targetUser = User::generateShaddow($userprops, $this->user);
 			$targetUser->store();
 
 
-		}
 
-		
+		}
 
 		$group->updateMember($userprops['userid'], 'member');
 
@@ -87,7 +95,6 @@ class GroupConnector {
 
 
 	public function updateMember($groupid, $userid, $member) {
-
 
 		$group = $this->getByID($groupid);
 		

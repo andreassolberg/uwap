@@ -1,32 +1,72 @@
+/**
+ * @package UWAP
+ * @description UWAP People Search. Dropdown search on organizations.
+ * @author Andreas Åkre Solberg
+ * @copyright Andreas Åkre Solberg, UNINETT AS.
+ * @version 1.0
+ */
+
 define(['jquery'], function ($) {
 
-	var PeopleSearch = function(inputEl, settings) {
-		var that = this;
+	var uwap_people_template = '<form class="uwap-people-form" role="form">' + 
+		'<div class="row"><div class="col-md-8"><div class="form-group">' + 
+			'<input type="text" class="form-control" id="uwap-people-search" placeholder="Search for a person to add...">' + 
+		'</div></div>' + 
+		'<div class="col-md-4"><div class="form-group">' + 
+			'<select id="uwap-people-orgs" class="form-control"></select>' + 
+		'</div></div></div>' + 
+	'</form>';
 
-		this.inputEl = inputEl;
+
+	var waiter = function (setCallback) {
+		var my = {};
+
+		// Number of milliseconds to wait for more events.
+		my.delay = 400;
+		my.counter = 0;
+
+		// Call back to fire, when the waiter is pinged, and waited for the timeout 
+		// (without subsequent events).
+		my.callback = setCallback;
+
+		// Ping
+		function ping () {
+			var xa = arguments;
+			//console.log('Search box detected a change. Executing refresh...')
+			my.counter++;
+			setTimeout(function() {
+				if (--my.counter === 0) {
+					my.callback(xa[0]);
+				}
+			}, my.delay);
+		}
+
+		my.ping = ping;
+		return my;
+	}
+
+	var PeopleSearch = function(container, settings) {
+		var that = this;
+		this.container = $(container);
+		this.container.empty().append(uwap_people_template);
+		this.inputEl = this.container.find('#uwap-people-search');
+
 		this.settings = settings;
 
-		$(this.inputEl).wrap('<form class="navbar-search pull-left"/>');
-		this.formWrapEl = $(this.inputEl).parent();
 
-		this.formWrapEl
-			.wrap('<div class="uwap-people-main" />')
-			.wrap('<div class="navbar navbar-default"></div>')
-			.wrap('<div class="navbar-collapse"></div>');
+		var dropdownContainer = $('<div class="dropdown" style="margin-top: -20px; margin-bottom: 20px"></div>');
+		var list = $('<ul id="peoplelist" class="dropdown-menu" role="menu" style="display: block; width: 400px" aria-labelledby="dLabel"></ul>')
+			.appendTo(dropdownContainer);
 
-		this.mainEl = $(this.formWrapEl).closest('div.uwap-people-main');
+		this.container.append(dropdownContainer);
 
-
-		var container = $('<div class="dropdown" style="margin-top: -20px"></div>');
-		var list = $('<ul id="peoplelist" class="dropdown-menu" role="menu" style="display: block" aria-labelledby="dLabel"></ul>')
-			.appendTo(container);
-		$(this.mainEl).append(container);
-
-		$(that.inputEl).val('').focus();
+		this.inputEl.val('').focus();
 
 		this.lc = new ListController(list, settings, function() {
 			$(that.inputEl).val('').focus();
 		});
+
+		this.waiter = waiter($.proxy(this.query, this));
 
 		$(this.inputEl).on('keyup', function() {
 			var q = $(that.inputEl).val();
@@ -36,31 +76,33 @@ define(['jquery'], function ($) {
 				return;
 			}
 			// console.log('Query');
-			that.query(q, this.lc);
+			// that.query(q, this.lc);
+			that.waiter.ping(q);
 		});
 
 		UWAP.people.listRealms(function(r) {
-			console.log("realms: ", r);
+			// console.log("realms: ", r);
 
 			// var c2 = $('<div class="realms"></div>');
 			var l2 = $('<select style="margin-bottom: -3px; margin-left: 4px " class="pull-right realmlist"></select>');
 
+			var realmsSelectEl = that.container.find('#uwap-people-orgs');
+
+
 			$.each(r, function(i, item) {
-				console.log("REALM FOUND", i, item);
+				// console.log("REALM FOUND", i, item);
 				if (item["default"]) {
-					l2.append('<option selected="selected" value="' + item.realm + '">' + item.name + '</option>');	
+					realmsSelectEl.append('<option selected="selected" value="' + item.realm + '">' + item.name + '</option>');	
 				} else {
-					l2.append('<option value="' + item.realm + '">' + item.name + '</option>');	
+					realmsSelectEl.append('<option value="' + item.realm + '">' + item.name + '</option>');	
 				}
 				
 			});
 
-			$(that.formWrapEl).append(l2);
-
-			l2.on('change', $.proxy(function() {
+			realmsSelectEl.on('change', $.proxy(function() {
 				console.log("CHANGE")
-				this.q();
-				this.inputEl.focus();
+				that.q();
+				that.inputEl.focus();
 			}, that));
 
 		});
@@ -68,8 +110,9 @@ define(['jquery'], function ($) {
 	}
 
 	PeopleSearch.prototype.getRealm = function() {
-		console.log("realmlist", $(this.el).parent().find('select.realmlist'));
-		return $(this.inputEl).parent().find('select.realmlist').val();
+		var realmlist = $(this.container).find('select#uwap-people-orgs');
+		// console.log("realmlist", realmlist);
+		return realmlist.val();
 	}
 	PeopleSearch.prototype.q = function() {
 		var that = this;
@@ -84,11 +127,16 @@ define(['jquery'], function ($) {
 	};
 	PeopleSearch.prototype.query = function(q) {
 		var that = this;
-		console.log("getRealm is ", this.getRealm());
+		console.log("Performing a search query on [" + q + "] where realm is [" + this.getRealm() + "]");
 
 		UWAP.people.query(that.getRealm(), q, function(data) {
+			console.log("Query result is ", data);
 			that.lc.clean();
-			$.each(data, function(i, item) {
+
+			if (!data.people) return;
+			if (data.people.length < 1) return;
+
+			$.each(data.people, function(i, item) {
 				if(item.userid){
 					that.lc.add(item);
 				}
@@ -125,17 +173,17 @@ define(['jquery'], function ($) {
 	}
 	ListController.prototype.add = function(item) {
 
-		var e = $('<li class="uwap-person" style="clear: both"><a href=""></a></li>');
+		var e = $('<li class="uwap-person" style="width: 400px; clear: both"><a href=""></a></li>');
 		var el = e.find('a');
 
 		if (item.jpegphoto) {
-			el.append('<img class="img-polaroid" style="margin: 5px; float: left; max-width: 64px; max-height:'
-					+'64px; border: 1px solid #ccc" src="data:image/jpeg;base64,' 
-					+ item.jpegphoto
+			el.append('<img class="img-polaroid" style="margin: 5px; float: left; height: 64px; width: 64px; '
+					+'border: 1px solid #ccc" src="data:image/jpeg;base64,' 
+					+ encodeURIComponent(item.jpegphoto)
 					+ '" />');
 		} else {
-			el.append('<img class="img-polaroid" style="margin: 5px; float: left; max-width: 64px; max-height:'
-					+'64px; border: 1px solid #ccc" src="/img/placeholder.png" />');
+			el.append('<img class="img-polaroid" style="margin: 5px; float: left; height: 64px; width: 64px; '
+					+'border: 1px solid #ccc" src="/img/placeholder.png" />');
 			// Got from here: http://www.veodin.com/wp-content/uploads/2012/01/placeholder.png
 		}
 		var iName = $('<h4 style="margin: 0px;">' + item.name + ' </h4>').appendTo(el);
@@ -147,11 +195,11 @@ define(['jquery'], function ($) {
 		e.data('src', item);
 		$(this.el).append(e);
 
-		var e2 = '<p style="margin: 0px"><span style="margin-right: 15px;"><i class="icon-briefcase"></i> ' +
+		var e2 = '<p style="margin: 0px"><span style="margin-right: 15px;"><i class="glyphicon glyphicon-briefcase"></i> ' +
 		item.o + '</span></p>';
-		e2 += '<p style="margin: 0px"><span style="margin-right: 15px;"><i class="icon-user"></i> ' +
+		e2 += '<p style="margin: 0px"><span style="margin-right: 15px;"><i class="glyphicon glyphicon-user"></i> ' +
 		item.userid + '</span></p>';
-		e2 += '<p style="margin: 0px"><span style="margin-right: 15px;"><i class="icon-envelope"></i> ' +
+		e2 += '<p style="margin: 0px"><span style="margin-right: 15px;"><i class="glyphicon glyphicon-envelope"></i> ' +
 		item.mail + '</span></p>';
 		// e2 += '<span>' + JSON.stringify(item) + '</span>';
 		el.append(e2);

@@ -1,0 +1,48 @@
+
+div.selectableItems table tr.item:hover td {
+	background-color: #fff;
+}
+
+div.selectableItems table tr.item td {
+	cursor:pointer;
+	cursor:hand;
+}
+
+div.selectableItems img.clientlogo {
+	max-height: 24px; 
+	max-width: 24px
+}
+
+div.selectableItems table tr.item span.closed { display: inline; }
+div.selectableItems table tr.item span.open { display: none; }
+
+div.selectableItems table tr.item.open span.closed { display: none; }
+div.selectableItems table tr.item.open span.open { display: inline; }
+
+div.selectableItems table tr.itemDetails { display: none;}
+div.selectableItems table tr.itemDetails.open { display: table-row;}
+
+
+div.selectableItems table tr.itemDetails, div.selectableItems table tr.itemDetails td {
+	padding: 0px;
+}
+div.selectableItems table tr.itemDetails div.itemDetailsBox { 
+
+	border-top: none;
+	border-right: 1px solid #eee;
+	border-bottom: 1px solid #eee;
+	border-left: 1px solid #eee;
+
+border-bottom-right-radius: 5px;
+border-bottom-left-radius: 5px;
+	padding: 5px .5em 10px 1em;
+	margin: 0px 0px 10px 0px;
+
+
+}
+
+
+
+input#peoplesearch {
+	
+}

@@ -1,0 +1,76 @@
+
+<div class="">
+<table class="table table-striped" class="">
+
+<!-- 	<thead>
+		<tr>
+			<th style="width: 40px">&nbsp;</th>
+			<th>Client</th>
+			<th>Status</th>
+		</tr>
+	</thead> -->
+
+
+	<tbody >
+
+	{{#each .}}
+
+		<tr class="item" data-itemid="{{userid}}">
+
+
+			<td style="padding: 0px; margin: 0px">
+				{{#if a}}
+				<img style="max-height: 64px; margin: 0px" src="http://core.app.bridge.uninett.no/api/media/user/{{a}}" />
+				{{else}}
+				&nbsp;
+				{{/if}}
+			</td>
+			<td>
+				
+				<strong>{{name}}</strong>
+			</td>
+
+			<td>
+				{{mail}} 
+			</td>
+
+			<td></td>
+			<td>
+				{{#if roleType.owner}}
+					<span style="color: #933"><span class="glyphicon glyphicon-user"></span> Owner</span>
+				{{/if}}
+				{{#if roleType.admin}}
+					<span style="color: #335"><span class="glyphicon glyphicon-user"></span> Admin</span>
+				{{/if}}
+				{{#if roleType.member}}
+					<span style="color: #999"><span class="glyphicon glyphicon-user"></span> Member</span>
+				{{/if}}
+
+			</td>
+
+			<td style="text-align: right">
+				{{#if roleType.member}}
+					<button class="actPromote btn btn-default btn-xs"><span class="glyphicon glyphicon-chevron-up"></span> Promote</button>
+				{{/if}}
+				{{#if roleType.admin}}
+					<button class="actDemote btn btn-default btn-xs"><span class=" glyphicon glyphicon-chevron-down"></span> Demote</button>
+				{{/if}}
+				{{#unless roleType.owner}}
+					<button class="actDelete btn btn-danger btn-xs"><span class=" glyphicon glyphicon-remove"></span> Delete</button>
+				{{/unless}}
+			</td>
+
+		</tr>
+
+	{{/each}}
+
+
+
+	</tbody>
+</table>
+
+</div>
+
+
+
+

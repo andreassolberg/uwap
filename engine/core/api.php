@@ -220,9 +220,35 @@ try {
 			$groupid = $parameters[1];
 			$group = $groupconnector->getByID($groupid);
 
+			if (empty($group)) {
+				throw new Exception('Group not found: ' . $groupid);
+			}
+
+
 			$response = array(
 				'status' => 'ok',
 				'data' => $group->getJSON(),
+			);
+
+
+		// Get a specific group
+		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-]+)/members$', &$parameters)) {
+
+			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
+
+			// TODO: ensure user is member of the group to extract memberlist
+			$groupid = $parameters[1];
+			$group = $groupconnector->getByID($groupid);
+
+			if (empty($group)) {
+				throw new Exception('Group not found: ' . $groupid);
+			}
+
+			$members = $group->getMembers();
+
+			$response = array(
+				'status' => 'ok',
+				'data' => $members->getJSON(array('type' => 'user')),
 			);
 
 			// if ($group === null) {

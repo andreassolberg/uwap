@@ -19,7 +19,6 @@ require_once($base . '/Auth/Authenticator.php');
 require_once($base . '/Groups/GroupConnector.php');
 require_once($base . '/Groups/AdHocGroups.php');
 require_once($base . '/Groups/ExtGroups.php');
-require_once($base . '/Groups/GroupSet.php');
 
 
 
@@ -39,7 +38,9 @@ require_once($base . '/Models/App.php');
 require_once($base . '/Models/APIProxy.php');
 require_once($base . '/Models/ClientAuthorization.php');
 
+
 require_once($base . '/Sets/Set.php');
+require_once($base . '/Sets/RoleSet.php');
 require_once($base . '/Sets/ClientSet.php');
 require_once($base . '/Sets/UserSet.php');
 require_once($base . '/Sets/GroupSet.php');

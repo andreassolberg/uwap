@@ -15,6 +15,31 @@ class Group extends StoredModel {
 
 	}
 
+	public function getMembers() {
+
+		$members = $this->get('members', array());
+		$admins = $this->get('admins', array());
+
+		$set = new RoleSet();
+
+		foreach($members AS $member) {
+			$user = User::getByID($member);
+			$role = 'member';
+			if ($user->get('userid') === $this->get('uwap-userid')) {
+				$role = 'owner';
+			} else if(in_array($user->get('userid'), $admins)) {
+				$role = 'admin';
+			}
+
+			$set->add(new Role($user, $this, array('role' => $role)));
+		}
+		// foreach($admins AS $admin) {
+		// 	$user = User::getByID($admin);
+		// 	$set->add(new Role($user, $this, array('role' => 'admin')));
+		// }
+		return $set;
+	}
+
 
 
 	public function getJSON($opts = array()) {

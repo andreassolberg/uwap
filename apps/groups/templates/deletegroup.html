@@ -1,0 +1,29 @@
+<div class="modal fade" id="newgroupmodal" >
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Delete a group</h4>
+			</div>
+			<div class="modal-body">
+
+				<p>You are about to delete a Feide Connect group.</p>
+
+				<p><strong>WARNING:</strong> Deleting a group may result in content being unaccessible, if you have associated content access control with this group.</p>
+
+				<p>Do you really want to delete this group?></p>
+
+				<blockquote class="callout">
+					<h4>{{title}}</h4>
+					<p>{{description}}</p>
+					<p style="color: #555">Group identifier: {{id}}</p>
+				</blockquote>
+
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="actDismiss btn btn-default">No, do not delete</a>
+				<a href="#" class="actSave btn btn-danger">Yes, delete this group.</a>
+			</div>
+		</div>
+	</div>
+</div>

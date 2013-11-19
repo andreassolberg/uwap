@@ -174,6 +174,11 @@ abstract class StoredModel extends Model {
 		}
 
 		$data = self::getRawByID($id);
+
+		if ($data === null) return null;
+		// echo "data<pre>";
+		// print_r($data);// exit();
+
 		$item = new static($data);
 
 		self::$cache[$id] = $item;

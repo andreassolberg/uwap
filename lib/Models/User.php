@@ -17,6 +17,15 @@ class User extends StoredModel {
 		$this->groupconnector = new GroupConnector($this);
 	}
 
+	public function hasRealm($realm) {
+		// echo "checking if has realm " . $realm . " for me " . $this->get('userid') . "\n";
+		$pos = strpos($this->get('userid'), '@' . $realm);
+		$has = ($pos !== false);
+		// echo var_export($pos, true) . "\n";
+		// echo var_export($has, true) . "\n";
+		// echo "\n\n";
+		return $has;
+	}
 
 	public function getGroups() {
 
@@ -78,6 +87,7 @@ class User extends StoredModel {
 			// print_r($subs); exit;
 
 			foreach($subs AS $groupid => $group) {
+				if (empty($group)) continue;
 				$ret['subscriptions'][$group->get('id')] = $group->getJSON($opts['groups']);
 			}
 		}

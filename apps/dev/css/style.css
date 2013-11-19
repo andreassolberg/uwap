@@ -38,7 +38,6 @@ div.clientauthorizations img.clientlogo {
 div.clientauthorizations table tr.client span.closed { display: inline; }
 div.clientauthorizations table tr.client span.open { display: none; }
 
-
 div.clientauthorizations table tr.client.open span.closed { display: none; }
 div.clientauthorizations table tr.client.open span.open { display: inline; }
 
@@ -56,11 +55,11 @@ div.clientauthorizations table tr.clientDetails div.clientDetailsBox {
 	border-bottom: 1px solid #eee;
 	border-left: 1px solid #eee;
 
-border-bottom-right-radius: 5px;
-border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+
 	padding: 5px .5em 10px 1em;
 	margin: 0px 0px 10px 0px;
-
 
 }
 

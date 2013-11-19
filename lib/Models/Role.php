@@ -22,6 +22,9 @@ class Role extends Model {
 
 		if (isset($opts['type']) && $opts['type'] === 'key') {
 			return $this->group->get('id');
+		} else if (isset($opts['type']) && $opts['type'] === 'user') {
+			$data = $this->user->getJSON(array('type' => 'basic'));
+			return array_merge($data, $this->properties);
 		}
 
 		$data = $this->group->getJSON($opts);

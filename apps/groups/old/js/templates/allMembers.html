@@ -1,0 +1,26 @@
+<tr>
+		<td>{{#admin}} 
+			<a href="javascript:void(0)" class="adminIcon" rel="tooltip" title="Admin"><img src="img/admin.png" alt="Admin" height="16" width="16"/></a> 
+			{{/admin}}
+			{{^admin}}
+				{{#member}}
+				<a href="javascript:void(0)" class="memberIcon" rel="tooltip" title="Regular member"><img src="img/user.png" alt="Member" height="16" width="16" /></a>
+				{{/member}}
+			{{/admin}}
+						
+		</td>
+		<td>
+			{{name}}
+		</td>
+		<td>
+			{{mail}}
+		</td>
+		<td><button memid="{{userid}}" class="btn btn-danger btn-xs removeButton" onclick="console.log('{{userid}}');">X</button>
+		{{#admin}} <button memid="{{userid}}" class="btn btn-warning btn-xs demoteButton" onclick="console.log(this);">Demote</button>
+		{{/admin}}
+					
+		{{^admin}}
+			<button memid="{{userid}}" class="btn btn-success btn-xs promoteButton">Promote</button>
+		{{/admin}}
+		</td>
+</tr>

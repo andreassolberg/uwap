@@ -48,6 +48,14 @@ define(function(require) {
 		return pre.innerHTML;
 	}
 
+	UWAP.utils.stack = function(msg) {
+		var e = new Error('dummy');
+		var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
+		    .replace(/^\s+at\s+/gm, '')
+		    .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
+		    .split('\n');
+		console.log(msg, stack);
+	}
 
 	// jso.jso_registerRedirectHandler(function(p, callback) {
 
@@ -548,6 +556,12 @@ define(function(require) {
 		get: function(gid, callback, errorcallback) {
 			UWAP._request(
 				'GET', UWAP.utils.getEngineURL("/api/group/" + gid),
+				null, 
+				null, callback, errorcallback);
+		},
+		getMembers: function(gid, callback, errorcallback) {
+			UWAP._request(
+				'GET', UWAP.utils.getEngineURL("/api/group/" + gid + "/members"),
 				null, 
 				null, callback, errorcallback);
 		},
