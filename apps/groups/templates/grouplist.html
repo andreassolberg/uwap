@@ -49,9 +49,11 @@
 
 				<div class="itemDetailsBox">
 
+					{{#if uwap-userid}}
 					<div class="pull-right">
 						<span class="glyphicon glyphicon-user"></span> <tt>{{uwap-userid}}</tt>
 					</div>
+					{{/if}}
 
 
 					{{#if description}}
@@ -60,6 +62,12 @@
 
 					
 					<div class="pull-right">
+
+						{{#if roleType.member}}
+							<button class="btn btn-primary actEditGroup btn-sm">
+								<span class="glyphicon glyphicon-pencil"></span>
+								View</button>
+						{{/if}}
 
 						{{#if roleType.admin}}
 							<button class="btn btn-primary actEditGroup btn-sm">

@@ -11,6 +11,11 @@ class ExtGroups {
 
 	private function call($script, $input = array()) {
 
+
+		global $UWAP_BASEDIR;
+
+
+
 		if ($this->user) {
 			$userdata = array(
 				'userid' => $this->user->get('userid'),
@@ -18,7 +23,7 @@ class ExtGroups {
 			if (preg_match('/(.*?)@(.*?)$/', $this->user->get('userid'), $matches)) {
 				$userdata['realm'] = $matches[2];
 			}
-			$userdata['idp'] = 'https://idp.feide.no';
+			$userdata['idp'] = 'https://idp.feide.no'; // TODO: fill inn from user data.
 			$input['user'] = $userdata;
 		}
 		
@@ -27,7 +32,16 @@ class ExtGroups {
 		$inputstr = json_encode($input);
 		// echo "script: " . $script;
 
-		$cmd = '/root/nvm/v0.10.19/bin/node /root/groupengine/' . $script . '.js';
+		$groupEngineConfig = GlobalConfig::getValue('groupengine');
+		if (empty($groupEngineConfig['cmd'])) throw new Exception('Missing configuration parameter for groupengine.cmd');
+
+		$cmd = $groupEngineConfig['cmd'] . ' ' . $UWAP_BASEDIR . '/groupengine/' . $script . '.js';
+
+		// if  ($script == 'getbyuser') {
+		// 	echo "About to run a command:\n";
+		// 	echo "echo '" . $inputstr . "' | " . $cmd . "\n\n"; exit;
+		// }
+
 		$descriptorspec = array(
 			0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
 			1 => array("pipe", "w"),  // stdout is a pipe that the child will write to
@@ -140,13 +154,17 @@ class ExtGroups {
 
 	public function getByID($id) {
 
-		$parsedgroups = $this->call('getgroup', array('groupid' => $id));
+		$parsedgroup = $this->call('getgroup', array('groupid' => $id));
 
-		return $parsedgroups;
+		$group = new Group($parsedgroup);
 
 		// echo "RESULT:";
-		// print_r($parsedgroups ); exit;
+		// print_r($parsedgroup ); exit;
 
+
+		return $group;
+
+		
 
 		// $gos = array();
 		// foreach($parsedgroups['groups'] AS $groupid => $pg) {

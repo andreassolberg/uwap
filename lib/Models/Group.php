@@ -6,7 +6,10 @@ class Group extends StoredModel {
 
 
 	protected static $validProps = array(
-		'id', 'type', 'title', 'description', 'members', 'admins', 'listable', 'uwap-userid', 'source');
+		'id', 'type', 'title', 'description', 'members', 'admins', 'listable', 'uwap-userid', 'source',
+
+		'users' // from external sources.... TODO override this class that handles users property
+		);
 
 
 	public function __construct($properties) {
@@ -16,6 +19,22 @@ class Group extends StoredModel {
 	}
 
 	public function getMembers() {
+
+		/*
+		 * Special handling of groups that have the 'users' property set. This means that the full exploded user
+		 * member list is embedded in the users. This is typically because it is retrieved from external sources.
+		 */
+		if ($this->has('users')) {
+			$users = $this->get('users');
+			$set = new RoleSet();
+			foreach($users AS $user) {
+				$user = new User($user);
+				$role = new Role($user, $this, array('role' => 'member'));
+				$set->add($role);
+			}
+			return $set;
+
+		}
 
 		$members = $this->get('members', array());
 		$admins = $this->get('admins', array());

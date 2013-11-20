@@ -1,0 +1,9 @@
+{
+	"query": "a",
+	"realm": null,
+	"user": {
+		"userid": "andreas@uninett.no",
+		"realm": "uninett.no",
+		"idp": "https://idp.feide.no"
+	}
+}

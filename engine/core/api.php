@@ -148,10 +148,12 @@ try {
 
 			// print_r($parameters); exit;
 
-			if ($parameters[1] !== '_') {
-				$realm = $parameters[1];
-			}
+			// $realm = null;
+			// if ($parameters[1] !== '_') {
+			// 	$realm = $parameters[1];
+			// }
 
+			$realm = $parameters[1];
 			$response = array(
 				'status' => 'ok',
 				'data' => $groupconnector->peopleQuery($realm, $_REQUEST['query']),
