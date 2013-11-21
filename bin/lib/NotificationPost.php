@@ -5,11 +5,12 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/lib/external/swift/swift_re
 
 class NotificationPost {
 
-	protected $notifications, $mailto, $message;
+	protected $notifications, $mailto, $message, $user;
 
-	function __construct(Notifications $notifications, $mailto) {
+	function __construct(Notifications $notifications, $mailto, User $user) {
 		$this->notifications = $notifications;
 		$this->mailto = $mailto;
+		$this->user = $user;
 
 		$this->process();
 	}
@@ -213,13 +214,13 @@ class NotificationPost {
 
 
 	function getHTML() {
-		$m = new Mailer($this->mailto);
+		$m = new Mailer($this->mailto, null, $this->user);
 		$m->setBody($this->message);
 		return $m->getHTML();
 	}
 
 	function send() {
-		$m = new Mailer($this->mailto);
+		$m = new Mailer($this->mailto, null, $this->user);
 		$m->setBody($this->message);
 		$m->send();
 

@@ -29,22 +29,28 @@ $query = array(
 $authz = $store->queryList('oauth2-server-authorization', $query);
 $client = Client::getByID('feed');
 
+// print_r($authz); exit;
+
 
 foreach($authz AS $a) {
 
 	// $testusers = array('andreas@uninett.no', 'armaz@uninett.no', 'anders@uninett.no', 'simon@uninett.no', 'hallen@uninett.no', 'navjord@uninett.no');
-	$testusers = array('andreas@uninett.no', 'anders@uninett.no', 'simon@uninett.no', 'hallen@uninett.no', 'navjord@uninett.no', 'bjorn@uninett.no');
+	// $testusers = array('andreas@uninett.no', 'anders@uninett.no', 'simon@uninett.no', 'hallen@uninett.no', 'navjord@uninett.no', 'bjorn@uninett.no');
 
-	$testusers = array('andreas@uninett.no');
+	// $testusers = array('andreas@uninett.no');
 
 	$user = User::getByID($a['userid']);
 	$userid = $user->get('userid');
+	if (!$user->isMemberOf('uwap:grp-ah:7ea1c555-583c-4a1f-9ae2-1273b0c66ebc')) {
+		echo "  › Skipping user " . $userid . " (not member of early adopter group)\n";
+		continue;
+	}	
 
 	// if ($userid !== 'andreas@uninett.no') continue;
-	if (!in_array($userid, $testusers)) {
-		echo "  › Skipping user " . $userid . "\n\n";
-		continue;
-	} 
+	// if (!in_array($userid, $testusers)) {
+	// 	echo "  › Skipping user " . $userid . "\n\n";
+	// 	continue;
+	// } 
 
 
 
@@ -58,7 +64,7 @@ foreach($authz AS $a) {
 
 
 	// $notifications = $feedReader->readNotifications(array(), 3600000);
-	$notifications = $feedReader->readNotifications(array());
+	$notifications = $feedReader->readNotifications(array(), 3600000);
 
 	$entries = $notifications->getJSON();
 
@@ -86,7 +92,10 @@ foreach($authz AS $a) {
 
 		// $entries[$k]['ref'] = $feed->read(array('id' => $entry['id']));
 		// print_r($entries[$k]); exit;
+	}
 
+	if(count($entries['items']) < 1) {
+		echo "No updates for this user\n\n"; continue;
 	}
 
 	if (!$user->has('mail')) {
@@ -96,11 +105,11 @@ foreach($authz AS $a) {
 
 	echo "   [Sending mail to " . $user->get('mail') . ".\n\n";
 
-	$np = new NotificationPost($notifications, $user->get('mail'));
-	// $np = new NotificationPost($entries, 'andreas@uninett.no');
+	$np = new NotificationPost($notifications, $user->get('mail'), $user);
+	// $np = new NotificationPost($notifications, 'andreas@uninett.no', $user);
 	$np->send();
 
-	exit;
+
 
 	// echo "User groups "; print_r($user['groups']);
 

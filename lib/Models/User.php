@@ -35,7 +35,11 @@ class User extends StoredModel {
 
 	public function isMemberOf($groupid) {
 		$groups = $this->getGroups();
-		return in_array($groupid, $groups);
+		// print_r(array_keys($groups)); exit;
+		// echo "Checking if " . $this->get('userid') . "  is member of " . $groupid . "\n";
+		// echo "   › is member of " . join(',', array_keys($groups) ). "\n";
+		return isset($groups[$groupid]);
+		// return in_array($groupid, $groups);
 	}
 
 	public function isSubscribedTo($groupid) {

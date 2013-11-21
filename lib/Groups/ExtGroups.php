@@ -38,8 +38,8 @@ class ExtGroups {
 		$cmd = $groupEngineConfig['cmd'] . ' ' . $UWAP_BASEDIR . '/groupengine/' . $script . '.js';
 
 		// if  ($script == 'getbyuser') {
-		// 	echo "About to run a command:\n";
-		// 	echo "echo '" . $inputstr . "' | " . $cmd . "\n\n"; exit;
+			// echo "About to run a command:\n";
+			// echo "echo '" . $inputstr . "' | " . $cmd . "\n\n"; exit;
 		// }
 
 		$descriptorspec = array(

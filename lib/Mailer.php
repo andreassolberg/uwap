@@ -7,9 +7,12 @@ class Mailer {
 	var $adr;
 	var $body;
 
-	function __construct($adr, $body = null) {
+	protected $user;
+
+	function __construct($adr, $body = null, User $user) {
 		$this->adr = $adr;
 		$this->body = $body;
+		$this->user = $user;
 	}
 
 
@@ -333,7 +336,7 @@ img.thumb {
 
 		<!-- Grey header bar below -->
 		<div id="headerbar" style="clear: both">
-		<p id="breadcrumb">Important updates on <a href="https://feed.uwap.org/">Feide Connect Activitystream</a> to ' . $this->adr . '</p>
+		<p id="breadcrumb">Important updates on <a href="https://feed.uwap.org/">Feide Connect Activitystream</a> for ' . $this->user->get('name', 'noname') . '</p>
 		<p style="height: 0px; clear: both"></p>
 		</div><!-- /#headerbar -->
 
