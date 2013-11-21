@@ -25,7 +25,9 @@ class GlobalConfig {
 
 	public static function getBaseURL($app = 'core') {
 
-		return Utils::getScheme() . '://' . $app . '.' . GlobalConfig::hostname() . '/';
+		
+
+		return self::getValue('scheme', 'https') . '://' . $app . '.' . GlobalConfig::hostname() . '/';
 
 	}
 
