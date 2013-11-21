@@ -12,10 +12,16 @@ class Mailer {
 		$this->body = $body;
 	}
 
+
+	function getHTML() {
+		$body = $this->getBody($this->body);
+		return $body;
+	}
+
 	function send() {
 
 		$from = 'notifications@uwap.org';
-		$subject = 'UNINETT Feed Updates';
+		$subject = 'UNINETT Activitystream Updates';
 		// $headers = 'From: notifications@uwap.org' . "\r\n" .
 		// 	'Reply-To: andreas.solberg@uninett.no' . "\r\n" .
 		// 	'X-Mailer: PHP/' . phpversion();
@@ -58,14 +64,18 @@ class Mailer {
 
 
 	public function getBody() {
+
+		$baseurl = GlobalConfig::getBaseURL();
+		$feedurl = GlobalConfig::getBaseURL('feed');
+		// echo "BASE URL " . $baseurl; exit;
+
 		return '<!DOCTYPE html>
 		<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 		<head xml:lang="en">
 
 			<meta charset="utf-8" />	
-
-		<link rel="stylesheet" href="https://core.uwap.org/_/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-		<link rel="stylesheet" href="https://core.uwap.org/_/bootstrap/plugins/fontawsome/css/font-awesome.css" rel="stylesheet" />
+		<link rel="stylesheet" href="' . $baseurl . '_/bootstrap3/css/bootstrap.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="' . $feedurl . 'css/feed.css" rel="stylesheet" />
 
 		<style type="text/css">
 
@@ -312,7 +322,7 @@ img.thumb {
 
 		</style>
 
-			<title>UWAP Feed</title> 
+			<title>Feide Connect Activitystream</title> 
 
 		</head>
 		<body>
@@ -323,7 +333,7 @@ img.thumb {
 
 		<!-- Grey header bar below -->
 		<div id="headerbar" style="clear: both">
-		<p id="breadcrumb">Important updates on <a href="https://feed.uwap.org/">UWAP Feed</a> to ' . $this->adr . '</p>
+		<p id="breadcrumb">Important updates on <a href="https://feed.uwap.org/">Feide Connect Activitystream</a> to ' . $this->adr . '</p>
 		<p style="height: 0px; clear: both"></p>
 		</div><!-- /#headerbar -->
 
@@ -331,13 +341,13 @@ img.thumb {
 
 		<div id="content">
 
-
 				' . $this->body . '
 
 		</div><!-- /#content -->
 
-		<div id="footer">
-			You are carefully selected as a very important test person, and therefore you receive these emails. We appreciate your support and patience. Contact Andreas if you have something
+		<div style="padding: 1px 3px" id="footer">
+			You have been added to the <a href="https://groups.uwap.org/#!/group/uwap:grp-ah:7ea1c555-583c-4a1f-9ae2-1273b0c66ebc">Feide Connect early adopter team</a>. 
+			Please contact Andreas Solberg for questions regarding this privilege.
 		</div><!-- /#footer -->
 
 
@@ -349,6 +359,8 @@ img.thumb {
 	function setBody($body) {
 		$this->body = $body;
 	}
+
+
 
 // 	function setNotifications($notifications) {
 

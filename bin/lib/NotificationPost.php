@@ -5,10 +5,10 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/lib/external/swift/swift_re
 
 class NotificationPost {
 
-	protected $items, $mailto, $message;
+	protected $notifications, $mailto, $message;
 
-	function __construct($items, $mailto) {
-		$this->items = $items;
+	function __construct(Notifications $notifications, $mailto) {
+		$this->notifications = $notifications;
 		$this->mailto = $mailto;
 
 		$this->process();
@@ -17,11 +17,14 @@ class NotificationPost {
 
 
 	function getResponse($summary, $item) {
+
 		$html = '';
 		$classes = array('item', 'basicItem');
 		if(isset($item['promoted']) && $item['promoted']) {
 			$classes[] = 'promoted';
 		}
+
+
 
 		// if (item.user) {
 		// 	item.user.profileimg = UWAP.utils.getEngineURL('/api/media/user/' + item.user.a);
@@ -43,25 +46,25 @@ class NotificationPost {
 			$html .= '<p>' . $summary['summary'] . '</p>';
 		}
 
-		$html .= '<span style="margin-right: 2em" class=""><i class="icon-share-alt"></i><a target="_blank" href="https://feed.uwap.org/#!/item/' . $item['id'] . '">Open item at UWAP</a></span> ' ;
+		$html .= '<span style="margin-right: 2em" class=""><i class="glyphicon glyphicon-share-alt"></i><a target="_blank" href="https://feed.uwap.org/#!/item/' . $item['id'] . '">Open item at UWAP</a></span> ' ;
 
 		$footer = '';
 
 		if (isset($item['author'])) {
-			$footer .= '<span><i class=" icon-user"></i> ' . $item['author'] . '</span>';
+			$footer .= '<span><i class=" glyphicon glyphicon-user"></i> ' . $item['author'] . '</span>';
 		}
 
 		if (isset($item['user'])) {
-			$footer .= '<span><i class=" icon-user"></i> ' . $item['user']['name'] . '</span>';
+			$footer .= '<span><i class=" glyphicon glyphicon-user"></i> ' . $item['user']['name'] . '</span>';
 		}
 
 		if (isset($item['client'])) {
-			$footer .= '<span><i class=" icon-briefcase"></i> ' . $item['client']['client_name'] . '</span>';
+			$footer .= '<span><i class=" glyphicon glyphicon-briefcase"></i> ' . $item['client']['client_name'] . '</span>';
 		}
 
 
 		if (isset($item['ts'])) {
-			$footer .= '<span class=""><i class=" icon-time"></i> ' . date('D, d M H:i:s', floor($item['ts']/1000))  .  '</span>';
+			$footer .= '<span class=""><i class=" glyphicon glyphicon-time"></i> ' . date('D, d M H:i:s', floor($item['ts']/1000))  .  '</span>';
 		}
 
 
@@ -76,10 +79,18 @@ class NotificationPost {
 
 	function getPost($item) {
 		$html = '';
+
+
+		$baseurl = GlobalConfig::getBaseURL();
+
+		// print_r($item); exit;
+
 		$classes = array('item', 'basicItem');
 		if(isset($item['promoted']) && $item['promoted']) {
 			$classes[] = 'promoted';
 		}
+
+		// print_r($item); exit;
 
 		// if (item.user) {
 		// 	item.user.profileimg = UWAP.utils.getEngineURL('/api/media/user/' + item.user.a);
@@ -165,12 +176,14 @@ class NotificationPost {
 	function getItem($item) {
 		// print_r($item['ref']); exit;
 
-		if (isset($item['ref']['inresponseto'])) {
-			// return '<div class="basicItem">' . $item['summary'] . '</div>';
-			return $this->getResponse($item, $item['ref']);
-		} else {
-			return $this->getPost($item['ref']);
-		}
+		// if (isset($item['ref']['inresponseto'])) {
+		// 	// return '<div class="basicItem">' . $item['summary'] . '</div>';
+		// 	return $this->getResponse($item, $item['ref']);
+		// } else {
+		// 	return $this->getPost($item['ref']);
+		// }
+
+		return $this->getPost($item);
 
 		
 	} 
@@ -180,8 +193,14 @@ class NotificationPost {
 
 		$this->message = ''; 
 
-		foreach($this->items AS $item) {
-			$this->message .= $this->getItem($item);
+		$nots = $this->notifications->get();
+
+
+
+		foreach($nots AS $notification) {
+
+
+			$this->message .= $notification->getHTML();
 			// '<div class="basicItem">' . $item['summary'] . '</div>';
 
 		}
@@ -192,6 +211,12 @@ class NotificationPost {
 
 	}
 
+
+	function getHTML() {
+		$m = new Mailer($this->mailto);
+		$m->setBody($this->message);
+		return $m->getHTML();
+	}
 
 	function send() {
 		$m = new Mailer($this->mailto);

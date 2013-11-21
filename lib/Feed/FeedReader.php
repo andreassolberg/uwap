@@ -294,6 +294,7 @@ class FeedReader {
 		$parents = null;
 		$missingParents = $feed->missingParentItems();
 
+		// header('Content-Type: text/plain');
 		// print_r($feed->getJSON());
 		// print_r($missingParents); exit;
 

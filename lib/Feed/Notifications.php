@@ -16,6 +16,11 @@ class Notifications {
 	}
 
 
+	public function get() {
+		// print_r($this->notifications); exit;
+		return $this->notifications;
+	}
+
 	protected function process() {
 
 		// $items = array();
@@ -43,8 +48,8 @@ class Notifications {
 			}
 
 		}
-
-		// print_r($this->notifications); exit;
+		// header('Content-type: text/plain'); 
+		// print_r($this->feed->getJSON()); exit;
 
 		if ($this->parents) {
 			$p = $this->parents->getItems();
@@ -55,6 +60,7 @@ class Notifications {
 					continue;
 				}
 				$this->notifications[$id]->item = $item;
+				$this->notifications[$id]->debut = false;
 			}
 		}
 

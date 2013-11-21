@@ -23,6 +23,13 @@ class GlobalConfig {
 	}
 
 
+	public static function getBaseURL($app = 'core') {
+
+		return Utils::getScheme() . '://' . $app . '.' . GlobalConfig::hostname() . '/';
+
+	}
+
+
 
 	// public static function getAppID() {
 

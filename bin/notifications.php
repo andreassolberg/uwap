@@ -24,39 +24,63 @@ if (!is_array($config)) {
 $store = new UWAPStore();
 
 $query = array(
-	"client_id" => 'app_feed'
+	"client_id" => 'feed'
 );
 $authz = $store->queryList('oauth2-server-authorization', $query);
+$client = Client::getByID('feed');
+
 
 foreach($authz AS $a) {
 
 	// $testusers = array('andreas@uninett.no', 'armaz@uninett.no', 'anders@uninett.no', 'simon@uninett.no', 'hallen@uninett.no', 'navjord@uninett.no');
 	$testusers = array('andreas@uninett.no', 'anders@uninett.no', 'simon@uninett.no', 'hallen@uninett.no', 'navjord@uninett.no', 'bjorn@uninett.no');
 
+	$testusers = array('andreas@uninett.no');
 
-	$user = $store->queryOne('users', array('userid' => $a['userid']));
-	$userid = $user['userid'];
+	$user = User::getByID($a['userid']);
+	$userid = $user->get('userid');
+
 	// if ($userid !== 'andreas@uninett.no') continue;
 	if (!in_array($userid, $testusers)) {
 		echo "  › Skipping user " . $userid . "\n\n";
 		continue;
 	} 
 
+
+
+
 	echo "   [Processing " . $userid . " >\n";
+	// echo "Memeber of groups"; print_r($user['groups']); print_r($user['subscriptions']);
+	// echo json_encode($user->getJSON(), 4);
 
-	echo "Memeber of groups"; print_r($user['groups']); print_r($user['subscriptions']);
 
-	$feed = new Feed($userid, $user['groups'], $user['subscriptions']);
-	$no = new Notifications($userid, $user['groups'], $user['subscriptions']);
-	$response = $no->read(array(), 3600000, true); // 3600000 is one hour. 432000000 is five days.
-	$entries = $response['items'];
+	$feedReader = new FeedReader($client, $user);
+
+
+	// $notifications = $feedReader->readNotifications(array(), 3600000);
+	$notifications = $feedReader->readNotifications(array());
+
+	$entries = $notifications->getJSON();
+
+	// print_r($entries); exit;
+
+	$ids = array();
+	// $feedReader->markNotificationsRead($ids);
+
+
+	// $feed = new Feed($userid, $user['groups'], $user['subscriptions']);
+	// $no = new Notifications($userid, $user['groups'], $user['subscriptions']);
+	// $response = $no->read(array(), 3600000, true); // 3600000 is one hour. 432000000 is five days.
+	// $entries = $response['items'];
+
+	// 	exit;
 
 	if (empty($entries)) {
 		echo "No updates...\n\n";
 		continue;
 	}
 
-	foreach($entries AS $k => $entry) {
+	foreach($entries['items'] AS $k => $entry) {
 		// echo "   Entry › " . json_encode($entry) . "\n\n";
 		echo " › " . $entry['summary'] . "\n";
 
@@ -65,13 +89,18 @@ foreach($authz AS $a) {
 
 	}
 
-	echo "   [Sending mail to " . $user['mail'] . ".\n\n";
+	if (!$user->has('mail')) {
+		echo "Skipping user because mail field is missing.\n";
+		continue;
+	}
 
-	$np = new NotificationPost($entries, $user['mail']);
+	echo "   [Sending mail to " . $user->get('mail') . ".\n\n";
+
+	$np = new NotificationPost($notifications, $user->get('mail'));
 	// $np = new NotificationPost($entries, 'andreas@uninett.no');
 	$np->send();
 
-
+	exit;
 
 	// echo "User groups "; print_r($user['groups']);
 
