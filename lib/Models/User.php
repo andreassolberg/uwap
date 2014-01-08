@@ -33,6 +33,15 @@ class User extends StoredModel {
 
 	}
 
+	public function getGroupIDs() {
+		$ids = array();
+		$groups = $this->getGroups();
+		foreach($groups AS $g) {
+			$ids[] = $g->group->get('id');
+		}
+		return $ids;
+	}
+
 	public function isMemberOf($groupid) {
 		$groups = $this->getGroups();
 		// print_r(array_keys($groups)); exit;
@@ -155,10 +164,42 @@ class User extends StoredModel {
 
 
 		$newUser = new User($userattr);
+
+		// $groups = self::groupsFromAttributes($attributes);
+
+		// UWAP_Utils::dump('grouos', $groups); exit;
+
 		$newUser->store();
 
 
 		return $newUser;
+	}
+
+	public static function groupsFromAttributes($attributes) {
+
+		$groups = array();
+
+		$realm = 'norealm_uwap_org';
+		if (!empty($attributes['eduPersonPrincipalName']) && !empty($attributes['eduPersonOrgDN:o'])) {
+			if (preg_match('/^(.*?)@(.*?)$/', $attributes['eduPersonPrincipalName'][0], $matches)) {
+				$realm = str_replace('.', '_', $matches[2]);
+				$orgname = $attributes['eduPersonOrgDN:o'][0];
+				$groups['uwap:realm:' . $realm] = $orgname;
+			}
+		}
+		if (!empty($attributes['eduPersonOrgUnitDN']) && !empty($attributes['eduPersonOrgUnitDN:ou'])) {
+			for($i = 0; $i < count($attributes['eduPersonOrgUnitDN']); $i++) {
+				$key = sha1($attributes['eduPersonOrgUnitDN'][$i]);
+				$name = $attributes['eduPersonOrgUnitDN:ou'][$i];
+				$groups['uwap:orgunit:' . $realm . ':' . $key] = $name;
+			}
+		}
+
+
+		return $groups;
+
+
+
 	}
 	
 

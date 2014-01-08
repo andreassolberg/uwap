@@ -144,6 +144,14 @@ class Client extends StoredModel {
 		return $currentHandlers;
 	}
 
+	public function getAuthzHandler($id) {
+		$currentHandlers = $this->get('handlers', array());
+		if (isset($currentHandlers[$id])) {
+			return $currentHandlers[$id];
+		}
+		throw new Exception('Authorization handler not found: ' . $id);
+	}
+
 
 	public function deleteAuthzHandler($id) {
 
@@ -303,7 +311,7 @@ class Client extends StoredModel {
 	public static function generate($properties, $user) {
 
 
-		$userproperties = array('id', 'name', 'descr', 'type', 'proxy');
+		$userproperties = array('id', 'name', 'descr', 'type', 'proxy', 'redirect_uri');
 
 		$requestedScopes = isset($properties['scopes']) ? $properties['scopes'] : array('userinfo');
 
