@@ -1,4 +1,14 @@
 div.gaveentry {
+
+/*	
+	margin: 0px;
+	font-family: "Ostrich";
+	font-size: 130%;
+	line-height: 95%;
+	color: #999;
+	font-weight: bold;
+*/
+	font-family: sans-serif;
 	border-top: 1px solid #eee;
 	
 	padding: 0px;
@@ -8,11 +18,11 @@ div.gaveentry {
 
 div.gaveentry div.name {
 	color: #555;
-	font-size: 10pt;
+	
 
 }
 div.gaveentry div.until {
 	
 	color: #080;
-		font-size: 11pt;
+		
 }

@@ -1,4 +1,7 @@
+div#calendar {
+	font-family: "-apple-system-font", "Helvetica", "Arial", "sans-serif";
 
+}
 div#calendar div.day {
 	margin: 0px 0px 0px 0px;
 	padding: 0px 0px 25px 0px;
@@ -36,6 +39,7 @@ div#calendar div.calentry.andreasjobb span.caltype { background: #b7ebef; }
 div#calendar div.calentry.solberg span.caltype { background: #e0c7bc; }
 div#calendar div.calentry.vigdis span.caltype { background: #c6e2b3; }
 div#calendar div.calentry.linnea span.caltype { background: #9d5ba0; }
+div#calendar div.calentry.linus span.caltype { background: #5566cc; }
 div#calendar div.calentry.helligdager span.caltype { background: #f7b8b7; }
 div#calendar div.calentry.helligdager2 span.caltype { background: #a00; }
 div#calendar div.calentry.barnehage span.caltype {background: #fcc9b2; }

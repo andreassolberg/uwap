@@ -14,15 +14,3 @@ table.temp tr td {
 	padding-top: 10px;
 }
 
-@font-face {
-    font-family: 'Ostrich';
-    src: url('https://twine.supermechanical.com/static/css/ostrich-regular/ostrich-regular-webfont.eot');
-    src: url('https://twine.supermechanical.com/static/css/ostrich-regular/ostrich-regular-webfont.eot?iefix') format('eot'),
-         url('https://twine.supermechanical.com/static/css/ostrich-regular/ostrich-regular-webfont.woff') format('woff'),
-         url('https://twine.supermechanical.com/static/css/ostrich-regular/ostrich-regular-webfont.ttf') format('truetype'),
-         url('https://twine.supermechanical.com/static/css/ostrich-regular/ostrich-regular-webfont.svg#webfont') format('svg');
-    font-weight: normal;
-    font-style: normal;
-
-}
-

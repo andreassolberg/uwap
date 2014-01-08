@@ -4,24 +4,24 @@
 
   <meta charset="utf-8">
 
+	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
 	<title>Solberg</title>
 	<meta name="description" content="">
 
-	<meta name="viewport" content="width=device-width">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 	<meta name="apple-mobile-web-app-capable" content="yes" />  
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-	<meta name = "viewport" content = "width = 320,
-       initial-scale = 2.3, user-scalable = no">
 
-
-	<meta charset="utf-8">
-	<title>Solberg Dashboard</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no" />
 
 	
+
+	<title>Solberg Dashboard</title>
+	
+
 	<style>
 		div#locations {
 			margin-bottom: 1em;
@@ -34,16 +34,83 @@
 	<link href="js/plugins/Adressa.css" rel="stylesheet" />
 	<link href="js/plugins/Yr.css" rel="stylesheet" />
 	<link href="js/plugins/Countdown.css" rel="stylesheet" />
-	<link href="js/plugins/SMsg.css" rel="stylesheet" />
-	<link href="js/plugins/Buss.css" rel="stylesheet" />
+	<!-- <link href="js/plugins/SMsg.css" rel="stylesheet" /> -->
+	<!-- <link href="js/plugins/Buss.css" rel="stylesheet" /> -->
 	<link href="js/plugins/Gaver.css" rel="stylesheet" />
-	<link href="js/plugins/Todo.css" rel="stylesheet" />
+	
+	<!-- <link href="js/plugins/Todo.css" rel="stylesheet" /> -->
 	<link href="js/plugins/Temp.css" rel="stylesheet" />
-
-
 
 	<script type="text/javascript" data-main="main" src="/_/js/require.js"></script>
 
+	<script type="text/javascript">
+
+	window.StatHatEmbed = new function () {
+    function d() {
+        var a = document.getElementsByTagName("script");
+        return a[a.length - 1]
+    }
+
+    function e(a, b) {
+        var d = document.createElement("script"),
+            c = "//www.stathat.com/embed/" + a + "/" + b.s1;
+        b.dev && (c = "//localhost:8081/embed/" + a + "/" + b.s1);
+        b.s2 && (c += "/" + b.s2);
+        b.s3 && (c += "/" + b.s3);
+        c += "?w=" + b.w + "&h=" + b.h + "&tf=" + b.tf;
+        b.style && (c += "&style=" + b.style);
+        b.dev && (c += "&dev=1");
+        b.title && (c += "&title=" + b.title);
+        d.src = c;
+        d.type = "text/javascript";
+        document.getElementsByTagName("head")[0].appendChild(d)
+    }
+    function f(a) {
+        return [a.s1,
+            a.s2, a.s3, a.w, a.h, a.tf, a.style].join("_")
+    }
+    this.render_graph = function (a) {
+        DIV_ID = "statd_embed_graph_" + f(a);
+        d().insertAdjacentHTML("AfterEnd", "<div id='" + DIV_ID + "' style='display:none'></div>");
+        e("graph", a)
+    };
+    this.render_histogram = function (a) {
+        DIV_ID = "statd_embed_histogram_" + f(a);
+        d().insertAdjacentHTML("AfterEnd", "<div id='" + DIV_ID + "' style='display:none'></div>");
+        e("histogram", a)
+    };
+    this.render_data = function (a) {
+        DIV_ID = "statd_embed_data_" + f(a);
+        d().insertAdjacentHTML("AfterEnd", "<div id='" + DIV_ID + "' style='display:none'></div>");
+        e("data", a)
+    };
+    this.render_table = function (a) {
+        DIV_ID = "statd_embed_table_" + f(a);
+        d().insertAdjacentHTML("AfterEnd", "<div id='" + DIV_ID + "' style='display:none'></div>");
+        e("table", a)
+    };
+    this.render_text = function (a) {
+        DIV_ID = ["statd_embed_text", a.s1, a.u].join("_");
+        d().insertAdjacentHTML("AfterEnd", "<div id='" + DIV_ID + "' style='display:none'></div>");
+        e("text", a)
+    };
+    this.render = function (a) {
+        a.tf || (a.tf = "week_compare");
+        a.kind || (a.kind = "graph");
+        switch (a.kind) {
+        case "graph":
+            this.render_graph(a);
+            break;
+        case "histogram":
+            this.render_histogram(a);
+            break;
+        default:
+            this.render_graph(a)
+        }
+    }
+};
+
+	</script>
 
 	<link rel="shortcut icon" href="/ico/favicon.ico">
 	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/ico/apple-touch-icon-144-precomposed.png">
@@ -55,75 +122,61 @@
 <body>
 
 
-	<div class="row-fluid">
-		<div class="span8">
-			<div id="yr" ></div>
+	<div class="row">
+		<div class="col-md-8">
+			<div style="" id="yr" ></div>
 
-			
 
-			<div class="row-fluid">
+			<div class="row">
 
-				<div class="span4">
-					<div id="tcontainer"></div>
+
+				<div class="col-md-8">
 					<div id="temp"></div>
-					<div id="tempnow"></div>
-					<!-- <h3 style="background: #333; color: #eee">Andreas</h3> -->
-					<div id="locations"></div>
-					<!-- <h3 style="background: #333; color: #eee">Buss</h3> -->
-					<div id="buss" ></div>
-					<div id="flo"></div>
+
+					<div id="tcontainer"></div>
+
+
+
+					<div class="row">
+						<div class="col-md-6">
+							<div id="tempnow"></div>
+
+							<div id="flo"></div>
+							<div id="locations"></div>
+							<div id="buss" ></div>
+						</div>
+						<div class="col-md-6">
+							<div id="countdowns2"></div>
+							<div id="countdowns"></div>
+							<div id="messages"></div>
+							<div id="gaver" ></div>
+							<div id="todo" ></div>
+
+						</div>
+					</div>
 
 				</div>
-				<div class="span4">
-				
 
-					<div id="countdowns"></div>
-					<div id="messages"></div>
-
-<!-- 				<h3 style="background: #333; color: #eee; font-size: 90%">Dagens VG+</h3>
-					<div id="vg" ></div> -->
-
-					<h3 style="background: #333; color: #eee">Gaver</h3>
-					<div id="gaver" ></div>
-
-					
-					<div id="todo" ></div>
-
-
+				<div class="col-md-4">
+					<div id="calendar" ></div>
 
 				</div>
-				<div id="calendar" class="span4"></div>
+
 			</div>
-		</div>
 
-		<div id="adressa" class="span4">
 
 		</div>
+
+		<div id="adressa" class="col-md-4">
+		</div>
+
 	</div>
 
+
 	<div class="hidden-phone" id="adressacover"></div>
-	
 
-
-
-	<!-- ========================================================== -->
-	<!-- Placed at the end of the document so the pages load faster -->
-
-
-	<!--
-		Add only the ones you are using.
-	<script src="js/bootstrap/bootstrap-collapse.js"></script>
-	<script src="/js/bootstrap/bootstrap-transition.js"></script>
-	<script src="/js/bootstrap/bootstrap-alert.js"></script>
-	<script src="/js/bootstrap/bootstrap-modal.js"></script>
-	<script src="/js/bootstrap/bootstrap-dropdown.js"></script>
-	<script src="/js/bootstrap/bootstrap-scrollspy.js"></script>
-	<script src="/js/bootstrap/bootstrap-tab.js"></script>
-	<script src="/js/bootstrap/bootstrap-tooltip.js"></script>
-	<script src="/js/bootstrap/bootstrap-popover.js"></script>
-	<script src="/js/bootstrap/bootstrap-button.js"></script>
-	<script src="/js/bootstrap/bootstrap-carousel.js"></script>
-	<script src="/js/bootstrap/bootstrap-typeahead.js"></script>
-	-->
 </body>
 </html>
+
+
+

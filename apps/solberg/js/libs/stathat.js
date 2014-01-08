@@ -1,0 +1,1 @@
+StatHatEmbed.render({s1: "VP6Z", s2: "KN49", s3: "FCjV", w: 500, h: 200, tf: "half_compare", style: "fill"});
