@@ -1,9 +1,54 @@
-div#countdowns div.countdown p {
-	margin: 0px;
-	font-family: "Arial Narrow";
+@font-face {
+  font-family: 'Ostrich';
+  src: url('../../fonts/ostrich-regular.ttf');
 }
 
+
+div#countdowns div.countdown p {
+	margin: 0px;
+	font-family: "Ostrich";
+	font-size: 170%;
+	line-height: 88%;
+}
+div#countdowns {
+	margin-top: 5px;
+}
 div#countdowns div.countdown span.text {
 	color: #999;
 	font-weight: bold;
+}
+
+div#countdowns2 div.countdown p {
+	margin: 0px;
+	font-family: "Ostrich";
+	font-size: 150%;
+	line-height: 95%;
+}
+div#countdowns2 {
+	margin-top: 5px;
+}
+div#countdowns2 div.countdown span.text {
+	color: #999;
+	font-weight: bold;
+}
+
+
+
+span.countdown1 {
+	color: #ff5577; 
+	font-weight: bold;
+}
+span.countdown2 {
+	color: #559988; 
+	/*font-weight: bold;*/
+}
+span.countdown3 {
+	color: #5577cc; 
+	/*font-weight: bold;*/
+}
+
+span.countdowntoday {
+	color: #ee8877; 
+	font-weight: bold;
+	font-size: 130%;
 }

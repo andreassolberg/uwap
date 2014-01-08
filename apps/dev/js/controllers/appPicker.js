@@ -62,7 +62,7 @@ define(function(require, exports, module) {
 
 
 	appPicker.prototype.selectApp = function(appid) {
-		console.log("SELECT APP");
+		console.log("SELECT APP", appid);
 		var element = this.findElement(appid);
 		if (appid !== this.selected) {
 			this.selected = appid;

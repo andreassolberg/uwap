@@ -1022,7 +1022,8 @@ class So_Message {
 		exit;
 	}
 	public function sendBody() {
-		header('Content-Type: application/json; charset=utf-8');
+		// header('Content-Type: application/json; charset=utf-8');
+		header('Content-Type: application/x-www-form-urlencoded');
 
 		$body = array();
 		foreach($this AS $key => $value) {
@@ -1030,7 +1031,8 @@ class So_Message {
 			$body[$key] = $value;
 		}
 
-		echo json_encode($body);
+		// echo json_encode($body);
+		echo http_build_query($body);
 		exit;
 	}
 	
@@ -1085,6 +1087,13 @@ abstract class So_AuthenticatedRequest extends So_Request {
 	}
 	function checkCredentials($u, $p) {
 		if ($u !== $this->client_id) throw new So_Exception('invalid_grant', 'Invalid client credentials');
+		if ($p !== $this->client_secret) throw new So_Exception('invalid_grant', 'Invalid client credentials');
+		// error_log("Checking credentials [" . $u . "] [" . $p . "]");
+		// error_log("Checking credentials Client id is  " . $this->client_id);
+		// error_log("Checking credentials Client secret is  " . $this->client_secret);
+
+
+
 	}
 	function parseServer($server) {
 		if (isset($_SERVER['PHP_AUTH_USER'])) {

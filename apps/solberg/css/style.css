@@ -40,3 +40,20 @@ div.location p.title {
 div.location p.time {
 	font-size: 90%;
 }
+
+body {
+	font-family: "Helvetica Neue";
+}
+
+
+
+@media screen and (min-width: 1600px) {
+    .container {
+        max-width: (1600px - @grid-gutter-width);
+    }
+}
+@media screen and (min-width: 1900px) {
+    .container {
+        max-width: (1900px - @grid-gutter-width);
+    }
+}

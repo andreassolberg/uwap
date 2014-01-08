@@ -30,7 +30,7 @@ define(function() {
 		var obj = {};
 
 		// obj.id = $(this.element).find("#newClientIdentifier").val();
-		obj.client_name = $(this.element).find("#newClientName").val();
+		obj.name = $(this.element).find("#newClientName").val();
 		obj.descr = $(this.element).find("#newClientDescr").val();
 		obj.redirect_uri = [$(this.element).find("#newClientRedirectURI").val()];
 		obj.type = 'client';

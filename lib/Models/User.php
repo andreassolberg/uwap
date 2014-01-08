@@ -33,6 +33,15 @@ class User extends StoredModel {
 
 	}
 
+	public function getGroupIDs() {
+		$ids = array();
+		$groups = $this->getGroups();
+		foreach($groups AS $g) {
+			$ids[] = $g->group->get('id');
+		}
+		return $ids;
+	}
+
 	public function isMemberOf($groupid) {
 		$groups = $this->getGroups();
 		// print_r(array_keys($groups)); exit;
@@ -159,8 +168,9 @@ class User extends StoredModel {
 
 
 		$newUser = new User($userattr);
-		$newUser = new User($userattr);
 
+		// $groups = self::groupsFromAttributes($attributes);
+		// UWAP_Utils::dump('grouos', $groups); exit;
 
 		$newUser->store();
 

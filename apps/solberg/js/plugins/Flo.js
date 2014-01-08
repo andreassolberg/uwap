@@ -16,43 +16,44 @@ define(function(require, exports, module) {
 	};
 
 
-
 	Flo.prototype.refresh = function() {
 		var 
-			havn = 19,
-			mnd = 8,
-			dag = 19,
 			that = this,
-			now = moment();
+			now = moment(),
+			plotdata = [];
 
-		// console.log("Day", (now.format("M")-1), "month", now.format("D"));
+		var until = now.clone().add('days', 0);
 
-		this.url = 'http://retro.met.no/cgi-bin/vannstand-tabell.cgi?' +
-			'havn=' + havn + '&dag=' + now.format("D") + '&mnd=' + (now.format("M")-1) + '&dogn=1&referanse=0&side=1';
+		var url = 'http://www.sehavniva.no/vannstand.php?locationDataAll=1&reflevelcode=CD&interval=10min&locationType=coordinate&' +
+			'lat=63.436484&lon=10.391669&' +
+			'fromDay=' + now.format("D") + '&fromMonth=' + (now.format("M")) + '&fromYear=' + now.format("YYYY") + '&' +
+			'toDay=' + until.format("D") + '&toMonth=' + (until.format("M")) + '&toYear=' + until.format("YYYY") + '';
 
-		UWAP.data.get(this.url,  null, function(data) {
-			// console.log('data', data);
-			// console.log("  - - - - - - - - - - -  -- - - - -  -- - - - -  -- - - - -  - DATATATA");
-			var obj = $(data);
+		console.log("Fetching vanndata from URL", url);
 
-			var fdata = [];
-			var start = 6;
-			
-			obj.find("table.table tr[align='right']").each(function(i, item) {
-				var hour = $(item).children().eq(0).text();
-				var height = $(item).children().eq(1).text();
-				// console.log("foo", hour, height);
+		UWAP.data.get(url, {}, function(data) {
+			console.log("Fikk vannstand data:");
+			console.log(data);
 
-				if (hour >= start)
-					fdata.push([hour, height]);
+			$.each(data.days, function(day, daydata) {
+				var dp;
+				// console.log("Day data from ", day, daydata.data);
+				for(var i = 0; i < daydata.data.length; i++) {
+					dp = moment(daydata.data[i].time);
+					if  (i < 10)
+					console.log("Day", day, daydata.data[i].time, dp.format("dddd, MMMM Do YYYY, h:mm:ss a"), daydata.data[i].values[1]);
+					plotdata.push([dp.valueOf(), daydata.data[i].values[1]]);
+				}
 
-				// console.log("hour", $(item).find("td[0]"), parseInt($(item).find("td[0]"), 10));
-				// console.log("height", parseInt($(item).find("td[1]"), 10));
 			});
+
+
+			console.log("plot PLOT");
+			console.log(plotdata);
 
 			var dayfill = parseInt(now.format("H"), 10) + (now.format("m") / 60);
 
-			// console.log("Day fill", dayfill, now.format("H"), now.format("m"));
+			console.log("Day fill", dayfill, now.format("H"), now.format("m"));
 
 			// var d1 = [];
 			// for (var i = 0; i < 14; i += 0.5)
@@ -66,32 +67,37 @@ define(function(require, exports, module) {
 			var markings = [
 		        // { color: '#f6f6f6', yaxis: { from: 1 } },
 		        // { color: '#f6f6f6', yaxis: { to: -1 } },
-		        { color: '#aaa', lineWidth: 1, xaxis: { from: start, to: dayfill } }
+		        { color: '#aaa', lineWidth: 1
+		        	, xaxis: { 
+		        		from: now.clone().startOf('day').valueOf() , to: now.valueOf()
+		        		
+		        	} 
+		        }
 		    ];
 
-			$(that.container).empty().append('<div id="floph" style="width:100%;height:100px;"></div>');
-			$.plot($("#floph"), [ fdata ], 
+		    // console.log("TIME", moment('11:00').valueOf());
+
+			$(that.container).empty().append('<div id="flophFlo" style="width:100%;height:100px;"></div>');
+			$.plot($("#flophFlo"), [ plotdata ], 
 				{
 					grid: { 
 						markings: markings 
 					},
-					xaxis: { ticks: [8,10,12,14,16,18,20,22]}
+					xaxis: { 
+						timezone: "browser",
+						// tickSize: 1,
+						from:  now.clone().startOf('day').valueOf(),
+						to: now.clone().endOf('day').valueOf(),
+						mode: "time"}
 				}
 			);
-
-
-
-			// obj.each("")
-
-			// console.log('content', content);
-			// $(that.container).empty().append(content);
 
 		});
 
 
 
-
 	}
+
 
 	return Flo;
 

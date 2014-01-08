@@ -16,7 +16,8 @@ define(function(require, exports, module) {
 	SCalendar.prototype.response = function(c) {
 		var 
 			key, i, 
-			dayel, entryel, cur;
+			dayel, cur,
+			entryelhtml;
 
 		console.log("Cal response");
 		console.log(c);
@@ -32,9 +33,32 @@ define(function(require, exports, module) {
 			console.log(c[key].middag);
 			if (c[key].middag) {
 				for(i = 0; i < c[key].middag.length; i++) {
-					entryel = $('<div class="calentry middag">' + c[key].middag[i].name + '</div>');
-					entryel.prepend('<img src="/img/dinner2.png" style="" />');
-					dayel.append(entryel);
+
+
+					// entryel = $('<div class="calentry middag">' + c[key].middag[i].name + '</div>');
+					// entryel.prepend('<img src="/img/dinner2.png" style="" />');
+
+					entryelhtml = c[key].middag[i].name;
+
+					if (c[key].middag[i].url) {
+						entryelhtml = entryelhtml + ' <i class="icon-circle-arrow-right"</a>';
+					}
+					entryelhtml = '<div class="calentry middag"><img src="/img/dinner2.png" style="" /> ' + entryelhtml + '</div>';
+
+					if (c[key].middag[i].url) {
+						if (c[key].middag[i].url.match(/^http/)) {
+							entryelhtml = '<a style="display: block" target="_blank" href="' + c[key].middag[i].url + '">' + entryelhtml + '</a>';
+						} else {
+							entryelhtml = '<a style="display: block" href="' + c[key].middag[i].url + '">' + entryelhtml + '</a>';
+						}
+						
+					}
+
+					
+
+
+
+					dayel.append($(entryelhtml));
 				}
 
 			}
