@@ -1045,6 +1045,10 @@ try {
 
 		}
 
+
+
+
+
 	/**
 	 *  The SOA Proxy REST data API.
 	 */
@@ -1141,58 +1145,36 @@ try {
 	} else if (Utils::route('post', '^/rest$', &$qs, &$args)) {
 
 
+
+		$oauth = new OAuth();
+
+		$client = null;
+		$user = null;
+
+
+
 		if (empty($args['url'])) {
 			throw new Exception("Missing parameter [url]");
 		}
+		$url = $args["url"];
+		$handler = isset($args["handler"]) ? $args["handler"] : "plain";
 
-		if (empty($args['appid'])) {
-			throw new Exception("Missing parameter [appid]");
+		if ($handler !== 'plain') {
+			$token = $oauth->check();
+			$client = $token->getClient();
+			$user = $token->getUser();
+
+			// echo 'token:' . "\n"; print_r($token);
 		}
 
-		$url = $args["url"];
-		$handler = "plain";
-
-
-		/*
-		 * Try to figure out on behalf of which app to perform the request.
-		 * This will be used to lookup HTTP REST handler configurations.
-		 */
-		$targetapp = $args['appid'];
-
-		error_log("target app is " . $targetapp);
-
-		if (!empty($args["handler"])) $handler = $args["handler"];
-
-
-		// Initiate an Oauth server handler
-		// Get provided Token on this request, if present.
-		$oauth = new OAuth();
-		$token = $oauth->getProvidedToken(false);
 
 		// Get an HTTP Client handler
-		$client = HTTPClient::getClient($handler, $targetapp);
-
-		// Make HTTP request authenticated by both client and user if applicable.
-		if (($token !== null) || ($handler !== 'plain')) {
-			
-			// $clientid = $client->getID();
-			// $ensureScopes = array('app_' . $clientid . '_user');
-
-			// print_r($ensureScopes); exit;
-
-			$user = $token->getUser();
-			$userdata = $user->getJSON(array('type' => 'basic', 'groups' => array('type' => 'key')));
-
-			$client->setAuthenticated($userdata);
-		}
-
-		// echo '<pre>'; 
-		// print_r($args);
-		// print_r($client);
-		// echo '---- o ---- o ---- o ---- o ---- o ---- o ---- ';
-
-
+		$client = HTTPClient::getClient($client, $handler);
+		$client->setAuthenticated($user);
 		$response = $client->get($url, $args);
+
+
+
 
 
 
