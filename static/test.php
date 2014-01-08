@@ -25,7 +25,9 @@ require_once('../lib/autoload.php');
 
 $a = new Authenticator();
 $a->req(false, true);
-$user = $a->getUser();
+$user = $a->getUser(true);
+
+
 
 
 // $res = User::fromAttributes(array(
@@ -43,6 +45,8 @@ $user = $a->getUser();
 
 header('Content-type: text/plain; charset=utf8');
 
+
+print_r($user); exit;
 
 $groupconnector = new GroupConnector($user);
 // $data2 = $groupconnector->getByID('uwap:grp-ah:da5832bf-453f-4333-abc8-36b83579d9df');

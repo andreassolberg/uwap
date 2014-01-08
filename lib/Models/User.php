@@ -126,6 +126,10 @@ class User extends StoredModel {
 		}
 
 
+		$groups = self::groupsFromAttributes($attributes);
+		// Utils::dump('groups:', $groups); exit;
+
+
 		$existingUser = self::getByID($userattr['userid']);
 		if ($existingUser !== null) {
 
@@ -155,12 +159,45 @@ class User extends StoredModel {
 
 
 		$newUser = new User($userattr);
+		$newUser = new User($userattr);
+
+
 		$newUser->store();
 
 
 		return $newUser;
 	}
+
+	public static function groupsFromAttributes($attributes) {
+
+		$groups = array();
+
+		$realm = 'norealm_uwap_org';
+		if (!empty($attributes['eduPersonPrincipalName']) && !empty($attributes['eduPersonOrgDN:o'])) {
+			if (preg_match('/^(.*?)@(.*?)$/', $attributes['eduPersonPrincipalName'][0], $matches)) {
+				$realm = str_replace('.', '_', $matches[2]);
+				$orgname = $attributes['eduPersonOrgDN:o'][0];
+				$groups['uwap:realm:' . $realm] = $orgname;
+			}
+		}
+		if (!empty($attributes['eduPersonOrgUnitDN']) && !empty($attributes['eduPersonOrgUnitDN:ou'])) {
+			for($i = 0; $i < count($attributes['eduPersonOrgUnitDN']); $i++) {
+				$key = sha1($attributes['eduPersonOrgUnitDN'][$i]);
+				$name = $attributes['eduPersonOrgUnitDN:ou'][$i];
+				$groups['uwap:orgunit:' . $realm . ':' . $key] = $name;
+			}
+		}
+
+
+		return $groups;
+
+
+
+	}
 	
+
+
+
 
 	public static function generateShaddow($properties, $user) {
 	// public static function generate($properties, $user) {

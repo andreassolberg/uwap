@@ -5,6 +5,7 @@ define(function(require, exports, module) {
 		UWAP = require('uwap-core/js/core');
 
 	UWAP.utils.loadCSS("uwap-core/bootstrap3/css/bootstrap.min.css");
+	UWAP.utils.loadCSS("uwap-core/bootstrap3-uninett/css/uninett.css");
 	// UWAP.utils.loadCSS("uwap-core/bootstrap/css/bootstrap-responsive.min.css");
 	// UWAP.utils.loadCSS("uwap-core/bootstrap3/plugins/fontawsome/css/font-awesome.css");
 
