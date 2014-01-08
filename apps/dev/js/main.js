@@ -375,12 +375,14 @@ define(function(require, exports, module) {
 				
 				console.log("About to store a new client", no); 
 
-				UWAP.appconfig.storeClient(no, function() {
+				UWAP.appconfig.store(no, function(data) {
 					console.log("Successully stored new app");
+
+					var newid = data.id;
 
 					UWAP.appconfig.list(function(list) {
 						that.picker.addList(list.items);
-						// that.picker.selectClient(no.client_id);
+						that.picker.selectApp(newid);
 					});
 
 				}, function(err) {

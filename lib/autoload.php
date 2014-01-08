@@ -70,11 +70,11 @@ require_once($base . '/GlobalConfig.php');
 require_once($base . '/UWAPStore.php');
 require_once($base . '/UWAPLogger.php');
 
-require_once($base . '/HTTPClient.php');
-require_once($base . '/HTTPClientBasic.php');
-require_once($base . '/HTTPClientToken.php');
-require_once($base . '/HTTPClientOAuth1.php');
-require_once($base . '/HTTPClientOAuth2.php');
+require_once($base . '/HTTPClient/HTTPClient.php');
+require_once($base . '/HTTPClient/HTTPClientBasic.php');
+require_once($base . '/HTTPClient/HTTPClientToken.php');
+require_once($base . '/HTTPClient/HTTPClientOAuth1.php');
+require_once($base . '/HTTPClient/HTTPClientOAuth2.php');
 
 require_once($base . '/ParentMessenger.php');
 
