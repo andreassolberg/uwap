@@ -4,24 +4,23 @@
 class HTTPClient {
 	
 	protected $config;
-	protected $userinfo = null;
-	protected $appid = null;
+	protected $client = null;
+	protected $user = null;
 
-	protected $clientid, $clientScopes;
 
-	public function __construct($config, $appid) {
+	public function __construct($config, $client) {
 		$this->config = $config;
-		$this->appid = $appid;
+		$this->client = $client;
 	}
 
-	public function setAuthenticated($userinfo) {
-		$this->userinfo = $userinfo;
+	public function setAuthenticated(User $user = null) {
+		$this->user = $user;
 	}
 
-	public function setAuthenticatedClient($clientid, $scopes) {
-		$this->clientid = $clientid;
-		$this->clientScopes = $scopes;
-	}
+	// public function setAuthenticatedClient($clientid, $scopes) {
+	// 	$this->clientid = $clientid;
+	// 	$this->clientScopes = $scopes;
+	// }
 
 	protected function getUserAuthHeaders(&$headers) {
 
@@ -29,16 +28,17 @@ class HTTPClient {
 
 		if (!isset($this->config['user'])) return $headers;
 		if (!$this->config['user']) return $headers;
-		if ($this->userinfo === null) throw new Exception('Cannot add http headers with authenticated user when user is not authenticated.');
+		if ($this->user === null) throw new Exception('Cannot add http headers with authenticated user when user is not authenticated.');
+		if ($this->client === null) throw new Exception('Cannot add http headers with authenticated user when client is not authenticated.');
 
-		if (empty($this->clientScopes)) {
-			$this->clientScopes = array();
-		}
+		$scopes = array();
 
-		$headers['UWAP-UserID'] = $this->userinfo['userid'];
-		$headers["UWAP-Groups"] = join(',', array_keys($this->userinfo['groups']));
-		$headers['UWAP-Client'] = $this->clientid;
-		$headers["UWAP-Scopes"] = join(',', $this->clientScopes);
+		$headers['UWAP-UserID'] = $this->user->get('userid');
+		$headers["UWAP-Groups"] = join(',', $this->user->getGroupIDs());
+		$headers['UWAP-Client'] = $this->client->get('id');
+		$headers["UWAP-Scopes"] = join(',', $scopes);
+
+		// echo "Headers: \n"; print_r($headers); exit;
 
 		return $headers;
 	}
@@ -262,47 +262,38 @@ class HTTPClient {
 			default:
 				return new HTTPClient($config, $appid);
 		}
+
 	}
 
-	public static function getClient($handler, $appid = null) {
+	public static function getClient(Client $client = null, $handler = 'plain') {
 
-		$subconfigobj = Config::getInstance($appid);
-		$subhost = $subconfigobj->getID();
-		$subconfig = $subconfigobj->getConfig();
 
 		$config = array("type" => "plain");
 		if ($handler !== 'plain') {
-
-			if (empty($subconfig["handlers"]) || empty($subconfig["handlers"][$handler])) {
-				throw new Exception("Cannot find a authentication handler for [" . $handler . "]");
-			}
-			$config = $subconfig["handlers"][$handler];			
+			$config = $client->getAuthzHandler($handler);
 		}
-
 
 		if (empty($config["type"])) {
 			throw new Exception("Handler configuration for [" . $handler . "] does not include the required [type] field.");
 		}
 
-		$config["subhost"] = $subhost;
-
 		switch($config['type']) {
 
 			case "basic":
-				return new HTTPClientBasic($config, $appid);
+				return new HTTPClientBasic($config, $client);
 
 			case "token":
-				return new HTTPClientToken($config, $appid);
+				return new HTTPClientToken($config, $client);
 
 			case "oauth2":
-				return new HTTPClientOAuth2($config, $appid);
+				return new HTTPClientOAuth2($config, $client);
 
 			case "oauth1":
-				return new HTTPClientOAuth1($config, $appid);
+				return new HTTPClientOAuth1($config, $client);
 
 			case "plain":
 			default:
-				return new HTTPClient($config, $appid);
+				return new HTTPClient($config, $client);
 		}
 
 
