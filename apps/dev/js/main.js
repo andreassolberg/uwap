@@ -327,6 +327,7 @@ define(function(require, exports, module) {
 				}, function(err) {
 					console.log("Error storing new app.");
 				});
+				
 			}, templates);
 			
 			na.activate();

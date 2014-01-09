@@ -26,7 +26,6 @@ define(function(require, exports, module) {
 	require('uwap-core/bootstrap3/js/modal');	
 	require('uwap-core/bootstrap3/js/dropdown');
 
-	
 	UWAP.utils.loadCSS('/css/style.css');
 
 	console.log(" -----> LOADED handlebars", hb);
@@ -86,7 +85,7 @@ define(function(require, exports, module) {
 
 		App.prototype.receiveMessage = function(event) {
 
-			console.log("Received message in widget", event.data);
+			console.log("[Widget] Received message in widget", event.data);
 			event.data.origin = event.origin;
 			this.setData(event.data);
 
@@ -130,9 +129,7 @@ define(function(require, exports, module) {
 			console.log("New client is ", obj);
 
 
-
-
-			UWAP.appconfig.storeClient(obj, function(newclient) {
+			UWAP.appconfig.store(obj, function(newclient) {
 
 				console.log("Successully stored new app", newclient);
 				// console.log("About to store new client"); alert("stored"); return;

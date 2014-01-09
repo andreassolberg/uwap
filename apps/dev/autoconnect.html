@@ -8,8 +8,6 @@
 		<meta name="author" content="Andreas Åkre Solberg" />
 
 		<link href="css/style-authzhandler.css" rel="stylesheet" />
-		<style type="text/css">
-		</style>
 
 		<script type="text/javascript" data-main="main-autoconnect" src="/_/js/require.js"></script>
 		
@@ -17,43 +15,32 @@
 
 	<body>
 
-      <!-- Static navbar -->
-      <div class="navbar navbar-default">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">UWAP</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-			<li><a href="https://store.uwap.org">App Store</a></li>
-			<li class="active"><a href="#">Developers</a></li>
-			<li><a href="https://docs.uwap.org">Documentation</a></li>
-			<li><a href="https://developers.uwap.org/">About</a></li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> <span id="username"></span> <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-				<li><a href="#">Profile</a></li>
-				<li class="divider"></li>
-				<li><a href="#">Sign Out</a></li>
-              </ul>
-            </li>
+		<!-- Static navbar -->
+		<div class="navbar navbar-default navbar-fixed-top">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+				<a class="navbar-brand" href="#"><img style="" src="http://core.app.bridge.uninett.no/_/bootstrap3-uninett/images/UNINETT_logo.svg" alt="Uninett logo" type="image/svg+xml"></a>
 
-          </ul>
-        </div>
-      </div>
+			</div>
+			<div class="navbar-collapse collapse">
+				<p class="navbar-text department">Feide Connect Autoconfigure</p>
+
+
+
+				<ul class="nav navbar-nav navbar-right">
+					<li class="">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> <span id="username"></span></a>
+					</li>
+
+				</ul>
+
+			</div>
+		</div>
 
 
 		<div class="container">
 
-
-
-			<div class="row">
+			<div class="row gutter">
 
 				<div id="notauthorized" style="display:none; padding: 3em">
 					<p>You have not yet authorized the UWAP feed Widget.</p>
@@ -62,25 +49,7 @@
 				<div id="main"></div>
 
 			</div><!--/row-->
-
-
-
-		 </div><!--/.fluid-container-->
-
-			<hr>
-
-		
-
-
-
-			
-				<footer>
-					<div class="container">
-						<div class="row">
-							<p style="color: #ccc">UNINETT &copy; 2012-2013</p>
-						</div>
-					</div>
-				</footer>
+		</div><!--/.container-->
 
 
 	</body>
