@@ -19,7 +19,10 @@ try {
 	$app = $globalconfig->getApp();
 
 } catch(Exception $e) {
-	echo "Not found";
+
+	header("HTTP/1.0 404 Not Found");
+	require_once('../templates/404.php');
+	// echo "Not found";
 	exit;
 }
 
