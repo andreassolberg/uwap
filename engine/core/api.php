@@ -466,6 +466,9 @@ try {
 			Utils::validateID($appid);
 
 			$client = Client::getByID($appid);
+			// echo "obtained client by id " . $appid;
+			// echo "result was "; print_r(var_export($client, true));
+
 			$clientdirectory->authorize($client, 'owner');
 			$response['data'] = $client->getJSON(array(
 				'appinfo' => true
@@ -1275,12 +1278,19 @@ try {
 	// $profiling = microtime(true);
 	error_log("Time to run command:     ======> " . (microtime(true) - $profiling));
 
+} catch(UWAPObjectNotFoundException $e) {
+
+	header("HTTP/1.0 404 Not Found");
+	header('Content-Type: text/plain; charset: utf-8');
+	echo "Error stack trace: \n";
+	print_r($e);
+
 
 } catch(Exception $e) {
 
 	// TODO: Catch OAuth token expiration etc.! return correct error code.
 
-	header("Status: 500 Internal Error");
+	header("HTTP/1.0 500 Internal Server Error");
 	header('Content-Type: text/plain; charset: utf-8');
 	echo "Error stack trace: \n";
 	print_r($e);
