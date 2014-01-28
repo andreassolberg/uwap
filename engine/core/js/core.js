@@ -69,6 +69,11 @@ define(function(require) {
 		console.log(msg, stack);
 	}
 
+
+	UWAP.Error = function(message) {
+		this.message = message;
+	}
+
 	// jso.jso_registerRedirectHandler(function(p, callback) {
 
 	// 	console.log("About to redirect to: ", p);
@@ -253,12 +258,16 @@ define(function(require) {
 				
 			},
 			error: function(err) {
-				if  (typeof errorcallback === 'function') {
-					errorcallback(err.responseText + '(' + err.status + ')');
-				}
-				console.error('Data request error (client side): ', err);
-				console.error('Response text');
-				console.error(err.responseText);
+
+				callback(new UWAP.Error(err));
+				console.error('Error in API Call [' + method + ' ' + url + ']',  err);
+
+				// if  (typeof errorcallback === 'function') {
+				// 	errorcallback(err.responseText + '(' + err.status + ')');
+				// }
+				// console.error('Data request error (client side): ', err);
+				// console.error('Response text');
+				// console.error(err.responseText);
 			}
 
 		};
