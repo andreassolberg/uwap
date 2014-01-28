@@ -12,6 +12,10 @@ class User extends StoredModel {
 	protected $groupconnector;
 
 	public function __construct($properties) {
+
+		// Utils::dump('create new user user:', $properties); exit;
+
+
 		parent::__construct($properties);
 
 		$this->groupconnector = new GroupConnector($this);
@@ -136,11 +140,13 @@ class User extends StoredModel {
 
 
 		$groups = self::groupsFromAttributes($attributes);
-		// Utils::dump('groups:', $groups); exit;
+
+		
 
 
-		$existingUser = self::getByID($userattr['userid']);
+		$existingUser = self::getByID($userattr['userid'], true);
 		if ($existingUser !== null) {
+
 
 
 			if ($update) {
@@ -153,10 +159,12 @@ class User extends StoredModel {
 			return $existingUser;
 		}
 
+		$userattr["a"] =  Utils::genID();
 
-		if (empty($userattr['mail'])) {
-			throw new Exception('Cannot obtain a proper mail from identify provider');
-		}
+
+		// if (empty($userattr['mail'])) {
+		// 	throw new Exception('Cannot obtain a proper mail from identify provider');
+		// }
 
 		if (empty($userattr['name'])) {
 			throw new Exception('Cannot obtain a proper name from identify provider');

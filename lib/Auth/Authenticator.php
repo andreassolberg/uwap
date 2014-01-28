@@ -19,6 +19,8 @@ class Authenticator {
 	 */
 	protected function authenticatePassive() {
 
+		error_log("Perform passive authentication..");
+
 		$this->as->login(array(
 			'isPassive' => true,
 			'ErrorURL' => SimpleSAML_Utilities::addURLparameter(SimpleSAML_Utilities::selfURL(), array(

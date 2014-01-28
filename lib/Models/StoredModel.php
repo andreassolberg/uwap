@@ -107,7 +107,7 @@ abstract class StoredModel extends Model {
 
 
 
-	protected static function getRawByKey($key, $value) {
+	protected static function getRawByKey($key, $value, $allowEmpty = false) {
 
 		// echo "GET " . $key . "=" . $value;
 		$store = new UWAPStore();
@@ -140,44 +140,52 @@ abstract class StoredModel extends Model {
 
 		// echo "looking up userid " . $userid; echo '<pre>'; print_r($search); exit;
 
-		if (empty($search)) return null;
+		if (empty($search)) {
+
+			if ($allowEmpty) {
+				return null;
+			} else {
+				throw new UWAPObjectNotFoundException();
+			}
+
+		}
 
 		return $search;
 
-		// $user = new static($search);
-		// return $user;
 	}
 
 
-	protected static function getRawByID($id) {
+	protected static function getRawByID($id, $allowEmpty = false) {
 		if (empty(static::$primaryKey)) throw new Exception('Incomplete Model implementation: primaryKey to storage not set');
-		return self::getRawByKey(static::$primaryKey, $id);
+		return self::getRawByKey(static::$primaryKey, $id, $allowEmpty);
 	}
 
 	public static function getByKey($key, $value) {
 		$data = self::getRawByKey($key, $value);
 
-		if (empty($data)) return null;
+		if (empty($data)) throw new UWAPObjectNotFoundException();
 		return new static($data);
 	}
 
 
 	public static function exists($id) {
-		$data = self::getRawByID($id);
+
+		$data = self::getRawByID($id, true);
 		return ($data !== null);
 	}
 
-	public static function getByID($id) {
+	public static function getByID($id, $allowEmpty = false) {
 
 		if (isset(self::$cache[$id])) {
 			return self::$cache[$id];
 		}
 
-		$data = self::getRawByID($id);
+		$data = self::getRawByID($id, $allowEmpty);
 
-		if ($data === null) return null;
-		// echo "data<pre>";
-		// print_r($data);// exit();
+		if (empty($data)) {
+			if ($allowEmpty) return null;
+			throw new UWAPObjectNotFoundException();
+		}
 
 		$item = new static($data);
 

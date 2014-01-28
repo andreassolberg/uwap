@@ -17,7 +17,7 @@ class Client extends StoredModel {
 		'id', 'name', 'descr', 'type', 'uwap-userid', 'handlers', 'status', 'scopes', 'scopes_requested', 'logo',
 		'redirect_uri', 'client_secret',
 		'groups' // A client can be member of groups... if acting on own.
-		);
+	);
 
 
 	public function __construct($properties) {
@@ -312,7 +312,6 @@ class Client extends StoredModel {
 
 
 		$userproperties = array('id', 'name', 'descr', 'type', 'proxy', 'redirect_uri');
-
 		$requestedScopes = isset($properties['scopes']) ? $properties['scopes'] : array('userinfo');
 
 		foreach($properties AS $k => $v) {
@@ -384,12 +383,13 @@ class Client extends StoredModel {
 	}
 
 
-	public static function getByID($id) {
-		$data = self::getRawByID($id);
+	public static function getByID($id, $allowEmpty = false) {
+		$data = self::getRawByID($id, $allowEmpty);
+		if ($data === null) {
+			return null;
+		}
 		return self::restoreFromProperties($data);
 		// echo "Type " . get_called_class() . "\n\n";
-
-
 
 	}
 

@@ -6,15 +6,15 @@ define(function(require, exports, module) {
 		hb = require('uwap-core/js/handlebars'),
 
 		UWAP = require('uwap-core/js/core'),
-		appPicker = require('controllers/appPicker'),
-		newApp = require('controllers/newApp'),
-		newProxy = require('controllers/newProxy'),
-		newClient = require('controllers/newClient'),
-		frontpage = require('controllers/frontpage'),
-		AppDashboard = require('controllers/AppDashboard'),
-		ClientDashboard = require('controllers/ClientDashboard'),
-		ProxyDashboard = require('controllers/ProxyDashboard'),
-		ProxyViewDashboard = require('controllers/ProxyViewDashboard'),
+		// appPicker = require('controllers/appPicker'),
+		// newApp = require('controllers/newApp'),
+		// newProxy = require('controllers/newProxy'),
+		// newClient = require('controllers/newClient'),
+		// frontpage = require('controllers/frontpage'),
+		// AppDashboard = require('controllers/AppDashboard'),
+		// ClientDashboard = require('controllers/ClientDashboard'),
+		// ProxyDashboard = require('controllers/ProxyDashboard'),
+		// ProxyViewDashboard = require('controllers/ProxyViewDashboard'),
 
 		Proxy = require('models/Proxy'),
 		Client = require('models/Client')
@@ -26,13 +26,13 @@ define(function(require, exports, module) {
 	require('uwap-core/bootstrap3/js/modal');	
 	require('uwap-core/bootstrap3/js/dropdown');
 
-	
 	UWAP.utils.loadCSS('/css/style.css');
 
-	console.log(" -----> LOADED handlebars", hb);
+	// console.log(" -----> LOADED handlebars", hb);
 
 	var tmpl = {
 		"autoconnect":require('uwap-core/js/text!templates/autoconnect.html'), 
+		"autoconnectExisting":require('uwap-core/js/text!templates/autoconnect-existing.html')
 		// "appdashboard": require('uwap-core/js/text!templates/appdashboard.html'),
 		// "clientdashboard": require('uwap-core/js/text!templates/clientdashboard.html'),
 		// "proxydashboard": require('uwap-core/js/text!templates/proxydashboard.html'),
@@ -45,9 +45,10 @@ define(function(require, exports, module) {
 		// "newClient": require('uwap-core/js/text!templates/newClient.html'),
 	};
 	
-	console.log('making templates compile');
+	// console.log('making templates compile');
 	var templates = {
 		"autoconnect": hb.compile(tmpl.autoconnect),
+		"autoconnectExisting": hb.compile(tmpl.autoconnectExisting)
 		// "appdashboard": hb.compile(tmpl.appdashboard),
 		// "clientdashboard": hb.compile(tmpl.clientdashboard),
 		// "authhandlereditor": hb.compile(tmpl.authhandlereditor),
@@ -59,7 +60,7 @@ define(function(require, exports, module) {
 		// "proxydashboard": hb.compile(tmpl.proxydashboard),
 		// "proxyviewdashboard": hb.compile(tmpl.proxyviewdashboard)
 	};
-	console.log('done compile');
+	// console.log('done compile');
 
 	$("document").ready(function() {
 
@@ -76,28 +77,89 @@ define(function(require, exports, module) {
 
 			this.el.on("click", ".newClientBtn", $.proxy(this.actNewClient, this));
 		
-			console.log("Registering handler to receive message...");
+			// console.log("Registering handler to receive message...");
 			window.addEventListener("message", $.proxy(this.receiveMessage, this), false);
 			// window.addEventListener("message", $.proxy(this.receiveMessage, this), false);
 			parent.postMessage({"msg": "ready"}, '*');
 		}
 
 
-
 		App.prototype.receiveMessage = function(event) {
 
-			console.log("Received message in widget", event.data);
+			// console.log("[Widget] Received message in widget", event.data);
 			event.data.origin = event.origin;
 			this.setData(event.data);
 
 		};
 
+
 		App.prototype.setData = function(data) {
-			console.log("set data", data);
+			var that = this;
+			// console.log("set data", data);
+
+			if (!data.metadata.redirect_uri) {
+				return alert('Received configuration but redirect_uri was missing.');
+			}
+
 			this.data = data;
 
+			var hashUserID = UWAP.utils.hash(this.user.userid);
+			var hashRedirectURI = UWAP.utils.hash(this.data.metadata.redirect_uri);
+
+			this.data.metadata.id = 'uwap-ac-' + hashUserID + '-' + hashRedirectURI;
+			// console.log("Creating UserID " + this.user.userid + ' ' + hashUserID  );
+			// console.log("Creating hashRedirectURI " + this.data.metadata.redirect_uri + ' ' + hashRedirectURI  );
+			// console.log("Generated identifier " + this.data.metadata.id);
+
+
+			UWAP.appconfig.check(that.data.metadata.id, function(idAvailable) {
+
+				if (idAvailable instanceof UWAP.Error) {
+					console.error("Not able to register new application for this reason", idAvailable);
+					return;
+				}
+
+				var alreadyRegistered = !idAvailable;
+
+				if (alreadyRegistered) {
+
+					UWAP.appconfig.get(that.data.metadata.id, function(appconfig) {
+						if (appconfig instanceof UWAP.Error) {
+							console.error("Not able to register new application for this reason", appconfig);
+							return;
+						}
+
+						// console.log("Loaded id " + that.data.metadata.id);
+						// console.log(appconfig);
+
+						that.main.empty();
+						$(templates['autoconnectExisting'](appconfig)).appendTo(that.main);
+
+						window.parent.postMessage({
+							"msg": "appconfig",
+							"data": appconfig
+						}, that.data.origin);
+
+					});
+
+				} else {
+
+					that.draw();
+
+				}
+
+
+
+			});
+
+
+		}
+
+		App.prototype.draw = function() {
 			this.main.empty();
-			$(templates['autoconnect'](data)).appendTo(this.main);
+			$(templates['autoconnect'](this.data.metadata)).appendTo(this.main);
+			$("#newClientName").focus();
+
 		}
 
 
@@ -111,14 +173,14 @@ define(function(require, exports, module) {
 			var that = this;
 			if (event) event.preventDefault();
 
-			console.log("Initiating new Client...");
+			// console.log("Initiating new Client...");
 
 
 			var obj = {};
 
 			// obj.id = $(this.element).find("#newClientIdentifier").val();
-			obj.client_id = $(this.main).find("#newClientID").val();
-			obj.client_name = $(this.main).find("#newClientName").val();
+			obj['id'] = $(this.main).find("#newClientID").val();
+			obj.name = $(this.main).find("#newClientName").val();
 			obj.descr = $(this.main).find("#newClientDescr").val();
 			obj.redirect_uri = [$(this.main).find("#newClientRedirectURI").val()];
 			obj.type = 'client';
@@ -127,14 +189,12 @@ define(function(require, exports, module) {
 			// userinfo scope, and scopes can be requested later...
 			obj.scopes_requested = ['userinfo', 'feedread', 'feedwrite', 'longterm'];
 
-			console.log("New client is ", obj);
+			// console.log("New client is ", obj);
 
 
+			UWAP.appconfig.store(obj, function(newclient) {
 
-
-			UWAP.appconfig.storeClient(obj, function(newclient) {
-
-				console.log("Successully stored new app", newclient);
+				// console.log("Successully stored new app", newclient);
 				// console.log("About to store new client"); alert("stored"); return;
 
 				window.parent.postMessage({
@@ -144,33 +204,22 @@ define(function(require, exports, module) {
 
 
 			}, function(err) {
-				console.log("Error storing new app.");
+				console.error("Error storing new app.");
 			});
 
-			return;
-
-
-
-			var na = new newClient(that.el, function(no) {
-				
-				console.log("About to store a new client", no); 
-
-
-
-			}, templates);
-			na.activate();
+			
 		}
 
 
 		App.prototype.actLoadClient = function(appid) {
 			var that = this;
-			console.log("Selected an app:", appid);
+			// console.log("Selected an app:", appid);
 			$("div#appmaincontainer").empty();
 
 			UWAP.appconfig.getClient(appid, function(appconfig) {
 
 				var adash;
-				console.log("Appconfig", appconfig);
+				// console.log("Appconfig", appconfig);
 
 				that.setHash('/client/' + appconfig["client_id"]);
 
@@ -210,7 +259,7 @@ define(function(require, exports, module) {
 			UWAP.auth.checkPassive(function(user) {
 
 				$("#share-widget-main").show();
-				console.log("LOADING APP WITH USER", user);
+				// console.log("LOADING APP WITH USER", user);
 				var app = new App($("body"), user);
 				// app.setauth(user);
 
@@ -226,7 +275,7 @@ define(function(require, exports, module) {
 							$("#share-widget-main").show();
 
 							var app = new App($("body"), user)
-							console.log("LOADING APP WITH USER", user);
+							// console.log("LOADING APP WITH USER", user);
 							// app.setauth(user);
 
 						});

@@ -72,11 +72,14 @@ class OAuth {
 
 			// echo "Failed because user was not authenticated..."; exit;
 
-			$this->server->authorizationFailed('access_denied', 'https://core.uwap.org/oauth/noPassiveAuthentication', 'Unable to perform passive authentication');
+			$this->server->authorizationFailed('access_denied', 'https://core.uwap.org/oauth/noPassiveAuthentication', 'Unable to perform passive authentication [1]');
 			return;
 
-		} else {
+		} else if (isset($_REQUEST['error']) && $_REQUEST['error'] === '1') {
+			$this->server->authorizationFailed('access_denied', 'https://core.uwap.org/oauth/noPassiveAuthentication', 'Unable to perform passive authentication [2]');
 
+		} else {
+			error_log("About to require authentication from simplesamlphp. Passive (" . var_export($passive, true). ")");
 			$this->auth->req($passive, true);
 
 		}
