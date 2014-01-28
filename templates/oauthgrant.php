@@ -64,7 +64,14 @@
 										<span style="" class="glyphicon glyphicon-user"></span> 
 											<?php echo htmlspecialchars($userdata["userid"]); ?>
 										<span style="margin-left: .8em" class="glyphicon glyphicon-envelope"></span> 
-											<?php echo htmlspecialchars($userdata["mail"]); ?>
+											<?php 
+												if (!empty($userdata['mail'])) {
+													echo htmlspecialchars($userdata["mail"]); 
+												} else {
+													echo '<span style="color: #ccc">no email</span>';
+												}
+
+											?>
 									</p>
 
 
@@ -216,31 +223,33 @@ if (isset($scopes['longterm'])) {
 
 
 
-
-
-
-
-
-
-
-
-
 				<div>
+
 				<form id="login" method="post" action="<?php echo htmlspecialchars($posturl); ?>">
-				<?php
-					foreach($postdata AS $name => $value) {
-						echo '<input type="hidden" name="' . htmlspecialchars($name) . '" value="' . htmlspecialchars($value) . '" />';
-					}
-				?>
+
+					<?php
+						foreach($postdata AS $name => $value) {
+							echo '<input type="hidden" name="' . htmlspecialchars($name) . '" value="' . htmlspecialchars($value) . '" />';
+						}
+					?>
+
 					<fieldset id="actions" style="text-align: right">
-						<input tabindex="1" type="submit" id="submit" class="btn btn-lg btn-primary" value="Allow">
-						<a tabindex="2" class="btn btn-default" href="#">Reject</a>
+						
+						<!-- <input tabindex="1" type="submit" id="submit" class="btn btn-lg btn-success" value="Allow"> -->
+						
+						<a id="submit" tabindex="1" onclick="submit()" href="#" class="btn btn-lg btn-success">
+							<span class="glyphicon glyphicon-ok"></span>
+							Allow
+						</a>
+
+
+						<a tabindex="2" class="btn btn-danger" href="#">
+							<span class="glyphicon glyphicon-remove"></span>
+							Reject</a>
 					</fieldset>
 				</form>
+				
 				</div>
-
-
-
 
 
 
@@ -257,7 +266,7 @@ if (isset($scopes['longterm'])) {
 						version="1.1" viewBox="154 100 70 165" 
 						>
 						<!-- <g fill="none" fill-opacity="1" stroke="none" stroke-dasharray="none" stroke-opacity="1"> -->
-							<path d="M 163 109 L 215 182.5 L 163 256 Z" fill="#eaeaea"/>
+							<path d="M 163 109 L 215 182.5 L 163 256 Z" fill="#f58220"/>
 						<!-- </g> -->
 					</svg>
 
