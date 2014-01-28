@@ -51,6 +51,11 @@ Implement onReady to send initial configuration data to the widget:
 
 		} 
 
+The metadata property tn the "metadata" message, may contain the following properties:
+
+* `redirect_uri`
+
+
 Then the user register the app using the widget, and when submitted, your app retrieves the full configuration:
 
 	var onRegisterCompleted = function(message) {
