@@ -174,15 +174,18 @@ abstract class StoredModel extends Model {
 		return ($data !== null);
 	}
 
-	public static function getByID($id) {
+	public static function getByID($id, $allowEmpty = false) {
 
 		if (isset(self::$cache[$id])) {
 			return self::$cache[$id];
 		}
 
-		$data = self::getRawByID($id);
+		$data = self::getRawByID($id, $allowEmpty);
 
-		if (empty($data)) throw new UWAPObjectNotFoundException();
+		if (empty($data)) {
+			if ($allowEmpty) return null;
+			throw new UWAPObjectNotFoundException();
+		}
 
 		$item = new static($data);
 

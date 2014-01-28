@@ -383,9 +383,11 @@ class Client extends StoredModel {
 	}
 
 
-	public static function getByID($id) {
-		$data = self::getRawByID($id);
-		if ($data === null) return null;
+	public static function getByID($id, $allowEmpty = false) {
+		$data = self::getRawByID($id, $allowEmpty);
+		if ($data === null) {
+			return null;
+		}
 		return self::restoreFromProperties($data);
 		// echo "Type " . get_called_class() . "\n\n";
 
