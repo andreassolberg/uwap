@@ -1,0 +1,24 @@
+{
+	"user": {
+		"userid": "grp03-markus123elev@feide.no",
+		"realm": "feide.no",
+		"idp": "https://idp-test.feide.no",
+		"customdata": {
+			"eduPersonOrgDN:o": [
+			"Oslo kommune"
+			],
+			"eduPersonOrgUnitDN:ou": [
+			"Alna grunnskole"
+			],
+			"eduPersonOrgUnitDN": [
+			"ou=Alna grunnskole,cn=testorg,dc=feide,dc=no,ou=feide,dc=uninett,dc=no"
+			],
+			"eduPersonEntitlement": [
+			"urn:mace:feide.no:go:grep:http://psi.udir.no/laereplan/aarstrinn/aarstrinn3",
+			"urn:mace:feide.no:go:group:b:NO876326125:3A:student:Klasse%203A",
+			"urn:mace:feide.no:go:group:u:NO876326125:3A-MAT:student:Matematikk%203A",
+			"urn:mace:feide.no:go:group:u:NO876326125:3A-NOR:student:Norsk%203A"
+			]
+		}
+	}
+}

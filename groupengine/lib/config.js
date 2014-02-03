@@ -14,6 +14,8 @@ config.getSources = function(input, type) {
 	for(var i = 0; i < configsrc.sources.length; i++) {
 		cur = configsrc.sources[i];
 
+		// console.log("Processing " + cur['plugin']);
+
 		if (cur.hasOwnProperty('filter:peoplesearch-realm') && input.realm) {
 			if (cur['filter:peoplesearch-realm'] === input.realm) {
 				result.push(cur); 
@@ -22,21 +24,28 @@ config.getSources = function(input, type) {
 		}
 
 		if (cur.hasOwnProperty('filter:userid')) {
-			if (cur['filter:userid'] !== input.userid) continue;
+			if (cur['filter:userid'] !== input.user.userid) continue;
 		}
 		if (cur.hasOwnProperty('filter:realm')) {
-			if (cur['filter:realm'] !== input.realm) continue;
+			if (cur['filter:realm'] !== input.user.realm) continue;
 		}
 		if (cur.hasOwnProperty('filter:idp')) {
-			if (cur['filter:idp'] !== input.idp) continue;
+			if (cur['filter:idp'] !== input.user.idp) continue;
 		}
 
 		if (type && cur['support']) {
-			if (cur['support']['type'] === false) continue;
+			if (cur['support'][type] === false) continue;
 		}
-
+		// console.log("Processed  " + cur['plugin']);
 		result.push(cur);
 	}
+
+	// console.log('-----');
+	// console.log('Input', input);
+	// console.log('Config', result);
+	// console.log('-----');
+
+
 	return result;
 }
 

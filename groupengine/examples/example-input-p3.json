@@ -1,0 +1,36 @@
+{
+	"user": {
+		"userid": "grp03-anne123teacher@feide.no",
+		"realm": "feide.no",
+		"idp": "https://idp-test.feide.no",
+		"customdata": {
+			"eduPersonEntitlement": [
+			"urn:mace:feide.no:go:group:b:NO876326125:3A:faculty:Klasse%203A",
+			"urn:mace:feide.no:go:group:u:NO876326125:3A-NOR:faculty:Norsk%203A",
+			"urn:mace:feide.no:go:group:u:NO876326125:3B-NOR:faculty:Norsk%203B",
+			"urn:mace:feide.no:go:group:u:NO876326126:3A-NOR:faculty:Norsk%203A",
+			"urn:mace:feide.no:go:group:u:NO876326126:3B-NOR:faculty:Norsk%203B"
+			],
+			"eduPersonAffiliation": [
+			"member",
+			"employee",
+			"faculty"
+			],
+			"eduPersonOrgDN:o": [
+			"Oslo kommune"
+			],
+			"eduPersonOrgUnitDN:ou": [
+			"Alna grunnskole",
+			"Bjerke grunnskole"
+			],
+			"eduPersonOrgUnitDN": [
+			"ou=Alna grunnskole,cn=testorg,dc=feide,dc=no,ou=feide,dc=uninett,dc=no",
+			"ou=Bjerke grunnskole,cn=testorg,dc=feide,dc=no,ou=feide,dc=uninett,dc=no"
+			],
+			"eduPersonOrgUnitDN:norEduOrgUnitUniqueIdentifier": [
+				"NO876326125",
+				"NO876326126"
+			]
+		}
+		}
+	}
