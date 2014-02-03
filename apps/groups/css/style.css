@@ -1,4 +1,8 @@
 
+.panecontainer {
+	margin: 0px; padding: 0px;
+}
+
 div.selectableItems table tr.item:hover td {
 	background-color: #fff;
 }
@@ -33,11 +37,12 @@ div.selectableItems table tr.itemDetails div.itemDetailsBox {
 	border-bottom: 1px solid #eee;
 	border-left: 1px solid #eee;
 
-border-bottom-right-radius: 5px;
-border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
 	padding: 5px .5em 10px 1em;
 	margin: 0px 0px 10px 0px;
 
+	background-color: #fff;
 
 }
 

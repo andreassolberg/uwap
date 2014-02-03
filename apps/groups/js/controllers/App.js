@@ -50,6 +50,9 @@ define(function(require, exports, module) {
 
 			this.user = user;
 
+			console.log("Setting username is", this.user.name );
+			$("span#username").html(this.user.name);
+
 			// Setup all application controllers
 			this.pc = new panes.PaneController(this.el.find('#panecontainer'));
 
@@ -153,6 +156,9 @@ define(function(require, exports, module) {
 
 		var app;
 		$("document").ready(function() {
+
+			$('.dropdown-toggle').dropdown();
+
 			UWAP.auth.require(function(data) {
 				var user = new models.User(data);
 				var g = new models.Groups();

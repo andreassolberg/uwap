@@ -24,6 +24,50 @@
 
 
 		<!-- Static navbar -->
+		<div class="navbar navbar-default navbar-fixed-top loader-showOnLoad" role="navigation" style="display: none; z-index: 1005">
+			<div class="container">
+			
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+					<a class="navbar-brand" href="#"><img src="http://core.app.bridge.uninett.no/_/bootstrap3-uninett/images/UNINETT_logo.svg" alt="Uninett logo" type="image/svg+xml"></a>
+
+				</div>
+
+				<div class="navbar-department">
+					<div class="department">Groups</div>
+				</div>
+
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+
+						<li><a href="https://store.uwap.org">App Store</a></li>
+						<li class="active"><a href="#">Groups</a></li>
+						<li><a href="https://dev.uwap.org">Dev dashboard</a></li>
+						<li><a href="https://inspect.uwap.org">API</a></li>
+						<li><a href="https://docs.uwap.org">Docs</a></li>
+
+						<li class="dropdown pull-right">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> <span id="username"></span> <b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><a href="#">Profile</a></li>
+								<li class="divider"></li>
+								<li><a href="#">Sign Out</a></li>
+							</ul>
+						</li>
+					</ul>
+
+
+
+
+				</div>
+			</div>
+		</div>
+
+
+
+
+<!--
+
 		<div class="navbar navbar-default loader-showOnLoad"  style="display: none; z-index: 1005">
 
 			<div class="navbar-header">
@@ -41,17 +85,17 @@
 
 		</div>
 
+-->
 
 
 
-
-		<div class="containerX loader-showOnLoad" style="display: none; padding: 0 15px;">
+		<div class="container loader-showOnLoad gutter " style="">
 
 			<div class="row">
 
-				<div class="col-md-8">
+				<div class="col-md-8  ">
 
-					<div id="panecontainer">
+					<div class="" id="panecontainer">
 
 
 
@@ -60,13 +104,19 @@
 				</div>
 
 
-				<div class="sidebar hidden-phone col-md-4">
-					<h3>Group manager</h3>
-					<p>By using the group manager, you may create new groups, and edit existing groups that you have created.</p>
+				<div class="sidebar  hidden-phone col-md-4">
+					<div class="uninett-color-white uninett-padded">
 
-					<p><a href="#!/new" class="btn btn-success">
-						<span class="glyphicon glyphicon-pencil"></span>
-						Create new group</a></p>
+						<h3>Group manager</h3>
+
+						<p>By using the group manager, you may create new groups, and edit existing groups that you have created.</p>
+
+						<p>
+							<a href="#!/new" class="btn btn-success">
+								<span class="glyphicon glyphicon-pencil"></span>
+								Create new group</a>
+						</p>
+					</div>
 				</div>
 
 			</div>
