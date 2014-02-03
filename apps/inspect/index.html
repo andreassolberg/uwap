@@ -1,45 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>API Inspector : UWAP</title>
-		<meta name="viewport" content="user-scalable=no,width=device-width" />
-		<meta name="description" content="Inspect" />
-		<meta name="author" content="Andreas Åkre Solberg" />
-
-		<link rel='stylesheet' href="css/style.css" rel="stylesheet" />
-
-		<script type="text/javascript" data-main="main" src="/_/js/require.js"></script>
-		<!-- <script type="text/javascript" src="/_/js/build/main"></script> -->
-
-	</head>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="user-scalable=no,width=device-width" />
 
 
-	<body>
 
-		<div class="loader-hideOnLoad" stlye="margin: 20%">
-			<p><img src="/img/ajax-loader.gif" /> Loading application...</p>
-		</div>
+	<title>API Inspector : UWAP</title>
+
+	<meta name="description" content="Inspect" />
+	<meta name="author" content="Andreas Åkre Solberg" />
+
+	<link rel="shortcut icon" href="uninett-theme/ico/favicon.ico">
+	<link rel='stylesheet' href="css/style.css" rel="stylesheet" />
+
+	<script type="text/javascript" data-main="main" src="/_/js/require.js"></script>
+	<!-- <script type="text/javascript" src="/_/js/build/main"></script> -->
+
+</head>
 
 
-		<!-- Static navbar -->
-		<div class="navbar navbar-default loader-showOnLoad"  style="display: none; z-index: 1005">
+<body>
 
+	<div class="loader-hideOnLoad" stlye="margin: 20%">
+		<p><img src="/img/ajax-loader.gif" /> Loading application...</p>
+	</div>
+
+
+
+
+	<!-- Fixed navbar -->
+	<div class="navbar navbar-default navbar-fixed-top loader-showOnLoad"  style="display: none; z-index: 1005" role="navigation">
+		<div class="container">
 			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+				<a class="navbar-brand" href="#"><img style="" src="http://core.app.bridge.uninett.no/_/bootstrap3-uninett/images/UNINETT_logo.svg" alt="Uninett logo" type="image/svg+xml"></a>
 
-				<a class="navbar-brand" style="padding: 8px" href="#!/">
-					<img style="margin-top: -5px" alt="UNINETT Logo" src="img/uninett-30-black.png" class="" />
-					API Inspect
-				</a>
 			</div>
-
-
 			<div class="navbar-collapse collapse">
+				<p class="navbar-text department">Feide Connect</p>
+				<ul class="nav navbar-nav">
+					<li><a href="https://store.uwap.org">App Store</a></li>
+					<li class="active"><a href="#">Developers</a></li>
+					<li><a href="https://docs.uwap.org">Documentation</a></li>
+					<li><a href="https://developers.uwap.org/">About</a></li>
+<!-- 						<li><span class="glyphicon glyphicon-search glyphicon_search_menu"></span></li> -->
+				</ul>
 
 				<ul class="nav navbar-nav navbar-right">
 					<li id="authmenu" class="dropdown">
@@ -53,38 +60,110 @@
 				</ul>
 
 			</div>
+			<!--/.nav-collapse --> 
+		</div>
+	</div>
+
+
+
+
+
+	<!-- Fixed navbar 
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+				<a class="navbar-brand" href="#"><img src="https://core.uwap.org/static/uninett-theme/images/UNINETT_logo.svg" alt="Uninett logo" type="image/svg+xml"></a>
+
+			</div>
+			<div class="navbar-department">
+				<div class="department">API Inspect</div>
+			</div>
+
+			<div class="navbar-collapse collapse">
+
+
+				<ul class="nav navbar-nav navbar-right">
+					<li id="authmenu" class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i><span class="userextra"> <span class="myname"></span> <b class="caret"></b></span></a>
+						<ul id="authmenuoptions" class="dropdown-menu">
+							<li><a href="#!/privacy">Privacy notice</a></li>
+							<li class="divider"></li>
+							<li><a id="actLogout" href="#">Logout</a></li>
+						</ul>
+					</li>
+				</ul>
+
+
+			</div>
+		</div>
+	</div>
+
+-->
+
+	<!-- Static navbar 
+	<div class="navbar navbar-default loader-showOnLoad"  style="display: none; z-index: 1005">
+
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+
+			<a class="navbar-brand" style="padding: 8px" href="#!/">
+				<img style="margin-top: -5px" alt="UNINETT Logo" src="img/uninett-30-black.png" class="" />
+				API Inspect
+			</a>
 		</div>
 
 
+		<div class="navbar-collapse collapse">
+
+			<ul class="nav navbar-nav navbar-right">
+				<li id="authmenu" class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i><span class="userextra"> <span class="myname"></span> <b class="caret"></b></span></a>
+					<ul id="authmenuoptions" class="dropdown-menu">
+						<li><a href="#!/privacy">Privacy notice</a></li>
+						<li class="divider"></li>
+						<li><a id="actLogout" href="#">Logout</a></li>
+					</ul>
+				</li>
+			</ul>
+
+		</div>
+	</div>
+-->
 
 
 
 
 
-		<div class="container loader-showOnLoad" style="display: none; padding: 0 15px;">
 
-			<div class="row">
+	<div class="container gutter loader-showOnLoad" style="display: none;">
 
-				<div class="col-md-4">
+		<div class="row">
 
-					<div id="apilist"></div>
+			<div class="col-md-4">
 
-				</div>
+				<div id="apilist"></div>
+
+			</div>
 
 
-				<div class="col-md-8">
+			<div class="col-md-8">
 
-					<pre id="output"></pre>
-
-				</div>
+				<pre id="output"></pre>
 
 			</div>
 
 		</div>
 
+	</div>
 
-		<div id="modalContainer"></div>
+
+	
 
 
-	</body>
+</body>
 </html>
