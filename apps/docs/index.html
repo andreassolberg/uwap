@@ -37,45 +37,50 @@
 	<body data-spy="scroll" data-target=".subnav" data-offset="50">
 
 
-	<div class="navbar navbar-fixed-top">
-		<div class="navbar-inner">
-			<div class="container">
-			 <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			 </a>
-			 <a class="brand" href="#">UWAP</a>
-			 <div class="btn-group pull-right">
-				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-					<i class="icon-user"></i> <span id="username"></span>
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu">
-					<li><a href="#">Profile</a></li>
-					<li class="divider"></li>
-					<li><a href="#">Sign Out</a></li>
-				</ul>
-			 </div>
-			 <div class="nav-collapse">
-				<ul class="nav">
-					<li><a href="https://store.uwap.org">App Store</a></li>
-					<li><a href="https://dev.uwap.org">Developers</a></li>
-					<li class="active"><a href="#">Documentation</a></li>
-					<li><a href="https://developers.uwap.org/">About</a></li>
+	<!-- Fixed navbar -->
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+				<a class="navbar-brand" href="#"><img src="http://core.app.bridge.uninett.no/_/bootstrap3-uninett/images/UNINETT_logo.svg" alt="Uninett logo" type="image/svg+xml"></a>
+			</div>
 
+			<div class="navbar-department">
+				<div class="department">Feide Connect</div>
+			</div>
+
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+
+					<li><a href="https://store.uwap.org">App Store</a></li>
+					<li><a href="https://groups.uwap.org">Groups</a></li>
+					<li><a href="https://dev.uwap.org">Dev dashboard</a></li>
+					<li><a href="https://inspect.uwap.org">API</a></li>
+					<li class="active"><a href="https://docs.uwap.org">Docs</a></li>
+
+					<li class="dropdown pull-right">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> <span id="username"></span> <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="#">My page</a></li>
+							<li><a href="#">Profile</a></li>
+							<li class="divider"></li>
+							<li><a href="#">Sign Out</a></li>
+						</ul>
+					</li>
 				</ul>
-			 </div><!--/.nav-collapse -->
 			</div>
 		</div>
-	 </div>
+	</div>
 
-	<div class="container">
+
+
+
+	<div class="container uninett-color-white uninett-padded gutter">
 
 		<header class="jumbotron subhead" id="overview">
-			<h1>UWAP API Documentation</h1>
+			<h1>Feide Connect Documentation</h1>
 			<p class="lead">Supersimple access to federated authentication, document storage and a sophisticated REST engine.</p>
-			<div class="subnav">
+			<div class="_subnav">
 				<ul class="nav nav-pills">
 					<li><a href="#installation">Installation and usage</a></li>
 					<li><a href="#auth">Authentication</a></li>
@@ -534,15 +539,23 @@ X-Foo-API-Key: sf76sd5f7sd65f69sdf67sd5f</pre>
 
 
 
-		<hr>
-
-		<footer>
-			<p>&copy; UNINETT 2012</p>
-		</footer>
 	</div>
 
+			<hr class="uninett-hr-divider">
 
-	 <div id="modalContainer"></div>
+
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="footer-uninett" style="text-align: center">
+						<span class="footer-logo">
+							<img src="http://core.app.bridge.uninett.no/_/bootstrap3-uninett/images/Uninett_pil_rod.svg" 
+								alt="Uninett logo" type="image/svg+xml">
+						</span>
+						<span class="footer-uninett-department">Feide Connect, 2013-2014, UNINETT AS &copy; Andreas Åkre Solberg</span>
+					</div>
+				</div>
+			</div>
+
 
 	</body>
 </html>

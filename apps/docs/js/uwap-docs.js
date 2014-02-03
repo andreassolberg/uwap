@@ -9,10 +9,11 @@ define(function(require, exports, module) {
 	// IT'S ALL JUST JUNK FOR OUR DOCS!
 	// ++++++++++++++++++++++++++++++++++++++++++
 
-	require('uwap-core/bootstrap/js/bootstrap');	
-	require('uwap-core/bootstrap/js/bootstrap-collapse');	
-	require('uwap-core/bootstrap/js/bootstrap-dropdown');
 
+	require('uwap-core/bootstrap3/js/bootstrap');	
+	require('uwap-core/bootstrap3/js/modal');	
+	require('uwap-core/bootstrap3/js/dropdown');
+	
 	$(document).ready(function() {
 
 
