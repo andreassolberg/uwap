@@ -82,10 +82,9 @@ define(function(require, exports, module) {
 			$(window).bind('hashchange', $.proxy(this.route, this));
 			this.route();
 
-			// this.setNavigationBar([
-			// 	{title: "Dashboard", href: "#!/"},
-			// 	{title: "Foodle"}
-			// ]);
+			this.setNavigationBar([
+				{title: "Dashboard", href: "#!/"}
+			]);
 
 		}
 

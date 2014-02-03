@@ -17,7 +17,43 @@
 	<body>
 
 
-		<!-- Fixed navbar -->
+
+	<!-- Fixed navbar -->
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+				<a class="navbar-brand" href="#"><img src="http://core.app.bridge.uninett.no/_/bootstrap3-uninett/images/UNINETT_logo.svg" alt="Uninett logo" type="image/svg+xml"></a>
+			</div>
+
+			<div class="navbar-department">
+				<div class="department">Feide Connect</div>
+			</div>
+
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+
+					<li><a href="https://store.uwap.org">App Store</a></li>
+					<li><a href="https://groups.uwap.org">Groups</a></li>
+					<li class="active"><a href="#">Dev dashboard</a></li>
+					<li><a href="https://inspect.uwap.org">API</a></li>
+					<li><a href="https://docs.uwap.org">Docs</a></li>
+
+					<li class="dropdown pull-right">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> <span id="username"></span> <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="#">My page</a></li>
+							<li><a href="#">Profile</a></li>
+							<li class="divider"></li>
+							<li><a href="#">Sign Out</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+		<!-- Fixed navbar 
 		<div class="navbar navbar-default navbar-fixed-top" role="navigation">
 			<div class="container">
 				<div class="navbar-header">
@@ -32,7 +68,6 @@
 						<li class="active"><a href="#">Developers</a></li>
 						<li><a href="https://docs.uwap.org">Documentation</a></li>
 						<li><a href="https://developers.uwap.org/">About</a></li>
-<!-- 						<li><span class="glyphicon glyphicon-search glyphicon_search_menu"></span></li> -->
 					</ul>
 
 					<ul class="nav navbar-nav navbar-right">
@@ -44,14 +79,12 @@
 								<li><a href="#">Sign Out</a></li>
 							</ul>
 						</li>
-
 					</ul>
 
 				</div>
-				<!--/.nav-collapse --> 
 			</div>
 		</div>
-
+	-->
 
 
 <!-- 
@@ -76,10 +109,12 @@
 			</div>
 		</div> -->
 
-		<div class="container">
+		<div class="container gutter">
 
-			<ul id="navigationlist" class="breadcrumb">
-			</ul>
+			<div class="row">
+				<ul id="navigationlist" class="breadcrumb">
+				</ul>
+			</div>
 
 
 			<div class="row">
@@ -90,7 +125,7 @@
 				 <!-- </div> -->
 				</div>
 				
-				<div id="appmaincontainer" class="col-md-9 uninett-color-white uninett-padded ">
+				<div id="appmaincontainer" class="col-md-9 uninett-color-white  ">
 				</div>
 
 			</div>
