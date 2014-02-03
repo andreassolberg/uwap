@@ -24,6 +24,7 @@ class ExtGroups {
 				$userdata['realm'] = $matches[2];
 			}
 			$userdata['idp'] = 'https://idp.feide.no'; // TODO: fill inn from user data.
+			$userdata['customdata'] = $this->user->get('customdata');
 			$input['user'] = $userdata;
 		}
 		

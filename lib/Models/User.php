@@ -7,6 +7,7 @@ class User extends StoredModel {
 	protected static $primaryKey = 'userid';
 	protected static $validProps = array(
 		'userid', 'mail', 'name', 'a', 'photo', 'groups', 'subscriptions',
+		'customdata',
 		'shaddow-generator', 'shaddow');
 
 	protected $groupconnector;
@@ -14,8 +15,6 @@ class User extends StoredModel {
 	public function __construct($properties) {
 
 		// Utils::dump('create new user user:', $properties); exit;
-
-
 		parent::__construct($properties);
 
 		$this->groupconnector = new GroupConnector($this);
@@ -139,9 +138,22 @@ class User extends StoredModel {
 		}
 
 
-		$groups = self::groupsFromAttributes($attributes);
+		// $groups = self::groupsFromAttributes($attributes);
 
 		
+		$collectUserdata = array(
+			'eduPersonEntitlement', 'eduPersonAffiliation',
+			'eduPersonOrgDN:o', 'eduPersonOrgUnitDN:ou', 
+			'eduPersonOrgUnitDN', 'eduPersonOrgUnitDN:ou',
+			'eduPersonOrgUnitDN:norEduOrgUnitUniqueIdentifier'
+		);
+
+		$userattr['customdata'] = array();
+		foreach($collectUserdata AS $key) {
+			if (isset($attributes[$key])) {
+				$userattr['customdata'][$key] = $attributes[$key];	
+			}
+		}
 
 
 		$existingUser = self::getByID($userattr['userid'], true);
@@ -186,6 +198,10 @@ class User extends StoredModel {
 		return $newUser;
 	}
 
+
+	/*
+	 * DEPRECATED
+	 */
 	public static function groupsFromAttributes($attributes) {
 
 		$groups = array();
@@ -227,7 +243,7 @@ class User extends StoredModel {
 				unset($properties[$k]);
 			}
 		}
-
+		$properties["a"] =  Utils::genID();
 		$properties['shaddow-generator'] = $user->get('userid');
 		$properties['shaddow'] = true;
 
