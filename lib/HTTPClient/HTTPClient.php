@@ -241,26 +241,28 @@ class HTTPClient {
 	}
 
 
-	public static function getClientWithConfig($config, $appid) {
-		if (!is_array($config)) throw new Exception('Must call getClientWithConfig() with config array');
+	public static function getClientFromConfig(APIProxy $proxy, Client $client) {
+		// if (!is_array($config)) throw new Exception('Must call getClientWithConfig() with config array');
+
+		$config = $proxy->get('proxy');
 
 		switch($config['type']) {
 
 			case "basic":
-				return new HTTPClientBasic($config, $appid);
+				return new HTTPClientBasic($config, $client);
 
 			case "token":
-				return new HTTPClientToken($config, $appid);
+				return new HTTPClientToken($config, $client);
 
 			case "oauth2":
-				return new HTTPClientOAuth2($config, $appid);
+				return new HTTPClientOAuth2($config, $client);
 
 			case "oauth1":
-				return new HTTPClientOAuth1($config, $appid);
+				return new HTTPClientOAuth1($config, $client);
 
 			case "plain":
 			default:
-				return new HTTPClient($config, $appid);
+				return new HTTPClient($config, $client);
 		}
 
 	}

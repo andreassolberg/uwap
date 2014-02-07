@@ -16,6 +16,7 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: HEAD, GET, OPTIONS, POST, DELETE, PATCH");
 header("Access-Control-Allow-Headers: Authorization, X-Requested-With, Origin, Accept, Content-Type");
+header("Access-Control-Expose-Headers: Authorization, X-Requested-With, Origin, Accept, Content-Type");
 
 
 
@@ -1075,6 +1076,7 @@ try {
 
 		$remoteHost = parse_url($url, PHP_URL_HOST);
 		$proxy = $globalconfig->getApp($remoteHost);
+		$proxyID = $proxy->get('id');
 
 		if ($proxy->get('type') !== 'proxy') {
 			throw new Exception('This host is not running a soaproxy.');
@@ -1107,16 +1109,11 @@ try {
 		$oauth = new OAuth();
 		$token = $oauth->check(null, null);
 		$user = $token->getUser();
+		$client = $token->getClient();
 
-		// // // Get provided Token on this request, if present.
-		// $token = $oauth->getProvidedToken();
 
-		$proxyID = $proxy->get('id');
 
-		// echo "ProviderID " . $providerID . "\n";
-		// echo "proxyconfig "; print_r($proxyconfig); echo "\n";
-
-		$httpclient = HTTPClient::getClientWithConfig($proxyconfig, $proxyID);
+		$httpclient = HTTPClient::getClientFromConfig($proxy, $client);
 		if ($token) {
 			
 			$clientid = $token->getClientID();
@@ -1132,9 +1129,9 @@ try {
 			// --- TODO
 
 			// $userdata = $token->getUserdataWithGroups();
-			$httpclient->setAuthenticated($userdata);
+			$httpclient->setAuthenticated($user);
 			$scopes = $oauth->getApplicationScopes('rest', $proxyID);
-			$httpclient->setAuthenticatedClient($clientid, $scopes);
+			// $httpclient->setAuthenticatedClient($clientid, $scopes);
 		}
 		$response = $httpclient->get($realurl, $args);
 
