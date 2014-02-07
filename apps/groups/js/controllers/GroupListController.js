@@ -5,8 +5,8 @@ define(function(require, exports, module) {
 
 		Class = require('uwap-core/js/class'),
 		Controller = require('../lib/Controller'),
-
 		hb = require('uwap-core/js/handlebars')
+		
 		;
 
 	var tmpl = {
