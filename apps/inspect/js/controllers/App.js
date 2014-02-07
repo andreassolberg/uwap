@@ -8,7 +8,7 @@ define(function(require, exports, module) {
 
 		models = require('uwap-core/js/models'),
 
-
+		AttributeMap = require('./AttributeMap'),
 
 		moment = require('uwap-core/js/moment'),
 		hogan = require('uwap-core/js/hogan'),
@@ -22,10 +22,99 @@ define(function(require, exports, module) {
 	require('uwap-core/bootstrap3/js/dropdown');	
 
 
-	// var tmpl = {
-	// 	"subscriptionList": require('uwap-core/js/text!templates/subscriptionList.html'),
-	// 	"upcomingItem":  require('uwap-core/js/text!templates/upcomingItem.html')
-	// };
+
+	UWAP.__request = function(method, url, data, options, callback) {
+		method = method || 'GET';
+
+		options = options || {};
+		options.handler = options.handler || 'plain';
+		options.auth = (typeof options.auth !== 'undefined' ) ?  options.auth : true;
+
+		var ar = {
+			type: method,
+			url: url,
+			dataType: 'json',
+			jso_provider: "uwap",
+			jso_allowia: true,
+			success: function(result, textStatus, jqXHR) {
+				// console.log('Response _request response reviced()');
+				// console.log(result);
+
+				if (result.status === 'ok') {
+					if (typeof callback === 'function') {
+						var x = result.data;
+						console.log(" ====> Result", result);
+						console.log(" ====> textStatus", textStatus);
+						console.log(" ====> jqXHR", jqXHR);
+						console.log(" ====> jqXHR", jqXHR.statusText);
+						callback(result, jqXHR.status + ' ' + jqXHR.statusText, jqXHR.getAllResponseHeaders());
+					}
+				} else if (result.status === 'redirect') {
+					// console.log("Redirecting user to " + result.url);
+					window.location.href = result.url;
+				} else {
+
+					console.error('Data request error (server side): ' + result.message);
+					callback(new UWAP.Error('Errir', result.message));
+					
+				}	
+				
+			},
+			error: function(err) {
+
+				callback(new UWAP.Error(err));
+				console.error('Error in API Call [' + method + ' ' + url + ']',  err);
+
+				// if  (typeof errorcallback === 'function') {
+				// 	errorcallback(err.responseText + '(' + err.status + ')');
+				// }
+				// console.error('Data request error (client side): ', err);
+				// console.error('Response text');
+				// console.error(err.responseText);
+			}
+
+		};
+
+		if (data) {
+
+			// data.options = options;
+
+			ar.data = JSON.stringify(data);
+			ar.processData = false;
+			ar.contentType = 'application/json; charset=UTF-8';
+		}
+
+
+		for(var key in options) {
+			if (options.hasOwnProperty(key)) {
+				ar[key] = options[key];
+			}
+		}
+
+		// console.log("UWAP.data _request data ", data, " options", options);
+
+		try {
+			if (options.handler === 'plain' && !options.auth) {
+				// console.log("Attempt nonauthenticated REST request to ", data.url); 
+				$.ajax(ar);
+
+			} else {
+				// console.log("Attempt authenticated REST request to ", data.url); return;
+				// console.log("UWAP.data authenticated _request data ", data, " options", options);
+				$.oajax(ar);
+			}
+			
+		} catch(exception) {
+			if (typeof errorcallback === 'function') {
+				errorcallback(exception);	
+			} else {
+				console.error("Error performing XHTTP Request: ", exception.message);
+			}
+
+			
+		}
+
+	};
 
 
 
@@ -43,12 +132,26 @@ define(function(require, exports, module) {
 			"method": "get"
 		},
 		'group-info': {
-			"path": "/api/group{group.id}",
-			"method": "get"
+			"path": "/api/group/{groupid}",
+			"method": "get",
+			"map": ["groupid"]
 		},
 		'group-members': {
-			"path": "/api/group{group.id}/members",
-			"method": "get"
+			"path": "/api/group/{groupid}/members",
+			"method": "get",
+			"map": ["groupid"]
+		},
+		'feed': {
+			"path": "/api/feed",
+			"method": "post"
+		},
+		'feed-upcoming': {
+			"path": "/api/feed/upcoming",
+			"method": "post"
+		},
+		'feed-notifications': {
+			"path": "/api/feed/notifications",
+			"method": "post"
 		}
 	};
 
@@ -78,20 +181,58 @@ define(function(require, exports, module) {
 			var key = $(e.currentTarget).data('apikey');
 			var config = apiconfig[key];
 
-			UWAP._request(
-			 	apiconfig[key].method, UWAP.utils.getEngineURL(apiconfig[key].path),
-			 	null,
-			 	null, function(data) {
+			var path = apiconfig[key].path;
+			var url = UWAP.utils.getEngineURL(path);
 
-			 		$("#output").empty().text(JSON.stringify(data, undefined, 4));
+			if (config.map) {
+				that.attributemap = new AttributeMap($("#am"), config.map, function(res) {
+					console.log("res", res);
 
-			 	}, function(err) {
-			 		$("#output").empty().text('ERROR ' + err);
-			 	});
+					
+					console.log("Path is ", path)
+
+					$.each(config.map, function(i, key) {
+						console.log("Replacing {" + key + "} with " + res[key]);
+						path = path.replace('{' + key + '}', res[key]);
+					});
+
+					console.log("Accessing the following path:", path);
+
+					url = UWAP.utils.getEngineURL(path);
+
+					that.performRequest(apiconfig[key].method, url);
+
+				});
+			} else {
+				
+				that.performRequest(apiconfig[key].method, url);
+			}
+
 
 
 			
 		})
+
+	}
+
+	App.prototype.performRequest = function(method, url) {
+
+		console.log("Performing a request " + method + " " + url);
+		UWAP.__request(
+		 	method, url,
+		 	null,
+		 	null, function(data, status, headers) {
+
+		 		console.log("HEADERS", headers);
+		 		$("#reqHeaders").empty().text(method.toUpperCase() + ' ' + url);
+
+		 		$("#output").empty().text(JSON.stringify(data, undefined, 4));
+		 		$("#respHeaders").empty().text('HTTP/1.1 ' + status + "\r\n" + headers);
+
+		 	}, function(err) {
+		 		$("#output").empty().text('ERROR ' + err);
+		 	}
+		);
 
 	}
 
@@ -100,6 +241,7 @@ define(function(require, exports, module) {
 		this.user = user;
 
 		$(".myname").empty().append(user.name);
+
 
 
 	}
