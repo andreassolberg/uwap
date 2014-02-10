@@ -2,9 +2,9 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>uFeed</title>
+		<title>Subscribe</title>
 		<meta name="viewport" content="user-scalable=no,width=device-width" />
-		<meta name="description" content="eduFeed" />
+		<meta name="description" content="Subscribe to group content" />
 		<meta name="author" content="Andreas Åkre Solberg" />
 
 		<link rel='stylesheet' href="css/style.css" rel="stylesheet" />
@@ -13,27 +13,23 @@
 		<script type="text/javascript" data-main="main" src="/_/js/require.js"></script>
 
 		<script id="groupItem" type="text/x-jquery-tmpl">
-			<tr class="group">
+			<tr style="" class="group">
 
-				<td style="width: 50px; text-align: right">
+				<td style=" text-align: right">
 					{{if subscribed}}
 						<button class="actUnsubscribe btn btn-mini">Unsubscribe</button>				
 					{{else}}
 						<button class="actSubscribe btn btn-success btn-mini">Subscribe</button>
 					{{/if}}
 				</td>
-				<td style="width: 50px">
+				<td style="">
 					{{if subscribed}}
 						<span class="label label-success">Subscribed</span>
 					{{else}}
 						
 					{{/if}}
 				</td>
-				<td>${title}</td>
-
-
-
-
+				<td class="title">${title}</td>
 
 <!--
 				<td>
@@ -48,6 +44,7 @@
 					{{/if}}
 				</td>
 -->
+
 			</tr>
 		</script>
 
@@ -58,7 +55,7 @@
 
 
 
-		<div class="loader-hideOnLoad" style="position: absolute; top: 100px; left: 50px">
+		<div class="loader-hideOnLoad" style="position: fixed; top: 100px; left: 50px">
 			<p><img src="/img/ajax-loader.gif" /> Loading application...</p>
 		</div>
 
@@ -78,9 +75,11 @@
 			<div class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
 
-					<li class="navbar-search pull-right" action="">
+					<li class="active"><a href="#">Subscribe</a></li>
+
+<!-- 					<li class="navbar-search pull-right" action="">
 						<input type="text" class="search-query span4" placeholder="Search">
-					</li>
+					</li> -->
 
 
 				</ul>
@@ -89,49 +88,11 @@
 		
 		</div>
 
-<!--
+	<div class="gutter loader-showOnLoad" style="display: none;">
 
-		<div class="navbar">
-			<div class="navbar-inner">
-				<div class="container">
+		<div class="main">
 
-					<a class="brand" href="#!/">UWAP Subscribe</a>
-
-
-					<ul class="nav pull-right">
-						<li id="authmenu" class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i> <span class="myname"></span> <b class="caret"></b></a>
-							<ul id="authmenuoptions" class="dropdown-menu">
-								<li><a href="#!/notificationsetup">Setup notifications</a></li>
-								<li><a href="https://groupmanager.uwpa.org">Manage groups</a></li>
-								<li><a href="#!/privacy">Privacy notice</a></li>
-								<li class="divider"></li>
-								<li><a href="#!/PROFILE">Logout</a></li>
-							</ul>
-						</li>
-					</ul>
-
-
-
-					<form class="navbar-search pull-left" action="">
-						<input type="text" class="search-query span4" placeholder="Search">
-					</form>
-
-				</div>
-			</div>
-		</div> -->
-
-
-
-
-
-
-
-	<div class="row gutter loader-showOnLoad" style="display: none;">
-
-		<div class="main span12">
-
-			<table class="t table table-striped">
+			<table class="t table table-striped" style="">
 			</table>
 
 
