@@ -12,10 +12,10 @@ define(function(require, exports, module) {
 	
 	require('uwap-core/js/jquery.tmpl');
 
-	require('uwap-core/bootstrap/js/bootstrap');
-	require('uwap-core/bootstrap/js/bootstrap-collapse');
-	require('uwap-core/bootstrap/js/bootstrap-button');
-	require('uwap-core/bootstrap/js/bootstrap-dropdown');
+	require('uwap-core/bootstrap3/js/bootstrap');	
+	require('uwap-core/bootstrap3/js/collapse');
+	require('uwap-core/bootstrap3/js/button');
+	require('uwap-core/bootstrap3/js/dropdown');	
 
 	// require('uwap-core/bootstrap/js/bootstrap-modal');
     // require('uwap-core/bootstrap/js/bootstrap-tooltip');
@@ -127,6 +127,12 @@ define(function(require, exports, module) {
 
 
 		UWAP.auth.require(function(user) {
+
+			$(".loader-hideOnLoad").hide();
+			$(".loader-showOnLoad").show();
+			$("span#username").html(user.name);
+			$('.dropdown-toggle').dropdown();
+
 
 			var app = new App($("body"), user)
 			
