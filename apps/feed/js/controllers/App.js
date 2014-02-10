@@ -312,6 +312,7 @@ define(function(require, exports, module) {
 		// console.log("Routing...");
 		if (hash.length < 3) {
 			this.setHash('/');
+			hash = window.location.hash;
 		}
 		hash = hash.substr(2);
 		// console.log("Checking hash " + hash);
