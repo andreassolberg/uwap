@@ -69,14 +69,14 @@ class User extends StoredModel {
 
 	public function subscribe(Group $group) {
 		$groupid = $group->get('id');
-		$subscriptions = $this->get('subscriptions');
+		$subscriptions = $this->get('subscriptions', array());
 		$subscriptions = self::array_add($subscriptions, $groupid);		
 		$this->set('subscriptions', $subscriptions);
 	}
 
 	public function unsubscribe(Group $group) {
 		$groupid = $group->get('id');
-		$subscriptions = $this->get('subscriptions');
+		$subscriptions = $this->get('subscriptions', array());
 		$subscriptions = self::array_remove($subscriptions, $groupid);		
 		$this->set('subscriptions', $subscriptions);
 	}
