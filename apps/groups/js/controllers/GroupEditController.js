@@ -133,15 +133,12 @@ define(function(require, exports, module) {
 			console.log("Draw group", view);
 			this.el.empty().append(template(view));
 
-
 			var ps = $("#peoplesearchContainer").focus().peopleSearch({
 				callback: function(item) {
 					// console.log("Adding item", item);
 					that.addMember(item);
 					ps.find('input').focus();
-		            // gr.addMember(item);
-		            // 
-		        }
+				}
 			});
 
 		}
