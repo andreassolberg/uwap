@@ -13,7 +13,5 @@ define(function(require, exports, module) {
 	App.init();
 
 
-
-
 });
 

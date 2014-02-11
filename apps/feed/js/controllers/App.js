@@ -171,7 +171,7 @@ define(function(require, exports, module) {
 				
 				var menupadding = data.extra + 50;
 				$("#connect-widget").height(data.size + 34 + menupadding);
-				$("#connect-widget").css('margin-bottom', '-' + menupadding);
+				$("#connect-widget").css('margin-bottom', -menupadding);
 				console.log("RESIZE", data, "set to ", $("#connect-widget").height());
 			}
 

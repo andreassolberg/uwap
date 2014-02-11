@@ -183,6 +183,8 @@ define(function(require, exports, module) {
 	FeedController.prototype.addItem = function(item) {
 		var that = this;
 
+		console.log("Add item", item)
+
 		item.groupnames = [];
 		if (item.groups) {
 			$.each(item.groups, function(i, g) {
