@@ -35,12 +35,20 @@ define(function(require, exports, module) {
 	 * @param  {string} msg Log message
 	 */
 	var log = function(msg) {
+
+		var arguments = Array.prototype.slice.call(arguments);
+
 		if (!options.debug) return;
 		if (!console) return;
 		if (!console.log) return;
 
 		// console.log("LOG(), Arguments", arguments, msg)
 		if (arguments.length > 1) {
+			// console.log("SHIFT ", arguments);
+			var first = arguments.shift();
+			console.log(first, arguments);
+
+		} else if (arguments.length > 1) {
 			console.log(arguments);	
 		} else {
 			console.log(msg);
@@ -175,7 +183,7 @@ define(function(require, exports, module) {
 		var tokens = JSON.parse(localStorage.getItem("tokens-" + provider));
 		if (!tokens) tokens = [];
 
-		log("Token received", tokens)
+		log("Token received from provider " + provider, tokens)
 		return tokens;
 	};
 	Api_default_storage.prototype.wipeTokens = function(provider) {
@@ -198,6 +206,9 @@ define(function(require, exports, module) {
 	 */
 	Api_default_storage.prototype.getToken = function(provider, scopes) {
 		var tokens = this.getTokens(provider);
+
+		log('About to getToken()', provider, scopes, tokens);
+
 		tokens = api_storage.filterTokens(tokens, scopes);
 		if (tokens.length < 1) return null;
 		return tokens[0];
@@ -680,6 +691,7 @@ define(function(require, exports, module) {
 			providerid,
 			co;
 		
+		log('---------------------');
 		log("$.oajax...... " + settings.url, settings);
 
 		providerid = settings.jso_provider;
@@ -687,6 +699,9 @@ define(function(require, exports, module) {
 		scopes = settings.jso_scopes;
 		token = api_storage.getToken(providerid, scopes);
 		co = config[providerid];
+
+
+		log('Attempted to getToken', providerid, scopes, token);
 
 		// var successOverridden = settings.success;
 		// settings.success = function(response) {
@@ -729,6 +744,7 @@ define(function(require, exports, module) {
 		};
 
 		settings.error = function(jqXHR, textStatus, errorThrown) {
+
 			log('error(jqXHR, textStatus, errorThrown)');
 			log(JSON.stringify(jqXHR));
 			log(textStatus);
@@ -757,6 +773,7 @@ define(function(require, exports, module) {
 
 		if (!token) {
 			// console.log("Did not have token, obtaining it.")
+			log('Did not have an token already, obtaining a new token.')
 			obtainToken();
 		} else {
 			// console.log("performing ajax..")

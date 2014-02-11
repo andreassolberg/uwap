@@ -33,9 +33,7 @@ try {
 		exit;
 	}
 
-	$response = array(
-		"status" => "ok"
-	);
+	$response = null;
 
 	/**
 	 *  The OAuth endpoints on core, typically the OAuth Server endpoints for communication with clients
@@ -74,11 +72,8 @@ try {
 
 		// $res = $auth->storeUser();
 
-		// header('Content-Type: application/json; chat-set: utf-8');
-		// echo 
 
-		$response['data'] = array('status' => 'ok', 'message' => 'TESTING');
-
+		$response = array('message' => 'Test');
 
 
 
@@ -101,7 +96,8 @@ try {
 		// header('Content-Type: application/json; chat-set: utf-8');
 		// echo 
 
-		$response['data'] = array('status' => 'ok', 'message' => 'updated user data', 'userdata' => $user->getJSON());
+		// $response['data'] = array('status' => 'ok', 'message' => 'updated user data', 'userdata' => $user->getJSON());
+		$response = array('status' => 'ok', 'message' => 'updated user data', 'userdata' => $user->getJSON());
 
 
 	/**
@@ -115,7 +111,7 @@ try {
 		$user = $token->getUser();
 
 
-		$response['data'] = $user->getJSON(array('type' => 'extended',  'groups' => true, 'subscriptions' => true));
+		$response = $user->getJSON(array('type' => 'extended',  'groups' => true, 'subscriptions' => true));
 
 
 	/**
@@ -140,10 +136,7 @@ try {
 
 		if (Utils::route('get', '^/people/realms$', &$parameters)) {
 
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->peopleListRealms(),
-			);
+			$response = $groupconnector->peopleListRealms();
 
 		} else if (Utils::route('get', '^/people/query/([a-z0-9\.\-]+)$', &$parameters)) {
 
@@ -155,10 +148,7 @@ try {
 			// }
 
 			$realm = $parameters[1];
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->peopleQuery($realm, $_REQUEST['query']),
-			);
+			$response = $groupconnector->peopleQuery($realm, $_REQUEST['query']);
 
 		} 
 
@@ -184,10 +174,7 @@ try {
 		// Get a list of groups
 		if (Utils::route('get', '^/groups$', &$parameters)) {
 
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->getGroupsJSON(),
-			);
+			$response = $groupconnector->getGroupsJSON();
 
 		} else if (Utils::route('get', '^/groups/public$', &$parameters)) {
 
@@ -195,10 +182,7 @@ try {
 
 			// $gres = $groupmanager->getPublicGroups($groups);
 
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->getPublicGroupsJSON(),
-			);
+			$response = $groupconnector->getPublicGroupsJSON();
 
 
 		// Add a new group
@@ -208,10 +192,7 @@ try {
 
 			$res = $groupconnector->addGroup($body);
 
-			$response = array(
-				'status' => 'ok',
-				'data' => $res->getJSON(),
-			);
+			$response = $res->getJSON();
 
 
 		// Get a specific group
@@ -228,10 +209,7 @@ try {
 			}
 
 
-			$response = array(
-				'status' => 'ok',
-				'data' => $group->getJSON(),
-			);
+			$response = $group->getJSON();
 
 
 		// Get a specific group
@@ -249,10 +227,7 @@ try {
 
 			$members = $group->getMembers();
 
-			$response = array(
-				'status' => 'ok',
-				'data' => $members->getJSON(array('type' => 'user')),
-			);
+			$response = $members->getJSON(array('type' => 'user'));
 
 			// if ($group === null) {
 			// 	$response = array(
@@ -275,10 +250,7 @@ try {
 
 			// TODO: ensure user is member of the group to extract memberlist
 			$groupid = $parameters[1];
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->update($groupid, $body),
-			);
+			$response = $groupconnector->update($groupid, $body);
 
 		// Delete  group
 		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)$', &$parameters)) {
@@ -286,10 +258,7 @@ try {
 
 
 			$groupid = $parameters[1];
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->remove($groupid),
-			);
+			$response = $groupconnector->remove($groupid);
 
 
 
@@ -306,20 +275,14 @@ try {
 				$res = $groupconnector->unsubscribe($groupid, $body['subscribe']);
 			}
 
-			$response = array(
-				'status' => 'ok',
-				'data' => $res,
-			);
+			$response = $res;
 
 
 		// Add a new member to a group
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/members$', &$parameters, &$body)) {
 
 			$groupid = $parameters[1];
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->addMember($groupid, $body),
-			);
+			$response = $groupconnector->addMember($groupid, $body);
 
 		// Update a membership to a group
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', &$parameters, &$obj)) {
@@ -328,10 +291,7 @@ try {
 
 			$groupid = $parameters[1];
 			$userid = $parameters[2];
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->updateMember($groupid, $userid, $obj),
-			);
+			$response = $groupconnector->updateMember($groupid, $userid, $obj);
 
 		// Remove a user from a group
 		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', &$parameters)) {
@@ -340,10 +300,7 @@ try {
 
 			$groupid = $parameters[1];
 			$userid = $parameters[2];
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->removeMember($groupid, $userid),
-			);
+			$response = $groupconnector->removeMember($groupid, $userid);
 
 		} else {
 			echo "Invalid request"; exit;
@@ -411,12 +368,12 @@ try {
 				// TODO: Clean output before returning. In example remove uwap- namespace attributes...
 			case 'queryOne':
 				if (empty($parameters['query'])) throw new Exception("Missing required parameter [query] query");
-				$response['data'] = $store->queryOneUser("appdata-" . $targetapp, $userid, $userdata['groups'], $parameters['query']);
+				$response = $store->queryOneUser("appdata-" . $targetapp, $userid, $userdata['groups'], $parameters['query']);
 				break;
 
 			case 'queryList':
 				if (empty($parameters['query'])) throw new Exception("Missing required parameter [query] query");
-				$response['data'] = $store->queryListUser("appdata-" . $targetapp, $userid, $userdata['groups'], $parameters['query']);
+				$response = $store->queryListUser("appdata-" . $targetapp, $userid, $userdata['groups'], $parameters['query']);
 				break;
 
 		}
@@ -452,7 +409,7 @@ try {
 				'mine' => true,
 				'status-' => 'pendingDelete'
 			));
-			$response['data'] = $clients->getJSON();
+			$response = $clients->getJSON();
 
 
 
@@ -471,14 +428,14 @@ try {
 			// echo "result was "; print_r(var_export($client, true));
 
 			$clientdirectory->authorize($client, 'owner');
-			$response['data'] = $client->getJSON(array(
+			$response = $client->getJSON(array(
 				'appinfo' => true
 			));
 
 			if ($client instanceof App) {
 
 				$apphosting = new AppHosting($user);
-				$response['data']['davcredentials'] = $apphosting->getDavCredentials($client);
+				$response = array('davcredentials' => $apphosting->getDavCredentials($client));
 				/*
 				 * Deprecated properties that was previously present in the API result
 				 *
@@ -499,14 +456,14 @@ try {
 			$clientdirectory->authorize($client, 'owner');
 
 			$clientdata = $client->getJSON();
-			$response['data'] = $clientdata['status'];
+			$response = $clientdata['status'];
 
 
 		} else if (Utils::route('get', '^/appconfig/check/([a-z0-9\-]+)$', &$qs, &$parameters)) {
 
 			$appid = $qs[1];
 			Utils::validateID($appid);
-			$response['data'] = !$clientdirectory->exists($appid);
+			$response = !$clientdirectory->exists($appid);
 
 
 
@@ -519,7 +476,7 @@ try {
 			
 
 			$client = Client::generate($object, $user);
-			$response['data'] = $client->getJSON();
+			$response = $client->getJSON();
 
 			// echo "OK. Done";
 
@@ -534,7 +491,7 @@ try {
 			$client->updateStatus($bodyobject);
 
 			$clientdata = $client->getJSON();
-			$response['data'] = $clientdata['status'];
+			$response = $clientdata['status'];
 
 
 		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/bootstrap$', &$parameters, &$object)) {
@@ -545,7 +502,7 @@ try {
 			$clientdirectory->authorize($client, 'owner');
 
 			$apphosting = new AppHosting($user);
-			$response['data'] = $apphosting->bootstrap($client, $object);
+			$response = $apphosting->bootstrap($client, $object);
 
 
 
@@ -561,7 +518,7 @@ try {
 			$authzid = $parameters[2];
 			Utils::validateID($authzid);
 
-			$response['data'] = $client->updateAuthzHandler($authzid, $object);
+			$response = $client->updateAuthzHandler($authzid, $object);
 
 
 			// Delete an authorization handler
@@ -575,7 +532,7 @@ try {
 			$authzid = $parameters[2];
 			Utils::validateID($authzid);
 
-			$response['data'] = $client->deleteAuthzHandler($authzid);
+			$response = $client->deleteAuthzHandler($authzid);
 
 
 		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/proxy$', &$parameters, &$object)) {
@@ -586,7 +543,7 @@ try {
 			$client = Client::getByID($appid);
 			$clientdirectory->authorize($client, 'owner');
 
-			$response['data'] = $client->updateProxy($object); 
+			$response = $client->updateProxy($object); 
 
 
 
@@ -600,7 +557,7 @@ try {
 
 			$authorizationList = $clientdirectory->getAuthorizationQueue($app);
 
-			$response['data'] = $authorizationList->getJSON();
+			$response = $authorizationList->getJSON();
 
 
 
@@ -614,7 +571,7 @@ try {
 			
 			$clientdirectory->requestScopes($client, $object);
 
-			$response['data'] = $client->getJSON();
+			$response = $client->getJSON();
 
 
 
@@ -630,7 +587,7 @@ try {
 			// echo "About to query getpublic api "; print_r($object); exit;
 
 			$authorizationList = $clientdirectory->getPublicAPIs($client, $object);
-			$response['data'] = $authorizationList->getJSON();
+			$response = $authorizationList->getJSON();
 
 
 		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)/authorizedapis$', &$parameters, &$object)) {
@@ -642,7 +599,7 @@ try {
 			$clientdirectory->authorize($client, 'owner');
 
 			$authorizationList = $clientdirectory->getAuthorizedAPIs($client, null);
-			$response['data'] = $authorizationList->getJSON();
+			$response = $authorizationList->getJSON();
 
 
 
@@ -662,7 +619,7 @@ try {
 			$clientdirectory->authorizeClientScopes($app, $client, $object);
 
 			$authorizationList = $clientdirectory->getAuthorizationQueue($app);
-			$response['data'] = $authorizationList->getJSON();
+			$response = $authorizationList->getJSON();
 
 
 
@@ -712,7 +669,7 @@ try {
 		} else if (Utils::route('post', '^/appconfig/apps/query$', &$qs, &$parameters)) {
 
 			$listing = $appdirectory->queryApps($parameters );
-			$response['data'] = $listing;
+			$response = $listing;
 
 
 		// } else if (Utils::route('post', '^/appconfig/clients$', &$qs, &$parameters)) {
@@ -881,7 +838,7 @@ try {
 			$appid = $qs[1];
 			Utils::validateID($appid);
 			$ac = Config::getInstance($appid);
-			$response['data'] = $ac->getConfigLimited();
+			$response = $ac->getConfigLimited();
 
 		// } else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)$', &$qs, &$parameters)) {
 
@@ -964,7 +921,7 @@ try {
 
 		if (Utils::route('post', '^/feed$', &$parameters, &$object)) {
 			
-			$response['data'] = $feedReader->read($object)->getJSON();
+			$response = $feedReader->read($object)->getJSON();
 
 
 
@@ -975,7 +932,7 @@ try {
 			// $response['data'] = $no->read($parameters);
 
 
-			$response['data'] = $feedReader->readUpcoming($object)->getJSON();
+			$response = $feedReader->readUpcoming($object)->getJSON();
 
 		} else if (Utils::route('post', '^/feed/notifications$',  &$parameters, &$object)) {
 
@@ -984,7 +941,7 @@ try {
 			// $response['data'] = $no->read($parameters);
 
 
-			$response['data'] = $feedReader->readNotifications($object)->getJSON();
+			$response = $feedReader->readNotifications($object)->getJSON();
 
 			// header('Content-Type: text/plain; charset: utf-8'); echo "poot"; print_r($response); exit;
 
@@ -992,7 +949,7 @@ try {
 
 
 			// $no = new Notifications($userid, $groups, $subscriptions);
-			$response['data'] = $feedReader->markNotificationsRead($ids);
+			$response = $feedReader->markNotificationsRead($ids);
 
 
 		} else if (Utils::route('post', '^/feed/post$', &$parameters, &$object)) {
@@ -1009,7 +966,7 @@ try {
 			// error_log("About to post groups: " . json_encode($groups));
 
 			$feedItem = $feedReader->post($object);
-			$response['data'] = $feedItem->getJSON();
+			$response = $feedItem->getJSON();
 
 
 
@@ -1020,7 +977,7 @@ try {
 			// echo "About to delete an item: " . $qs[1];
 			// $response['data'] = $feed->delete($qs[1]);
 			
-			$response['data'] = $feedReader->delete($parameters[1]);
+			$response = $feedReader->delete($parameters[1]);
 
 
 		} else if (Utils::route('post', '^/feed/item/([a-z0-9\-]+)/response$',  &$parameters, &$object)) {
@@ -1031,7 +988,7 @@ try {
 
 			$feedItem = $feedReader->respond($object);;
 
-			$response['data'] = $feedItem->getJSON();
+			$response = $feedItem->getJSON();
 
 
 
@@ -1041,7 +998,7 @@ try {
 			// $oauth->check(null, array('feedwrite'));
 			// echo "About to delete an item: " . $qs[1];
 			
-			$response['data'] = $feedReader->read(array('id_' => $parameters[1]))->getJSON();
+			$response = $feedReader->read(array('id_' => $parameters[1]))->getJSON();
 
 		} else {
 

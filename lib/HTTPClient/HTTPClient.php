@@ -106,6 +106,9 @@ class HTTPClient {
 			$opts['http']['content'] = json_encode($options['options']['_data']);
 		}
 
+
+		// error_log("HTTPClientToken Content data: " . $opts['http']['content']);
+
 		$headerstring = '';
 		foreach($headers AS $k => $v) {
 			$headerstring .= $k . ': ' . $v . "\r\n";
@@ -233,11 +236,11 @@ class HTTPClient {
 		$this->verifyURL($url);
 
 		// ($url, $headers = array(), $redir = true, $curl = false, $options = array()) {
-		$result["data"] = $this->rawget($url, array(), true, false, $options);
+		$rawdata = $this->rawget($url, array(), true, false, $options);
 
-		error_log("Got data: " . var_export($result["data"], true)) ;
-		$result = $this->decode($result, $options);
-		return $result;
+		error_log("Got data: " . var_export($rawdata, true)) ;
+		// $result = $this->decode($rawdata, $options);
+		return json_decode($rawdata, true);
 	}
 
 

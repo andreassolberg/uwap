@@ -40,30 +40,59 @@ define(function(require, exports, module) {
 				// console.log('Response _request response reviced()');
 				// console.log(result);
 
-				if (result.status === 'ok') {
+				if (jqXHR.status === 200) {
+
+					console.log("=====> jqXHR.status === 200");
 					if (typeof callback === 'function') {
-						var x = result.data;
-						console.log(" ====> Result", result);
-						console.log(" ====> textStatus", textStatus);
-						console.log(" ====> jqXHR", jqXHR);
-						console.log(" ====> jqXHR", jqXHR.statusText);
-						callback(result, jqXHR.status + ' ' + jqXHR.statusText, jqXHR.getAllResponseHeaders());
+
+						var x = result;
+						if (typeof dataprocess === 'function') {
+							var x = dataprocess(result);
+						} 
+						callback(result, jqXHR.status + ' ' + jqXHR.statusText, jqXHR.getAllResponseHeaders());		
 					}
-				} else if (result.status === 'redirect') {
+
+
+					// REDIRECT
+				} else if (false) {
+
+
 					// console.log("Redirecting user to " + result.url);
 					window.location.href = result.url;
+
 				} else {
 
-					console.error('Data request error (server side): ' + result.message);
-					callback(new UWAP.Error('Errir', result.message));
-					
-				}	
+					console.log("=====> jqXHR.status !== 200");
+					var msg = jqXHR.status + ' ' + jqXHR.statusText;
+					if (result && result.message) {
+						msg += ': ' + result.message;
+					}
+					console.error('Data request error (server side 1): ' + msg);
+					callback(new UWAP.error(msg));					
+
+				}
+
+
+				// if (result.status === 'ok') {
+
+				// } else if (result.status === 'redirect') {
+
+				// } else {
+
+				// }	
 				
 			},
-			error: function(err) {
+			error: function(jqXHR, textStatus, errorThrown) {
 
 				callback(new UWAP.Error(err));
 				console.error('Error in API Call [' + method + ' ' + url + ']',  err);
+
+				var msg = jqXHR.status + ' ' + jqXHR.statusText + ' ' + textStatus;
+				// if (result && result.message) {
+				// 	msg += ': ' + result.message;
+				// }
+				console.error('Data request error (server side 2): ' + msg);
+				callback(new UWAP.error(msg));		
 
 				// if  (typeof errorcallback === 'function') {
 				// 	errorcallback(err.responseText + '(' + err.status + ')');
@@ -122,6 +151,10 @@ define(function(require, exports, module) {
 		'userinfo': {
 			"path": "/api/userinfo",
 			"method": "get"
+		},
+		'updateme': {
+			'path': '/api/updateme',
+			'method': 'get'
 		},
 		'groups-public': {
 			"path": "/api/groups/public",
@@ -255,16 +288,18 @@ define(function(require, exports, module) {
 
 
 	App.init = function() {
-		var app;
+		
 		$("document").ready(function() {
-			// console.log("App.init()");
-			UWAP.auth.require(function(data) {
-				// console.log("Is authenticated, now start the app.");
-				app = new App($("body"))
+			
+			var app = new App($("body"))
 
-				var user = new models.User(data);
-				app.setauth(user);
-			});
+			// UWAP.auth.require(function(data) {
+			// 	// console.log("Is authenticated, now start the app.");
+			// 	app 
+
+			// 	var user = new models.User(data);
+			// 	app.setauth(user);
+			// });
 		});
 	};
 

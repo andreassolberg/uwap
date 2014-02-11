@@ -11,8 +11,8 @@ define(function(require, exports, module) {
 	var t = require('uwap-core/js/text!templates/attributemap.html');
 	var template = hb.compile(t);
 
-	console.log(t);
-	console.log(template);
+	// console.log(t);
+	// console.log(template);
 
 	var AttributeMap = Class.extend({
 		"init": function(container, map, callback) {
