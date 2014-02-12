@@ -24,9 +24,7 @@ class User extends StoredModel {
 		// echo "checking if has realm " . $realm . " for me " . $this->get('userid') . "\n";
 		$pos = strpos($this->get('userid'), '@' . $realm);
 		$has = ($pos !== false);
-		// echo var_export($pos, true) . "\n";
-		// echo var_export($has, true) . "\n";
-		// echo "\n\n";
+
 		return $has;
 	}
 
@@ -86,6 +84,17 @@ class User extends StoredModel {
 		$props = self::$validProps;
 		if (isset($opts['type']) && $opts['type'] === 'basic') {
 			$props = array('userid', 'mail', 'name', 'a');
+		}
+
+		if (isset($opts['type']) && $opts['type'] === 'subscriptions') {
+			$subgroups = $this->getSubscriptions();
+			$res = array();
+			foreach($subgroups AS $groupid => $group) {
+				if (empty($group)) continue;
+				$res[$group->get('id')] = $group->getJSON(array('type' => 'basic'));
+			}
+
+			return $res;
 		}
 
 		$ret = array();

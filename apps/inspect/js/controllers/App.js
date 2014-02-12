@@ -84,10 +84,12 @@ define(function(require, exports, module) {
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 
-				callback(new UWAP.Error(err));
-				console.error('Error in API Call [' + method + ' ' + url + ']',  err);
+
 
 				var msg = jqXHR.status + ' ' + jqXHR.statusText + ' ' + textStatus;
+
+
+				
 				// if (result && result.message) {
 				// 	msg += ': ' + result.message;
 				// }
@@ -150,6 +152,10 @@ define(function(require, exports, module) {
 	var apiconfig = {
 		'userinfo': {
 			"path": "/api/userinfo",
+			"method": "get"
+		},
+		'subscriptions': {
+			"path": "/api/userinfo/subscriptions",
 			"method": "get"
 		},
 		'updateme': {
@@ -250,15 +256,38 @@ define(function(require, exports, module) {
 
 	App.prototype.performRequest = function(method, url) {
 
+		var start = window.performance.now();
+
+		console.log("START", start);
+
 		console.log("Performing a request " + method + " " + url);
 		UWAP.__request(
 		 	method, url,
 		 	null,
 		 	null, function(data, status, headers) {
 
-		 		console.log("HEADERS", headers);
-		 		$("#reqHeaders").empty().text(method.toUpperCase() + ' ' + url);
+		 		var stop = window.performance.now();
 
+		 		console.log("HEADERS", headers);
+		 		var dur = (stop-start);
+		 		var fixed = parseFloat(Math.round(dur * 100) / 100).toFixed(2);
+
+
+
+		 		$("#timer").empty().text( fixed  + ' ms');
+
+		 		if (dur < 100.0) {
+		 			$("#timer").append(' <span class="label label-success">Good</span>');
+		 		} else if (dur < 400.0) {
+		 			$("#timer").append(' <span class="label label-info">OK</span>');
+		 		} else if (dur < 1000.0) {
+		 			$("#timer").append(' <span class="label label-warning">Slow</span>');
+		 		} else {
+	 				$("#timer").append(' <span class="label label-danger">Bad</span>');
+		 		}
+
+
+		 		$("#reqHeaders").empty().text(method.toUpperCase() + ' ' + url);
 		 		$("#output").empty().text(JSON.stringify(data, undefined, 4));
 		 		$("#respHeaders").empty().text('HTTP/1.1 ' + status + "\r\n" + headers);
 

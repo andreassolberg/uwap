@@ -110,8 +110,21 @@ try {
 
 		$user = $token->getUser();
 
+		// $response = $user->getJSON(array('type' => 'extended',  'groups' => true, 'subscriptions' => true));
+		$response = $user->getJSON(array('type' => 'basic'));
 
-		$response = $user->getJSON(array('type' => 'extended',  'groups' => true, 'subscriptions' => true));
+
+	/**
+	 *  The userinfo endpoint is used for authentication of clients.
+	 */
+	} else if (Utils::route('get', '^/userinfo/subscriptions$', &$parameters)) {
+
+		$oauth = new OAuth();
+		$token = $oauth->check(array(), array('userinfo'));
+
+		$user = $token->getUser();
+		$response = $user->getJSON(array('type' => 'subscriptions'));
+
 
 
 	/**

@@ -629,6 +629,12 @@ define(function(require) {
 			 	null,
 			 	null, callback);
 		},
+		listSubscriptions: function(callback) {
+			UWAP._request(
+			 	'GET', UWAP.utils.getEngineURL("/api/userinfo/subscriptions"),
+			 	null,
+			 	null, callback);
+		},
 		subscribe: function(groupid, callback) {
 			UWAP._request(
 			 	'POST', UWAP.utils.getEngineURL("/api/group/" + groupid + '/subscription'),

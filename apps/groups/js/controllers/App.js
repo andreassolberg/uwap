@@ -40,7 +40,7 @@ define(function(require, exports, module) {
 	
 
 	var App = AppController.extend({
-		"init": function(user) {
+		"init": function(user, groups) {
 
 			var that = this;
 
@@ -49,14 +49,17 @@ define(function(require, exports, module) {
 			this._super();
 
 			this.user = user;
+			this.groups = groups;
 
-			console.log("Setting username is", this.user.name );
+
+			console.log("Initializing Groups App with user ", this.user, " and group ", this.groups );
+
 			$("span#username").html(this.user.name);
 
 			// Setup all application controllers
 			this.pc = new panes.PaneController(this.el.find('#panecontainer'));
 
-			this.grouplistcontroller = new GroupListController(this.pc.get('grouplist'), user);
+			this.grouplistcontroller = new GroupListController(this.pc.get('grouplist'), this.groups);
 			this.groupeditcontroller = new GroupEditController(this.pc.get('groupedit'));
 
 			this.grouplistcontroller.on('editGroup', $.proxy(this.editGroup, this));
@@ -68,6 +71,8 @@ define(function(require, exports, module) {
 				console.log("Opening a list");
 				that.listGroups();
 			});
+
+			this.reloadGroups();
 
 			// Define routes..
 			this.setupRoute(/^\/$/, "listGroups");
@@ -90,7 +95,7 @@ define(function(require, exports, module) {
 				var g = new models.Groups();
 				g.addProps(groups);
 
-				that.user.groups = g;
+				that.groups = g;
 				that.grouplistcontroller.draw(false);
 			});
 
@@ -117,7 +122,7 @@ define(function(require, exports, module) {
 			UWAP.groups.addGroup(group, function(storedGroup) {
 
 				console.log("Successfully stored new group", storedGroup);
-				that.user.groups[storedGroup.id] = storedGroup;
+				that.groups[storedGroup.id] = storedGroup;
 				that.editGroup(storedGroup);
 
 				that.reloadGroups();
@@ -133,7 +138,7 @@ define(function(require, exports, module) {
 			this.grouplistcontroller.load();
 		},
 		"editGroupByID": function(groupid) {
-			var group = this.user.groups.getByID(groupid);
+			var group = this.groups.getByID(groupid);
 			if (group === null) {
 				console.error("Could not load this group: ", groupid);
 				return;
@@ -161,12 +166,20 @@ define(function(require, exports, module) {
 
 			UWAP.auth.require(function(data) {
 				var user = new models.User(data);
-				var g = new models.Groups();
-				g.addProps(user.groups);
-				user.groups = g;
+				
 
-				console.log("Groups object", g);
-				app = new App(user);
+				UWAP.groups.listMyGroups(function(groups) {
+
+					var g = new models.Groups();
+					g.addProps(groups);
+					// user.groups = g;
+
+					// console.log("Groups object", g);
+					app = new App(user, g);
+				});
+
+
+
 			});
 		});
 

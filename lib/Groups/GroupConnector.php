@@ -258,7 +258,8 @@ class GroupConnector {
 		$res = array();
 
 		foreach($data AS $entry) {
-			$res[] = $entry->getJSON();
+			$e = $entry->getJSON();
+			$res[$e['id']] = $e;
 		}
 		return $res;
 	}
@@ -269,7 +270,8 @@ class GroupConnector {
 		$res = array();
 
 		foreach($data AS $entry) {
-			$res[] = $entry->getJSON();
+			$e = $entry->getJSON();
+			$res[$e['id']] = $e;
 		}
 		return $res;
 

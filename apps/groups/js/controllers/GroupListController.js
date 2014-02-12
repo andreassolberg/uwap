@@ -22,12 +22,12 @@ define(function(require, exports, module) {
 	 * This controller controls 
 	 */
 	var GroupListController = Controller.extend({
-		"init": function(pane, user) {
+		"init": function(pane, groups) {
 
 			console.log("initiator (GroupListController)");
 			// UWAP.utils.stack('initiator (GroupListController)');
 
-			this.user = user;
+			this.groups = groups;
 
 			this.itemid = null;
 			this.selected = null;
@@ -63,7 +63,7 @@ define(function(require, exports, module) {
 
 		"draw": function(act) {
 			var obj = {
-				groups: this.user.groups.getView(),
+				groups: this.groups.getView(),
 				subscriptions: null
 			};
 
@@ -84,14 +84,14 @@ define(function(require, exports, module) {
 		"_evntDeleteGroup": function(e) {
 			e.stopPropagation(); e.preventDefault();
 			var itemid = $(e.currentTarget).closest('tr.itemDetails').data('itemid');
-			var item = this.user.groups.getByID(itemid);
+			var item = this.groups.getByID(itemid);
 			this.emit("deleteGroup", item);
 		},
 
 		"_evntEditGroup": function(e) {
 			e.stopPropagation(); e.preventDefault();
 			var itemid = $(e.currentTarget).closest('tr.itemDetails').data('itemid');
-			var item = this.user.groups.getByID(itemid);
+			var item = this.groups.getByID(itemid);
 			this.emit("editGroup", item);
 		},
 
