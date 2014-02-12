@@ -118,6 +118,9 @@ abstract class StoredModel extends Model {
 
 		if($key === 'id' && static::$primaryKey === '_id') {
 			$query = array('_id' => new MongoId($value));
+
+		} else if($key === '_id' && static::$primaryKey === '_id') {
+			$query = array('_id' => new MongoId($value));
 			
 		} else {
 
