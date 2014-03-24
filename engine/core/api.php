@@ -175,14 +175,12 @@ try {
 		$token = $oauth->check();
 		$user = $token->getUser();
 
-
 		$groupconnector = new GroupConnector($user);
 
 		$userdata = $user->getJSON(array(
 			'type' => 'basic',
 			'groups' => array('type' => 'key')
 		));
-
 
 		// Get a list of groups
 		if (Utils::route('get', '^/groups$', &$parameters)) {
@@ -209,7 +207,7 @@ try {
 
 
 		// Get a specific group
-		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-]+)$', &$parameters)) {
+		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-_]+)$', &$parameters)) {
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
@@ -226,7 +224,7 @@ try {
 
 
 		// Get a specific group
-		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-]+)/members$', &$parameters)) {
+		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-_]+)/members$', &$parameters)) {
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
