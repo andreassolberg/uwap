@@ -35,6 +35,8 @@ var readInput = function(callback, error) {
 }
 
 
+// console.log("GET GROUP SCRITOP");
+
 var groupengine = new GroupEngine();
 
 readInput(function(input) {

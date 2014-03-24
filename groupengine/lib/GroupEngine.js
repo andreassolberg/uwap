@@ -3,7 +3,7 @@
 var config = require('./config').config;
 var WaitGuard = require('./WaitGuard').WaitGuard;
 
-var pluginNames = ['Foodle', 'Static', 'Agresso', 'LDAP', 'AttrOrg'];
+var pluginNames = ['Foodle', 'Static', 'Agresso', 'LDAP', 'AttrOrg', 'FS'];
 
 var pluginClasses = {};
 for(var i = 0; i < pluginNames.length; i++) {
