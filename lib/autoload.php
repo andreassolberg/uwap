@@ -15,6 +15,8 @@ require_once($base . '/Auth/AuthenticatedToken.php');
 require_once($base . '/Auth/Authenticator.php');
 
 
+
+
 // Groups
 require_once($base . '/Groups/GroupConnector.php');
 require_once($base . '/Groups/AdHocGroups.php');
@@ -51,6 +53,14 @@ require_once($base . '/Models/AdHocGroup.php');
 require_once($base . '/Models/Role.php');
 
 
+// SCIM
+require_once($base . '/SCIM/SCIMResource.php');
+require_once($base . '/SCIM/SCIMSchema.php');
+require_once($base . '/SCIM/SCIMSchemaDirectory.php');
+require_once($base . '/SCIM/SCIMAttributeDef.php');
+require_once($base . '/SCIM/SCIMResourceGroup.php');
+require_once($base . '/SCIM/SCIMResourceRole.php');
+require_once($base . '/SCIM/Protocol/SCIMListResponse.php');
 
 // Feed
 

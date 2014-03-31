@@ -1,0 +1,63 @@
+{
+	"id":           "urn:mace:voot:schemas:group",
+	"name":         "VOOT Group Extension",
+	"description":  "Defining some additional attributes for groups within VOOT.",
+	"attributes": [
+		{
+			"name":         "groupType",
+			"description":  "Type of group. Studieretning, kull, emne, more...",
+			"type":         "String",
+			"multiValued":  false,
+			"required":     true,
+			"caseExact":    true
+		},
+		{
+			"name":         "sourceID",
+			"description":  "An indentifier representing the authorative source of this group definition.",
+			"type":         "String",
+			"multiValued":  false,
+			"required":     true,
+			"caseExact":    true
+		},
+		{
+			"name":         "public",
+			"description":  "Is this group publicly listable.",
+			"type":         "Boolean",
+			"multiValued":  false,
+			"required":     true,
+			"caseExact":    true
+		},
+		{
+			"name":         "vootRole",
+			"description":  "An embeded Role resource",
+			"type":         "complex",
+			"multiValued":  false,
+			"required":     true,
+			"caseExact":    true
+		},
+		{
+			"name":         "notBefore",
+			"description":  "The group is not active (valid) before this date.",
+			"type":         "dateTime",
+			"multiValued":  false,
+			"required":     true,
+			"caseExact":    true
+		},
+		{
+			"name":         "notAfter",
+			"description":  "The group is not active (valid) after this date.",
+			"type":         "dateTime",
+			"multiValued":  false,
+			"required":     true,
+			"caseExact":    true
+		},
+		{
+			"name":         "groupActive",
+			"description":  "Default is true. If the group is set to passive, it means that the group is not currently valid.",
+			"type":         "Boolean",
+			"multiValued":  false,
+			"required":     true,
+			"caseExact":    true
+		}
+	]
+}
