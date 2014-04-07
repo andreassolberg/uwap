@@ -13,6 +13,16 @@
 
 		<script type="text/javascript" src="/_/js/require.js"></script>
 		<script type="text/javascript" src="/oauthgrant/main.js"></script>
+
+		<script type="text/javascript">
+			require(['jquery'], function($) {
+				$(document).ready(function() {
+					$('#submit').on('click', function() {
+						$("form").submit();
+					});
+				});
+			});
+		</script>
 		
 	</head>
 
@@ -24,6 +34,8 @@
 	foreach($cscopes AS $scope) {
 		$scopes[$scope] = 1;
 	}
+
+
 
 
 	// print_r($scopes);
@@ -237,7 +249,7 @@ if (isset($scopes['longterm'])) {
 						
 						<!-- <input tabindex="1" type="submit" id="submit" class="btn btn-lg btn-success" value="Allow"> -->
 						
-						<a id="submit" tabindex="1" onclick="submit()" href="#" class="btn btn-lg btn-success">
+						<a id="submit" tabindex="1" href="#" class="btn btn-lg btn-success">
 							<span class="glyphicon glyphicon-ok"></span>
 							Allow
 						</a>
