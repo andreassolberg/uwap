@@ -13,16 +13,6 @@
 
 		<script type="text/javascript" src="/_/js/require.js"></script>
 		<script type="text/javascript" src="/oauthgrant/main.js"></script>
-
-		<script type="text/javascript">
-			require(['jquery'], function($) {
-				$(document).ready(function() {
-					$('#submit').on('click', function() {
-						$("form").submit();
-					});
-				});
-			});
-		</script>
 		
 	</head>
 
@@ -36,9 +26,6 @@
 	}
 
 
-
-
-	// print_r($scopes);
 ?>
 
 
