@@ -2,7 +2,12 @@
 // var util = require('util');
 // var WaitGuard = require('../WaitGuard').WaitGuard;
 
+var 
 
+	Group = require('../models/Group').Group,
+	Role = require('../models/Role').Role
+	;
+	
 var WaitGuard = require('../WaitGuard').WaitGuard;
 
 
@@ -58,7 +63,7 @@ LDAP.prototype.getByUser = function(input, callback) {
 	// Callback when person LDAP search is successfully completed...
 	function(personResultEntry) {
 
-		var groups = {};
+		var groups = [];
 		var groupLookupStatus;
 
 		// console.log("LDAP personResultEntry result is "); console.log(personResultEntry);
@@ -126,8 +131,11 @@ LDAP.prototype.getByUser = function(input, callback) {
 
 							that.ldap.ldapLookup(dn, mapping.getAttrs(), function(groupResultEntry) {
 
+								var groupobj;
 								var group = groupResultEntry.getMapped(mapping);
-								group.role = 'member';
+								group.vootRole = {
+									'basic': 'member'
+								};
 
 								// ldapSearch = function(base, query, type, attrs, multiple, callback) {
 								that.ldap.ldapSearch(dn, 
@@ -144,13 +152,14 @@ LDAP.prototype.getByUser = function(input, callback) {
 
 										if (personResultEntry.getDN() === leaderResultEntry.getAliasedObjectName()) {
 
-											group.role = 'admin';
+											group.vootRole.basic = 'admin';
 										}
 
 									}
-									var groupid = group.id;
-									delete group.id;
-									groups[groupid] = group;
+
+
+									groupobj = new Group(group);
+									groups.push(groupobj);
 									donecallback();
 								});
 

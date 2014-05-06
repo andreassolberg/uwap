@@ -2,54 +2,49 @@
     "id":           "urn:mace:voot:schemas:role",
     "name":         "Role schema",
     "description":  "Defining the basic properties of a role resource.",
-    "attributes": {
-        "basic": {
-            "name":         "",
-            "description":  "",
+    "attributes": [
+        {
+            "name":         "basic",
+            "description":  "Basic role",
             "type":         "String",
             "multiValued":  false,
             "required":     true,
             "caseExact":    true
         },
-        "roleActive": {
-            "name":         "Active role",
+        {
+            "name":         "roleActive",
             "description":  "Default is true. If the role is set to passive, it means that the role is not currently valid.",
             "type":         "Boolean",
             "multiValued":  false,
-            "required":     true,
-            "caseExact":    true
+            "required":     true
         },
-        "vootUser": {
-            "name":         "User",
+        {
+            "name":         "vootUser",
             "description":  "An embeded User resource",
             "type":         "complex",
             "multiValued":  false,
-            "required":     true,
-            "caseExact":    true
+            "required":     true
         },
-        "vootGroup": {
-            "name":         "Group",
+        {
+            "name":         "vootGroup",
             "description":  "An embeded Group resource",
             "type":         "complex",
             "multiValued":  false,
-            "required":     true,
-            "caseExact":    true
+            "required":     true
         },
-        "notBefore": {
-            "name":         "Not active before",
+        {
+            "name":         "notBefore",
             "description":  "The role association is not active (valid) before this date.",
             "type":         "dateTime",
             "multiValued":  false,
-            "required":     true,
-            "caseExact":    true
+            "required":     false
         },
-        "notAfter": {
-            "name":         "Not valid after",
+        {
+            "name":         "notAfter",
             "description":  "The role association is not active (valid) after this date.",
             "type":         "dateTime",
             "multiValued":  false,
-            "required":     true,
-            "caseExact":    true
+            "required":     false
         }
-    }
+    ]
 }

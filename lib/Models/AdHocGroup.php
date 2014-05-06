@@ -8,7 +8,7 @@ class AdHocGroup extends Group {
 	protected static $collection = 'groups';
 	protected static $primaryKey = 'id';
 	protected static $validProps = array(
-		'id', 'type', 'title', 'description', 'members', 'admins', 'uwap-userid', 'source', 'listable');
+		'id', 'type', 'displayName', 'description', 'members', 'admins', 'uwap-userid', 'source', 'public');
 
 
 	public function __construct($properties) {
@@ -45,7 +45,7 @@ class AdHocGroup extends Group {
 
 		foreach($properties AS $key => $value) {
 			if (in_array($key, $allowed)) {
-				if ($key === 'listable' && !is_bool($value)) {
+				if ($key === 'public' && !is_bool($value)) {
 					throw new Exception('listable property needs to be boolean');
 				}
 				$this->set($key, $value);
@@ -122,6 +122,62 @@ class AdHocGroup extends Group {
 		$this->store();
 
 	}
+
+	public function getAsVoot($currentUser) {
+
+		$map = array(
+			'displayName' => 'displayName',
+			'description' => 'description',
+			'id' => 'id',
+			'groupType' => 'groupType',
+			'public' => 'public'
+		);
+
+		$object = array();
+		foreach($map AS $to => $from) {
+			if (isset($this->properties[$from])) {
+				$object[$to] = $this->properties[$from];
+			}
+		}
+
+		$role = array();
+
+		// echo 'USER IS <pre>' . $currentUser->get('userid');
+		// print_r($this->properties);
+
+		if (in_array($currentUser->get('userid'), $this->properties['members']) 
+			|| ($currentUser->get('userid') === $this->properties['uwap-userid'])
+			) {
+
+			$role['basic'] = 'member';
+			$role['displayName'] = 'Member';
+			$role['may'] = array(
+				'listMembers' => true,
+				'manageMembers' => false,
+				'manageGroup' => false
+			);
+
+			if ($currentUser->get('userid') === $this->properties['uwap-userid']) {
+				$role['basic'] = 'owner';
+				$role['displayName'] = 'Owner';
+				$role['may']['manageMembers'] = true;
+			} else if(in_array($currentUser->get('userid'), $this->properties['admins'])) {
+				$role['basic'] = 'admin';
+				$role['displayName'] = 'Admin';
+				$role['may']['manageMembers'] = true;
+				$role['may']['manageGroup'] = true;
+			}
+
+			$object['vootRole'] = $role;
+
+		}
+
+
+		$group = new SCIMResourceGroup($object);
+		return $group;
+
+	}
+
 
 	public function removeMember($userid) {
 

@@ -4,6 +4,23 @@
 	"description":  "Defining some additional attributes for groups within VOOT.",
 	"attributes": [
 		{
+			"name":         "displayName_",
+			"description":  "An indentifier representing the authorative source of this group definition.",
+			"type":         "stringTranslated",
+			"translatable":	true,
+			"multiValued":  false,
+			"required":     false,
+
+			"overrides": 	"displayName"
+		},
+		{
+			"name":         "description",
+			"description":  "A textual description of the group.",
+			"type":         "stringTranslated",
+			"multiValued":  false,
+			"required":     false
+		},
+		{
 			"name":         "groupType",
 			"description":  "Type of group. Studieretning, kull, emne, more...",
 			"type":         "String",
@@ -58,6 +75,13 @@
 			"multiValued":  false,
 			"required":     true,
 			"caseExact":    true
-		}
+		},
+        {
+            "name":         "may",
+            "description":  "What are the user and client allowed to do",
+            "type":         "complex",
+            "multiValued":  false,
+            "required":     true
+        }
 	]
 }

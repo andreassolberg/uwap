@@ -18,9 +18,6 @@ header("Access-Control-Allow-Methods: HEAD, GET, OPTIONS, POST, DELETE, PATCH");
 header("Access-Control-Allow-Headers: Authorization, X-Requested-With, Origin, Accept, Content-Type");
 header("Access-Control-Expose-Headers: Authorization, X-Requested-With, Origin, Accept, Content-Type");
 
-
-
-
 $profiling = microtime(true);
 error_log("Time START    :     ======> " . (microtime(true) - $profiling));
 
@@ -73,6 +70,7 @@ try {
 		// $res = $auth->storeUser();
 
 
+		
 		$response = array('message' => 'Test');
 
 
@@ -166,6 +164,30 @@ try {
 		} 
 
 
+
+	// TODO: DELETE THIS...
+	} else if (Utils::route(false, '^/debuggroups', &$parameters)) {
+
+
+		$user = User::getByID('andreas@uninett.no');
+		$groupconnector = new GroupConnector($user);
+		$response = $groupconnector->getGroupsListResponse();
+
+		$type = new SCIMResourceGroupType(array('id' => 'uwap:group:type:ad-hoc', 
+			'displayName' => array(
+				'en' => 'Ad-Hoc',
+				'nb' => 'Någruppe'
+			)
+		));
+
+
+		echo 'Groups: <pre>'; 
+		print_r($type);
+		print_r($type->getJSON()); 
+		exit;
+
+
+
 	/**
 	 *  The groups API is VOOT
 	 */
@@ -185,12 +207,12 @@ try {
 		// Get a list of groups
 		if (Utils::route('get', '^/groups$', &$parameters)) {
 
-			$response = $groupconnector->getGroupsJSON();
+			$groupResponse = $groupconnector->getGroupsListResponse();
+			$response = $groupResponse->getJSON();
 
 		} else if (Utils::route('get', '^/groups/public$', &$parameters)) {
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
-
 			// $gres = $groupmanager->getPublicGroups($groups);
 
 			$response = $groupconnector->getPublicGroupsJSON();
@@ -200,9 +222,7 @@ try {
 		} else if (Utils::route('post', '^/groups$', &$parameters, &$body)) {
 
 			// echo "About to create new group with "; print_r($body); exit;
-
 			$res = $groupconnector->addGroup($body);
-
 			$response = $res->getJSON();
 
 
@@ -1241,7 +1261,12 @@ try {
 	echo json_encode($response);
 
 	// $profiling = microtime(true);
-	error_log("Time to run command:     ======> " . (microtime(true) - $profiling));
+	$key = Utils::getPathString();
+	$timer = round((microtime(true) - $profiling) * 1000.0);
+	error_log("Time to run command:   [" . $key . "]  ======> " . $timer);
+
+
+	UWAPLogger::stat('timing', $key, $timer);
 
 } catch(UWAPObjectNotFoundException $e) {
 

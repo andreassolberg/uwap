@@ -1,10 +1,72 @@
-var http = require('http');
-var https = require('https');
+var 
+	http = require('http'),
+	https = require('https'),
+
+	Group = require('../models/Group').Group,
+	Role = require('../models/Role').Role
+	;
 
 
 
 var FS = function(config) {
 	this.config = config;
+	this.prefix = 'uwap:grp:fs';
+}
+
+
+FS.prototype.createRoleObj = function(attrs) {
+
+	var role = new Role(attrs);
+	return role;
+}
+
+
+FS.prototype.createGroupObj = function(attrs) {
+
+	if (!attrs.id) return null;
+
+	var expectedPrefix = 'uwap:grp:';
+	var id = attrs.id;	
+	if (id.indexOf(expectedPrefix) === 0) {
+		id = id.substring(expectedPrefix.length);
+	}
+	attrs.id = id;
+
+	if (attrs.hasOwnProperty('title')) {
+		attrs.displayName = attrs.title;
+		delete attrs.title;
+	}
+
+	if (attrs.hasOwnProperty('displayName')) {
+		attrs.displayName_ = attrs.displayName;
+		delete attrs.displayName;
+	}
+
+	if (attrs.hasOwnProperty('type')) {
+		attrs.groupType = attrs.type;
+		delete attrs.type;
+	}
+
+	if (attrs.hasOwnProperty('role')) {
+		attrs.vootRole = attrs.role;
+		delete attrs.role;
+	}
+
+	var may = {
+		'listMembers': false,
+		'manageGroup': false,
+		'manageMembers': false
+	};
+	if (attrs.vootRole && attrs.vootRole.basic && attrs.vootRole.basic === 'admin') {
+		may.listMembers = true;
+	}
+	if (attrs.vootRole) {
+		attrs.vootRole.may = may;	
+	}
+	
+
+	var group = new Group(attrs);
+	return group;
 
 }
 
@@ -48,8 +110,20 @@ FS.prototype._getData = function(path, callback) {
 		});
 		res.on('end', function (x) {
 			if (responseData === null) return callback(null);
-			var data = JSON.parse(responseData);
-			return callback(data);
+
+			if (res.statusCode === 200) {
+
+				var data = JSON.parse(responseData);
+				return callback(data);
+
+
+			} else {
+				// console.error("Error performing the request [" + res.statusCode + "]: " + responseData);
+				callback(new Error(responseData));
+
+			}
+
+
 		});
 	});
 
@@ -67,10 +141,7 @@ FS.prototype.getGroup = function(input, callback) {
 	// console.log("About to getGroup," ,input);
 
 	var groupid;
-
-	var prefix = 'uwap:grp:fs:';
-	groupid = input.groupid.substring(prefix.length);
-
+	groupid = 'uwap:grp:' + input.groupid.substring(this.prefix.length);
 	this._getData('/fsrest/rest/api/group/'+ groupid, callback);
 
 }
@@ -78,14 +149,20 @@ FS.prototype.getGroup = function(input, callback) {
 
 
 FS.prototype.getByUser = function(input, callback) {
-
+	var that = this;
 	// console.log("getByUser ...");
 	this._getData('/fsrest/rest/api/user/brn:15517390264@fsutv.no/groups', function(response) {
 
-		// console.log("›››› CALLBACL SUCCESS !!!", response);
-		var obj = {};
+		if (response instanceof Error) {
+			return callback(null);
+		}
+
+		// console.log("›››› CALLBACK SUCCESS !!!", JSON.stringify(response)); return;
+		var obj = [], newobj;
 		for(var i = 0; i < response.length; i++) {
-			obj[response[i].id] = response[i];
+			newobj = that.createGroupObj(response[i]);
+			if (newobj === null) continue;
+			obj.push(newobj);
 		}
 		return callback(obj);
 

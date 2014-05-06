@@ -84,11 +84,15 @@ class ExtGroups {
 					echo "Data that could not be parsed:\n\n"; echo(var_export($parsedData, true)); echo "\n\n";
 					throw new Exception('Unable to parse JSON response from external group connector (cmd)');
 				}
-				return $parsedData;
 
 				// echo '<pre>';
 				// print_r($parsedgroups);
 				// exit;
+				// 
+				// 
+				return $parsedData;
+
+
 			}
 
 			// echo "command returned $return_value\n";
@@ -112,21 +116,26 @@ class ExtGroups {
 
 		$parsedgroups = $this->call('getbyuser');
 
-		// echo "data"; print_r($parsedgroups);exit;
+		// echo "data"; print_r($parsedgroups); exit;
 
 		$gos = array();
 
-		// echo "parsedgroups:";
-		// print_r($parsedgroups); exit;
+		// echo "parsedgroups: <pre>";
+		// print_r($parsedgroups);  exit;
 
-		foreach($parsedgroups['groups'] AS $groupid => $pg) {
+		foreach($parsedgroups['groups'] AS $pg) {
 
-			// print_r($parsedgroups); exit;
-			$pg['id'] = $groupid;
-			$g = new Group($pg);
-			$role = new Role($this->user, $g, array('role' => $pg['role']));
-			$gos[] = $role;
+			$newgroup = new SCIMResourceGroup($pg);
+			$gos[] = $newgroup;
+
+			// print_r($newgroup->getJSON()); exit;
+			// $pg['id'] = $groupid;
+			// $g = new Group($pg);
+			// $role = new Role($this->user, $g, array('role' => $pg['role']));
+			// $gos[] = $role;
 		}
+
+		// print_r($gos); exit;
 
 		return $gos;
 	}	

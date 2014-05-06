@@ -3,7 +3,7 @@
 /**
 * 
 */
-class SCIMResouceRole extends SCIMResource {
+class SCIMResourceRole extends SCIMResource {
 
 	protected static $schemaIDs = array(
 		'urn:mace:voot:schemas:role'

@@ -117,13 +117,13 @@ class User extends StoredModel {
 			}
 		}
 
-		if (isset($opts['groups'])) {
-			$ret['groups'] = array();
-			$groups = $this->getGroups();
-			foreach($groups AS $g) {
-				$ret['groups'][$g->group->get('id')] = $g->getJSON($opts['groups']);
-			}
-		}
+		// if (isset($opts['groups'])) {
+		// 	$ret['groups'] = array();
+		// 	$groups = $this->getGroups();
+		// 	foreach($groups AS $g) {
+		// 		$ret['groups'][$g->group->get('id')] = $g->getJSON($opts['groups']);
+		// 	}
+		// }
 
 		return $ret;
 	}

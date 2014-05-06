@@ -3,6 +3,10 @@
 	margin: 0px; padding: 0px;
 }
 
+div.selectableItems {
+	font-size: 96%;
+}
+
 div.selectableItems table tr.item:hover td {
 	background-color: #fff;
 }

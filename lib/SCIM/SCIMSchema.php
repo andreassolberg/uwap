@@ -68,7 +68,7 @@ class SCIMSchema
 			}
 			$multivalue = $v;
 		} else {
-			if (is_array($v) && strtolower($adef['type']) !== 'complex') {
+			if (is_array($v) && strtolower($adef['type']) !== 'complex' && strtolower($adef['type']) !== 'stringtranslated') {
 				throw new Exception('Attribute [' . $k . '] is defined to be singlevalued, and multiple values are not allowed.');
 			}
 			$multivalue = array($v);
@@ -95,11 +95,27 @@ class SCIMSchema
 				foreach($multivalue AS $m) $this->validateComplex($k, $m);
 				break;			
 
+			case 'stringtranslated': 
+				foreach($multivalue AS $m) $this->validateStringTranslated($k, $m);
+				break;			
+
 			default: 
 				throw new Exception('Schema attribute definition for [' . $k . '] contains an unknown attribute type [' . $adef['type'] . ']');
 		}
 
+	}
 
+	protected function validateStringTranslated($k, $v) {
+		if (is_array($v)) {
+			foreach($v AS $key => $str) {
+				if (!is_string($str)) throw new Exception('Invalid content of a translatedString value of [' . $k . ']');
+				if (!is_string($key) || strlen($key) !== 2) throw new Exception('Invalid langauge key of translatedString of [' . $k . ']');
+			}
+		} else {
+			if (!is_string($v)) {
+				throw new Exception('Invalid content of translatedString. If not a complex translated string it should be a single string.');
+			}
+		}
 	}
 
 	protected function validateComplex($k, $v) {

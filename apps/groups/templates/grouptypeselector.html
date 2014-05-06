@@ -1,0 +1,56 @@
+
+
+<h3>Group types</h3>
+
+<div class="radio">
+  <label>
+    <input type="radio" name="grouptype" id="_all" value="_all" checked="checked">
+    All groups 
+    <span class="badge">{{total}}</span>
+  </label>
+</div>
+
+{{#each groupTypes}}
+
+	<!-- <div>: {{displayName}}</div> -->
+
+	<div class="radio">
+	  <label>
+	    <input type="radio" name="grouptype" id="groupType_{{@key}}" value="{{@key}}" >
+	    {{displayName}}
+
+	    <span class="badge">{{counter}}</span>
+	  </label>
+	</div>
+
+{{/each}}
+
+
+
+<h3>Member roles</h3>
+
+
+<div class="radio">
+  <label>
+    <input type="radio" name="roletype" id="_all" value="_all" checked="checked">
+    All roles 
+    <span class="badge">{{total}}</span>
+  </label>
+</div>
+
+{{#each roleTypes}}
+
+	<!-- <div>: {{displayName}}</div> -->
+
+	<div class="radio">
+	  <label>
+	    <input type="radio" name="roletype" id="groupType_{{@key}}" value="{{@key}}" >
+	    {{displayName}}
+
+	    <span class="badge">{{counter}}</span>
+	  </label>
+	</div>
+
+{{/each}}
+
+

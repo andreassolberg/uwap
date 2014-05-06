@@ -44,7 +44,7 @@ GroupEngine.prototype.getByUser = function(input, callback) {
 	var that = this;
 	var sources = config.getSources(input);
 	var result = {
-		"groups": {}
+		"groups": []
 	};
 
 	var guard = new WaitGuard(function(sources) {
@@ -71,11 +71,16 @@ GroupEngine.prototype.getByUser = function(input, callback) {
 				// console.error('___ Processing [' + currentSource.plugin + '] srcid:' + currentSource.sourceID);
 				that.plugins[currentSource.sourceID].getByUser(input.user, function(moreGroups) {
 					var globalGroupId;
-					for(var key in moreGroups) {
-						// console.error('______> adding group ' + moreGroups[key]['title']);
-						globalGroupId = currentSource.sourceID + ':' + key;
- 						moreGroups[key].source = currentSource.sourceID;
-						result.groups[globalGroupId] = moreGroups[key];
+					if (moreGroups !== null) {
+						for(var i = 0; i < moreGroups.length; i++) {
+							// console.error('______> adding group ' + moreGroups[key]['title']);
+							// globalGroupId = currentSource.sourceID + ':' + moreGroups[i].id;
+							moreGroups[i].id = currentSource.sourceID + ':' + moreGroups[i].id;
+							// moreGroups[i]._globalId = globalGroupId;
+	 						moreGroups[i].sourceID = currentSource.sourceID;
+							result.groups.push(moreGroups[i]);
+						}
+						
 					}
 					donecallback();
 				});

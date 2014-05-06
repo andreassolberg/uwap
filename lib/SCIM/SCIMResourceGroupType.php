@@ -4,24 +4,19 @@
 /**
 * 
 */
-class SCIMResourceGroup extends SCIMResource {
+class SCIMResourceGroupType extends SCIMResource {
 
 	protected static $schemaIDs = array(
-		'urn:scim:schemas:core:2.0:Group',
-		'urn:mace:voot:schemas:group'
+		'urn:mace:voot:schemas:groupType'
 	);
 
 	function __construct($data) {
 		parent::__construct($data);
 	}
 
-	function addRole() {
-		
-	}
 
 	public function getJSON() {
 		$obj = parent::getJSON();
-
 		return $obj;
 	}
 

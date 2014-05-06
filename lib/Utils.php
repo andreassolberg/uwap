@@ -79,7 +79,11 @@ class Utils {
 
 
 
-
+	public static function getPathString() {
+		$path = $_SERVER['PATH_INFO'];
+		$realmethod = strtolower($_SERVER['REQUEST_METHOD']);
+		return $realmethod  . str_replace('/', '.', $path);
+	}
 	public static function route($method = false, $match, $parameters, $object = null) {
 		if (empty($_SERVER['PATH_INFO']) || strlen($_SERVER['PATH_INFO']) < 2) return false;
 

@@ -1,6 +1,32 @@
 # GroupEngine
 
 
+
+
+## Examples
+
+
+
+	./getbyuser.js  < examples/example-input-p1.json
+	./getbyuser.js  < examples/example-input-p2.json
+	./getbyuser.js  < examples/example-input-p3.json
+
+
+	./getgroup.js < examples/example-input-g1.json
+	./getgroup.js < examples/example-input-g2.json
+	./getgroup.js < examples/example-input-g3.json
+	./getgroup.js < examples/example-input-g4.json
+
+
+
+
+-----
+
+
+
+
+
+
 Operations:
 
 
@@ -23,8 +49,6 @@ Group object
 	    "type": "uwap:group:type:org",
 	    "sourceID": "uwap:grp:org"
 	}
-
-
 
 
 

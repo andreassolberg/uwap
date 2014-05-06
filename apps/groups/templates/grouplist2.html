@@ -1,0 +1,114 @@
+
+<div class="selectableItems">
+<table class="table table-striped" class="itemList">
+
+<!-- 	<thead>
+		<tr>
+			<th style="width: 40px">&nbsp;</th>
+			<th>Client</th>
+			<th>Status</th>
+		</tr>
+	</thead> -->
+
+
+	<tbody >
+
+	{{#each groups}}
+
+
+		<tr class="item" data-itemid="{{id}}">
+
+			<td>
+				<span  style="color: #999" class="closed glyphicon glyphicon-chevron-right"></span>
+				<span  style="color: #999" class="open glyphicon glyphicon-chevron-down"></span>
+			</td>
+			<td>
+				{{displayName}} 
+			</td>
+
+			<td class="groupType-{{groupType.id}}">
+				{{groupType.displayName}}
+			</td>
+
+			<td class="roleType-{{vootRole.basic}}">
+				{{#if vootRole.displayName}}
+					{{vootRole.displayName}}
+				{{else }}
+					{{vootRole.basic}}
+				{{/if}}
+			</td>
+
+			<td class="roleType-{{vootRole.basic}}" style="text-align: right">
+
+				{{#if vootRole.may.manageMembers}}
+					<button class="btn btn-default actEditGroup btn-sm">
+						<!-- <span class="glyphicon glyphicon-pencil"></span> -->
+						Manage</button>
+
+				{{else}}
+					<button class="btn btn-default actEditGroup btn-sm">
+						<!-- <span class="glyphicon glyphicon-pencil"></span> -->
+						View</button>
+				{{/if}}
+
+			</td>
+
+
+
+		</tr>
+
+
+
+		<tr class="itemDetails" data-itemid="{{id}}">
+
+			<td colspan="5">
+
+				<div class="itemDetailsBox">
+
+					{{#if uwap-userid}}
+					<div class="pull-right">
+						<span class="glyphicon glyphicon-user"></span> <tt>{{uwap-userid}}</tt>
+					</div>
+					{{/if}}
+
+
+					{{#if description}}
+						<p class="text-info"> {{description}}</p>
+					{{/if}}
+
+					
+					<div class="pull-right">
+
+
+						
+
+					</div>
+
+
+					<div class="clearfix"></div>
+
+				</div>
+
+
+				
+
+			</td>
+
+		</tr>
+
+	{{/each}}
+
+
+
+	</tbody>
+</table>
+
+</div>
+
+
+
+
+
+
+
+

@@ -35,6 +35,9 @@ class SCIMSchemaDirectory {
 			case 'urn:scim:schemas:core:2.0:User':
 				return new SCIMSchema(json_decode(file_get_contents($base . '/schemas/user.json'), true));
 
+			case 'urn:mace:voot:schemas:groupType':
+				return new SCIMSchema(json_decode(file_get_contents($base . '/schemas/grouptype.json'), true));			
+
 			default: 
 				throw new Exception('Could not find defintiion of schema [' . $id . ']');
 		}

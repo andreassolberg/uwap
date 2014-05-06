@@ -22,16 +22,12 @@ class GroupConnector {
 	}
 
 	// public function getGroup($id) {
-
 	// 	if (preg_match('/^uwap:grp-ah:/', $id)) {
-			
 	// 		return $this->adhoc->getByID($id);
 	// 	}
 	// 	$data = $this->ext->getByID($id);
-
 	// 	return $data;
 	// }
-
 
 	public function peopleListRealms() {
 
@@ -191,7 +187,7 @@ class GroupConnector {
 		if (!$group->requireLevel($this->user, 'admin')) 
 			throw new Exception('User unauthorized to update this group');
 
-		$group->update($properties, array('title', 'description', 'listable'));
+		$group->update($properties, array('displayName', 'description', 'public'));
 
 		return $group->store();
 
@@ -219,22 +215,83 @@ class GroupConnector {
 
 		$groups = array();
 
+
 		$m = $this->adhoc->getGroups();
 		foreach($m AS $me) {
-			// print_r($me);
-			$groups[$me->group->get('id')] = $me;
+			$groups[] = $me;
 		}
 
 		$m = $this->ext->getGroups();
 		foreach($m AS $me) {
-			$groups[$me->group->get('id')] = $me;
+			$groups[] = $me;
 		}
 
-		$this->cachedGroups = $groups;
 
+		$this->cachedGroups = $groups;
 		return $groups;
 	}	
 
+	public function getGroupsListResponse() {
+
+		$groups = $this->getGroups();
+
+		error_log( "Got groups" - var_export($groups, true));
+
+		$response = new SCIMListResponse($groups);
+
+		$response->addGroupType(new SCIMResourceGroupType(array('id' => 'uwap:grp:inst',  
+			'displayName' => array(
+				'nb' => 'Organisasjon',
+				'en' => 'Organization'
+			)
+		)));
+
+		$response->addGroupType(new SCIMResourceGroupType(array('id' => 'uwap:group:type:orgUnit',  
+			'displayName' => array(
+				'nb' => 'Organisasjonsenhet',
+				'en' => 'Organization Unit'
+			)
+		)));
+
+
+		$response->addGroupType(new SCIMResourceGroupType(array('id' => 'uwap:group:type:ad-hoc',  
+			'displayName' => array(
+				'nb' => 'Ad-Hoc',
+				'en' => 'Ad-Hoc'
+			)
+		)));
+
+
+
+		$response->addGroupType(new SCIMResourceGroupType(array('id' => 'uwap:group:type:platform',  
+			'displayName' => array(
+				'nb' => 'UWAP Platform',
+				'en' => 'UWAP Plattform'
+			)
+		)));
+
+
+
+		$response->addGroupType(new SCIMResourceGroupType(array('id' => 'uwap:grp:emne', 
+			'displayName' => array(
+				'nb' => 'Emne',
+				'en' => 'Course'
+			)
+		)));
+		$response->addGroupType(new SCIMResourceGroupType(array('id' => 'uwap:grp:kull',  
+			'displayName' => array(
+				'nb' => 'Kull',
+				'en' => 'Cohort'
+			)
+		)));
+
+
+		
+		// $response->addGroupType(new SCIMResourceGroupType(array('id' => 'sdf', 'displayName' => '')));
+
+		return $response;
+
+	}
 
 	public function getPublicGroups() {
 
@@ -253,13 +310,14 @@ class GroupConnector {
 		return $groups;
 	}
 
+
 	public function getPublicGroupsJSON() {
 		$data = $this->getPublicGroups();
 		$res = array();
 
 		foreach($data AS $entry) {
 			$e = $entry->getJSON();
-			$res[$e['id']] = $e;
+			$res[] = $e;
 		}
 		return $res;
 	}
@@ -271,7 +329,7 @@ class GroupConnector {
 
 		foreach($data AS $entry) {
 			$e = $entry->getJSON();
-			$res[$e['id']] = $e;
+			$res[] = $e;
 		}
 		return $res;
 
