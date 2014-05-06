@@ -12,7 +12,7 @@ define(function(require, exports, module) {
 	
 	var Controller = EventEmitter.extend({
 		"init": function(el) {
-			this.el = el;
+			this.el = el || this.el || $('<div class=""></div>');
 			console.log("initiator (Controller)")
 
 			this._super();

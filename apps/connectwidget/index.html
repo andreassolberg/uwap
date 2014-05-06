@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>uFeed</title>
+		<meta name="viewport" content="user-scalable=no,width=device-width" />
+		<meta name="description" content="eduFeed" />
+		<meta name="author" content="Andreas Åkre Solberg" />
+
+		<link rel='stylesheet' href="css/feed.css" rel="stylesheet" />
+		<link rel='stylesheet' href='css/feed-mobile.css' media='screen and (max-width: 767px)' />
+
+		<!-- script type="text/javascript" data-main="main" src="/_/js/require.js"></script --> 
+
+		<!-- <script type="text/javascript" src="/_/js/build/main"></script> -->
+
+	</head>
+
+
+
+
+	<body>
+		<div class="loader-hideOnLoad" stlye="margin: 20%">
+			<p><img src="/img/ajax-loader.gif" /> Loading application...</p>
+		</div>
+
+
+      <!-- Static navbar -->
+      <div class="navbar navbar-default loader-showOnLoad"  style="display: none">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          
+          <a class="navbar-brand" style="padding: 8px" href="#!/">
+          	<img style="margin-top: -5px" alt="UNINETT Logo" src="img/uninett-30-black.png" class="" />
+				UWAP eduFeed
+
+	      </a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+
+
+          <!-- ul class="nav navbar-nav">
+			<li><a href="https://store.uwap.org">App Store</a></li>
+			<li class="active"><a href="#">Developers</a></li>
+			<li><a href="https://docs.uwap.org">Documentation</a></li>
+			<li><a href="https://developers.uwap.org/">About</a></li>
+          </ul -->
+
+            <ul class="nav navbar-nav navbar-right">
+              <li id="authmenu" class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i><span class="userextra"> <span class="myname"></span> <b class="caret"></b></span></a>
+                <ul id="authmenuoptions" class="dropdown-menu">
+                	<li><a href="#!/notificationsetup">Setup notifications</a></li>
+                	<li><a target="_blank" href="https://groupmanager.uwap.org">Manage groups</a></li>
+                	<li><a target="_blank" href="https://subscribe.uwap.org">Subscribe to open groups</a></li>
+                	<li><a href="#!/privacy">Privacy notice</a></li>
+                	<li class="divider"></li>
+                	<li><a id="actLogout" href="#">Logout</a></li>
+                </ul>
+              </li>
+            </ul>
+
+          	
+
+            <ul class="nav navbar-nav navbar-right">
+
+              <li id="feednotifications" class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span style="display: none" class="badge badge-warning notificationcount"></span> <i class="glyphicon glyphicon-bell"></i></a>
+                <ul class="dropdown-menu notificationlist">
+                  <li class="divider"></li>
+                  <li class="markallread"><a href="#">Mark all as read...</a></li>
+                </ul>
+              </li>
+
+            </ul>
+
+
+          <!-- ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> <span id="username"></span> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+				<li><a href="#">Profile</a></li>
+				<li class="divider"></li>
+				<li><a href="#">Sign Out</a></li>
+              </ul>
+            </li>
+          </ul -->
+
+
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+	<div class="containerX loader-showOnLoad" style="display: none">
+
+		<div class="row">
+
+			<div class="col-md-8">
+
+
+				<div class="navbar navbar-default" role="navigation">
+					<div class="navbar-inner">
+
+
+						<ul id="feedmenucontainer" class="nav navbar-nav">
+		                  <li id="feedmenu" class="dropdown">
+		                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="selectedFeed">All groups</span> <b class="caret"></b></a>
+		                    <ul id="feedlist" class="dropdown-menu">
+		                    </ul>
+		                  </li>
+		                  <li class="divider-vertical"></li>
+						</ul>
+
+						<ul id="navbar" class="nav navbar-nav">
+						</ul>
+
+
+
+						<!--
+						<div style="margin-left: 4px" id="calendarToggle" class="nav pull-right">
+							<a id="" href="#!/calendar" class="btn btn-info"><i class="icon-time icon-white"></i></a>
+						</div>
+						-->
+						<div id="postEnable" class="nav pull-right" style="padding: 8px">
+							<!-- <li><a href="#">Post content</a></li> -->
+							<a id="postEnableBtn" href="#!/post" class="btn btn-primary">Post content</a>
+						</div>
+<!-- 
+						<div id="2postEnable" class="nav pull-right">
+							<li><a href="#">Post content</a></li>
+							<a id="2postEnableBtn" class="btn" href="#!/post" class="">Post content</a>
+						</div> -->
+
+						<!-- 
+						<ul  id="viewbarcontroller" class="nav pull-right">
+							<li class="divider-vertical"></li>
+							<li id="feedmenu" class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="selectedView"></span> <b class="caret"></b></a>
+								<ul id="viewtypes" class="dropdown-menu">
+								</ul>
+							</li>
+							<li class="divider-vertical"></li>
+						</ul>
+						-->
+
+					</div>
+				</div>
+
+
+			<div id="panecontainer">
+			</div>
+
+
+			</div>
+
+			<div class="sidebar hidden-phone col-md-4">
+
+				<div class="sidebaritem">
+				<h4>About this group <i class="icon-reorder"></i></h4>
+				<p>This is the description of the group you are currently viewing...</p>
+				<p>36 group members - <a href="https://groupmanager.uwap.org">manage group</a></p>
+				</div>
+
+				<div class="sidebaritem">
+				<h4>Upcoming <i class="icon-calendar"></i></h4>
+				<div id="upcoming"></div>
+				</div>
+
+
+
+				<div class="sidebaritem">
+				<h4>Webconference <i class="icon-facetime-video"></i></h4>
+				<div>
+					<p>This group has configured a web conference room.</p>
+					<p><button class="btn btn-default btn-xs">Join meeting</button></p>
+				</div>
+				</div>
+
+				<div class="sidebaritem">
+				<h4>Subscribe to groups <i class="icon-group"></i></h4>
+				<div id="subscribeproposals"></div>
+				</div>
+			</div>
+
+
+		</div>
+
+
+
+
+
+
+		</div><!--/.fluid-container-->
+
+
+		<div id="modalContainer"></div>
+
+
+	</body>
+</html>

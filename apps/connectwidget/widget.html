@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Connect Meetingrooms</title>
+		<meta name="viewport" content="user-scalable=no,width=device-width" />
+		<meta name="description" content="Adobe Connect Meetingroom Widget" />
+		<meta name="author" content="Andreas Åkre Solberg" />
+
+		<style type="text/css">
+
+			body {
+				padding-top: 0px !important;
+			}
+
+		</style>
+
+<!-- 		
+		<link rel='stylesheet' href="css/feed.css" rel="stylesheet" />
+		<link rel='stylesheet' href='css/feed-mobile.css' media='screen and (max-width: 767px)' />
+ -->
+		<script type="text/javascript" data-main="main-widget" src="/_/js/require.js"></script>
+	</head>
+
+
+	<body style="background-color: transparent">
+
+
+		<div id="notauthorized" style="display:none; padding: 3em">
+			<p>You have not yet authorized the UWAP feed Widget.</p>
+			<p><button class="btn btn-primary">Authorize</button></p>
+		</div>
+
+
+		<div class="xcontainer" style="margin-top: 0em" id="contentcontainer">
+			<div id="content"></div>
+			<div id="onlinemeetings"></div>
+			<div id="highlighted"></div>
+
+		</div>
+
+	</body>
+
+</html>

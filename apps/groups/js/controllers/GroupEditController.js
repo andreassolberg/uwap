@@ -6,7 +6,7 @@ define(function(require, exports, module) {
 		Class = require('uwap-core/js/class'),
 		models = require('uwap-core/js/models'),
 
-		Controller = require('../lib/Controller'),
+		Pane = require('../lib/Pane'),
 		MemberListController = require('./MemberListController')
 
 		;
@@ -16,18 +16,13 @@ define(function(require, exports, module) {
 
 	var template = hb.compile(require('uwap-core/js/text!../../templates/editgroup.html'));
 
-	var GroupEditController = Controller.extend({
+	var GroupEditController = Pane.extend({
 
-		"init": function(pane) {
-			this.pane = pane;
-			this._super(this.pane.el);
-
-
+		"init": function() {
+			this._super();
 
 			this.ebind('click', '.actEditInfo', '_evntEditInfo');
 			this.ebind('click', '.actSaveInfo', '_evntSaveInfo');
-
-
 
 		},
 
@@ -46,13 +41,13 @@ define(function(require, exports, module) {
 			var that = this;
 
 			var obj = {};
-			obj.title = this.el.find('input#groupname').val();
+			obj.displayName = this.el.find('input#groupname').val();
 			obj.description = this.el.find('#groupdescription').val();
-			obj.listable = this.el.find('#grouplisting').prop('checked');
+			obj.public = this.el.find('#grouplisting').prop('checked');
 
-			this.group.title = obj.title;
+			this.group.displayName = obj.displayName;
 			this.group.description = obj.description;
-			this.group.listable = obj.listable;
+			this.group.public = obj.public;
 
 
 			UWAP.groups.updateGroup(this.group.id, obj, function(data) {
@@ -70,8 +65,10 @@ define(function(require, exports, module) {
 		"editGroup": function(group) {
 			var that = this;
 			this.group = new models.Group(group);
-			this.pane.activate();
+			
 			this.draw();
+
+			this.activate();
 
 			this.memberlistcontroller = new MemberListController(this.el.find('.memberlist'));
 			that.memberlistcontroller.on('delete', $.proxy(that.actDelete, that));
@@ -133,15 +130,12 @@ define(function(require, exports, module) {
 			console.log("Draw group", view);
 			this.el.empty().append(template(view));
 
-
 			var ps = $("#peoplesearchContainer").focus().peopleSearch({
 				callback: function(item) {
 					// console.log("Adding item", item);
 					that.addMember(item);
 					ps.find('input').focus();
-		            // gr.addMember(item);
-		            // 
-		        }
+				}
 			});
 
 		}

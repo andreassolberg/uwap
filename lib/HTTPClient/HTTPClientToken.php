@@ -50,12 +50,12 @@ class HTTPClientToken extends HTTPClient {
 		error_log('HTTPClientToken Options: ' . json_encode($options));
 
 		// ($url, $headers = array(), $redir = true, $curl = false, $options = array()) {
-		$result["data"] = $this->rawget($url, $headers, $redir, $curl, $options);
+		$rawdata = $this->rawget($url, $headers, $redir, $curl, $options);
 
-		error_log('HTTPClientToken data: ' . $result["data"]);
+		error_log('HTTPClientToken data: ' . $rawdata);
 
-		$result = $this->decode($result, $options);
-		return $result;
+		// $result = $this->decode($result, $options);
+		return json_decode($rawdata, true);
 	}
 
 }

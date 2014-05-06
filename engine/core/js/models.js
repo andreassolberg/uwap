@@ -10,11 +10,17 @@ define(function(require) {
 		Class = require('uwap-core/js/class');
 
 
+	/**
+	 * [description]
+	 * @return {[type]}            [description]
+	 */
 	var Model = Class.extend({
 		"init": function(props) {
+			if (!this._) this._ = {};
 			for (var key in props) {
 				this[key] = props[key];
 			}
+			return this;
 		},
 		"get": function(key) {
 			return this[key];
@@ -22,6 +28,7 @@ define(function(require) {
 		"getView": function() {
 			var obj = {};
 			for(var key in this) {
+				if (key === '_') continue;
 				if (typeof this[key] !== 'function') {
 					obj[key] = this[key];
 				}
@@ -31,7 +38,108 @@ define(function(require) {
 	});
 
 
+	models.GroupType = Model.extend({
+
+	});
+
+	models.Role = Model.extend({
+		"init": function(props, user, group) {
+			if (!this._) this._ = {};
+			if (user instanceof models.User) {
+				this._.user = user;
+			}
+			if (group instanceof models.Group) {
+				this._.group = group;
+			}
+
+			return this._super(props);
+		}
+	});
+
+
+	models.ListResponse = Model.extend({
+		"init": function(props) {
+			var resources = null;
+			var grouptypes = null;
+			if (props.Resources) {
+				resources = props.Resources;
+				delete props.Resources;
+			}
+			if (props.GroupTypes) {
+				grouptypes = props.GroupTypes;
+				delete props.GroupTypes;
+			}
+
+			this._super(props);
+			this._.GroupTypes = {};
+			this._.Resources = [];
+
+			if (resources == null) return this;
+			var i, n;
+
+
+			if (grouptypes) {
+				for(i = 0; i < grouptypes.length; i++) {
+					n = new models.GroupType(grouptypes[i]);
+					this._.GroupTypes[n.id] = n;
+				}				
+			}
+			if (resources) {
+				for(i = 0; i < resources.length; i++) {
+					n = new models.Group(resources[i]);
+					if (n.groupType && this._.GroupTypes.hasOwnProperty(n.groupType)) {
+						n.setGroupType(this._.GroupTypes[n.groupType]);
+					}
+					this._.Resources.push(n);
+				}
+			}
+			return this;
+		},
+
+		"getGroupTypes": function() {
+			return this._.GroupTypes;
+		},
+
+		"getByID": function(id) {
+
+			if (this._ && this._.Resources) {
+
+				for(var i = 0; this._.Resources.length; i++) {
+					if (this._.Resources[i].id === id) return this._.Resources[i];
+				}
+
+			}
+
+			return null;
+
+		},
+
+		"getView": function() {
+			// console.error("Prepping getview from list");
+			var obj = this._super();
+			obj.Resources = [];
+			if (this._.Resources.length > 0) {
+				for(var i = 0; i < this._.Resources.length; i++) {
+					obj.Resources.push(this._.Resources[i].getView());
+				}
+			}
+			return obj;
+		}
+	})
+
 	models.Group = Model.extend({
+		"init": function(props) {
+
+			if (!this._) this._ = {};
+			this._.role = null;
+
+			if (props.vootRole) {
+				this._.role = new models.Role(props.vootRole);
+				delete props.vootRole;
+			}
+
+			return this._super(props);
+		},
 		"getTypeText": function() {
 			var types = {
 				"uwap:group:type:ad-hoc": {"title": "Ad-hoc group", "icon": "xxx"},
@@ -54,12 +162,21 @@ define(function(require) {
 			}
 			return 0;
 		},
+		"setGroupType": function(grouptype) {
+			this._.groupType = grouptype;
+		},
 		"getView": function() {
 			var obj = this._super();
-			obj.typeText = this.getTypeText();
-			obj.roleType = {};
-			if (this.role) {
-				obj.roleType[this.role] = true;	
+			if (this._.role) {
+				obj.vootRole = this._.role.getView();
+			}
+			if (this._.groupType) {
+				obj.groupType = this._.groupType.getView();
+			} else {
+				obj.groupType = {
+					"id": obj.groupType,
+					"displayName": obj.groupType
+				}
 			}
 			return obj;
 		}
@@ -188,7 +305,7 @@ define(function(require) {
 				obj.push(this.items[i].getView());
 			}
 			return obj;
-			// return obj;
+
 		}
 	});
 
@@ -209,10 +326,10 @@ define(function(require) {
 		},
 		"getView": function() {
 			var tmp = this._super();
-			tmp['photourl'] = this.photourl();
+			// tmp['photourl'] = this.photourl();
 
-			tmp.roleType = {};
-			tmp.roleType[this.role] = true;
+			// tmp.roleType = {};
+			// tmp.roleType[this.role] = true;
 			return tmp;
 		}
 	});

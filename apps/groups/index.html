@@ -8,7 +8,7 @@
 		<meta name="author" content="Andreas Åkre Solberg" />
 
  		<link rel='stylesheet' href="css/style.css" rel="stylesheet" />
-<!--		<link rel='stylesheet' href='css/groups-mobile.css' media='screen and (max-width: 767px)' /> -->
+		<!-- <link rel='stylesheet' href='css/groups-mobile.css' media='screen and (max-width: 767px)' /> -->
 
 		<script type="text/javascript" data-main="main" src="/_/js/require.js"></script>
 		<!-- <script type="text/javascript" src="/_/js/build/main"></script> -->
@@ -22,11 +22,10 @@
 			<p><img src="/img/ajax-loader.gif" /> Loading application...</p>
 		</div>
 
-
 		<!-- Static navbar -->
 		<div class="navbar navbar-default navbar-fixed-top loader-showOnLoad" role="navigation" style="display: none; z-index: 1005">
 			<div class="container">
-			
+
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
 					<a class="navbar-brand" href="#"><img src="http://core.app.bridge.uninett.no/_/bootstrap3-uninett/images/UNINETT_logo.svg" alt="Uninett logo" type="image/svg+xml"></a>
@@ -38,6 +37,7 @@
 				</div>
 
 				<div class="navbar-collapse collapse">
+
 					<ul class="nav navbar-nav">
 
 						<li><a href="https://store.uwap.org">App Store</a></li>
@@ -56,11 +56,10 @@
 						</li>
 					</ul>
 
-
-
-
 				</div>
+
 			</div>
+			
 		</div>
 
 
@@ -93,7 +92,7 @@
 
 			<div class="row">
 
-				<div class="col-md-8  ">
+				<div class="col-md-8">
 
 					<div class="" id="panecontainer">
 
@@ -107,7 +106,13 @@
 				<div class="sidebar  hidden-phone col-md-4">
 					<div class="uninett-color-white uninett-padded">
 
-						<h3>Group manager</h3>
+						<div id="filterContainer"></div>
+					</div>
+
+
+					<div class="uninett-color-white uninett-padded">
+
+						<h3>Create new groups</h3>
 
 						<p>By using the group manager, you may create new groups, and edit existing groups that you have created.</p>
 

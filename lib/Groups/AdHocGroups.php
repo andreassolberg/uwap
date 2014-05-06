@@ -32,7 +32,6 @@ class AdHocGroups {
 	public function getGroups() {
 
 		$memberships = array();
-
 		$query = array(
 			'$or' => array(
 				array(
@@ -48,11 +47,40 @@ class AdHocGroups {
 		$res = $this->store->queryList('groups', $query );
 
 		foreach($res AS $g) {
-	
-			$group = new AdHocGroup($g);
-			$role = new Role($this->user, $group, array('role' => $group->getUserRole($this->user)));
+			
+			$g['vootRole'] = array(
+				'basic' => 'member',
+				'may' => array(
+					'manageMembers' => false,
+					'listMembers' => true
+				)
+			);
 
-			$memberships[] = $role;			
+			if ($this->user->get('userid') === $g['uwap-userid']) {
+				$g['vootRole']['basic'] = 'owner';
+				$g['vootRole']['may']['manageMembers'] = true;
+			} else if (isset($g['admins']) && in_array($this->user->get('userid'), $g['admins'])) {
+				$g['vootRole']['basic'] = 'admin';
+				$g['vootRole']['may']['manageMembers'] = true;
+			}
+
+			$g['groupType'] = 'uwap:group:type:ad-hoc';
+
+			$newgroup = new SCIMResourceGroup($g);
+			$memberships[] = $newgroup;
+
+
+
+			// $group = new AdHocGroup($g);
+			// $vootgroup = $group->getAsVoot($this->user);
+
+			// $memberships[] = $vootgroup;
+
+			// echo "AdHocGroup 1: <pre>"; print_r($vootgroup->getJSON()); exit;
+
+			// $group = new AdHocGroup($g);
+			// $role = new Role($this->user, $group, array('role' => $group->getUserRole($this->user)));
+			// $memberships[] = $role;			
 		}
 
 		return $memberships;

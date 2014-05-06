@@ -6,7 +6,16 @@ class Proxy_REST {
 
 	function __construct() {
 
-		$this->config = Config::getInstance();
+		$this->globalconfig = GlobalConfig::getInstance();
+		$this->proxy = $this->globalconfig->getApp();
+
+		// header('Content-type: text/plain');
+		// print_r($this->proxy);
+
+		if (! ($this->proxy instanceof APIProxy)) {
+			throw new Exception('Invalid proxy');
+		}
+
 	}
 
 
@@ -33,18 +42,18 @@ class Proxy_REST {
 				 */
 
 
-
 				$url = $args["url"];
 				$handler = "plain";
 
-				$remoteHost = parse_url($url, PHP_URL_HOST);
-				$remoteConfig = Config::getInstanceFromHost($remoteHost);
+				// $remoteConfig = Config::getInstanceFromHost($remoteHost);
 
-				if ($remoteConfig->_getValue('type', null, true) !== 'proxy') {
-					throw new Exception('This host is not running a soaproxy.');
-				}
 
-				$proxyconfig = $remoteConfig->_getValue('proxy', null, true) ;
+
+				// $proxyconfig = $remoteConfig->_getValue('proxy', null, true) ;
+
+				$proxyconfig = $this->proxy->get('proxy');
+
+
 
 				// $rawpath = parse_url($url, PHP_URL_PATH);
 				$rawpath = $_SERVER['PATH_INFO'];
@@ -68,6 +77,19 @@ class Proxy_REST {
 				}
 
 
+				$providerID = $this->proxy->get('id');
+
+
+
+				// header('Content-type: text/plain');
+				// print_r($proxyconfig);
+				// echo 'provider id '. $providerID;
+
+				// exit;
+
+
+
+
 				// // // Initiate an Oauth server handler
 				$oauth = new OAuth();
 
@@ -76,7 +98,6 @@ class Proxy_REST {
 
 				// echo "TOKEN used was : <pre>"; print_r($token); exit;
 
-				$providerID = $remoteConfig->getID();
 
 				// echo "proxyconfig was : <pre>"; print_r($proxyconfig); exit;
 
@@ -98,8 +119,11 @@ class Proxy_REST {
 				}
 				$response = $client->get($realurl, $args); 
 
+
+				// echo "Response is "; echo $resposne;
+
 				header('Content-Type: application/json; charset=utf-8');
-				echo json_encode($response['data']);
+				echo json_encode($response);
 
 			} else {
 				throw new Exception('Bad request.');

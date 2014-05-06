@@ -12,31 +12,22 @@ define(function(require, exports, module) {
 	
 	require('uwap-core/js/jquery.tmpl');
 
-	require('uwap-core/bootstrap/js/bootstrap');
-	require('uwap-core/bootstrap/js/bootstrap-collapse');
-	require('uwap-core/bootstrap/js/bootstrap-button');
-	require('uwap-core/bootstrap/js/bootstrap-dropdown');
+	require('uwap-core/bootstrap3/js/bootstrap');	
+	require('uwap-core/bootstrap3/js/collapse');
+	require('uwap-core/bootstrap3/js/button');
+	require('uwap-core/bootstrap3/js/dropdown');	
 
-	// require('uwap-core/bootstrap/js/bootstrap-modal');
-    // require('uwap-core/bootstrap/js/bootstrap-tooltip');
-	// require('uwap-core/bootstrap/js/bootstrap-transition');
-	// require('uwap-core/bootstrap/js/bootstrap-alert');
-	// require('uwap-core/bootstrap/js/bootstrap-scrollspy');
-	// require('uwap-core/bootstrap/js/bootstrap-tab');
-	// require('uwap-core/bootstrap/js/bootstrap-popover');
-	// require('uwap-core/bootstrap/js/bootstrap-carousel');
-	// require('uwap-core/bootstrap/js/bootstrap-typeahead');
 
 	$("document").ready(function() {
 		
 
 		
 
-		var App = function(el, user) {
+		var App = function(el, user, groups, subscriptions) {
 			var that = this;
 			this.el = el;
 
-			this.setauth(user);
+			this.setauth(user, groups, subscriptions);
 
 			this.el.on('click', '.actSubscribe', $.proxy(this.subscribe, this));
 			this.el.on('click', '.actUnsubscribe', $.proxy(this.unsubscribe, this));
@@ -56,11 +47,11 @@ define(function(require, exports, module) {
 
 				$.each(items, function(groupid, item) {
 
-					if (that.user.groups[item.id]) {
+					if (that.groups[item.id]) {
 						// return;
 					}
 
-					if (that.user.subscriptions[item.id]) {
+					if (that.subscriptions[item.id]) {
 						item.subscribed = true;
 					} else {
 						item.subscribed = false;
@@ -70,6 +61,18 @@ define(function(require, exports, module) {
 				});
 
 			});
+		}
+
+		App.prototype.reloadSubscriptions = function(callback) {
+
+			var that = this;
+			UWAP.groups.listSubscriptions(function(subscriptions) {
+
+				that.subscriptions = subscriptions;
+				that.load();
+
+			});
+
 		}
 
 
@@ -83,8 +86,8 @@ define(function(require, exports, module) {
 			console.log("Subscribe to ", item);
 
 			UWAP.groups.subscribe(item.id, function() {
-				console.log("Subscribed");
-				UWAP.auth.require($.proxy(that.setauth, that));
+
+				that.reloadSubscriptions();
 				
 			});
 
@@ -100,14 +103,19 @@ define(function(require, exports, module) {
 			console.log("Subscribe to ", item);
 
 			UWAP.groups.unsubscribe(item.id, function() {
-				UWAP.auth.require($.proxy(that.setauth, that));
+
+				that.reloadSubscriptions();
+
+				// UWAP.auth.require($.proxy(that.setauth, that));
 
 			});
 
 		}
 
-		App.prototype.setauth = function(user) {
+		App.prototype.setauth = function(user, groups, subscriptions) {
 			this.user = user;
+			this.groups = groups;
+			this.subscriptions = subscriptions;
 
 			$(".myname").empty().append(user.name);
 
@@ -128,8 +136,23 @@ define(function(require, exports, module) {
 
 		UWAP.auth.require(function(user) {
 
-			var app = new App($("body"), user)
-			
+			$(".loader-hideOnLoad").hide();
+			$(".loader-showOnLoad").show();
+			$("span#username").html(user.name);
+			$('.dropdown-toggle').dropdown();
+
+			UWAP.groups.listMyGroups(function(groups) {
+
+				UWAP.groups.listSubscriptions(function(subscriptions) {
+
+					var app = new App($("body"), user, groups, subscriptions);
+
+
+				});
+
+
+			});
+
 
 		});
 

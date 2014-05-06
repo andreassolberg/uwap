@@ -38,10 +38,10 @@ class ExtGroups {
 
 		$cmd = $groupEngineConfig['cmd'] . ' ' . $UWAP_BASEDIR . '/groupengine/' . $script . '.js';
 
-		// if  ($script == 'getbyuser') {
+		if  ($script == 'getbyuser') {
 			// echo "About to run a command:\n";
 			// echo "echo '" . $inputstr . "' | " . $cmd . "\n\n"; exit;
-		// }
+		}
 
 		$descriptorspec = array(
 			0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
@@ -55,7 +55,6 @@ class ExtGroups {
 		$process = proc_open($cmd, $descriptorspec, $pipes, $cwd, $env);
 
 		// echo "return value"; print_r($cmd);
-
 		// echo "About to start"; print_r(json_encode($input));
 
 		if (is_resource($process)) {
@@ -81,13 +80,19 @@ class ExtGroups {
 
 				// echo "raw data is $result";
 
-				return $parsedData;
-
-
+				if ($parsedData === null) {
+					echo "Data that could not be parsed:\n\n"; echo(var_export($parsedData, true)); echo "\n\n";
+					throw new Exception('Unable to parse JSON response from external group connector (cmd)');
+				}
 
 				// echo '<pre>';
 				// print_r($parsedgroups);
 				// exit;
+				// 
+				// 
+				return $parsedData;
+
+
 			}
 
 			// echo "command returned $return_value\n";
@@ -111,20 +116,26 @@ class ExtGroups {
 
 		$parsedgroups = $this->call('getbyuser');
 
-		// echo "data"; print_r($parsedgroups);exit;
+		// echo "data"; print_r($parsedgroups); exit;
 
 		$gos = array();
 
-		// print_r($parsedgroups); exit;
+		// echo "parsedgroups: <pre>";
+		// print_r($parsedgroups);  exit;
 
-		foreach($parsedgroups['groups'] AS $groupid => $pg) {
+		foreach($parsedgroups['groups'] AS $pg) {
 
-			// print_r($parsedgroups); exit;
-			$pg['id'] = $groupid;
-			$g = new Group($pg);
-			$role = new Role($this->user, $g, array('role' => $pg['role']));
-			$gos[] = $role;
+			$newgroup = new SCIMResourceGroup($pg);
+			$gos[] = $newgroup;
+
+			// print_r($newgroup->getJSON()); exit;
+			// $pg['id'] = $groupid;
+			// $g = new Group($pg);
+			// $role = new Role($this->user, $g, array('role' => $pg['role']));
+			// $gos[] = $role;
 		}
+
+		// print_r($gos); exit;
 
 		return $gos;
 	}	

@@ -26,9 +26,9 @@ define(function(require, exports, module) {
 
 		"obtainObject": function() {
 			var obj = {};
-			obj.title = this.el.find('input#groupname').val();
+			obj.displayName = this.el.find('input#groupname').val();
 			obj.description = this.el.find('#groupdescription').val();
-			obj.listable = this.el.find('#grouplisting').prop('checked');
+			obj['public'] = this.el.find('#grouplisting').prop('checked');
 
 			return obj;
 		}

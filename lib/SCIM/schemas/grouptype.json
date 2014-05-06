@@ -1,0 +1,27 @@
+{
+    "id":           "urn:mace:voot:schemas:role",
+    "name":         "Group type",
+    "description":  "Defining the basic properties of a group type resource.",
+    "attributes": [
+        {
+          "name" : "id",
+          "type" : "string",
+          "multiValued" : false,
+          "description" : "Unique identifier for the SCIM resource as defined by the Service Provider. Each representation of the resource MUST include a non-empty id value. This identifier MUST be unique across the Service Provider's entire set of resources. It MUST be a stable, non-reassignable identifier that does not change when the same resource is returned in subsequent requests. The value of the id attribute is always issued by the Service Provider and MUST never be specified by the Service Consumer. REQUIRED.",
+          "required" : true,
+          "caseExact" : false,
+          "mutability" : "readWrite",
+          "returned" : "always",
+          "uniqueness" : "server"
+        },
+        {
+            "name":         "displayName",
+            "description":  "A description of the ",
+            "type":         "stringTranslated",
+            "translatable": true,
+            "multiValued":  false,
+            "required":     true,
+            "caseExact":    true
+        }
+    ]
+}

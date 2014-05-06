@@ -1,0 +1,27 @@
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Adobe Connect webconferences</h3>
+	</div>
+	<div class="panel-body">
+		<div class="btn-group">
+
+			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+				<span class="glyphicon glyphicon-facetime-video"></span> Join webconference <span class="caret"></span>
+			</button>
+
+			<ul class="dropdown-menu" role="menu">
+				{{#each .}}
+					<li><a id="{{@key}}" data-groupid="{{@key}}" class="selectRoom" href="#">{{title}}</a></li>	
+				{{/each}}
+				<li class="divider"></li>
+				<li>
+					<a href="https://groupmanager.uwap.org" target="_blank" class="groupmanager">
+						<span class="glyphicon glyphicon-cog"></span> Manage groups
+					</a>
+				</li>
+			</ul>
+
+		</div>
+	</div>
+</div>

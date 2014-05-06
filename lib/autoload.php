@@ -4,8 +4,23 @@
 // App engine core
 $base = dirname(__FILE__);
 
+
+require_once(dirname($base) . '/vendor/autoload.php');
+
 require_once($base . '/Utils.php');
 require_once($base . '/Exceptions.php');
+
+
+
+// SCIM
+require_once($base . '/SCIM/SCIMResource.php');
+require_once($base . '/SCIM/SCIMSchema.php');
+require_once($base . '/SCIM/SCIMSchemaDirectory.php');
+require_once($base . '/SCIM/SCIMAttributeDef.php');
+require_once($base . '/SCIM/SCIMResourceGroup.php');
+require_once($base . '/SCIM/SCIMResourceGroupType.php');
+require_once($base . '/SCIM/SCIMResourceRole.php');
+require_once($base . '/SCIM/Protocol/SCIMListResponse.php');
 
 
 // Authentication
@@ -13,6 +28,7 @@ require_once(dirname($base) . '/solberg-oauth/lib/soauth.php');
 require_once($base . '/Auth/OAuth.php');
 require_once($base . '/Auth/AuthenticatedToken.php');
 require_once($base . '/Auth/Authenticator.php');
+
 
 
 // Groups
@@ -23,7 +39,6 @@ require_once($base . '/Groups/ExtGroups.php');
 
 
 require_once($base . '/Clients/ClientDirectory.php');
-
 require_once($base . '/AppHosting/AppHosting.php');
 
 
@@ -49,6 +64,7 @@ require_once($base . '/Sets/AuthorizationList.php');
 require_once($base . '/Models/Group.php');  
 require_once($base . '/Models/AdHocGroup.php');
 require_once($base . '/Models/Role.php');
+
 
 
 

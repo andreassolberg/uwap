@@ -44,6 +44,7 @@ define(function(require, exports, module) {
 			
 			if (hash.length < 3) {
 				this.setHash('/');
+				hash = window.location.hash;
 			}
 			hash = hash.substr(2);
 

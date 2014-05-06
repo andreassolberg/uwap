@@ -73,6 +73,7 @@ define(function(require, exports, module) {
 		});
 		this.mainnewsfeedPane.on('activate', function() {
 			$("#viewbarcontroller").show();
+
 		});
 
 
@@ -81,7 +82,7 @@ define(function(require, exports, module) {
 		this.postcontroller = new PostController(this.postpane);
 		this.postcontroller.onPost(function(d) {
 			that.mainnewsfeed.post(d);
-
+			that.mainnewsfeedPane.activate();
 		});
 
 		this.postpane.on('deactivate', function() {
@@ -171,7 +172,7 @@ define(function(require, exports, module) {
 				
 				var menupadding = data.extra + 50;
 				$("#connect-widget").height(data.size + 34 + menupadding);
-				$("#connect-widget").css('margin-bottom', '-' + menupadding);
+				$("#connect-widget").css('margin-bottom', -menupadding);
 				console.log("RESIZE", data, "set to ", $("#connect-widget").height());
 			}
 
@@ -191,7 +192,7 @@ define(function(require, exports, module) {
 			table.empty();
 			$.each(items, function(i, item) {
 				// table.append($("#groupItem").tmpl(item));
-				if (that.user.subscriptions[item.id]) {
+				if (that.subscriptions[item.id]) {
 					item.subscribed = true;
 				} else {
 					item.subscribed = false;
@@ -312,6 +313,7 @@ define(function(require, exports, module) {
 		// console.log("Routing...");
 		if (hash.length < 3) {
 			this.setHash('/');
+			hash = window.location.hash;
 		}
 		hash = hash.substr(2);
 		// console.log("Checking hash " + hash);
@@ -389,21 +391,24 @@ define(function(require, exports, module) {
 	}
 
 
-	App.prototype.setauth = function(user) {
+	App.prototype.setauth = function(user, groups, subscriptions) {
 		this.user = user;
-		this.groups = user.groups;
+		this.groups = groups;
+		this.subscriptions = subscriptions;
 
 		$(".myname").empty().append(user.name);
 
-		// console.error('setauth');
+		
 
-		this.postcontroller.setgroups(user.groups);
+		console.error('setauth', user, groups, subscriptions);
+
+		this.postcontroller.setgroups(groups);
 		// this.groupcontrollerbar.setgroups(user.groups);
 
-		this.feedselector.setgroups(user.groups, user.subscriptions);
+		this.feedselector.setgroups(groups, subscriptions);
 
-		this.mainnewsfeed.setgroups(user.groups);
-		this.mainnewsfeed.setsubscriptions(user.subscriptions);
+		this.mainnewsfeed.setgroups(groups);
+		this.mainnewsfeed.setsubscriptions(subscriptions);
 		this.mainnewsfeed.setuser(user);
 
 	}
@@ -420,12 +425,21 @@ define(function(require, exports, module) {
 		var app;
 		$("document").ready(function() {
 			// console.log("App.init()");
-			UWAP.auth.require(function(data) {
-				// console.log("Is authenticated, now start the app.");
-				app = new App($("body"))
 
-				var user = new models.User(data);
-				app.setauth(user);
+			// TODO: Load these in async
+			UWAP.auth.require(function(userdata) {
+				
+				UWAP.groups.listMyGroups(function(groups) {
+
+					UWAP.groups.listSubscriptions(function(subscriptions) {
+						app = new App($("body"));
+						var user = new models.User(userdata);
+						app.setauth(user, groups, subscriptions);
+
+					});
+
+				});
+
 			});
 		});
 	};

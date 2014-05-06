@@ -24,12 +24,14 @@ config.getSources = function(input, type) {
 		}
 
 		if (cur.hasOwnProperty('filter:userid')) {
+			// console.log("Checking match for filter:userid ", cur['filter:userid'], input.user.userid);
 			if (cur['filter:userid'] !== input.user.userid) continue;
 		}
 		if (cur.hasOwnProperty('filter:realm')) {
 			if (cur['filter:realm'] !== input.user.realm) continue;
 		}
 		if (cur.hasOwnProperty('filter:idp')) {
+			// console.log("Checking match for filter:idp ", cur['filter:idp'], input.user.idp);
 			if (cur['filter:idp'] !== input.user.idp) continue;
 		}
 

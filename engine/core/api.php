@@ -16,9 +16,7 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: HEAD, GET, OPTIONS, POST, DELETE, PATCH");
 header("Access-Control-Allow-Headers: Authorization, X-Requested-With, Origin, Accept, Content-Type");
-
-
-
+header("Access-Control-Expose-Headers: Authorization, X-Requested-With, Origin, Accept, Content-Type");
 
 $profiling = microtime(true);
 error_log("Time START    :     ======> " . (microtime(true) - $profiling));
@@ -32,9 +30,7 @@ try {
 		exit;
 	}
 
-	$response = array(
-		"status" => "ok"
-	);
+	$response = null;
 
 	/**
 	 *  The OAuth endpoints on core, typically the OAuth Server endpoints for communication with clients
@@ -73,11 +69,9 @@ try {
 
 		// $res = $auth->storeUser();
 
-		// header('Content-Type: application/json; chat-set: utf-8');
-		// echo 
 
-		$response['data'] = array('status' => 'ok', 'message' => 'TESTING');
-
+		
+		$response = array('message' => 'Test');
 
 
 
@@ -100,7 +94,8 @@ try {
 		// header('Content-Type: application/json; chat-set: utf-8');
 		// echo 
 
-		$response['data'] = array('status' => 'ok', 'message' => 'updated user data', 'userdata' => $user->getJSON());
+		// $response['data'] = array('status' => 'ok', 'message' => 'updated user data', 'userdata' => $user->getJSON());
+		$response = array('status' => 'ok', 'message' => 'updated user data', 'userdata' => $user->getJSON());
 
 
 	/**
@@ -113,8 +108,21 @@ try {
 
 		$user = $token->getUser();
 
+		// $response = $user->getJSON(array('type' => 'extended',  'groups' => true, 'subscriptions' => true));
+		$response = $user->getJSON(array('type' => 'basic'));
 
-		$response['data'] = $user->getJSON(array('type' => 'extended',  'groups' => true, 'subscriptions' => true));
+
+	/**
+	 *  The userinfo endpoint is used for authentication of clients.
+	 */
+	} else if (Utils::route('get', '^/userinfo/subscriptions$', &$parameters)) {
+
+		$oauth = new OAuth();
+		$token = $oauth->check(array(), array('userinfo'));
+
+		$user = $token->getUser();
+		$response = $user->getJSON(array('type' => 'subscriptions'));
+
 
 
 	/**
@@ -139,10 +147,7 @@ try {
 
 		if (Utils::route('get', '^/people/realms$', &$parameters)) {
 
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->peopleListRealms(),
-			);
+			$response = $groupconnector->peopleListRealms();
 
 		} else if (Utils::route('get', '^/people/query/([a-z0-9\.\-]+)$', &$parameters)) {
 
@@ -154,12 +159,33 @@ try {
 			// }
 
 			$realm = $parameters[1];
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->peopleQuery($realm, $_REQUEST['query']),
-			);
+			$response = $groupconnector->peopleQuery($realm, $_REQUEST['query']);
 
 		} 
+
+
+
+	// TODO: DELETE THIS...
+	} else if (Utils::route(false, '^/debuggroups', &$parameters)) {
+
+
+		$user = User::getByID('andreas@uninett.no');
+		$groupconnector = new GroupConnector($user);
+		$response = $groupconnector->getGroupsListResponse();
+
+		$type = new SCIMResourceGroupType(array('id' => 'uwap:group:type:ad-hoc', 
+			'displayName' => array(
+				'en' => 'Ad-Hoc',
+				'nb' => 'Någruppe'
+			)
+		));
+
+
+		echo 'Groups: <pre>'; 
+		print_r($type);
+		print_r($type->getJSON()); 
+		exit;
+
 
 
 	/**
@@ -171,7 +197,6 @@ try {
 		$token = $oauth->check();
 		$user = $token->getUser();
 
-
 		$groupconnector = new GroupConnector($user);
 
 		$userdata = $user->getJSON(array(
@@ -179,42 +204,30 @@ try {
 			'groups' => array('type' => 'key')
 		));
 
-
 		// Get a list of groups
 		if (Utils::route('get', '^/groups$', &$parameters)) {
 
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->getGroupsJSON(),
-			);
+			$groupResponse = $groupconnector->getGroupsListResponse();
+			$response = $groupResponse->getJSON();
 
 		} else if (Utils::route('get', '^/groups/public$', &$parameters)) {
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
-
 			// $gres = $groupmanager->getPublicGroups($groups);
 
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->getPublicGroupsJSON(),
-			);
+			$response = $groupconnector->getPublicGroupsJSON();
 
 
 		// Add a new group
 		} else if (Utils::route('post', '^/groups$', &$parameters, &$body)) {
 
 			// echo "About to create new group with "; print_r($body); exit;
-
 			$res = $groupconnector->addGroup($body);
-
-			$response = array(
-				'status' => 'ok',
-				'data' => $res->getJSON(),
-			);
+			$response = $res->getJSON();
 
 
 		// Get a specific group
-		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-]+)$', &$parameters)) {
+		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-_]+)$', &$parameters)) {
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
@@ -227,14 +240,11 @@ try {
 			}
 
 
-			$response = array(
-				'status' => 'ok',
-				'data' => $group->getJSON(),
-			);
+			$response = $group->getJSON();
 
 
 		// Get a specific group
-		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-]+)/members$', &$parameters)) {
+		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-_]+)/members$', &$parameters)) {
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
@@ -248,10 +258,7 @@ try {
 
 			$members = $group->getMembers();
 
-			$response = array(
-				'status' => 'ok',
-				'data' => $members->getJSON(array('type' => 'user')),
-			);
+			$response = $members->getJSON(array('type' => 'user'));
 
 			// if ($group === null) {
 			// 	$response = array(
@@ -274,10 +281,7 @@ try {
 
 			// TODO: ensure user is member of the group to extract memberlist
 			$groupid = $parameters[1];
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->update($groupid, $body),
-			);
+			$response = $groupconnector->update($groupid, $body);
 
 		// Delete  group
 		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)$', &$parameters)) {
@@ -285,10 +289,7 @@ try {
 
 
 			$groupid = $parameters[1];
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->remove($groupid),
-			);
+			$response = $groupconnector->remove($groupid);
 
 
 
@@ -305,20 +306,14 @@ try {
 				$res = $groupconnector->unsubscribe($groupid, $body['subscribe']);
 			}
 
-			$response = array(
-				'status' => 'ok',
-				'data' => $res,
-			);
+			$response = $res;
 
 
 		// Add a new member to a group
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/members$', &$parameters, &$body)) {
 
 			$groupid = $parameters[1];
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->addMember($groupid, $body),
-			);
+			$response = $groupconnector->addMember($groupid, $body);
 
 		// Update a membership to a group
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', &$parameters, &$obj)) {
@@ -327,10 +322,7 @@ try {
 
 			$groupid = $parameters[1];
 			$userid = $parameters[2];
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->updateMember($groupid, $userid, $obj),
-			);
+			$response = $groupconnector->updateMember($groupid, $userid, $obj);
 
 		// Remove a user from a group
 		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', &$parameters)) {
@@ -339,10 +331,7 @@ try {
 
 			$groupid = $parameters[1];
 			$userid = $parameters[2];
-			$response = array(
-				'status' => 'ok',
-				'data' => $groupconnector->removeMember($groupid, $userid),
-			);
+			$response = $groupconnector->removeMember($groupid, $userid);
 
 		} else {
 			echo "Invalid request"; exit;
@@ -410,12 +399,12 @@ try {
 				// TODO: Clean output before returning. In example remove uwap- namespace attributes...
 			case 'queryOne':
 				if (empty($parameters['query'])) throw new Exception("Missing required parameter [query] query");
-				$response['data'] = $store->queryOneUser("appdata-" . $targetapp, $userid, $userdata['groups'], $parameters['query']);
+				$response = $store->queryOneUser("appdata-" . $targetapp, $userid, $userdata['groups'], $parameters['query']);
 				break;
 
 			case 'queryList':
 				if (empty($parameters['query'])) throw new Exception("Missing required parameter [query] query");
-				$response['data'] = $store->queryListUser("appdata-" . $targetapp, $userid, $userdata['groups'], $parameters['query']);
+				$response = $store->queryListUser("appdata-" . $targetapp, $userid, $userdata['groups'], $parameters['query']);
 				break;
 
 		}
@@ -451,7 +440,7 @@ try {
 				'mine' => true,
 				'status-' => 'pendingDelete'
 			));
-			$response['data'] = $clients->getJSON();
+			$response = $clients->getJSON();
 
 
 
@@ -470,14 +459,14 @@ try {
 			// echo "result was "; print_r(var_export($client, true));
 
 			$clientdirectory->authorize($client, 'owner');
-			$response['data'] = $client->getJSON(array(
+			$response = $client->getJSON(array(
 				'appinfo' => true
 			));
 
 			if ($client instanceof App) {
 
 				$apphosting = new AppHosting($user);
-				$response['data']['davcredentials'] = $apphosting->getDavCredentials($client);
+				$response = array('davcredentials' => $apphosting->getDavCredentials($client));
 				/*
 				 * Deprecated properties that was previously present in the API result
 				 *
@@ -498,14 +487,14 @@ try {
 			$clientdirectory->authorize($client, 'owner');
 
 			$clientdata = $client->getJSON();
-			$response['data'] = $clientdata['status'];
+			$response = $clientdata['status'];
 
 
 		} else if (Utils::route('get', '^/appconfig/check/([a-z0-9\-]+)$', &$qs, &$parameters)) {
 
 			$appid = $qs[1];
 			Utils::validateID($appid);
-			$response['data'] = !$clientdirectory->exists($appid);
+			$response = !$clientdirectory->exists($appid);
 
 
 
@@ -518,7 +507,7 @@ try {
 			
 
 			$client = Client::generate($object, $user);
-			$response['data'] = $client->getJSON();
+			$response = $client->getJSON();
 
 			// echo "OK. Done";
 
@@ -533,7 +522,7 @@ try {
 			$client->updateStatus($bodyobject);
 
 			$clientdata = $client->getJSON();
-			$response['data'] = $clientdata['status'];
+			$response = $clientdata['status'];
 
 
 		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/bootstrap$', &$parameters, &$object)) {
@@ -544,7 +533,7 @@ try {
 			$clientdirectory->authorize($client, 'owner');
 
 			$apphosting = new AppHosting($user);
-			$response['data'] = $apphosting->bootstrap($client, $object);
+			$response = $apphosting->bootstrap($client, $object);
 
 
 
@@ -560,7 +549,7 @@ try {
 			$authzid = $parameters[2];
 			Utils::validateID($authzid);
 
-			$response['data'] = $client->updateAuthzHandler($authzid, $object);
+			$response = $client->updateAuthzHandler($authzid, $object);
 
 
 			// Delete an authorization handler
@@ -574,7 +563,7 @@ try {
 			$authzid = $parameters[2];
 			Utils::validateID($authzid);
 
-			$response['data'] = $client->deleteAuthzHandler($authzid);
+			$response = $client->deleteAuthzHandler($authzid);
 
 
 		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/proxy$', &$parameters, &$object)) {
@@ -585,7 +574,7 @@ try {
 			$client = Client::getByID($appid);
 			$clientdirectory->authorize($client, 'owner');
 
-			$response['data'] = $client->updateProxy($object); 
+			$response = $client->updateProxy($object); 
 
 
 
@@ -599,7 +588,7 @@ try {
 
 			$authorizationList = $clientdirectory->getAuthorizationQueue($app);
 
-			$response['data'] = $authorizationList->getJSON();
+			$response = $authorizationList->getJSON();
 
 
 
@@ -613,7 +602,7 @@ try {
 			
 			$clientdirectory->requestScopes($client, $object);
 
-			$response['data'] = $client->getJSON();
+			$response = $client->getJSON();
 
 
 
@@ -629,7 +618,7 @@ try {
 			// echo "About to query getpublic api "; print_r($object); exit;
 
 			$authorizationList = $clientdirectory->getPublicAPIs($client, $object);
-			$response['data'] = $authorizationList->getJSON();
+			$response = $authorizationList->getJSON();
 
 
 		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)/authorizedapis$', &$parameters, &$object)) {
@@ -641,7 +630,7 @@ try {
 			$clientdirectory->authorize($client, 'owner');
 
 			$authorizationList = $clientdirectory->getAuthorizedAPIs($client, null);
-			$response['data'] = $authorizationList->getJSON();
+			$response = $authorizationList->getJSON();
 
 
 
@@ -661,7 +650,7 @@ try {
 			$clientdirectory->authorizeClientScopes($app, $client, $object);
 
 			$authorizationList = $clientdirectory->getAuthorizationQueue($app);
-			$response['data'] = $authorizationList->getJSON();
+			$response = $authorizationList->getJSON();
 
 
 
@@ -711,7 +700,7 @@ try {
 		} else if (Utils::route('post', '^/appconfig/apps/query$', &$qs, &$parameters)) {
 
 			$listing = $appdirectory->queryApps($parameters );
-			$response['data'] = $listing;
+			$response = $listing;
 
 
 		// } else if (Utils::route('post', '^/appconfig/clients$', &$qs, &$parameters)) {
@@ -880,7 +869,7 @@ try {
 			$appid = $qs[1];
 			Utils::validateID($appid);
 			$ac = Config::getInstance($appid);
-			$response['data'] = $ac->getConfigLimited();
+			$response = $ac->getConfigLimited();
 
 		// } else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)$', &$qs, &$parameters)) {
 
@@ -963,7 +952,7 @@ try {
 
 		if (Utils::route('post', '^/feed$', &$parameters, &$object)) {
 			
-			$response['data'] = $feedReader->read($object)->getJSON();
+			$response = $feedReader->read($object)->getJSON();
 
 
 
@@ -974,7 +963,7 @@ try {
 			// $response['data'] = $no->read($parameters);
 
 
-			$response['data'] = $feedReader->readUpcoming($object)->getJSON();
+			$response = $feedReader->readUpcoming($object)->getJSON();
 
 		} else if (Utils::route('post', '^/feed/notifications$',  &$parameters, &$object)) {
 
@@ -983,7 +972,7 @@ try {
 			// $response['data'] = $no->read($parameters);
 
 
-			$response['data'] = $feedReader->readNotifications($object)->getJSON();
+			$response = $feedReader->readNotifications($object)->getJSON();
 
 			// header('Content-Type: text/plain; charset: utf-8'); echo "poot"; print_r($response); exit;
 
@@ -991,7 +980,7 @@ try {
 
 
 			// $no = new Notifications($userid, $groups, $subscriptions);
-			$response['data'] = $feedReader->markNotificationsRead($ids);
+			$response = $feedReader->markNotificationsRead($ids);
 
 
 		} else if (Utils::route('post', '^/feed/post$', &$parameters, &$object)) {
@@ -1008,7 +997,7 @@ try {
 			// error_log("About to post groups: " . json_encode($groups));
 
 			$feedItem = $feedReader->post($object);
-			$response['data'] = $feedItem->getJSON();
+			$response = $feedItem->getJSON();
 
 
 
@@ -1019,7 +1008,7 @@ try {
 			// echo "About to delete an item: " . $qs[1];
 			// $response['data'] = $feed->delete($qs[1]);
 			
-			$response['data'] = $feedReader->delete($parameters[1]);
+			$response = $feedReader->delete($parameters[1]);
 
 
 		} else if (Utils::route('post', '^/feed/item/([a-z0-9\-]+)/response$',  &$parameters, &$object)) {
@@ -1030,7 +1019,7 @@ try {
 
 			$feedItem = $feedReader->respond($object);;
 
-			$response['data'] = $feedItem->getJSON();
+			$response = $feedItem->getJSON();
 
 
 
@@ -1040,7 +1029,7 @@ try {
 			// $oauth->check(null, array('feedwrite'));
 			// echo "About to delete an item: " . $qs[1];
 			
-			$response['data'] = $feedReader->read(array('id_' => $parameters[1]))->getJSON();
+			$response = $feedReader->read(array('id_' => $parameters[1]))->getJSON();
 
 		} else {
 
@@ -1075,6 +1064,7 @@ try {
 
 		$remoteHost = parse_url($url, PHP_URL_HOST);
 		$proxy = $globalconfig->getApp($remoteHost);
+		$proxyID = $proxy->get('id');
 
 		if ($proxy->get('type') !== 'proxy') {
 			throw new Exception('This host is not running a soaproxy.');
@@ -1107,16 +1097,11 @@ try {
 		$oauth = new OAuth();
 		$token = $oauth->check(null, null);
 		$user = $token->getUser();
+		$client = $token->getClient();
 
-		// // // Get provided Token on this request, if present.
-		// $token = $oauth->getProvidedToken();
 
-		$proxyID = $proxy->get('id');
 
-		// echo "ProviderID " . $providerID . "\n";
-		// echo "proxyconfig "; print_r($proxyconfig); echo "\n";
-
-		$httpclient = HTTPClient::getClientWithConfig($proxyconfig, $proxyID);
+		$httpclient = HTTPClient::getClientFromConfig($proxy, $client);
 		if ($token) {
 			
 			$clientid = $token->getClientID();
@@ -1132,9 +1117,9 @@ try {
 			// --- TODO
 
 			// $userdata = $token->getUserdataWithGroups();
-			$httpclient->setAuthenticated($userdata);
+			$httpclient->setAuthenticated($user);
 			$scopes = $oauth->getApplicationScopes('rest', $proxyID);
-			$httpclient->setAuthenticatedClient($clientid, $scopes);
+			// $httpclient->setAuthenticatedClient($clientid, $scopes);
 		}
 		$response = $httpclient->get($realurl, $args);
 
@@ -1276,7 +1261,12 @@ try {
 	echo json_encode($response);
 
 	// $profiling = microtime(true);
-	error_log("Time to run command:     ======> " . (microtime(true) - $profiling));
+	$key = Utils::getPathString();
+	$timer = round((microtime(true) - $profiling) * 1000.0);
+	error_log("Time to run command:   [" . $key . "]  ======> " . $timer);
+
+
+	UWAPLogger::stat('timing', $key, $timer);
 
 } catch(UWAPObjectNotFoundException $e) {
 

@@ -4,13 +4,16 @@ define(function(require, exports, module) {
 		$ = require('jquery'),
 
 		Class = require('uwap-core/js/class'),
-		Controller = require('../lib/Controller'),
+		Pane = require('../lib/Pane'),
+
+		GroupListFilter = require('./GroupListFilter'),
 
 		hb = require('uwap-core/js/handlebars')
+		
 		;
 
 	var tmpl = {
-		"grouplist": require('uwap-core/js/text!../../templates/grouplist.html')
+		"grouplist": require('uwap-core/js/text!../../templates/grouplist2.html')
 	};
 	var templates = {
 		"grouplist": hb.compile(tmpl.grouplist),
@@ -21,31 +24,42 @@ define(function(require, exports, module) {
 	/*
 	 * This controller controls 
 	 */
-	var GroupListController = Controller.extend({
-		"init": function(pane, user) {
+	var GroupListController = Pane.extend({
+		"init": function(groups) {
 
 			console.log("initiator (GroupListController)");
 			// UWAP.utils.stack('initiator (GroupListController)');
 
-			this.user = user;
+			var that = this;
+			this.groups = groups;
 
 			this.itemid = null;
 			this.selected = null;
 
-			this.pane = pane;
+			this._super();
 
-			this._super(this.pane.el);
+			this.filter = {};
 
-			$(this.pane.el).on("click", "tr.item", $.proxy(this._evntSelect, this));
-			$(this.pane.el).on("click", ".actEditGroup", $.proxy(this._evntEditGroup, this));
-			$(this.pane.el).on("click", ".actDeleteGroup", $.proxy(this._evntDeleteGroup, this));
+			this.filtercontroller = new GroupListFilter(groups);
+			this.filtercontroller.on('filterUpdate', function(newFilter) {
+				that.filter = newFilter;
+				that.draw();
+			})
+
+
+			$(this.el).on("click", "tr.item", $.proxy(this._evntSelect, this));
+			$(this.el).on("click", ".actEditGroup", $.proxy(this._evntEditGroup, this));
+			$(this.el).on("click", ".actDeleteGroup", $.proxy(this._evntDeleteGroup, this));
 
 		},
 
 
 		"load": function() {
-			this.draw();
-			this.pane.activate();
+			console.log("DRAW");
+
+			this.draw(true);
+			this.filtercontroller.load();
+			// this.activate();
 		},
 
 		// "reload": function() {
@@ -61,37 +75,53 @@ define(function(require, exports, module) {
 		// 	});
 		// },
 
+		"getFilteredList": function() {
+
+			var groupCandidates = this.groups.getView();
+			var groups = {};
+
+			for(var key in groupCandidates.Resources) {
+				if (this.filtercontroller.matchFilter(groupCandidates.Resources[key])) {
+					groups[key] = groupCandidates.Resources[key];
+				}
+			}
+
+			return groups;
+			
+		},
+
+
 		"draw": function(act) {
 			var obj = {
-				groups: this.user.groups.getView(),
+				groups: this.getFilteredList(),
 				subscriptions: null
 			};
 
-			console.log("About to draw", obj);
+			console.log(" -----> About to draw", obj, this.groups);
 
 			this.el.empty().append(templates.grouplist(obj));
 
-			if (typeof act === 'undefined') {
-				act = true;
-			}
 
 			if (act) {
-				this.pane.activate();	
+				this.activate();
 			}
 			
 		},
 
 		"_evntDeleteGroup": function(e) {
 			e.stopPropagation(); e.preventDefault();
-			var itemid = $(e.currentTarget).closest('tr.itemDetails').data('itemid');
-			var item = this.user.groups.getByID(itemid);
+			var itemid = $(e.currentTarget).closest('tr').data('itemid');
+			var item = this.groups.getByID(itemid);
 			this.emit("deleteGroup", item);
 		},
 
 		"_evntEditGroup": function(e) {
+			
 			e.stopPropagation(); e.preventDefault();
-			var itemid = $(e.currentTarget).closest('tr.itemDetails').data('itemid');
-			var item = this.user.groups.getByID(itemid);
+			var itemid = $(e.currentTarget).closest('tr').data('itemid');
+			if (this.groups)
+
+			var item = this.groups.getByID(itemid);
 			this.emit("editGroup", item);
 		},
 

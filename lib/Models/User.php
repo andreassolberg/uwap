@@ -24,9 +24,7 @@ class User extends StoredModel {
 		// echo "checking if has realm " . $realm . " for me " . $this->get('userid') . "\n";
 		$pos = strpos($this->get('userid'), '@' . $realm);
 		$has = ($pos !== false);
-		// echo var_export($pos, true) . "\n";
-		// echo var_export($has, true) . "\n";
-		// echo "\n\n";
+
 		return $has;
 	}
 
@@ -69,14 +67,14 @@ class User extends StoredModel {
 
 	public function subscribe(Group $group) {
 		$groupid = $group->get('id');
-		$subscriptions = $this->get('subscriptions');
+		$subscriptions = $this->get('subscriptions', array());
 		$subscriptions = self::array_add($subscriptions, $groupid);		
 		$this->set('subscriptions', $subscriptions);
 	}
 
 	public function unsubscribe(Group $group) {
 		$groupid = $group->get('id');
-		$subscriptions = $this->get('subscriptions');
+		$subscriptions = $this->get('subscriptions', array());
 		$subscriptions = self::array_remove($subscriptions, $groupid);		
 		$this->set('subscriptions', $subscriptions);
 	}
@@ -86,6 +84,17 @@ class User extends StoredModel {
 		$props = self::$validProps;
 		if (isset($opts['type']) && $opts['type'] === 'basic') {
 			$props = array('userid', 'mail', 'name', 'a');
+		}
+
+		if (isset($opts['type']) && $opts['type'] === 'subscriptions') {
+			$subgroups = $this->getSubscriptions();
+			$res = array();
+			foreach($subgroups AS $groupid => $group) {
+				if (empty($group)) continue;
+				$res[$group->get('id')] = $group->getJSON(array('type' => 'basic'));
+			}
+
+			return $res;
 		}
 
 		$ret = array();
@@ -108,13 +117,13 @@ class User extends StoredModel {
 			}
 		}
 
-		if (isset($opts['groups'])) {
-			$ret['groups'] = array();
-			$groups = $this->getGroups();
-			foreach($groups AS $g) {
-				$ret['groups'][$g->group->get('id')] = $g->getJSON($opts['groups']);
-			}
-		}
+		// if (isset($opts['groups'])) {
+		// 	$ret['groups'] = array();
+		// 	$groups = $this->getGroups();
+		// 	foreach($groups AS $g) {
+		// 		$ret['groups'][$g->group->get('id')] = $g->getJSON($opts['groups']);
+		// 	}
+		// }
 
 		return $ret;
 	}

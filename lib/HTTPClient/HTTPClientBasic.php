@@ -30,11 +30,9 @@ class HTTPClientBasic extends HTTPClient {
 
 		error_log("HTTPClientBasic headers:" .  var_export($headers, true));
 
-		$result["data"] = $this->rawget($url, $headers, true, false, $options);
-		// ($url, $headers = array(), $redir = true, $curl = false, $options = array()) {
-		// 
-		$result = $this->decode($result, $options);
-		return $result;
+		$rawdata = $this->rawget($url, $headers, true, false, $options);
+
+		return json_decode($rawdata, true);
 	}
 
 }

@@ -183,6 +183,8 @@ define(function(require, exports, module) {
 	FeedController.prototype.addItem = function(item) {
 		var that = this;
 
+		console.log("Add item", item)
+
 		item.groupnames = [];
 		if (item.groups) {
 			$.each(item.groups, function(i, g) {
@@ -486,10 +488,11 @@ define(function(require, exports, module) {
 
 		// console.log("About to uwap.feed.read()");
 		UWAP.feed.read(s, $.proxy(this.processFeedResponse, this));
-
-
 		
 	}
+
+
+	
 	FeedController.prototype.post = function(msg) {
 		var that = this;
 		// console.log("POSTING", msg);

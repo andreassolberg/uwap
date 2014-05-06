@@ -1,0 +1,50 @@
+{
+    "id":           "urn:mace:voot:schemas:role",
+    "name":         "Role schema",
+    "description":  "Defining the basic properties of a role resource.",
+    "attributes": [
+        {
+            "name":         "basic",
+            "description":  "Basic role",
+            "type":         "String",
+            "multiValued":  false,
+            "required":     true,
+            "caseExact":    true
+        },
+        {
+            "name":         "roleActive",
+            "description":  "Default is true. If the role is set to passive, it means that the role is not currently valid.",
+            "type":         "Boolean",
+            "multiValued":  false,
+            "required":     true
+        },
+        {
+            "name":         "vootUser",
+            "description":  "An embeded User resource",
+            "type":         "complex",
+            "multiValued":  false,
+            "required":     true
+        },
+        {
+            "name":         "vootGroup",
+            "description":  "An embeded Group resource",
+            "type":         "complex",
+            "multiValued":  false,
+            "required":     true
+        },
+        {
+            "name":         "notBefore",
+            "description":  "The role association is not active (valid) before this date.",
+            "type":         "dateTime",
+            "multiValued":  false,
+            "required":     false
+        },
+        {
+            "name":         "notAfter",
+            "description":  "The role association is not active (valid) after this date.",
+            "type":         "dateTime",
+            "multiValued":  false,
+            "required":     false
+        }
+    ]
+}
