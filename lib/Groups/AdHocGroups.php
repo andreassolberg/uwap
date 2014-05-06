@@ -64,7 +64,7 @@ class AdHocGroups {
 	public function getPublicGroups() {
 
 		$query = array(
-			'listable' => true
+			'public' => true
 		);
 
 		$res = $this->store->queryList('groups', $query );
