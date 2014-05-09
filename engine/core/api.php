@@ -55,6 +55,19 @@ try {
 
 
 
+	/*
+	 *	Testing authentication using the auth libs
+	 *	Both API auth and 
+	 */
+	} else if  (Utils::route('get', '^/providerconfig$', &$parameters)) {
+
+		$base = $globalconfig->getBaseURL() . 'api/oauth/';
+		$providerconfig = array(
+			'authorization' => $base . 'authorization',
+			'token' => $base . 'token'
+		);
+		$response = $providerconfig;
+
 
 	/*
 	 *	Testing authentication using the auth libs
@@ -105,7 +118,6 @@ try {
 
 		$oauth = new OAuth();
 		$token = $oauth->check(array(), array('userinfo'));
-
 		$user = $token->getUser();
 
 		// $response = $user->getJSON(array('type' => 'extended',  'groups' => true, 'subscriptions' => true));
@@ -466,7 +478,7 @@ try {
 			if ($client instanceof App) {
 
 				$apphosting = new AppHosting($user);
-				$response = array('davcredentials' => $apphosting->getDavCredentials($client));
+				$response['davcredentials'] = $apphosting->getDavCredentials($client);
 				/*
 				 * Deprecated properties that was previously present in the API result
 				 *

@@ -81,7 +81,7 @@ define(function(require, exports, module) {
 
 	appPicker.prototype.addList = function(items) {
 		var i;
-		console.log("adding list of apps to be selected...", list);
+		console.log("adding list of apps to be selected...", items);
 		$(this.element).empty();
 
 		var list = {
@@ -96,6 +96,7 @@ define(function(require, exports, module) {
 			$(this.element).append('<h4 class="list-group-item">Applications</h4>');
 			for(i = 0; i < list.app.length; i++) {
 				$(this.element).append(this.getAppItem(list.app[i]));
+				// console.log("About to add app ", this.getAppItem(list.app[i]));
 				// $(this.element).append('<li class=""><a href="#">' + list.app[i].name + '</a></li>');
 			}
 		}

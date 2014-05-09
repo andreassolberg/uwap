@@ -17,7 +17,7 @@
 
 	<div class="col-md-6">
 		<h3>OAuth details</h3>
-		<p>You may access your application area using WebDAV</p>
+		
 
 		<dl>
 			<dt>Client ID</dt>
@@ -25,6 +25,12 @@
 
 			<dt>Client Secret</dt>
 			<dd><code>{{client_secret}}</code></dd>
+
+			<dt>Authorization endpoint</dt>
+			<dd>https:\/\/core.app.bridge.uninett.no\/api\/oauth\/authorization</dd>
+
+			<dt>Token endpoint</dt>
+			<dd>https:\/\/core.app.bridge.uninett.no\/api\/oauth\/token</dd>
 
 			<dt>Redirect URI</dt>
 			{{#each redirect_uri}}
