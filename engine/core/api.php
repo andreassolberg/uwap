@@ -1277,8 +1277,7 @@ try {
 	$timer = round((microtime(true) - $profiling) * 1000.0);
 	error_log("Time to run command:   [" . $key . "]  ======> " . $timer);
 
-
-	UWAPLogger::stat('timing', $key, $timer);
+	// UWAPLogger::stat('timing', $key, $timer);
 
 } catch(UWAPObjectNotFoundException $e) {
 
