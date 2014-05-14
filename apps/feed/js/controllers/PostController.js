@@ -99,7 +99,7 @@ define(function(require, exports, module) {
 
 		this.selectedGroups[groupid] = true;
 
-		sharespan.append('<span class="label label-primary sharedwithgroup">' + UWAP.utils.escape(this.groups[groupid].title) + '</span>');
+		sharespan.append('<span class="label label-primary sharedwithgroup">' + UWAP.utils.escape(this.groups[groupid].displayName) + '</span>');
 		currentListItem.addClass('disabled');
 
 		// console.log('Adding group', groupid)
@@ -253,7 +253,7 @@ define(function(require, exports, module) {
 
 		$.each(groups, function(i, item) {
 			// that.el.find("div.groups").append('<label class="checkbox inline"><input type="checkbox" id="grp_' + i + '" value="' + i + '">' + item + '</label>');
-			$('<li><a class="actShareWith" href="#">' + UWAP.utils.escape(item.title) + '</a></li>').data('groupid', i).appendTo(grouplist);
+			$('<li><a class="actShareWith" href="#">' + UWAP.utils.escape(item.displayName) + '</a></li>').data('groupid', i).appendTo(grouplist);
 		});
 	}
 

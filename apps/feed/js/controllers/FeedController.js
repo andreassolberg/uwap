@@ -189,7 +189,7 @@ define(function(require, exports, module) {
 		if (item.groups) {
 			$.each(item.groups, function(i, g) {
 				if (that.groups[i]) {
-					item.groupnames.push(that.groups[g].title);
+					item.groupnames.push(that.groups[g].displayName);
 				} else {
 					item.groupnames.push(g);
 				}
@@ -271,7 +271,7 @@ define(function(require, exports, module) {
 			item.groupnames = [];
 			for(var key in item.groups) {
 				// item.groupnames[key] = item.groups[key].title;
-				item.groupnames.push(item.groups[key].title);
+				item.groupnames.push(item.groups[key].displayName);
 			}
 		}
 

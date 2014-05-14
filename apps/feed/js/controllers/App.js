@@ -393,21 +393,31 @@ define(function(require, exports, module) {
 
 	App.prototype.setauth = function(user, groups, subscriptions) {
 		this.user = user;
-		this.groups = groups;
+
+		if (groups.Resources) {
+			for(var i = 0; i < groups.Resources.length; i++) {
+				this.groups[groups.Resources[i].id] = groups.Resources[i];
+			}			
+		}
+
+		// this.groups = groups;
 		this.subscriptions = subscriptions;
 
 		$(".myname").empty().append(user.name);
 
+
 		
 
-		console.error('setauth', user, groups, subscriptions);
-
-		this.postcontroller.setgroups(groups);
+		this.postcontroller.setgroups(this.groups);
 		// this.groupcontrollerbar.setgroups(user.groups);
 
-		this.feedselector.setgroups(groups, subscriptions);
 
-		this.mainnewsfeed.setgroups(groups);
+		// console.error('setauth groups', user, this.groups, subscriptions);
+		console.error('setauth groups', this.groups);
+
+		this.feedselector.setgroups(this.groups, subscriptions);
+
+		this.mainnewsfeed.setgroups(this.groups);
 		this.mainnewsfeed.setsubscriptions(subscriptions);
 		this.mainnewsfeed.setuser(user);
 

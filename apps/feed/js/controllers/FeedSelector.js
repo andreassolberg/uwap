@@ -220,6 +220,9 @@ define([
 
 	FeedSelector.prototype.draw = function() {
 
+
+		console.log("FeedSelector draw", this.groups);
+
 		var list = this.el.find('ul.list');
 		var that = this;
 
@@ -255,10 +258,10 @@ define([
 		$.each(this.groups, function(i, item) {
 
 			var ne = $('<li class="group"><a class="actGroupSelect" id="entr_' + i + '" href="#">' +
-					'<span class="glyphicon glyphicon-tag"></span> ' + UWAP.utils.escape(item.title) + 
+					'<span class="glyphicon glyphicon-tag"></span> ' + UWAP.utils.escape(item.displayName) + 
 					'<span class="notifications"></span></a></li>')
 				.data('selector', {group: i})
-				.data('content', '<span class="glyphicon glyphicon-tag"></span> ' + item.title);
+				.data('content', '<span class="glyphicon glyphicon-tag"></span> ' + item.displayName);
 
 			if (that.currentSelector && that.currentSelector.group && that.currentSelector.group === i) {
 				ne.addClass('active'); console.log("Checking ", i , "against", that.currentGroup);
@@ -274,7 +277,7 @@ define([
 		$.each(this.subscriptions, function(i, item) {
 
 			var ne = $('<li class="group"><a class="actGroupSelect" id="entr_' + i + '" href="#">' +
-					'<span class="glyphicon glyphicon-globe"></span> ' + UWAP.utils.escape(item.title) + 
+					'<span class="glyphicon glyphicon-globe"></span> ' + UWAP.utils.escape(item.displayName) + 
 					'<span class="notifications"></span></a></li>')
 				.data('selector', {group: i});
 				// .data('content', '<span class="glyphicon glyphicon-globe"></span> ' + item.title);
