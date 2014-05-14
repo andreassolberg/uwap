@@ -38,8 +38,9 @@ class User extends StoredModel {
 		$ids = array();
 		$groups = $this->getGroups();
 		foreach($groups AS $g) {
-			$ids[] = $g->group->get('id');
+			$ids[] = $g->get('id');
 		}
+		// echo "IDs: "; print_r($ids);
 		return $ids;
 	}
 

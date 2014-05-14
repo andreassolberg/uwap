@@ -6,7 +6,7 @@ class Group extends StoredModel {
 
 
 	protected static $validProps = array(
-		'id', 'type', 'title', 'description', 'members', 'admins', 'listable', 'uwap-userid', 'source',
+		'id', 'type', 'displayName', 'description', 'members', 'admins', 'public', 'uwap-userid', 'source',
 
 		'users' // from external sources.... TODO override this class that handles users property
 		);
@@ -69,7 +69,7 @@ class Group extends StoredModel {
 
 		$props = self::$validProps;
 		if (isset($opts['type']) && $opts['type'] === 'basic') {
-			$props = array('id', 'title', 'type', 'description', 'uwap-userid');
+			$props = array('id', 'displayName', 'type', 'public', 'description', 'uwap-userid');
 		}
 
 		$ret = array();
