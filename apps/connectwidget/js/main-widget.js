@@ -93,15 +93,14 @@ define(function(require, exports, module) {
 
 
 	App.prototype.selectRoom = function(e) {
-		var room = $(e.currentTarget).data('groupid');
 
+		var room = $(e.currentTarget).data('groupid');
 		var target = $(e.currentTarget);
 
 		if (target.hasClass("disabled")) {
 			console.log("Not reacting to selection.");
 			return;
 		}
-
 
 		// target.prop('disabled', true);
 		target.addClass("disabled");
@@ -110,7 +109,9 @@ define(function(require, exports, module) {
 		}, 5000);
 
 		console.log("Selecting room " + room);
-		console.log("Group name " + this.groups[room]);
+		console.log("Group data ", this.groups[room]);
+
+		// return;
 
 		// UWAP.data.soa('http://connectapi.app.bridge.uninett.no/connect/' + room + '/participants', {}, function(data) {
 		// 	console.log("participants", data);
@@ -134,7 +135,7 @@ define(function(require, exports, module) {
 				"_method": "post",
 				"_data": {
 					"groupid": room,
-					"name": this.groups[room].title
+					"name": this.groups[room].displayName
 				}
 			}, 
 			function(data) {
@@ -175,7 +176,7 @@ define(function(require, exports, module) {
 			
 				var ginfo = {
 						'groupid': that.highlighted,
-						'groupname': that.user.groups[that.highlighted]
+						'groupname': that.groups[that.highlighted].displayName
 					};
 				console.log("group info", ginfo);
 				$("#onlinemeetings").append(
@@ -187,7 +188,7 @@ define(function(require, exports, module) {
 				if (data[groupid] !== null) {
 					var obj = {
 						"groupid": groupid,
-						"groupname": that.user.groups[groupid],
+						"groupname": that.groups[groupid].displayName,
 						"participants": data[groupid],
 						"nop": data[groupid].length,
 						"multiple": data[groupid].length > 1
@@ -206,7 +207,12 @@ define(function(require, exports, module) {
 
 	App.prototype.setauth = function(user, groups) {
 		this.user = user;
-		this.groups = groups;
+		this.groups = {};
+
+		for(var i = 0; i < groups.Resources.length; i++) {
+			this.groups[groups.Resources[i].id] = groups.Resources[i];
+		}
+
 		console.log(user);
 
 		console.log("Apply group templates with ", this.user)
@@ -265,20 +271,17 @@ define(function(require, exports, module) {
 
 	$("document").ready(function() {
 		
-
-
 		console.log("About to checkpassive");
-
 		UWAP.auth.checkPassive(function(user) {
 
 			console.log("Check passive success", user);
 
 			UWAP.groups.listMyGroups(function(groups) {
+
+				console.log("Got groups", groups);
 				var app = new App($("body"))
 				app.setauth(user, groups);
 			});
-
-
 
 		}, function() {
 
