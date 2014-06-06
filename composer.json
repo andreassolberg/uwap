@@ -1,0 +1,12 @@
+{
+    "require": {
+        "mustache/mustache": "~2.6"
+    },
+    "dev_": {
+        "liuggio/statsd-php-client": "*",
+        "monolog/monolog": "1.9.x"
+    }
+}
+
+
+ 

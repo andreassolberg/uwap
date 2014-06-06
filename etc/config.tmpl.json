@@ -1,0 +1,28 @@
+{
+	"mainhost": "uwap.uninettlabs.no",
+	"instance": "vltrd007.web.uninett.no",
+	"admins": ["andreas@uninett.no"],
+	"logging.toFile": false,
+	"logging": {
+		"logLevel": 4
+	},
+	"cache": false,
+	"mongodb": {
+		"host": "158.38.213.108"
+	},
+	"groupengine": {
+		"cmd": "/root/nvm/v0.10.19/bin/node",
+		"path": "groupengine"
+	},
+	"attributeMap": {
+		"name": "displayName",
+		"userid": "eduPersonPrincipalName",
+		"mail": "mail",
+		"photo": "jpegPhoto"
+	},
+	"salt": null,
+	"_": {
+		"_": "This part is just left over that can be copied and pasted into the config above",
+		"idp": "https://idp-test.feide.no"
+	}
+}
