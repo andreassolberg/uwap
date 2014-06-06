@@ -5,3 +5,8 @@ passwords
 config.json
 groupengine/node_modules/
 engine/core/bootstrap3-uninett/fonts/
+composer.lock
+composer.phar
+vendor
+auth/simplesamlphp*
+static/www/bootstrap3-uninett/fonts
