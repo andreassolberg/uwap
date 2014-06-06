@@ -1,13 +1,14 @@
 <?php
 
 /*
- * This is the MAIN API for core for external applications using OAuth and the API to access things.
+ * This is the API. The main component serving data. All authentication and token issuing is done at 
+ * the auth component. Most of these endpoints requires a valid token.
  * 
- * 		core.uwap.org/api/*
+ * 		api.uwap.org/*
  *
  */
 
-require_once('../../lib/autoload.php');
+require_once(dirname(dirname(__FILE__)) . '/lib/autoload.php');
 
 header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
@@ -25,77 +26,16 @@ try {
 
 	$globalconfig = GlobalConfig::getInstance();
 
-	if (Utils::route('options', '.*', &$parameters)) {
+	if (Utils::route('options', '.*', $parameters)) {
 		header('Content-Type: application/json; charset=utf-8');
 		exit;
 	}
 
 	$response = null;
 
-	/**
-	 *  The OAuth endpoints on core, typically the OAuth Server endpoints for communication with clients
-	 *  using the API.
-	 */
-	if (Utils::route(false, '^/oauth', &$parameters)) {
 
 
-		$oauth = new OAuth();
-
-		if (Utils::route('post','^/oauth/authorization$', &$parameters)) {
-			$oauth->processAuthorizationResponse();
-		} else if (Utils::route('get', '^/oauth/authorization$', &$parameters)) {
-			$oauth->authorization();
-		} else if (Utils::route(false, '^/oauth/token$', &$parameters)) {
-			$oauth->token();
-		} else if (Utils::route('get', '^/oauth/info$', &$parameters)) {
-			$oauth->info();
-		} else {
-			throw new Exception('Invalid request');
-		}
-
-
-
-	/*
-	 *	Testing authentication using the auth libs
-	 *	Both API auth and 
-	 */
-	} else if  (Utils::route('get', '^/providerconfig$', &$parameters)) {
-
-		$base = $globalconfig->getBaseURL() . 'api/oauth/';
-		$providerconfig = array(
-			'authorization' => $base . 'authorization',
-			'token' => $base . 'token'
-		);
-		$response = $providerconfig;
-
-
-	/*
-	 *	Testing authentication using the auth libs
-	 *	Both API auth and 
-	 */
-	} else if  (Utils::route('get', '^/test$', &$parameters)) {
-
-		$auth = new Authenticator();
-		$auth->req(false, true); // require($isPassive = false, $allowRedirect = false, $return = null
-
-		$user = $auth->getUser();
-
-		// $res = $auth->storeUser();
-
-
-		
-		$response = array('message' => 'Test');
-
-
-
-
-
-
-
-
-	} else if  (Utils::route('get', '^/updateme$', &$parameters)) {
-
-
+	if  (Utils::route('get', '^/updateme$', $parameters)) {
 
 		$auth = new Authenticator();
 		$auth->req(false, true); // require($isPassive = false, $allowRedirect = false, $return = null
@@ -114,7 +54,7 @@ try {
 	/**
 	 *  The userinfo endpoint is used for authentication of clients.
 	 */
-	} else if (Utils::route('get', '^/userinfo$', &$parameters)) {
+	} else if (Utils::route('get', '^/userinfo$', $parameters)) {
 
 		$oauth = new OAuth();
 		$token = $oauth->check(array(), array('userinfo'));
@@ -127,7 +67,7 @@ try {
 	/**
 	 *  The userinfo endpoint is used for authentication of clients.
 	 */
-	} else if (Utils::route('get', '^/userinfo/subscriptions$', &$parameters)) {
+	} else if (Utils::route('get', '^/userinfo/subscriptions$', $parameters)) {
 
 		$oauth = new OAuth();
 		$token = $oauth->check(array(), array('userinfo'));
@@ -140,7 +80,7 @@ try {
 	/**
 	 *  The people API
 	 */
-	} else if (Utils::route(false, '^/people', &$parameters)) {
+	} else if (Utils::route(false, '^/people', $parameters)) {
 
 
 
@@ -157,11 +97,11 @@ try {
 		// 	$relam = $matches[1];
 		// }
 
-		if (Utils::route('get', '^/people/realms$', &$parameters)) {
+		if (Utils::route('get', '^/people/realms$', $parameters)) {
 
 			$response = $groupconnector->peopleListRealms();
 
-		} else if (Utils::route('get', '^/people/query/([a-z0-9\.\-]+)$', &$parameters)) {
+		} else if (Utils::route('get', '^/people/query/([a-z0-9\.\-]+)$', $parameters)) {
 
 			// print_r($parameters); exit;
 
@@ -178,7 +118,7 @@ try {
 
 
 	// TODO: DELETE THIS...
-	} else if (Utils::route(false, '^/debuggroups', &$parameters)) {
+	} else if (Utils::route(false, '^/debuggroups', $parameters)) {
 
 
 		$user = User::getByID('andreas@uninett.no');
@@ -203,7 +143,7 @@ try {
 	/**
 	 *  The groups API is VOOT
 	 */
-	} else if (Utils::route(false, '^/group[s]?', &$parameters)) {
+	} else if (Utils::route(false, '^/group[s]?', $parameters)) {
 
 		$oauth = new OAuth();
 		$token = $oauth->check();
@@ -217,12 +157,12 @@ try {
 		));
 
 		// Get a list of groups
-		if (Utils::route('get', '^/groups$', &$parameters)) {
+		if (Utils::route('get', '^/groups$', $parameters)) {
 
 			$groupResponse = $groupconnector->getGroupsListResponse();
 			$response = $groupResponse->getJSON();
 
-		} else if (Utils::route('get', '^/groups/public$', &$parameters)) {
+		} else if (Utils::route('get', '^/groups/public$', $parameters)) {
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
 			// $gres = $groupmanager->getPublicGroups($groups);
@@ -231,7 +171,7 @@ try {
 
 
 		// Add a new group
-		} else if (Utils::route('post', '^/groups$', &$parameters, &$body)) {
+		} else if (Utils::route('post', '^/groups$', $parameters, $body)) {
 
 			// echo "About to create new group with "; print_r($body); exit;
 			$res = $groupconnector->addGroup($body);
@@ -239,7 +179,7 @@ try {
 
 
 		// Get a specific group
-		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-_]+)$', &$parameters)) {
+		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-_]+)$', $parameters)) {
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
@@ -256,7 +196,7 @@ try {
 
 
 		// Get a specific group
-		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-_]+)/members$', &$parameters)) {
+		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-_]+)/members$', $parameters)) {
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
@@ -286,7 +226,7 @@ try {
 
 
 		// Update some group data...
-		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)$', &$parameters, &$body)) {
+		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)$', $parameters, $body)) {
 
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
@@ -296,7 +236,7 @@ try {
 			$response = $groupconnector->update($groupid, $body);
 
 		// Delete  group
-		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)$', &$parameters)) {
+		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)$', $parameters)) {
 
 
 
@@ -305,7 +245,7 @@ try {
 
 
 
-		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/subscription$', &$parameters, &$body)) {
+		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/subscription$', $parameters, $body)) {
 
 
 			$groupid = $parameters[1];
@@ -322,13 +262,13 @@ try {
 
 
 		// Add a new member to a group
-		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/members$', &$parameters, &$body)) {
+		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/members$', $parameters, $body)) {
 
 			$groupid = $parameters[1];
 			$response = $groupconnector->addMember($groupid, $body);
 
 		// Update a membership to a group
-		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', &$parameters, &$obj)) {
+		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', $parameters, $obj)) {
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
@@ -337,7 +277,7 @@ try {
 			$response = $groupconnector->updateMember($groupid, $userid, $obj);
 
 		// Remove a user from a group
-		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', &$parameters)) {
+		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', $parameters)) {
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
 
@@ -355,7 +295,7 @@ try {
 	/**
 	 *  The storage API.
 	 */
-	} else if (Utils::route('post', '^/store$', &$qs, &$parameters)) {
+	} else if (Utils::route('post', '^/store$', $qs, $parameters)) {
 
 		$oauth = new OAuth();
 		$token = $oauth->getProvidedToken();
@@ -430,7 +370,7 @@ try {
 	/**
 	 *  The appconfig API.
 	 */
-	} else if (Utils::route(false, '^/appconfig/', &$qs, &$parameters)) {
+	} else if (Utils::route(false, '^/appconfig/', $qs, $parameters)) {
 
 
 		$oauth = new OAuth();
@@ -444,7 +384,7 @@ try {
 		 * APIs that allows querying a list of appconfig related objects
 		 */
 
-		if (Utils::route('get', '^/appconfig/clients$', &$qs, &$parameters)) {
+		if (Utils::route('get', '^/appconfig/clients$', $qs, $parameters)) {
 
 			// echo "GET APPCONFIG/Clients";
 
@@ -460,7 +400,7 @@ try {
 		 * APIs that allows retrieval of single entries
 		 */
 
-		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)$', $qs, $parameters)) {
 
 
 			$appid = $qs[1];
@@ -490,7 +430,7 @@ try {
 			}
 
 
-		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)/status$', &$qs, &$parameters)) {
+		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)/status$', $qs, $parameters)) {
 
 			$appid = $qs[1];
 			Utils::validateID($appid);
@@ -502,7 +442,7 @@ try {
 			$response = $clientdata['status'];
 
 
-		} else if (Utils::route('get', '^/appconfig/check/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+		} else if (Utils::route('get', '^/appconfig/check/([a-z0-9\-]+)$', $qs, $parameters)) {
 
 			$appid = $qs[1];
 			Utils::validateID($appid);
@@ -515,7 +455,7 @@ try {
 		 * APIs that allows modifications of appconfig related items.
 		 */
 
-		} else if (Utils::route('post', '^/appconfig/clients$', &$parameters, &$object)) {
+		} else if (Utils::route('post', '^/appconfig/clients$', $parameters, $object)) {
 			
 
 			$client = Client::generate($object, $user);
@@ -523,7 +463,7 @@ try {
 
 			// echo "OK. Done";
 
-		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/status$', &$parameters, &$bodyobject)) {
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/status$', $parameters, $bodyobject)) {
 
 			$appid = $parameters[1];
 			Utils::validateID($appid);
@@ -537,7 +477,7 @@ try {
 			$response = $clientdata['status'];
 
 
-		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/bootstrap$', &$parameters, &$object)) {
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/bootstrap$', $parameters, $object)) {
 
 			$appid = $parameters[1];
 			Utils::validateID($appid);
@@ -550,7 +490,7 @@ try {
 
 
 			// Update an authorization handler
-		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', &$parameters, &$object)) {
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', $parameters, $object)) {
 
 
 			$appid = $parameters[1];
@@ -565,7 +505,7 @@ try {
 
 
 			// Delete an authorization handler
-		} else if (Utils::route('delete', '^/appconfig/client/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', &$parameters, &$object)) {
+		} else if (Utils::route('delete', '^/appconfig/client/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', $parameters, $object)) {
 
 			$appid = $parameters[1];
 			Utils::validateID($appid);
@@ -578,7 +518,7 @@ try {
 			$response = $client->deleteAuthzHandler($authzid);
 
 
-		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/proxy$', &$parameters, &$object)) {
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/proxy$', $parameters, $object)) {
 
 
 			$appid = $parameters[1];
@@ -590,7 +530,7 @@ try {
 
 
 
-		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)/clients$', &$parameters, &$object)) {
+		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)/clients$', $parameters, $object)) {
 
 
 			$appid = $parameters[1];
@@ -604,7 +544,7 @@ try {
 
 
 
-		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/scopes$', &$parameters, &$object)) {
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/scopes$', $parameters, $object)) {
 
 			$clientid = $parameters[1];
 			Utils::validateID($clientid);
@@ -619,7 +559,7 @@ try {
 
 
 
-		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/publicapis$', &$parameters, &$object)) {
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/publicapis$', $parameters, $object)) {
 
 			$clientid = $parameters[1];
 			Utils::validateID($clientid);
@@ -633,7 +573,7 @@ try {
 			$response = $authorizationList->getJSON();
 
 
-		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)/authorizedapis$', &$parameters, &$object)) {
+		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)/authorizedapis$', $parameters, $object)) {
 
 			$clientid = $parameters[1];
 			Utils::validateID($clientid);
@@ -647,7 +587,7 @@ try {
 
 
 
-		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/client/([a-z0-9\-]+)/authorization$', &$parameters, &$object)) {
+		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/client/([a-z0-9\-]+)/authorization$', $parameters, $object)) {
 
 			$appid = $parameters[1];
 			Utils::validateID($appid);
@@ -666,7 +606,7 @@ try {
 
 
 
-		// } else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/proxy/scopes$', &$parameters, &$object)) {
+		// } else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/proxy/scopes$', $parameters, $object)) {
 
 		// 	$appid = $parameters[1];
 		// 	Utils::validateID($appid);
@@ -677,7 +617,7 @@ try {
 		// 	$response['data'] = $client->addProxyScopes($object);
 
 
-		// } else if (Utils::route('delete', '^/appconfig/client/([a-z0-9\-]+)/proxy/scopes/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+		// } else if (Utils::route('delete', '^/appconfig/client/([a-z0-9\-]+)/proxy/scopes/([a-z0-9\-]+)$', $qs, $parameters)) {
 
 		// 	$appid = $qs[1];
 		// 	Utils::validateID($appid);
@@ -704,18 +644,18 @@ try {
 
 		if (true)  {
 
-		// } else if (Utils::route('get', '^/appconfig/apps$', &$qs, &$parameters)) {
+		// } else if (Utils::route('get', '^/appconfig/apps$', $qs, $parameters)) {
 
 		// 	$listing = $appdirectory->getMyApps();			
 		// 	$response['data'] = $listing;
 
-		} else if (Utils::route('post', '^/appconfig/apps/query$', &$qs, &$parameters)) {
+		} else if (Utils::route('post', '^/appconfig/apps/query$', $qs, $parameters)) {
 
 			$listing = $appdirectory->queryApps($parameters );
 			$response = $listing;
 
 
-		// } else if (Utils::route('post', '^/appconfig/clients$', &$qs, &$parameters)) {
+		// } else if (Utils::route('post', '^/appconfig/clients$', $qs, $parameters)) {
 
 		// 	$object = $parameters;
 			
@@ -738,7 +678,7 @@ try {
 			// $response['data'] = $ac->getConfig();
 
 
-		// } else if (Utils::route('post', '^/appconfig/apps$', &$qs, &$parameters)) {
+		// } else if (Utils::route('post', '^/appconfig/apps$', $qs, $parameters)) {
 
 		// 	$object = $parameters;
 		// 	$id = $object["id"];
@@ -754,7 +694,7 @@ try {
 		// 	$response['data'] = $ac->getConfig();
 
 
-		// } else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)/status$', &$qs, &$parameters)) {
+		// } else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)/status$', $qs, $parameters)) {
 
 		// 	$appid = $qs[1];
 		// 	Utils::validateID($appid);
@@ -763,7 +703,7 @@ try {
 
 		// 	$response['data'] = $c['status'];
 
-		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/status$', &$qs, &$parameters)) {
+		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/status$', $qs, $parameters)) {
 
 		// 	$appid = $qs[1];
 		// 	Utils::validateID($appid);
@@ -777,7 +717,7 @@ try {
 
 		// 	$response['data'] = $c['status'];
 
-		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/proxy$', &$qs, &$object)) {
+		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/proxy$', $qs, $object)) {
 
 		// 	$appid = $qs[1];
 		// 	Utils::validateID($appid);
@@ -789,7 +729,7 @@ try {
 
 		// 	$response['data'] = $c['proxy'];
 
-		// } else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)/clients$', &$qs, &$parameters)) {
+		// } else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)/clients$', $qs, $parameters)) {
 
 		// 	$appid = $qs[1];
 		// 	Utils::validateID($appid);
@@ -797,7 +737,7 @@ try {
 		// 	$clients = $appdirectory->getClients($appid);
 		// 	$response['data'] = $clients;
 
-		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/client/([a-z0-9\-]+)/authorize$', &$qs, &$object)) {
+		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/client/([a-z0-9\-]+)/authorize$', $qs, $object)) {
 
 		// 	$appid = $qs[1];
 		// 	$clientid = $qs[2];
@@ -813,7 +753,7 @@ try {
 		// 	$response['data'] = $store->authorizeClient($clientid, $appid, $userid, $object);
 			// $response['data'] = $clients;
 
-		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/davcredentials$', &$qs, &$parameters)) {
+		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/davcredentials$', $qs, $parameters)) {
 
 		// 	$appid = $qs[1];
 		// 	Utils::validateID($appid);
@@ -822,7 +762,7 @@ try {
 		// 	$response['data'] = $ac->getDavCredentials();
 
 
-		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/bootstrap$', &$qs, &$parameters)) {
+		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/bootstrap$', $qs, $parameters)) {
 
 		// 	$appid = $qs[1];
 		// 	$object = $parameters;
@@ -841,7 +781,7 @@ try {
 
 
 
-		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+		// } else if (Utils::route('post', '^/appconfig/app/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', $qs, $parameters)) {
 
 		// 	$appid = $qs[1];
 		// 	$authzid = $qs[2];
@@ -857,7 +797,7 @@ try {
 		// 	$response['data'] = $handlers;
 
 
-		// } else if (Utils::route('delete', '^/appconfig/app/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+		// } else if (Utils::route('delete', '^/appconfig/app/([a-z0-9\-]+)/authorizationhandler/([a-z0-9\-]+)$', $qs, $parameters)) {
 
 		// 	$appid = $qs[1];
 		// 	$authzid = $qs[2];
@@ -876,14 +816,14 @@ try {
 
 
 
-		} else if (Utils::route('get', '^/appconfig/view/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+		} else if (Utils::route('get', '^/appconfig/view/([a-z0-9\-]+)$', $qs, $parameters)) {
 
 			$appid = $qs[1];
 			Utils::validateID($appid);
 			$ac = Config::getInstance($appid);
 			$response = $ac->getConfigLimited();
 
-		// } else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+		// } else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)$', $qs, $parameters)) {
 
 		// 	$appid = $qs[1];
 		// 	Utils::validateID($appid);
@@ -901,7 +841,7 @@ try {
 
 		// 	}
 
-		// } else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)$', &$qs, &$parameters)) {
+		// } else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)$', $qs, $parameters)) {
 
 		// 	$appid = $qs[1];
 		// 	Utils::validateID($appid);
@@ -911,7 +851,7 @@ try {
 
 			// $ac = Config::getInstance($appid);
 
-		// } else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/addScopes$', &$qs, &$parameters)) {
+		// } else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/addScopes$', $qs, $parameters)) {
 
 		// 	$appid = $qs[1];
 		// 	Utils::validateID($appid);
@@ -920,7 +860,7 @@ try {
 		// 	$response['data'] = $appdirectory->addClientScopes($appid, $object);
 
 
-		// } else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/removeScopes$', &$qs, &$parameters)) {
+		// } else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/removeScopes$', $qs, $parameters)) {
 
 		// 	$appid = $qs[1];
 		// 	Utils::validateID($appid);
@@ -947,7 +887,7 @@ try {
 	/**
 	 *  The feed API.
 	 */
-	} else if (Utils::route(false, '^/feed', &$qs, &$parameters)) {
+	} else if (Utils::route(false, '^/feed', $qs, $parameters)) {
 
 		$oauth = new OAuth();
 		$token = $oauth->check(null, array('feedread'));
@@ -962,13 +902,13 @@ try {
 		// Utils::dump('feedReader', $feedReader);
 
 
-		if (Utils::route('post', '^/feed$', &$parameters, &$object)) {
+		if (Utils::route('post', '^/feed$', $parameters, $object)) {
 			
 			$response = $feedReader->read($object)->getJSON();
 
 
 
-		} else if (Utils::route('post', '^/feed/upcoming$', &$parameters, &$object)) {
+		} else if (Utils::route('post', '^/feed/upcoming$', $parameters, $object)) {
 
 			// $parameters;
 			// $no = new Upcoming($userid, $groups, $subscriptions);
@@ -977,7 +917,7 @@ try {
 
 			$response = $feedReader->readUpcoming($object)->getJSON();
 
-		} else if (Utils::route('post', '^/feed/notifications$',  &$parameters, &$object)) {
+		} else if (Utils::route('post', '^/feed/notifications$',  $parameters, $object)) {
 
 			// $parameters;
 			// $no = new Notifications($userid, $groups, $subscriptions);
@@ -988,14 +928,15 @@ try {
 
 			// header('Content-Type: text/plain; charset: utf-8'); echo "poot"; print_r($response); exit;
 
-		} else if (Utils::route('post', '^/feed/notifications/markread$', &$qs, &$ids)) {
+
+		} else if (Utils::route('post', '^/feed/notifications/markread$', $qs, $ids)) {
 
 
 			// $no = new Notifications($userid, $groups, $subscriptions);
 			$response = $feedReader->markNotificationsRead($ids);
 
 
-		} else if (Utils::route('post', '^/feed/post$', &$parameters, &$object)) {
+		} else if (Utils::route('post', '^/feed/post$', $parameters, $object)) {
 
 			$oauth->check(null, array('feedwrite'));
 
@@ -1013,7 +954,7 @@ try {
 
 
 
-		} else if (Utils::route('delete', '^/feed/item/([a-z0-9\-]+)$',  &$parameters, &$object)) {
+		} else if (Utils::route('delete', '^/feed/item/([a-z0-9\-]+)$',  $parameters, $object)) {
 
 			$oauth->check(null, array('feedwrite'));
 
@@ -1023,7 +964,7 @@ try {
 			$response = $feedReader->delete($parameters[1]);
 
 
-		} else if (Utils::route('post', '^/feed/item/([a-z0-9\-]+)/response$',  &$parameters, &$object)) {
+		} else if (Utils::route('post', '^/feed/item/([a-z0-9\-]+)/response$',  $parameters, $object)) {
 
 			if ($parameters[1] !== $object['inresponseto']) {
 				throw new Exception('inresponseto property does not match url endpoint item.');
@@ -1036,7 +977,7 @@ try {
 
 
 
-		} else if (Utils::route('get', '^/feed/item/([a-z0-9\-]+)$', &$parameters, &$object)) {
+		} else if (Utils::route('get', '^/feed/item/([a-z0-9\-]+)$', $parameters, $object)) {
 
 			// $oauth->check(null, array('feedwrite'));
 			// echo "About to delete an item: " . $qs[1];
@@ -1056,7 +997,7 @@ try {
 	/**
 	 *  The SOA Proxy REST data API.
 	 */
-	} else if (Utils::route('post', '^/soa$', &$qs, &$args)) {
+	} else if (Utils::route('post', '^/soa$', $qs, $args)) {
 
 
 		/**
@@ -1142,7 +1083,7 @@ try {
 	/**
 	 *  The REST data API.
 	 */
-	} else if (Utils::route('post', '^/rest$', &$qs, &$args)) {
+	} else if (Utils::route('post', '^/rest$', $qs, $args)) {
 
 
 
@@ -1181,7 +1122,7 @@ try {
 	/**
 	 *  Media files
 	 */
-	} else if (Utils::route('get', '^/media/user/([a-z0-9\-]+)$', &$qs, &$args)) {
+	} else if (Utils::route('get', '^/media/user/([a-z0-9\-]+)$', $qs, $args)) {
 
 		$default = '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';
 		try {
@@ -1218,11 +1159,13 @@ try {
 	/**
 	 *  Media files
 	 */
-	} else if (Utils::route('get', '^/media/logo/app/([a-z0-9\-]+)$', &$parameters, &$object)) {
+	} else if (Utils::route('get', '^/media/logo/app/([a-z0-9\-]+)$', $parameters, $object)) {
 
 
 		$default = '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';
 
+
+		// echo 'Parameters'; print_r($parameters); exit;
 
 		$appid = $parameters[1];
 		Utils::validateID($appid);
@@ -1245,7 +1188,7 @@ try {
 	/**
 	 *  Media files
 	 */
-	// } else if (Utils::route('get', '^/media/logo/client/([a-z0-9\-]+)$', &$qs, &$args)) {
+	// } else if (Utils::route('get', '^/media/logo/client/([a-z0-9\-]+)$', $qs, $args)) {
 
 
 	// 	$store = new So_StorageServerUWAP();

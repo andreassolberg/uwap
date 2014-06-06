@@ -35,6 +35,26 @@ class UsersTest extends PHPUnit_Framework_TestCase {
 		// 'norEduPersonNIN' => array('101080'),
     );
 
+	public function testCreateAppOwner() {
+
+		// TODO: this shuold not be neccessary
+
+		$dir = new UserDirectory();
+
+		$user = $dir->getUserFromAttributes(array(
+			'eduPersonPrincipalName' => array('andreas@uninett.no'),
+			'displayName' => array('Andreas Åkre Solberg'),
+		));
+
+		$user->set('userid', 'andreas@uninett.no');
+		$user->store();
+
+
+	}
+
+
+
+
 	public function testUserCreate() {
 
 
@@ -192,6 +212,10 @@ class UsersTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals($userid1, $userid1b, 'UserID should not be changed after user update');
 		$this->assertNotEquals($this->user1['displayName'][0], $user1b->get('name'), 'Name should not be the same after user udpate');
+
+    	$user1->remove();
+
+    	$this->assertEmpty($dir->lookupAttributes($this->user1), 'Should not find any users after user is deleted');
 
 	}
 

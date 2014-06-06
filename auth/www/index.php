@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This is the Auth API for core for external applications using OAuth and the API to access things.
+ * This is the vhost / endpoints that deals with authentication and authorization, issuing OAuth tokens.
  * OAuth and OpenID Connect.
  * 
  * 		auth.uwap.org/*
@@ -10,6 +10,7 @@
 
 
 require_once(dirname(dirname(__FILE__)) . '/lib/autoload.php');
+
 
 // error_log("File path: " . $BASE);
 

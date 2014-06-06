@@ -84,7 +84,7 @@ class Utils {
 		$realmethod = strtolower($_SERVER['REQUEST_METHOD']);
 		return $realmethod  . str_replace('/', '.', $path);
 	}
-	public static function route($method = false, $match, $parameters, $object = null) {
+	public static function route($method = false, $match, &$parameters, &$object = null) {
 		if (empty($_SERVER['PATH_INFO']) || strlen($_SERVER['PATH_INFO']) < 2) return false;
 
 		$inputraw = file_get_contents("php://input");
