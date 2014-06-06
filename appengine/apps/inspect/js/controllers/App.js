@@ -21,8 +21,6 @@ define(function(require, exports, module) {
 	require('uwap-core/bootstrap3/js/button');
 	require('uwap-core/bootstrap3/js/dropdown');	
 
-
-
 	UWAP.__request = function(method, url, data, options, callback) {
 		method = method || 'GET';
 
@@ -151,45 +149,45 @@ define(function(require, exports, module) {
 
 	var apiconfig = {
 		'userinfo': {
-			"path": "/api/userinfo",
+			"path": "/userinfo",
 			"method": "get"
 		},
 		'subscriptions': {
-			"path": "/api/userinfo/subscriptions",
+			"path": "/userinfo/subscriptions",
 			"method": "get"
 		},
 		'updateme': {
-			'path': '/api/updateme',
+			'path': '/updateme',
 			'method': 'get'
 		},
 		'groups-public': {
-			"path": "/api/groups/public",
+			"path": "/groups/public",
 			"method": "get"
 		},
 		'groups': {
-			"path": "/api/groups",
+			"path": "/groups",
 			"method": "get"
 		},
 		'group-info': {
-			"path": "/api/group/{groupid}",
+			"path": "/group/{groupid}",
 			"method": "get",
 			"map": ["groupid"]
 		},
 		'group-members': {
-			"path": "/api/group/{groupid}/members",
+			"path": "/group/{groupid}/members",
 			"method": "get",
 			"map": ["groupid"]
 		},
 		'feed': {
-			"path": "/api/feed",
+			"path": "/feed",
 			"method": "post"
 		},
 		'feed-upcoming': {
-			"path": "/api/feed/upcoming",
+			"path": "/feed/upcoming",
 			"method": "post"
 		},
 		'feed-notifications': {
-			"path": "/api/feed/notifications",
+			"path": "/feed/notifications",
 			"method": "post"
 		}
 	};
@@ -221,7 +219,7 @@ define(function(require, exports, module) {
 			var config = apiconfig[key];
 
 			var path = apiconfig[key].path;
-			var url = UWAP.utils.getEngineURL(path);
+			var url = UWAP.utils.getAPIurl(path);
 
 			if (config.map) {
 				that.attributemap = new AttributeMap($("#am"), config.map, function(res) {
@@ -237,7 +235,7 @@ define(function(require, exports, module) {
 
 					console.log("Accessing the following path:", path);
 
-					url = UWAP.utils.getEngineURL(path);
+					url = UWAP.utils.getAPIurl(path);
 
 					that.performRequest(apiconfig[key].method, url);
 

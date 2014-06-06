@@ -34,18 +34,13 @@ try {
 	$response = null;
 
 
+	$auth = new APIAuthenticator();
+
 
 	if  (Utils::route('get', '^/updateme$', $parameters)) {
 
-		$auth = new Authenticator();
-		$auth->req(false, true); // require($isPassive = false, $allowRedirect = false, $return = null
+		$user = $auth->reqToken()->reqScopes(array('userinfo'))->getUser();
 
-		$user = $auth->getUser();
-
-		// $res = $auth->storeUser();
-
-		// header('Content-Type: application/json; chat-set: utf-8');
-		// echo 
 
 		// $response['data'] = array('status' => 'ok', 'message' => 'updated user data', 'userdata' => $user->getJSON());
 		$response = array('status' => 'ok', 'message' => 'updated user data', 'userdata' => $user->getJSON());
@@ -56,9 +51,7 @@ try {
 	 */
 	} else if (Utils::route('get', '^/userinfo$', $parameters)) {
 
-		$oauth = new OAuth();
-		$token = $oauth->check(array(), array('userinfo'));
-		$user = $token->getUser();
+		$user = $auth->reqToken()->reqScopes(array('userinfo'))->getUser();
 
 		// $response = $user->getJSON(array('type' => 'extended',  'groups' => true, 'subscriptions' => true));
 		$response = $user->getJSON(array('type' => 'basic'));

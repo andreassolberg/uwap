@@ -4,12 +4,11 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/common/lib/autoload.php');
 
 $base = dirname(__FILE__);
 
-require_once(dirname($base) . '/solberg-oauth/lib/soauth.php');
+
 require_once($base . '/Auth/OAuth.php');
-
-require_once($base . '/So_StorageUWAP.php');
-require_once($base . '/So_StorageServerUWAP.php');
-
+require_once($base . '/Auth/So_StorageUWAP.php');
+require_once($base . '/Auth/So_StorageServerUWAP.php');
+require_once($base . '/Auth/Authenticator.php');
 
 
 /* --- SimpleSAMLphp ---- */

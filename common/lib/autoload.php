@@ -22,12 +22,18 @@ require_once($base . '/SCIM/SCIMResourceGroupType.php');
 require_once($base . '/SCIM/SCIMResourceRole.php');
 require_once($base . '/SCIM/Protocol/SCIMListResponse.php');
 
+require_once($base . '/solberg-oauth/lib/soauth.php');
+
+// require_once($base . '/So_StorageServerUWAP.php');
+// require_once($base . '/So_StorageUWAP.php');
 
 // Authentication
-
-require_once($base . '/Auth/AuthenticatedToken.php');
-require_once($base . '/Auth/Authenticator.php');
+// require_once($base . '/Auth/OAuth.php');
+// require_once($base . '/Auth/AuthenticatedToken.php');
+// require_once($base . '/Auth/Authenticator.php');
 require_once($base . '/Auth/AuthorizationPresenter.php');
+
+
 
 
 

@@ -166,6 +166,12 @@ define(function(require) {
 		return base + path;
 	}
 
+	UWAP.utils.getAPIurl = function(path) {
+		var base = UWAP.utils.scheme + '://api.' + UWAP.utils.enginehostname + '';
+		return base + path;
+	}
+
+
 	UWAP.utils.getAppURL = function(path) {
 		var base = UWAP.utils.scheme + '://' + UWAP.utils.hostname + '';
 		return base + path;
