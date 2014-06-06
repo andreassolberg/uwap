@@ -91,43 +91,10 @@ class Authenticator {
 
 		$attributes = $this->as->getAttributes();
 
-		// echo '<pre> UserID '; print_r($attributes);
-
-
-		$uid = User::getUserIDfromAttributes($attributes);
-
-		if (!$uid->isValid()) {
-			throw new Exception('No valid user identifiers provided from the authentication layer. Not able to create new user.');
-		}
-
 		$directory = new UserDirectory();
-		$search = $directory->lookup($uid);
+		$this->user = $directory->getUserFromAttributes($attributes);
 
-
-		// echo 'Found these users: <pre>'; print_r($search);
-		// echo 'Query '; print_r( $uid->getQuery());
-
-
-		if (count($search) === 0) {
-			// Create a new user
-			
-			$this->user = User::fromAttributes($uid, $attributes, $update);
-
-		} else if (count($search) === 1) {
-
-			$this->user = $search[0];
-
-
-		} else if (count($search) === 2) {
-
-			$this->user = $directory->merge($search[0], $search[1]);
-
-		} else {
-
-			throw new Exception('Not implemented merge of more than two items yet');
-			// $this->user = $directory->merge($search);
-
-		}
+		// echo '<pre> UserID '; print_r($attributes);
 
 
 		// exit;

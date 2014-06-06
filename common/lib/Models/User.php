@@ -174,18 +174,22 @@ class User extends StoredModel {
 			}
 		}
 
-		$uid->add('nnin', '101080');
+		// $uid->add('nnin', '101080');
 		return $uid;
 
 	}
 
 
-	public static function createUserFromAttributes(ComplexUserID $uid, array $attributes, $update = true) {
 
-		$store = new UWAPStore();
 
+	public static function interpretAttributes(array $attributes) {
 		$map = GlobalConfig::getValue('attributeMap', null, true);
 
+
+		/*
+		 * Pick the attributes defined in the configuration mapping, and store the attributes in 
+		 * a new attribute array $userattr
+		 */
 		$userattr = array();
 		foreach($map AS $key => $akey) {
 			if (isset($attributes[$akey])) {
@@ -193,21 +197,22 @@ class User extends StoredModel {
 			}
 		}
 
-		if (empty($userattr['userid'])) {
-			throw new Exception('Cannot obtain a proper userid from identify provider');
-		}
+
 
 
 		// $groups = self::groupsFromAttributes($attributes);
-
 		
+
+		/*
+		 * The user field customdata can contain a set of custom data to be used for other purposes
+		 * such as generating groups from it. 
+		 */
 		$collectUserdata = array(
 			'eduPersonEntitlement', 'eduPersonAffiliation',
 			'eduPersonOrgDN:o', 'eduPersonOrgUnitDN:ou', 
 			'eduPersonOrgUnitDN', 'eduPersonOrgUnitDN:ou',
 			'eduPersonOrgUnitDN:norEduOrgUnitUniqueIdentifier'
 		);
-
 		$userattr['customdata'] = array();
 		foreach($collectUserdata AS $key) {
 			if (isset($attributes[$key])) {
@@ -216,22 +221,77 @@ class User extends StoredModel {
 		}
 
 
-		$existingUser = self::getByID($userattr['userid'], true);
-		if ($existingUser !== null) {
+		// $existingUser = self::getByID($userattr['userid'], true);
+		// if ($existingUser !== null) {
+
+		// 	if ($update) {
+		// 		foreach($userattr AS $key => $value) {
+		// 			$existingUser->set($key, $value);	
+		// 		}
+		// 		$existingUser->store();
+		// 	}
+		// 	return $existingUser;
+		// }
 
 
 
-			if ($update) {
-				foreach($userattr AS $key => $value) {
-					$existingUser->set($key, $value);	
+		return $userattr;
+	}
+
+	/**
+	 * Update this user object with attributes from the IdP.
+	 * @param  array  $attributes [description]
+	 * @return [type]             [description]
+	 */
+	public function updateFromAttributes(array $attributes) {
+
+		$userattr = self::interpretAttributes($attributes);
+
+		$isUpdated = false;
+
+		foreach(array('mail', 'name', 'photo', 'customdata') AS $key) {
+			if (isset($userattr[$key])) {
+				if ($this->set($key, $userattr[$key]) === true) {
+					error_log("Updating user, and this property was changed [" . $key . "]    From [". $this->get($key) . "] to [" . $userattr[$key] . "]");
+					$isUpdated = true;
 				}
-				$existingUser->store();
 			}
-
-			return $existingUser;
 		}
 
+		if ($isUpdated) {
+			$this->store();
+			return true;
+		}
+		return false;
+
+	}
+
+	/**
+	 * IMPORTANT: Make sure that no existing users exists with a matching key when using this function.
+	 * This function is mostly used by UserDirectory, and one needs to be careful when using this directly.
+	 * 
+	 * @param  array   $attributes [description]
+	 * @param  boolean $update     [description]
+	 * @return [type]              [description]
+	 */
+	public static function createUserFromAttributes(array $attributes, $update = true) {
+
+
+		$store = new UWAPStore();
+
+		$userattr = self::interpretAttributes($attributes);
 		$userattr["a"] =  Utils::genID();
+
+		/*
+		 * Deal with primary and secondary keys for users.
+		 */
+		$complexID = self::getUserIDfromAttributes($attributes);
+		if (!$complexID->isValid()) throw new Exception('Cannot register new user, because no valid userid was provided.');
+		// if ($complexID->hasPri()) throw new Exception('Trying to create new user that already exists... Bug.');
+
+		$complexID->genPri();
+		$userattr['userid'] = $complexID->getPri();
+		$userattr['userid-sec'] = $complexID->getKeys();
 
 
 		// if (empty($userattr['mail'])) {
@@ -242,19 +302,12 @@ class User extends StoredModel {
 			throw new Exception('Cannot obtain a proper name from identify provider');
 		}
 
-		if (isset($userattr['subscriptions'])) {
+		if (isset($userattr['subscriptions'])) {	
 			unset ($userattr['subscriptions']);
 		}
 
-
 		$newUser = new User($userattr);
-
-		// $groups = self::groupsFromAttributes($attributes);
-		// UWAP_Utils::dump('grouos', $groups); exit;
-
 		$newUser->store();
-
-
 		return $newUser;
 	}
 

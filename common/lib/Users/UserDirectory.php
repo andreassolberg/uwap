@@ -13,6 +13,39 @@ class UserDirectory {
 		$this->store = new UWAPStore();
 	}
 
+
+	function getUserFromAttributes($attributes, $it = 5) {
+
+		$search = $this->lookupAttributes($attributes);
+
+		if (count($search) === 0) {
+
+			// Create a new user
+			$user = User::createUserFromAttributes($attributes, false);
+
+		} else if (count($search) === 1) {
+
+			$user = $search[0];
+
+
+		} else if (count($search) === 2) {
+
+			$user = $this->merge($search[0], $search[1]);
+
+		} else {
+
+			if ($it <= 0) throw new Exception('Reached the maximum number of users that can be merged in one batch..');
+
+			$user = $this->merge($search[0], $search[1]);
+			return $this->getUserFromAttributes($attributes, $it - 1);
+		}
+
+		return $user;
+
+	}
+
+
+
 	function merge(User $item1, User $item2) {
 
 		if ($item1->get('shaddow', false) > $item2->get('shaddow', false)) {
@@ -38,8 +71,22 @@ class UserDirectory {
 
 	}
 
+	function lookupKey($key) {
+		$complex = new ComplexUserID();
+		$complex->addRaw($key);
+		return $this->lookup($complex);
+	}
 
-	function lookup($uid) {
+	function lookupAttributes($attributes) {
+		$uid = User::getUserIDfromAttributes($attributes);
+		if (!$uid->isValid()) {
+			throw new Exception('No valid user identifiers provided from the authentication layer. Not able to create new user.');
+		}
+		return $this->lookup($uid);
+	}
+
+
+	function lookup(ComplexUserID $uid) {
 
 		$query = $uid->getQuery();
 		$list = $this->store->queryList('users', $query);

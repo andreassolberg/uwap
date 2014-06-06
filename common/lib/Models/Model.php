@@ -54,31 +54,60 @@ abstract class Model {
 	}
 
 	public function set($key, $val) {
+		$changed = null;
+		if (is_scalar($val)) {
+			$changed = ($this->properties[$key] !== $val);
+		}
 		$this->properties[$key] = $val;
+		return $changed;
 	}
 
 	public function getJSON($opts = array()) {
 		return $this->properties;
 	}
 
-
-	public static function array_remove($arr, $key) {
-		$newarr = array();
-
-		foreach($arr AS $v) {
-			if ($v !== $key) $newarr[$v] = 1;
-		}
-
-		return array_keys($newarr);
+	public function addItemsToList($key, $items) {
+		$current = $this->properties[$key];
+		if (!is_array($current)) $current = array();
+		$this->properties[$key] = self::array_add($current, $items);
+	}
+	public function removeItemsFromList($key, $items) {
+		$current = $this->properties[$key];
+		if (!is_array($current)) $current = array();
+		$this->properties[$key] = self::array_remove($current, $items);
 	}
 
-	public static function array_add($arr, $key) {
+
+	public static function array_remove($arr, $keys) {
 		$newarr = array();
 
 		foreach($arr AS $v) {
 			$newarr[$v] = 1;
 		}
-		$newarr[$key] = 1;
+		if (is_array($keys)) {
+			foreach($keys AS $key) {
+				unset($newarr[$key]);
+			}
+		} else {
+			unset($newarr[$keys]);
+		}
+		return array_keys($newarr);
+	}
+
+	public static function array_add($arr, $keys) {
+		$newarr = array();
+
+		foreach($arr AS $v) {
+			$newarr[$v] = 1;
+		}
+		if (is_array($keys)) {
+			foreach($keys AS $key) {
+				$newarr[$key] = 1;		
+			}
+		} else {
+			$newarr[$keys] = 1;
+		}
+		
 
 		return array_keys($newarr);
 	}

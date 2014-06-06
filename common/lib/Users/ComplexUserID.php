@@ -32,6 +32,14 @@ class ComplexUserID {
 		$this->primary = $p;
 	}
 
+	public function genPri() {
+		$this->setPri('uuid:' . Utils::genID());
+	}
+
+	public function getKeys() {
+		return $this->keys;
+	}
+
 	public function isValid() {
 		if ($this->hasPri()) return true;
 		if (!empty($this->keys)) return true;
@@ -72,10 +80,5 @@ class ComplexUserID {
 	}
 
 
-	public static function generate() {
-		$n = new ComplexUserID();
-		$n->setPri('uuid:' . UWAPUtils::genUUID());
-		return $n;
-	}
 
 }
