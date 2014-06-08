@@ -261,6 +261,8 @@ define(function(require) {
 				} else if (false) {
 
 
+					alert('When is this thing used??? --');
+
 					// console.log("Redirecting user to " + result.url);
 					window.location.href = result.url;
 

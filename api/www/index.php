@@ -25,23 +25,19 @@ error_log("Time START    :     ======> " . (microtime(true) - $profiling));
 try {
 
 	$globalconfig = GlobalConfig::getInstance();
+	$response = null;
+	$auth = new APIAuthenticator();
+
 
 	if (Utils::route('options', '.*', $parameters)) {
 		header('Content-Type: application/json; charset=utf-8');
 		exit;
 	}
 
-	$response = null;
-
-
-	$auth = new APIAuthenticator();
-
 
 	if  (Utils::route('get', '^/updateme$', $parameters)) {
 
 		$user = $auth->reqToken()->reqScopes(array('userinfo'))->getUser();
-
-
 		// $response['data'] = array('status' => 'ok', 'message' => 'updated user data', 'userdata' => $user->getJSON());
 		$response = array('status' => 'ok', 'message' => 'updated user data', 'userdata' => $user->getJSON());
 
@@ -52,7 +48,6 @@ try {
 	} else if (Utils::route('get', '^/userinfo$', $parameters)) {
 
 		$user = $auth->reqToken()->reqScopes(array('userinfo'))->getUser();
-
 		// $response = $user->getJSON(array('type' => 'extended',  'groups' => true, 'subscriptions' => true));
 		$response = $user->getJSON(array('type' => 'basic'));
 
@@ -62,12 +57,8 @@ try {
 	 */
 	} else if (Utils::route('get', '^/userinfo/subscriptions$', $parameters)) {
 
-		$oauth = new OAuth();
-		$token = $oauth->check(array(), array('userinfo'));
-
-		$user = $token->getUser();
+		$user = $auth->reqToken()->reqScopes(array('userinfo'))->getUser();
 		$response = $user->getJSON(array('type' => 'subscriptions'));
-
 
 
 	/**
@@ -76,12 +67,8 @@ try {
 	} else if (Utils::route(false, '^/people', $parameters)) {
 
 
-
-		$oauth = new OAuth();
-		$token = $oauth->check();
-		$user = $token->getUser();
-
-
+		$auth->$auth->reqToken()->reqScopes(array('people'));
+		$user = $auth->getUser();
 		$groupconnector = new GroupConnector($user);
 
 		// $people = new People($token->getUserID());
@@ -110,44 +97,21 @@ try {
 
 
 
-	// TODO: DELETE THIS...
-	} else if (Utils::route(false, '^/debuggroups', $parameters)) {
-
-
-		$user = User::getByID('andreas@uninett.no');
-		$groupconnector = new GroupConnector($user);
-		$response = $groupconnector->getGroupsListResponse();
-
-		$type = new SCIMResourceGroupType(array('id' => 'uwap:group:type:ad-hoc', 
-			'displayName' => array(
-				'en' => 'Ad-Hoc',
-				'nb' => 'Någruppe'
-			)
-		));
-
-
-		echo 'Groups: <pre>'; 
-		print_r($type);
-		print_r($type->getJSON()); 
-		exit;
-
-
 
 	/**
 	 *  The groups API is VOOT
 	 */
 	} else if (Utils::route(false, '^/group[s]?', $parameters)) {
 
-		$oauth = new OAuth();
-		$token = $oauth->check();
-		$user = $token->getUser();
-
+		$auth->reqToken()->reqScopes(array('userinfo'));
+		$user = $auth->getUser();
 		$groupconnector = new GroupConnector($user);
 
 		$userdata = $user->getJSON(array(
 			'type' => 'basic',
 			'groups' => array('type' => 'key')
 		));
+
 
 		// Get a list of groups
 		if (Utils::route('get', '^/groups$', $parameters)) {
@@ -157,16 +121,12 @@ try {
 
 		} else if (Utils::route('get', '^/groups/public$', $parameters)) {
 
-			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
-			// $gres = $groupmanager->getPublicGroups($groups);
-
 			$response = $groupconnector->getPublicGroupsJSON();
-
 
 		// Add a new group
 		} else if (Utils::route('post', '^/groups$', $parameters, $body)) {
 
-			// echo "About to create new group with "; print_r($body); exit;
+			$auth->reqScopes(array('groupmanage'));
 			$res = $groupconnector->addGroup($body);
 			$response = $res->getJSON();
 
@@ -188,7 +148,7 @@ try {
 			$response = $group->getJSON();
 
 
-		// Get a specific group
+		// Get a specific groups members
 		} else if (Utils::route('get', '^/group/([@:.a-zA-Z0-9\-_]+)/members$', $parameters)) {
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
@@ -222,7 +182,7 @@ try {
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)$', $parameters, $body)) {
 
 
-			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
+			$auth->reqScopes(array('groupmanage'));
 
 			// TODO: ensure user is member of the group to extract memberlist
 			$groupid = $parameters[1];
@@ -232,7 +192,9 @@ try {
 		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)$', $parameters)) {
 
 
-
+			// TODO: ensure user is member of the group to extract memberlist
+			// 
+			$auth->reqScopes(array('groupmanage'));
 			$groupid = $parameters[1];
 			$response = $groupconnector->remove($groupid);
 
@@ -240,6 +202,8 @@ try {
 
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/subscription$', $parameters, $body)) {
 
+
+			$auth->reqScopes(array('groupmanage'));
 
 			$groupid = $parameters[1];
 
@@ -257,6 +221,7 @@ try {
 		// Add a new member to a group
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/members$', $parameters, $body)) {
 
+			$auth->reqScopes(array('groupmanage'));
 			$groupid = $parameters[1];
 			$response = $groupconnector->addMember($groupid, $body);
 
@@ -264,7 +229,7 @@ try {
 		} else if (Utils::route('post', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', $parameters, $obj)) {
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
-
+			$auth->reqScopes(array('groupmanage'));
 			$groupid = $parameters[1];
 			$userid = $parameters[2];
 			$response = $groupconnector->updateMember($groupid, $userid, $obj);
@@ -273,7 +238,7 @@ try {
 		} else if (Utils::route('delete', '^/group/([@:.a-z0-9\-]+)/member/([@:.a-z0-9\-]+)$', $parameters)) {
 
 			// throw new NotImplementedException('Have to refactor and implement search for public groups.');
-
+			$auth->reqScopes(array('groupmanage'));
 			$groupid = $parameters[1];
 			$userid = $parameters[2];
 			$response = $groupconnector->removeMember($groupid, $userid);
@@ -366,12 +331,8 @@ try {
 	} else if (Utils::route(false, '^/appconfig/', $qs, $parameters)) {
 
 
-		$oauth = new OAuth();
-		$token = $oauth->check(null, array('appconfig'));
-		$user = $token->getUser();
+		$user = $auth->reqToken()->reqScopes(array('appconfig'))->getUser();
 		$clientdirectory = new ClientDirectory($user);
-
-
 
 		/*
 		 * APIs that allows querying a list of appconfig related objects
