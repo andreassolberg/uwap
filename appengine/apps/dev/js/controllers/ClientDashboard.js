@@ -22,9 +22,11 @@ define(function(require, exports, module) {
 	var proxyTmpl = hb.compile(proxyTmplText);
 
 
-	var ClientDashboard = function(container, appconfig, templates) {
+	var ClientDashboard = function(container, appconfig, templates, providerconfig) {
 
 		var that = this;
+
+
 
 		this.handlers = {};
 		this.currentTerm = null;
@@ -33,6 +35,7 @@ define(function(require, exports, module) {
 		
 		this.appconfig = appconfig;
 		this.templates = templates;
+		this.providerconfig = providerconfig;
 
 		this.draw();
 
@@ -214,6 +217,8 @@ define(function(require, exports, module) {
 
 		var clientview = this.appconfig.getView();
 		console.log("CLIENT VIEW CLIENT VIEW ", clientview);
+
+		clientview.providerconfig = this.providerconfig;
 
 		this.element = $(this.templates['clientdashboard'](clientview));
 

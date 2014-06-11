@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 
 	Proxy.prototype.logo = function() {
 		console.log("properties of client is", this.id);
-		return UWAP.utils.getEngineURL('/api/media/logo/app/' + this.id);
+		return UWAP.utils.getAPIurl('/media/logo/app/' + this.id);
 	}
 
 	Proxy.prototype.getView = function() {

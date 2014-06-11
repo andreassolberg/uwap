@@ -35,7 +35,7 @@ define(function(require, exports, module) {
 	}
 
 	App.prototype.logo = function() {
-		return UWAP.utils.getEngineURL('/api/media/logo/app/' + this.properties.id);
+		return UWAP.utils.getAPIurl('/media/logo/app/' + this.properties.id);
 	}
 
 	App.prototype.getView = function() {

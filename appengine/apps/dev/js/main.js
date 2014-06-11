@@ -60,10 +60,11 @@ define(function(require, exports, module) {
 
 		$('.dropdown-toggle').dropdown()
 
-		var App = function(el, user) {
+		var App = function(el, user, providerconfig) {
 			
 			this.el = el;
 			this.user = user;
+			this.providerconfig = providerconfig;
 
 			this.picker = new appPicker($(".applicationlist"), $.proxy(this.actLoadApp, this));
 			this.fpage = new frontpage($("div#appmaincontainer"), function(){}, templates);
@@ -282,7 +283,7 @@ define(function(require, exports, module) {
 
 				} else if (appconfig.type === 'client') {
 
-					adash = new ClientDashboard($("div#appmaincontainer"), new Client(appconfig), templates);
+					adash = new ClientDashboard($("div#appmaincontainer"), new Client(appconfig), templates, that.providerconfig);
 
 					// alert("opening a client");
 					// adash = new ProxyDashboard($("div#appmaincontainer"), new Proxy(appconfig), templates);
@@ -399,8 +400,12 @@ define(function(require, exports, module) {
 
 		UWAP.auth.require(function(user) {
 
-			console.log("Logged in", user);
-			app = new App($("body"), user);
+			UWAP.auth.getProviderConfig(function(providerconfig) {
+				console.log("Got providerconfig", providerconfig);
+				console.log("Logged in", user);
+				app = new App($("body"), user, providerconfig);
+			});
+
 
 			// var newapp = {
 			// 	'type': 'app',

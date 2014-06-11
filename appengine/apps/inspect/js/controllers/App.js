@@ -148,6 +148,10 @@ define(function(require, exports, module) {
 
 
 	var apiconfig = {
+		'authinfo': {
+			"path": "/authinfo",
+			"method": "get"
+		},
 		'userinfo': {
 			"path": "/userinfo",
 			"method": "get"

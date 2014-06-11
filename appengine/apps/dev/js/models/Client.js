@@ -61,7 +61,7 @@ define(function(require, exports, module) {
 
 	Client.prototype.logo = function() {
 		console.log("properties of client is", this.id);
-		return UWAP.utils.getEngineURL('/api/media/logo/app/' + this.id);
+		return UWAP.utils.getAPIurl('/media/logo/app/' + this.id);
 	}
 
 	Client.prototype.getAppScopes = function() {
