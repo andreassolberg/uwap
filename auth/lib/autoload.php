@@ -6,8 +6,7 @@ $base = dirname(__FILE__);
 
 
 require_once($base . '/Auth/OAuth.php');
-require_once($base . '/Auth/So_StorageUWAP.php');
-require_once($base . '/Auth/So_StorageServerUWAP.php');
+
 require_once($base . '/Auth/Authenticator.php');
 
 

@@ -34,28 +34,35 @@ require_once($base . '/SCIM/Protocol/SCIMListResponse.php');
 require_once($base . '/Auth/AuthorizationPresenter.php');
 
 
-require_once('Auth/OAuth/So_log.php');
-require_once('Auth/OAuth/So_Utils.php');
-require_once('Auth/OAuth/exceptions.php');
+require_once($base . '/Auth/OAuth/So_Storage.php');
+require_once($base . '/Auth/OAuth/So_StorageUWAP.php');
+require_once($base . '/Auth/OAuth/So_StorageServerUWAP.php');
 
-require_once('Auth/OAuth/messages/So_Message.php');
-require_once('Auth/OAuth/messages/So_Request.php');
-require_once('Auth/OAuth/messages/So_Response.php');
+require_once($base . '/Auth/OAuth/So_log.php');
+require_once($base . '/Auth/OAuth/So_Utils.php');
+require_once($base . '/Auth/OAuth/exceptions.php');
 
-require_once('Auth/OAuth/messages/So_AuthResponse.php');
-require_once('Auth/OAuth/messages/So_ErrorResponse.php');
-require_once('Auth/OAuth/messages/So_TokenResponse.php');
-require_once('Auth/OAuth/messages/So_AuthenticatedRequest.php');
-require_once('Auth/OAuth/messages/So_AuthRequest.php');
-require_once('Auth/OAuth/messages/So_TokenRequest.php');
+require_once($base . '/Auth/OAuth/So_StorageUWAP.php');
+require_once($base . '/Auth/OAuth/So_StorageServerUWAP.php');
 
-require_once('Auth/OAuth/So_AuthorizationCode.php');
-require_once('Auth/OAuth/So_Authorization.php');
-require_once('Auth/OAuth/So_AccessToken.php');
+require_once($base . '/Auth/OAuth/messages/So_Message.php');
+require_once($base . '/Auth/OAuth/messages/So_Request.php');
+require_once($base . '/Auth/OAuth/messages/So_Response.php');
 
-require_once('Auth/OAuth/So_Server.php');
-require_once('Auth/OAuth/So_Storage.php');
-require_once('Auth/OAuth/So_Client.php');
+require_once($base . '/Auth/OAuth/messages/So_AuthResponse.php');
+require_once($base . '/Auth/OAuth/messages/So_ErrorResponse.php');
+require_once($base . '/Auth/OAuth/messages/So_TokenResponse.php');
+require_once($base . '/Auth/OAuth/messages/So_AuthenticatedRequest.php');
+require_once($base . '/Auth/OAuth/messages/So_AuthRequest.php');
+require_once($base . '/Auth/OAuth/messages/So_TokenRequest.php');
+
+require_once($base . '/Auth/OAuth/So_AuthorizationCode.php');
+require_once($base . '/Auth/OAuth/So_Authorization.php');
+require_once($base . '/Auth/OAuth/So_AccessToken.php');
+
+require_once($base . '/Auth/OAuth/So_Server.php');
+
+require_once($base . '/Auth/OAuth/So_Client.php');
 
 
 

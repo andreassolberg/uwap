@@ -155,13 +155,18 @@ define(function(require) {
 		}
 		return url + delimiter + encodeURIComponent(key) + '=' + encodeURIComponent(value);
 	};
-	UWAP.utils.goAndReturn = function(url) {
-		// console.log("About to redirect to: " + UWAP.utils.addQueryParam(url, 'return', document.URL));
-		var base = UWAP.utils.scheme + '://auth.' + UWAP.utils.hostname + '/';
-		window.location = UWAP.utils.addQueryParam(url, 'return', document.URL);	
-	}
+	// UWAP.utils.goAndReturn = function(url) {
+	// 	// console.log("About to redirect to: " + UWAP.utils.addQueryParam(url, 'return', document.URL));
+	// 	var base = UWAP.utils.scheme + '://auth.' + UWAP.utils.hostname + '/';
+	// 	window.location = UWAP.utils.addQueryParam(url, 'return', document.URL);	
+	// }
 
-	UWAP.utils.getEngineURL = function(path) {
+	// UWAP.utils.getAPIurl = function(path) {
+	// 	var base = UWAP.utils.scheme + '://api.' + UWAP.utils.enginehostname + '';
+	// 	return base + path;
+	// }
+
+	UWAP.utils.getAuthURL = function(path) {
 		var base = UWAP.utils.scheme + '://auth.' + UWAP.utils.enginehostname + '';
 		return base + path;
 	}
@@ -208,7 +213,7 @@ define(function(require) {
 	jso.jso_configure({
 		"uwap": {
 			client_id: client_id,
-			authorization: UWAP.utils.getEngineURL('/oauth/authorization'),
+			authorization: UWAP.utils.getAuthURL('/oauth/authorization'),
 			redirect_uri: redirect_uri,
 			passive_redirect_uri: passive_redirect_uri
 		}
@@ -340,13 +345,20 @@ define(function(require) {
 
 
 
+
+
 	UWAP.auth = {
 
+		getProviderConfig: function(callbackSuccess) {
+			var url = UWAP.utils.getAuthURL("/providerconfig");
+			console.log("About to get ", url);
+			$.getJSON(url, callbackSuccess);
+		},
 		require: function (callbackSuccess, options) {
 			options = options || {};
 			UWAP._request(
 				'GET', 
-				UWAP.utils.getEngineURL("/userinfo"),
+				UWAP.utils.getAPIurl("/userinfo"),
 				null, options, callbackSuccess);
 		},
 		check: function (callbackSuccess) {
@@ -359,7 +371,7 @@ define(function(require) {
 			}
 			UWAP._request(
 				'GET', 
-				UWAP.utils.getEngineURL("/userinfo"),
+				UWAP.utils.getAPIurl("/userinfo"),
 				null,options, callbackSuccess);
 		},
 		logout: function() {
@@ -373,7 +385,7 @@ define(function(require) {
 			console.log("checkPassive()");
 			UWAP._request(
 				'GET', 
-				UWAP.utils.getEngineURL("/userinfo"),
+				UWAP.utils.getAPIurl("/userinfo"),
 				null, {
 					"jso_allowia": false
 				}, function(response) {
@@ -392,7 +404,7 @@ define(function(require) {
 
 						UWAP._request(
 							'GET', 
-							UWAP.utils.getEngineURL("/userinfo"),
+							UWAP.utils.getAPIurl("/userinfo"),
 							null, {
 								"jso_allowia": false
 							}, function(response) {
@@ -438,7 +450,7 @@ define(function(require) {
 	UWAP.store = {
 		save: function(object, callback) {
 			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/store"),
+				'POST', UWAP.utils.getAPIurl("/store"),
 				{
 					op: "save",
 					object: object
@@ -447,7 +459,7 @@ define(function(require) {
 		},
 		remove: function(object, callback) {
 			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/store"),
+				'POST', UWAP.utils.getAPIurl("/store"),
 				{
 					op: "remove",
 					object: object
@@ -456,7 +468,7 @@ define(function(require) {
 		},
 		queryOne: function(query, callback) {
 			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/store"),
+				'POST', UWAP.utils.getAPIurl("/store"),
 				{
 					op: "queryOne",
 					query: query
@@ -465,7 +477,7 @@ define(function(require) {
 		},
 		queryList: function(query, callback) {
 			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/store"),
+				'POST', UWAP.utils.getAPIurl("/store"),
 				{
 					op: "queryList",
 					query: query
@@ -477,13 +489,13 @@ define(function(require) {
 	UWAP.feed = {
 		notificationsMarkRead: function(ids, callback) {
 			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/feed/notifications/markread"),
+				'POST', UWAP.utils.getAPIurl("/feed/notifications/markread"),
 				ids, 
 				null, callback);
 		},
 		upcoming: function(selector, callback) {
 			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/feed/upcoming"),
+				'POST', UWAP.utils.getAPIurl("/feed/upcoming"),
 				selector, 
 				null, callback, function(data) {
 
@@ -502,19 +514,19 @@ define(function(require) {
 		},
 		notifications: function(selector, callback) {
 			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/feed/notifications"),
+				'POST', UWAP.utils.getAPIurl("/feed/notifications"),
 				selector, 
 				null, callback);
 		},
 		post: function(object, callback) {
 			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/feed/post"),
+				'POST', UWAP.utils.getAPIurl("/feed/post"),
 				object, 
 				null, callback);
 		},
 		respond: function(object, callback) {
 			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/feed/item/" + object.inresponseto + '/response'),
+				'POST', UWAP.utils.getAPIurl("/feed/item/" + object.inresponseto + '/response'),
 				object, 
 				null, callback, function(data) {
 					// console.log("    ==> CREATING new feed.");
@@ -525,13 +537,13 @@ define(function(require) {
 		},
 		delete: function(oid, callback) {
 			UWAP._request(
-				'DELETE', UWAP.utils.getEngineURL("/feed/item/" + oid),
+				'DELETE', UWAP.utils.getAPIurl("/feed/item/" + oid),
 				null, 
 				null, callback);
 		},
 		read: function(selector, callback) {
 			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/feed"),
+				'POST', UWAP.utils.getAPIurl("/feed"),
 				selector, 
 				null, callback, function(data) {
 					console.log("    ==> CREATING new feed.");
@@ -543,7 +555,7 @@ define(function(require) {
 		},
 		readItem: function(oid, callback) {
 			UWAP._request(
-				'GET', UWAP.utils.getEngineURL("/feed/item/" + oid),
+				'GET', UWAP.utils.getAPIurl("/feed/item/" + oid),
 				null, 
 				null, callback, function(data) {
 					// console.log("    ==> CREATING new feed.");
@@ -574,7 +586,7 @@ define(function(require) {
 			console.log("UWAP.data options", options);
 			
 			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/rest"),
+				'POST', UWAP.utils.getAPIurl("/rest"),
 				data,
 				options, 
 				callback);
@@ -594,7 +606,7 @@ define(function(require) {
 			console.log("UWAP.data [" + url + "] options", options);
 			
 			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/soa"),
+				'POST', UWAP.utils.getAPIurl("/soa"),
 				data,
 				options, 
 				callback);
@@ -605,13 +617,13 @@ define(function(require) {
 	UWAP.people = {
 		query: function(realm, query, callback) {
 			UWAP._request(
-				'GET', UWAP.utils.getEngineURL("/people/query/" + realm + '?query=' + encodeURIComponent(query)),
+				'GET', UWAP.utils.getAPIurl("/people/query/" + realm + '?query=' + encodeURIComponent(query)),
 				null, 
 				null, callback);
 		},
 		listRealms: function(callback) {
 			UWAP._request(
-				'GET', UWAP.utils.getEngineURL("/people/realms"),
+				'GET', UWAP.utils.getAPIurl("/people/realms"),
 				null, 
 				null, callback);
 		}
@@ -620,79 +632,79 @@ define(function(require) {
 	UWAP.groups = {
 		get: function(gid, callback) {
 			UWAP._request(
-				'GET', UWAP.utils.getEngineURL("/group/" + gid),
+				'GET', UWAP.utils.getAPIurl("/group/" + gid),
 				null, 
 				null, callback);
 		},
 		getMembers: function(gid, callback) {
 			UWAP._request(
-				'GET', UWAP.utils.getEngineURL("/group/" + gid + "/members"),
+				'GET', UWAP.utils.getAPIurl("/group/" + gid + "/members"),
 				null, 
 				null, callback);
 		},
 		listPublic: function(callback) {
 			UWAP._request(
-			 	'GET', UWAP.utils.getEngineURL("/groups/public"),
+			 	'GET', UWAP.utils.getAPIurl("/groups/public"),
 			 	null,
 			 	null, callback);
 		},
 		listSubscriptions: function(callback) {
 			UWAP._request(
-			 	'GET', UWAP.utils.getEngineURL("/userinfo/subscriptions"),
+			 	'GET', UWAP.utils.getAPIurl("/userinfo/subscriptions"),
 			 	null,
 			 	null, callback);
 		},
 		subscribe: function(groupid, callback) {
 			UWAP._request(
-			 	'POST', UWAP.utils.getEngineURL("/group/" + groupid + '/subscription'),
+			 	'POST', UWAP.utils.getAPIurl("/group/" + groupid + '/subscription'),
 			 	{subscribe: true},
 			 	null, callback);
 		},
 		unsubscribe: function(groupid, callback) {
 			UWAP._request(
-			 	'POST', UWAP.utils.getEngineURL("/group/" + groupid + '/subscription'),
+			 	'POST', UWAP.utils.getAPIurl("/group/" + groupid + '/subscription'),
 			 	{subscribe: false},
 			 	null, callback);
 		},
 		listMyGroups: function(callback) {
 			UWAP._request(
-			 	'GET', UWAP.utils.getEngineURL("/groups"),
+			 	'GET', UWAP.utils.getAPIurl("/groups"),
 			 	null,
 			 	null, callback);
 		},
 		addGroup: function(object, callback) {
 			UWAP._request(
-			 	'POST', UWAP.utils.getEngineURL("/groups"),
+			 	'POST', UWAP.utils.getAPIurl("/groups"),
 			 	object, 
 			 	null, callback);
 		},
 		updateGroup: function(groupid, object, callback) {
 			UWAP._request(
-			 	'POST', UWAP.utils.getEngineURL("/group/" + groupid),
+			 	'POST', UWAP.utils.getAPIurl("/group/" + groupid),
 			 	object, 
 			 	null, callback);
 		},
 		removeGroup: function(groupid, callback) {
 			UWAP._request(
-			 	'DELETE', UWAP.utils.getEngineURL("/group/" + groupid),
+			 	'DELETE', UWAP.utils.getAPIurl("/group/" + groupid),
 			 	null,
 			 	null, callback);
 		},
 		addMember: function(groupid, user, callback) {
 			UWAP._request(
-			 	'POST', UWAP.utils.getEngineURL("/group/" + groupid + '/members'),
+			 	'POST', UWAP.utils.getAPIurl("/group/" + groupid + '/members'),
 			 	user, 
 			 	null, callback);
 		},
 		removeMember: function(groupid, userid, callback) {
 			UWAP._request(
-			 	'DELETE', UWAP.utils.getEngineURL("/group/" + groupid + '/member/' + userid),
+			 	'DELETE', UWAP.utils.getAPIurl("/group/" + groupid + '/member/' + userid),
 			 	null,
 			 	null, callback);
 		},
 		updateMember: function(groupid, userid, obj, callback) {
 			UWAP._request(
-			 	'POST', UWAP.utils.getEngineURL("/group/" + groupid + '/member/' + userid),
+			 	'POST', UWAP.utils.getAPIurl("/group/" + groupid + '/member/' + userid),
 			 	obj,
 			 	null, callback);
 		}
@@ -706,42 +718,42 @@ define(function(require) {
 	UWAP.appconfig = {
 		list: function(callback) {
 			UWAP._request(
-				'GET', UWAP.utils.getEngineURL("/appconfig/clients"),
+				'GET', UWAP.utils.getAPIurl("/appconfig/clients"),
 				null, 
 				null, callback);
 		},
 		get: function(id, callback) {
 			UWAP._request(
 				'GET', 
-				UWAP.utils.getEngineURL('/appconfig/client/' + id),
+				UWAP.utils.getAPIurl('/appconfig/client/' + id),
 				null, 
 				null, callback);
 		},
 		updateStatus: function(id, object, callback) {
 			UWAP._request(
 				'POST', 
-				UWAP.utils.getEngineURL('/appconfig/client/' + id + '/status'),
+				UWAP.utils.getAPIurl('/appconfig/client/' + id + '/status'),
 				object, 
 				null, callback);
 		},
 		bootstrap: function(id, template, callback) {
 			UWAP._request(
 				'POST', 
-				UWAP.utils.getEngineURL('/appconfig/client/' + id + '/bootstrap'),
+				UWAP.utils.getAPIurl('/appconfig/client/' + id + '/bootstrap'),
 				template, 
 				null, callback);
 		},
 		check: function(id, callback) {
 			UWAP._request(
 				'GET', 
-				UWAP.utils.getEngineURL('/appconfig/check/' + id),
+				UWAP.utils.getAPIurl('/appconfig/check/' + id),
 				null, 
 				null, callback);
 		},
 		updateAuthzHandler: function(id, object, callback) {
 			UWAP._request(
 				'POST', 
-				UWAP.utils.getEngineURL('/appconfig/client/' + id + '/authorizationhandler/' + object.id),
+				UWAP.utils.getAPIurl('/appconfig/client/' + id + '/authorizationhandler/' + object.id),
 				object, 
 				null, callback);
 		},
@@ -749,14 +761,14 @@ define(function(require) {
 		deleteAuthzHandler: function(appid, objectid, callback) {
 			UWAP._request(
 				'DELETE', 
-				UWAP.utils.getEngineURL('/appconfig/client/' + appid + '/authorizationhandler/' + objectid),
+				UWAP.utils.getAPIurl('/appconfig/client/' + appid + '/authorizationhandler/' + objectid),
 				null, 
 				null, callback);
 		},
 
 		store: function(object, callback) {
 			UWAP._request(
-				'POST', UWAP.utils.getEngineURL("/appconfig/clients"),
+				'POST', UWAP.utils.getAPIurl("/appconfig/clients"),
 				object, 
 				null, callback);
 		},
@@ -764,7 +776,7 @@ define(function(require) {
 		updateProxy: function(id, proxy, callback) {
 			UWAP._request(
 				'POST', 
-				UWAP.utils.getEngineURL('/appconfig/client/' + id + '/proxy'),
+				UWAP.utils.getAPIurl('/appconfig/client/' + id + '/proxy'),
 				proxy, 
 				null, callback);
 		},
@@ -772,7 +784,7 @@ define(function(require) {
 		getAppClients: function(id, callback) {
 			UWAP._request(
 				'GET', 
-				UWAP.utils.getEngineURL('/appconfig/client/' + id + '/clients'),
+				UWAP.utils.getAPIurl('/appconfig/client/' + id + '/clients'),
 				null, 
 				null, callback);
 		},
@@ -780,7 +792,7 @@ define(function(require) {
 		authorizeClient: function(id, clientid, authz, callback) {
 			UWAP._request(
 				'POST', 
-				UWAP.utils.getEngineURL('/appconfig/client/' + id + '/client/' + clientid + '/authorization'),
+				UWAP.utils.getAPIurl('/appconfig/client/' + id + '/client/' + clientid + '/authorization'),
 				authz, 
 				null, callback);
 		},
@@ -788,7 +800,7 @@ define(function(require) {
 		requestScopes: function(clientid, scopes, callback) {
 			UWAP._request(
 				'POST', 
-				UWAP.utils.getEngineURL('/appconfig/client/' + clientid + '/scopes'),
+				UWAP.utils.getAPIurl('/appconfig/client/' + clientid + '/scopes'),
 				scopes, 
 				null, callback);
 		},
@@ -797,14 +809,14 @@ define(function(require) {
 		getPublicAPIs: function(clientid, query, callback) {
 			UWAP._request(
 				'POST', 
-				UWAP.utils.getEngineURL('/appconfig/client/' + clientid + '/publicapis'),
+				UWAP.utils.getAPIurl('/appconfig/client/' + clientid + '/publicapis'),
 				query, 
 				null, callback);
 		},
 		getAuthorizedAPIs: function(clientid, callback) {
 			UWAP._request(
 				'GET', 
-				UWAP.utils.getEngineURL('/appconfig/client/' + clientid + '/authorizedapis'),
+				UWAP.utils.getAPIurl('/appconfig/client/' + clientid + '/authorizedapis'),
 				null, 
 				null, callback);
 		},
@@ -813,7 +825,7 @@ define(function(require) {
 		// query: function(object, callback) {
 		// 	console.error('››› NOT IMPLEMENTED updates to this API call for appconfig after refactoring');
 		// 	UWAP._request(
-		// 		'POST', UWAP.utils.getEngineURL("/appconfig/apps/query"),
+		// 		'POST', UWAP.utils.getAPIurl("/appconfig/apps/query"),
 		// 		object, 
 		// 		null, callback);
 		// },
@@ -821,7 +833,7 @@ define(function(require) {
 		// storeClient: function(object, callback) {
 		// 	console.error('››› NOT IMPLEMENTED updates to this API call for appconfig after refactoring');
 		// 	UWAP._request(
-		// 		'POST', UWAP.utils.getEngineURL("/appconfig/clients"),
+		// 		'POST', UWAP.utils.getAPIurl("/appconfig/clients"),
 		// 		object, 
 		// 		null, callback);
 		// },
@@ -833,7 +845,7 @@ define(function(require) {
 		// 	console.error('››› NOT IMPLEMENTED updates to this API call for appconfig after refactoring');
 		// 	UWAP._request(
 		// 		'GET', 
-		// 		UWAP.utils.getEngineURL('/appconfig/client/' + id),
+		// 		UWAP.utils.getAPIurl('/appconfig/client/' + id),
 		// 		null, 
 		// 		null, callback);
 		// },
@@ -842,7 +854,7 @@ define(function(require) {
 			console.error('››› NOT IMPLEMENTED updates to this API call for appconfig after refactoring');
 			UWAP._request(
 				'GET', 
-				UWAP.utils.getEngineURL('/appconfig/view/' + id),
+				UWAP.utils.getAPIurl('/appconfig/view/' + id),
 				null, 
 				null, callback);
 		}

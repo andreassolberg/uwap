@@ -311,7 +311,7 @@ define(function(require) {
 
 	models.Role = Model.extend({
 		"photourl": function() {
-			return UWAP.utils.getEngineURL('/api/media/user/' + this.a );
+			return UWAP.utils.getEngineURL('/media/user/' + this.a );
 		},
 		"getRoleValue": function() {
 			var roles = {
@@ -337,7 +337,7 @@ define(function(require) {
 
 	models.User = Model.extend({
 		"photourl": function() {
-			return UWAP.utils.getEngineURL('/api/media/user/' + this.a );
+			return UWAP.utils.getEngineURL('/media/user/' + this.a );
 		},
 		"getView": function() {
 			var tmp = this._super();
@@ -402,7 +402,7 @@ define(function(require) {
 
 	models.Client.prototype.logo = function() {
 		// console.log("properties of client is", this.id);
-		return UWAP.utils.getEngineURL('/api/media/logo/app/' + this.id);
+		return UWAP.utils.getEngineURL('/media/logo/app/' + this.id);
 	}
 
 

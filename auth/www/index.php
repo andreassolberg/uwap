@@ -75,7 +75,7 @@ try {
 	 */
 	} else if  (Utils::route('get', '^/providerconfig$', $parameters)) {
 
-		$base = $globalconfig->getBaseURL() . 'api/oauth/';
+		$base = $globalconfig->getBaseURL('auth') . 'oauth/';
 		$providerconfig = array(
 			'authorization' => $base . 'authorization',
 			'token' => $base . 'token'

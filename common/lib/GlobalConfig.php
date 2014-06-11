@@ -28,7 +28,7 @@ class GlobalConfig {
 	}
 
 
-	public static function getBaseURL($app = 'core') {
+	public static function getBaseURL($app = 'api') {
 
 		
 
