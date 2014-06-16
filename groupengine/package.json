@@ -1,7 +1,24 @@
 {
+	"name": "groupengine",
+	"description": "An engine that takes input about a user or group identifier, and extract information from multiple sources in parallell about groups.",
+	"author": "Andreas Åkre Solberg <andreas.solberg@uninett.no>",
+	"version": "0.1.0",
+	"main": "./getbyuser.js",
+	"bin": "./getbyuser.js",
 
-	
-	"version": "0.1.0"
+	"repository": "git://github.com/andreassolberg/UWAP.git",
+	"homepage": "https://github.com/andreassolberg/UWAP",
+	"bugs": "https://github.com/andreassolberg/UWAP/issues?labels=GroupEngine&page=1&state=open",
+	"keywords": [ "groups", "authorization", "api" ],
+	"tags": [ "groups", "authorization", "api" ],
 
+	"engines": {
+		"node": ">=0.8"
+	},
 
+	"dependencies": {
+		"ldapjs": "0.7.x",
+		"async": "0.9.x"
+	},
+	"devDependencies": {}
 }

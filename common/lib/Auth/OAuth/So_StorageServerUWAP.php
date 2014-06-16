@@ -31,6 +31,18 @@ class So_StorageServerUWAP extends So_Storage {
 		return Client::getByID($client_id);
 	}
 
+	public function listAuthorizations($userid) {
+		$result = $this->extractOne('authorization', 
+			array(
+				'client_id' => $client_id,
+				'userid' => $userid
+			)
+		);
+		error_log('Extracting authz ' . var_export($result, true));
+		if ($result === null) return null;
+		return So_Authorization::fromObj($result);
+	}
+
 	// /*
 	//  * Return an associated array or throws an exception.
 	//  */
@@ -127,7 +139,7 @@ class So_StorageServerUWAP extends So_Storage {
 	public function listAuthorization($userid) {
 
 
-		$result = $this->extractOne('authorization', 
+		$result = $this->store->queryList('oauth2-server-authorization', 
 			array(
 				'userid' => $userid
 			)

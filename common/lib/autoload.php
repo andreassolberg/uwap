@@ -22,28 +22,20 @@ require_once($base . '/SCIM/SCIMResourceGroupType.php');
 require_once($base . '/SCIM/SCIMResourceRole.php');
 require_once($base . '/SCIM/Protocol/SCIMListResponse.php');
 
-// require_once($base . '/solberg-oauth/lib/soauth.php');
 
-// require_once($base . '/So_StorageServerUWAP.php');
-// require_once($base . '/So_StorageUWAP.php');
 
-// Authentication
-// require_once($base . '/Auth/OAuth.php');
-// require_once($base . '/Auth/AuthenticatedToken.php');
-// require_once($base . '/Auth/Authenticator.php');
+
 require_once($base . '/Auth/AuthorizationPresenter.php');
 
-
+// Authentication
+// require_once($base . '/solberg-oauth/lib/soauth.php');
 require_once($base . '/Auth/OAuth/So_Storage.php');
-require_once($base . '/Auth/OAuth/So_StorageUWAP.php');
+// require_once($base . '/Auth/OAuth/So_StorageUWAP.php');
 require_once($base . '/Auth/OAuth/So_StorageServerUWAP.php');
 
 require_once($base . '/Auth/OAuth/So_log.php');
 require_once($base . '/Auth/OAuth/So_Utils.php');
 require_once($base . '/Auth/OAuth/exceptions.php');
-
-require_once($base . '/Auth/OAuth/So_StorageUWAP.php');
-require_once($base . '/Auth/OAuth/So_StorageServerUWAP.php');
 
 require_once($base . '/Auth/OAuth/messages/So_Message.php');
 require_once($base . '/Auth/OAuth/messages/So_Request.php');
@@ -77,8 +69,9 @@ require_once($base . '/Groups/ExtGroups.php');
 require_once($base . '/Clients/ClientDirectory.php');
 require_once($base . '/AppHosting/AppHosting.php');
 
-
 require_once($base . '/Users/ComplexUserID.php');
+require_once($base . '/Users/UserAttributeInput.php');
+
 
 // Models
 require_once($base . '/Models/Model.php');

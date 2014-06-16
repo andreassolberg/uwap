@@ -15,17 +15,18 @@ class ExtGroups {
 		global $UWAP_BASEDIR;
 
 
-
 		if ($this->user) {
-			$userdata = array(
-				'userid' => $this->user->get('userid'),
-			);
-			if (preg_match('/(.*?)@(.*?)$/', $this->user->get('userid'), $matches)) {
-				$userdata['realm'] = $matches[2];
-			}
-			$userdata['idp'] = 'https://idp.feide.no'; // TODO: fill inn from user data.
-			$userdata['customdata'] = $this->user->get('customdata');
-			$input['user'] = $userdata;
+			// $userdata = array(
+			// 	'userid' => $this->user->get('userid'),
+			// );
+			// if (preg_match('/(.*?)@(.*?)$/', $this->user->get('userid'), $matches)) {
+			// 	$userdata['realm'] = $matches[2];
+			// }
+			// // $userdata['idp'] = 'https://idp.feide.no'; // TODO: fill inn from user data.
+			// $userdata['custom'] = $this->user->get('custom');
+			// $input['user'] = $userdata;
+
+			$input = array_merge($input, $this->user->getJSON());
 		}
 		
 
@@ -78,10 +79,10 @@ class ExtGroups {
 			if ($return_value === 0) {
 				$parsedData = json_decode($result, true);
 
-				// echo "raw data is $result";
+				
 
 				if ($parsedData === null) {
-					echo "Data that could not be parsed:\n\n"; echo(var_export($parsedData, true)); echo "\n\n";
+					// echo "Data that could not be parsed:\n\n"; echo(var_export($parsedData, true)); echo "\n\n";
 					throw new Exception('Unable to parse JSON response from external group connector (cmd)');
 				}
 
@@ -94,7 +95,7 @@ class ExtGroups {
 
 
 			}
-
+			// echo "\n\nraw data is $result \n\n";
 			// echo "command returned $return_value\n";
 		}
 		return null;

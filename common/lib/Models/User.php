@@ -6,7 +6,9 @@ class User extends StoredModel {
 	protected static $collection = 'users';
 	protected static $primaryKey = 'userid';
 	protected static $validProps = array(
-		'userid', 'userid-sec', 'mail', 'name', 'a', 'photo', 'groups', 'subscriptions',
+		'userid', 'userid-sec', 'mail', 'name', 'a', 'photo', 
+		'accounts',
+		'groups', 'subscriptions',
 		'customdata',
 		'created', 'updated',
 		'shaddow-generator', 'shaddow');
@@ -21,13 +23,12 @@ class User extends StoredModel {
 		$this->groupconnector = new GroupConnector($this);
 	}
 
-	public function hasRealm($realm) {
-		// echo "checking if has realm " . $realm . " for me " . $this->get('userid') . "\n";
-		$pos = strpos($this->get('userid'), '@' . $realm);
-		$has = ($pos !== false);
-
-		return $has;
-	}
+	// public function hasRealm($realm) {
+	// 	// echo "checking if has realm " . $realm . " for me " . $this->get('userid') . "\n";
+	// 	$pos = strpos($this->get('userid'), '@' . $realm);
+	// 	$has = ($pos !== false);
+	// 	return $has;
+	// }
 
 	public function getGroups() {
 		return $this->groupconnector->getGroups();
@@ -143,6 +144,12 @@ class User extends StoredModel {
 		// TODO consider to update attributes on user object that we are merging into.
 		// Currently the properties on the object that is merged into this is forgotten.
 		
+
+		$accounts = $this->get('accounts', array());
+		foreach($accounts AS $accountid => $account) {
+			$into->updateAccountinfo($accountid, $account);
+		}
+
 		$into->store();
 		$this->remove();
 
@@ -153,159 +160,103 @@ class User extends StoredModel {
 	}
 
 	public function addSecondaryKey($key) {
+		$updated = false;
 		$keys = $this->get('userid-sec');
 		if (!in_array($key, $keys)) {
 			$keys[] = $key;
+			$updated = true;
 			$this->set('userid-sec', $keys);
 		}
-	}
-
-
-	public static function getUserIDfromAttributes(array $attributes) {
-
-		$map = GlobalConfig::getValue('useridattrs', null, true);
-		
-		$uid = new ComplexUserID();
-
-		$userattr = array();
-		foreach($map AS $key => $akey) {
-			if (isset($attributes[$akey])) {
-				$uid->add($key, $attributes[$akey][0]);
-			}
-		}
-
-		// $uid->add('nnin', '101080');
-		return $uid;
-
+		return $updated;
 	}
 
 
 
+	public function updateUserFromAttributes(UserAttributeInput $userinput) {
 
-	public static function interpretAttributes(array $attributes) {
-		$map = GlobalConfig::getValue('attributeMap', null, true);
+		// Update account attributes if any changes...
+		$updated = $this->updateAccountinfo($userinput->accountId, $userinput->accountinfo);
 
-
-		/*
-		 * Pick the attributes defined in the configuration mapping, and store the attributes in 
-		 * a new attribute array $userattr
-		 */
-		$userattr = array();
-		foreach($map AS $key => $akey) {
-			if (isset($attributes[$akey])) {
-				$userattr[$key] = $attributes[$akey][0];	
+		// Update secondary keys if neccessary
+		foreach($userinput->complexId->getKeys() AS $key) {
+			if ($this->addSecondaryKey($key)) {
+				$updated = true;
 			}
 		}
-
-
-
-
-		// $groups = self::groupsFromAttributes($attributes);
-		
-
-		/*
-		 * The user field customdata can contain a set of custom data to be used for other purposes
-		 * such as generating groups from it. 
-		 */
-		$collectUserdata = array(
-			'eduPersonEntitlement', 'eduPersonAffiliation',
-			'eduPersonOrgDN:o', 'eduPersonOrgUnitDN:ou', 
-			'eduPersonOrgUnitDN', 'eduPersonOrgUnitDN:ou',
-			'eduPersonOrgUnitDN:norEduOrgUnitUniqueIdentifier'
-		);
-		$userattr['customdata'] = array();
-		foreach($collectUserdata AS $key) {
-			if (isset($attributes[$key])) {
-				$userattr['customdata'][$key] = $attributes[$key];	
-			}
-		}
-
-
-		// $existingUser = self::getByID($userattr['userid'], true);
-		// if ($existingUser !== null) {
-
-		// 	if ($update) {
-		// 		foreach($userattr AS $key => $value) {
-		// 			$existingUser->set($key, $value);	
-		// 		}
-		// 		$existingUser->store();
-		// 	}
-		// 	return $existingUser;
-		// }
-
-
-
-		return $userattr;
-	}
-
-	/**
-	 * Update this user object with attributes from the IdP.
-	 * @param  array  $attributes [description]
-	 * @return [type]             [description]
-	 */
-	public function updateFromAttributes(array $attributes) {
-
-		$userattr = self::interpretAttributes($attributes);
-
-		$isUpdated = false;
-
-		foreach(array('mail', 'name', 'photo', 'customdata') AS $key) {
-			if (isset($userattr[$key])) {
-				if ($this->set($key, $userattr[$key]) === true) {
-					error_log("Updating user, and this property was changed [" . $key . "]    From [". $this->get($key) . "] to [" . $userattr[$key] . "]");
-					$isUpdated = true;
-				}
-			}
-		}
-
-		if ($isUpdated) {
+		if ($updated) {
 			$this->store();
-			return true;
 		}
-		return false;
 
 	}
+
+	public function updateAccountinfo($accountid, $attr) {
+
+
+		$updated = false;
+		$accounts = $this->get('accounts', array());
+
+		if (!isset($accounts[$accountid])) {
+			$accounts[$accountid] = array();
+			$updated = true;
+		}
+		foreach($attr AS $key => $val) {
+
+			if (!isset($accounts[$accountid][$key])) {
+				$accounts[$accountid][$key] = $val; $updated = true;
+			} else if ($accounts[$accountid][$key] !== $val) {
+				$accounts[$accountid][$key] = $val; $updated = true;
+			}
+
+		}
+		if ($updated) {
+			$this->set('accounts', $accounts);
+		}
+		
+		return $updated;
+
+	}
+
 
 	/**
 	 * IMPORTANT: Make sure that no existing users exists with a matching key when using this function.
 	 * This function is mostly used by UserDirectory, and one needs to be careful when using this directly.
 	 * 
-	 * @param  array   $attributes [description]
+	 * @param  UserAttributeInput   $attributeInput [description]
 	 * @param  boolean $update     [description]
 	 * @return [type]              [description]
 	 */
-	public static function createUserFromAttributes(array $attributes, $update = true) {
+	public static function createUserFromAttributes(UserAttributeInput $attributeInput, $update = true) {
 
 
 		$store = new UWAPStore();
 
-		$userattr = self::interpretAttributes($attributes);
+		$userattr = array();
+
 		$userattr["a"] =  Utils::genID();
 
 		/*
 		 * Deal with primary and secondary keys for users.
 		 */
-		$complexID = self::getUserIDfromAttributes($attributes);
-		if (!$complexID->isValid()) throw new Exception('Cannot register new user, because no valid userid was provided.');
-		// if ($complexID->hasPri()) throw new Exception('Trying to create new user that already exists... Bug.');
-
-		$complexID->genPri();
-		$userattr['userid'] = $complexID->getPri();
-		$userattr['userid-sec'] = $complexID->getKeys();
+		$attributeInput->complexId->ensurePri();
+		$userattr['userid'] = $attributeInput->complexId->getPri();
+		$userattr['userid-sec'] = $attributeInput->complexId->getKeys();
 
 
-		// if (empty($userattr['mail'])) {
-		// 	throw new Exception('Cannot obtain a proper mail from identify provider');
-		// }
+		$userattr['accounts'] = array();
+		$userattr['accounts'][$attributeInput->accountId] = $attributeInput->accountinfo;
 
-		if (empty($userattr['name'])) {
+		if (empty($attributeInput->accountinfo['name'])) {
 			throw new Exception('Cannot obtain a proper name from identify provider');
 		}
+		$userattr['name'] = $attributeInput->accountinfo['name'];
+		// echo '<pre>';
+		// print_r($userattr);
+		// print_r($attributeInput);
+		// exit;
 
-		if (isset($userattr['subscriptions'])) {	
-			unset ($userattr['subscriptions']);
-		}
-
+		/*
+		 * Create and store new user object to databsae
+		 */
 		$newUser = new User($userattr);
 		$newUser->store();
 		return $newUser;
@@ -315,24 +266,24 @@ class User extends StoredModel {
 
 
 
-	public static function generateShaddow($properties, $user) {
-	// public static function generate($properties, $user) {
+	// public static function generateShaddow($properties, $user) {
+	// // public static function generate($properties, $user) {
 
 
-		$allowed = array('userid', 'mail', 'name', 'photo');
-		foreach($properties AS $k => $v) {
-			if (!in_array($k, $allowed)) {
-				unset($properties[$k]);
-			}
-		}
-		$properties["a"] =  Utils::genID();
-		$properties['shaddow-generator'] = $user->get('userid');
-		$properties['shaddow'] = true;
+	// 	$allowed = array('userid', 'mail', 'name', 'photo');
+	// 	foreach($properties AS $k => $v) {
+	// 		if (!in_array($k, $allowed)) {
+	// 			unset($properties[$k]);
+	// 		}
+	// 	}
+	// 	$properties["a"] =  Utils::genID();
+	// 	$properties['shaddow-generator'] = $user->get('userid');
+	// 	$properties['shaddow'] = true;
 
 
-		$user = new User($properties);
-		return $user;
-	}
+	// 	$user = new User($properties);
+	// 	return $user;
+	// }
 
 
 

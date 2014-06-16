@@ -14,14 +14,16 @@ class UserDirectory {
 	}
 
 
-	function getUserFromAttributes($attributes, $it = 5) {
+	function getUserFromAttributes(UserAttributeInput $attributeInput, $update = false, $it = 5) {
 
-		$search = $this->lookupAttributes($attributes);
+		$search = $this->lookupAttributes($attributeInput);
+
+		// echo "Looked up search ". count($search) . "\n";
 
 		if (count($search) === 0) {
 
 			// Create a new user
-			$user = User::createUserFromAttributes($attributes, false);
+			$user = User::createUserFromAttributes($attributeInput, false);
 
 		} else if (count($search) === 1) {
 
@@ -37,7 +39,11 @@ class UserDirectory {
 			if ($it <= 0) throw new Exception('Reached the maximum number of users that can be merged in one batch..');
 
 			$user = $this->merge($search[0], $search[1]);
-			return $this->getUserFromAttributes($attributes, $it - 1);
+			return $this->getUserFromAttributes($attributes, $update, $it - 1);
+		}
+
+		if ($update) {
+			$user->updateUserFromAttributes($attributeInput);
 		}
 
 		return $user;
@@ -77,12 +83,8 @@ class UserDirectory {
 		return $this->lookup($complex);
 	}
 
-	function lookupAttributes($attributes) {
-		$uid = User::getUserIDfromAttributes($attributes);
-		if (!$uid->isValid()) {
-			throw new Exception('No valid user identifiers provided from the authentication layer. Not able to create new user.');
-		}
-		return $this->lookup($uid);
+	function lookupAttributes(UserAttributeInput $attributeInput) {
+		return $this->lookup($attributeInput->complexId);
 	}
 
 

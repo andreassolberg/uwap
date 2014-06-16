@@ -9,38 +9,53 @@ config.get = function(key) {
 	return configsrc[key];
 }
 
-config.getSources = function(input, type) {
-	var result = [], cur;
-	for(var i = 0; i < configsrc.sources.length; i++) {
-		cur = configsrc.sources[i];
 
-		// console.log("Processing " + cur['plugin']);
 
-		if (cur.hasOwnProperty('filter:peoplesearch-realm') && input.realm) {
-			if (cur['filter:peoplesearch-realm'] === input.realm) {
-				result.push(cur); 
+config.getSources = function(inputList, type) {
+	var result = [], cur, input;
+
+	for(var j = 0; j < inputList.length; j++) {
+
+		input = inputList[j];
+
+		for(var i = 0; i < configsrc.sources.length; i++) {
+			cur = configsrc.sources[i];
+
+			// console.log("Processing " + cur['plugin']);
+
+			// if (cur.hasOwnProperty('filter:peoplesearch-realm') && input.custom && input.custom.realm) {
+			// 	if (cur['filter:peoplesearch-realm'] === input.custom.realm) {
+			// 		result.push([input, cur]);
+			// 	}
+			// 	continue;
+			// }
+
+			if (cur.hasOwnProperty('filter:userid')) {
+				// console.log("Checking match for filter:userid ", cur['filter:userid'], input.user.userid);
+				if (cur['filter:userid'] !== input.userid) continue;
 			}
-			continue;
+
+			if (cur.hasOwnProperty('filter:realm')) {
+				if (cur['filter:realm'] !== input.realm) continue;
+			}
+
+			if (cur.hasOwnProperty('filter:idp')) {
+				// console.log("Checking match for filter:idp ", cur['filter:idp'], input.user.idp);
+				if (cur['filter:idp'] !== input.idp) continue;
+			}
+
+			if (type && cur['support']) {
+				if (cur['support'][type] === false) continue;
+			}
+
+			// console.log("Processed  " + cur['plugin']);
+			result.push([input, cur]);
 		}
 
-		if (cur.hasOwnProperty('filter:userid')) {
-			// console.log("Checking match for filter:userid ", cur['filter:userid'], input.user.userid);
-			if (cur['filter:userid'] !== input.user.userid) continue;
-		}
-		if (cur.hasOwnProperty('filter:realm')) {
-			if (cur['filter:realm'] !== input.user.realm) continue;
-		}
-		if (cur.hasOwnProperty('filter:idp')) {
-			// console.log("Checking match for filter:idp ", cur['filter:idp'], input.user.idp);
-			if (cur['filter:idp'] !== input.user.idp) continue;
-		}
-
-		if (type && cur['support']) {
-			if (cur['support'][type] === false) continue;
-		}
-		// console.log("Processed  " + cur['plugin']);
-		result.push(cur);
 	}
+
+
+
 
 	// console.log('-----');
 	// console.log('Input', input);

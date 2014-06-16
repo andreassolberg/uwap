@@ -89,10 +89,12 @@ class Authenticator {
 
 		if ($this->user !== null) return $this->user;
 
-		$attributes = $this->as->getAttributes();
-
 		$directory = new UserDirectory();
-		$this->user = $directory->getUserFromAttributes($attributes);
+
+		// print_r($this->as->getAuthData('saml:sp:IdP')); exit;
+
+		$attributes = new UserAttributeInput($this->as->getAttributes(), $this->as->getAuthData('saml:sp:IdP'));
+		$this->user = $directory->getUserFromAttributes($attributes, true);
 
 		// echo '<pre> UserID '; print_r($attributes);
 

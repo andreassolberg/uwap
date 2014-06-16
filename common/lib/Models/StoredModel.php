@@ -8,13 +8,15 @@ abstract class StoredModel extends Model {
 	protected static $mongoID = false;
 
 	protected $store;
+	protected $stored = false;
 
 
 	protected static $cache = array();
 
-	public function __construct($properties) {
+	public function __construct($properties, $stored = false) {
 
 		$this->store = new UWAPStore();
+		$this->stored = $stored;
 
 		parent::__construct($properties);
 
@@ -72,17 +74,13 @@ abstract class StoredModel extends Model {
 			$update['updated'] = new MongoDate();
 		}
 
-
-		if (!isset($matchValue)) {
+		// If not already stored in database, create new item in database.
+		if (!$this->stored) {
 			$this->store->store(static::$collection, null, $update);
 			return;
 		}
 
-
-
-		// echo "about to store a new object: "; print_r($update); exit;
-
-
+		// If already stored, approch an update on the object.
 		$this->store->upsert(static::$collection, 
 			array(static::$primaryKey => $matchValue),
 			$update
@@ -111,7 +109,6 @@ abstract class StoredModel extends Model {
 		$store = new UWAPStore();
 
 		if (empty(static::$collection)) throw new Exception('Incomplete Model implementation: collection to storage not set');
-
 
 
 		if($key === 'id' && static::$primaryKey === '_id') {
@@ -163,7 +160,7 @@ abstract class StoredModel extends Model {
 		$data = self::getRawByKey($key, $value);
 
 		if (empty($data)) throw new UWAPObjectNotFoundException();
-		return new static($data);
+		return new static($data, true);
 	}
 
 
@@ -186,7 +183,7 @@ abstract class StoredModel extends Model {
 			throw new UWAPObjectNotFoundException();
 		}
 
-		$item = new static($data);
+		$item = new static($data, true);
 
 		self::$cache[$id] = $item;
 

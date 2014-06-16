@@ -51,7 +51,7 @@ var decodeEntitlementGO = function(str, realm, orgname, unitnames) {
 	}
 
 	// var shasum = crypto.createHash('sha1');
-	// var name = cleanOrgUnitName(input.customdata['eduPersonOrgUnitDN:ou'][i]);
+	// var name = cleanOrgUnitName(input.custom['eduPersonOrgUnitDN:ou'][i]);
 
 
 	ng.id = elements[0] + ':' + elements[1] + ':' + elements[2];
@@ -98,53 +98,59 @@ var AttrOrg = function(config) {
 
 AttrOrg.prototype.getByUser = function(input, callback) {
 
-
 	// console.log("-----=====> ATTRORG -----=====> ATTRORG -----=====> ATTRORG -----=====> ATTRORG -----=====> ATTRORG -----=====> ATTRORG");
 	// console.log(JSON.stringify(input, undefined, 4));
 
-	var groups = {};
+	var groups = [];
 	var id, ng;
 
-	var orgname = input.realm.toLowerCase();
+	if (!input) return callback(null);
+	if (!input.hasOwnProperty('account')) return callback(null);
+	if (!input.account.hasOwnProperty('realm')) {
+		console.error('AttrOrg plugin does require a realm to be provided.');
+		return callback(null, null);
+	}
+	if (!input.account.hasOwnProperty('custom')) {
+		console.error('AttrOrg plugin does require a custom property to be provided.');
+		return callback(null, null);
+	}
+
+	var orgname = input.account.realm.toLowerCase();
 	var unitnames = {};
-	var realm = input.realm.toLowerCase();
+	var realm = input.account.realm.toLowerCase();
 
-	if (!input) return callback(groups);
-	if (!input.customdata) return callback(groups);
-
-	// console.log(JSON.stringify(input.customdata, undefined, 4));
-
-
+	// console.log(JSON.stringify(input.custom, undefined, 4));
 	// 'eduPersonAffiliation'
-	if (input.realm && input.customdata['eduPersonOrgDN:o']) {
+	
 
-		// console.log("jalla");
+	if (input.account.realm && input.account.custom['eduPersonOrgDN:o']) {
+
 		var ng = {};
 
-		orgname = input.customdata['eduPersonOrgDN:o'][0];
+		orgname = input.account.custom['eduPersonOrgDN:o'][0];
 
 		ng.role = 'member';
-		if (input.customdata['eduPersonAffiliation'] && contains(input.customdata['eduPersonAffiliation'], 'employee')) {
+		if (input.account.custom['eduPersonAffiliation'] && contains(input.account.custom['eduPersonAffiliation'], 'employee')) {
 			ng.role = 'admin';
 		}
+
+		ng.id = 'org:' + realm;
 		ng.title = 'Ansatte og studenter i ' + orgname;
 		ng.description = 'Ansatte og studenter i ' + orgname;
 
-		id = realm;
 
-		groups['org:' + id] = ng;
+		groups.push(ng);
 
-
-		if (input.customdata['eduPersonAffiliation'] && contains(input.customdata['eduPersonAffiliation'], 'employee')) {
+		if (input.account.custom['eduPersonAffiliation'] && contains(input.account.custom['eduPersonAffiliation'], 'employee')) {
 
 
 			var ng2 = {};
 			ng2.role = 'member';
 			ng2.title = 'Ansatte i ' + orgname;
 			ng2.description = 'Kun de ansatte i ' + orgname;
+			ng2.id = 'org:' + realm + ':employees';
 
-			groups['org:' + id + ':employees'] = ng2;
-
+			groups.push(ng2);
 		}
 
 
@@ -153,53 +159,51 @@ AttrOrg.prototype.getByUser = function(input, callback) {
 
 
 
-	if (input.customdata['eduPersonOrgUnitDN:norEduOrgUnitUniqueIdentifier']) {
+	if (input.account.custom['eduPersonOrgUnitDN:norEduOrgUnitUniqueIdentifier']) {
 
 		
-		for(var i = 0; i < input.customdata['eduPersonOrgUnitDN:norEduOrgUnitUniqueIdentifier'].length; i++) {
+		for(var i = 0; i < input.account.custom['eduPersonOrgUnitDN:norEduOrgUnitUniqueIdentifier'].length; i++) {
 
 			ng = {};
 			var shasum = crypto.createHash('sha1');
 
-			var name = cleanOrgUnitName(input.customdata['eduPersonOrgUnitDN:ou'][i]);
+			var name = cleanOrgUnitName(input.account.custom['eduPersonOrgUnitDN:ou'][i]);
 
 			ng.role = 'member';
 			ng.title = name;
 			ng.description = 'Ansatte og studenter i ' + name;
 
-			shasum.update(input.customdata['eduPersonOrgUnitDN'][i]);
+			shasum.update(input.account.custom['eduPersonOrgUnitDN'][i]);
 
-			var unitid = input.customdata['eduPersonOrgUnitDN:norEduOrgUnitUniqueIdentifier'][i];
-
-			id = input.realm.toLowerCase() + ':' + unitid;
-
+			var unitid = input.account.custom['eduPersonOrgUnitDN:norEduOrgUnitUniqueIdentifier'][i];
 			unitnames[unitid] = name;
 
-			groups['orgunit:' + id] = ng;
+			ng.id = input.account.realm.toLowerCase() + ':' + unitid;
+			groups.push(ng);
 
 		}
 
 	}
 
+	// console.error("Unit names");
+	// console.error(unitnames);
 
-	console.error(unitnames);
-
-	if (input.customdata['eduPersonEntitlement']) {
+	if (input.account.custom['eduPersonEntitlement']) {
 
 		var entitlement, match;
-		for(var i = 0; i < input.customdata['eduPersonEntitlement'].length; i++) {
-			entitlement = input.customdata['eduPersonEntitlement'][i];
+		for(var i = 0; i < input.account.custom['eduPersonEntitlement'].length; i++) {
+			entitlement = input.account.custom['eduPersonEntitlement'][i];
 
 			if (match = isPrefixed(entitlement, 'urn:mace:feide.no:go:grep:') ) {
 
 				ng = {};
-				id = match;
+				ng.id = 'grep:' + match;
 				ng.role = 'member';
 				ng.title = match;
 
 				ng.debug = decodeEntitlementGrep(match, input);
 
-				groups['grep:' + id] = ng;
+				groups.push(ng);
 
 
 			} else if (match = isPrefixed(entitlement, 'urn:mace:feide.no:go:group:') ) {
@@ -207,10 +211,9 @@ AttrOrg.prototype.getByUser = function(input, callback) {
 				ng = decodeEntitlementGO(match, realm, orgname, unitnames);
 
 				if (ng !== null) {
-					groups['group:' + ng.id] = ng;	
+					// groups['group:' + ng.id] = ng;	
+					groups.push(ng);
 				}
-
-				
 
 			}
 
@@ -222,7 +225,7 @@ AttrOrg.prototype.getByUser = function(input, callback) {
 
 	// console.log("-", groups);
 
-	return callback(groups);
+	return callback(null, groups);
 
 	// setTimeout(function() {
 	// 	callback({

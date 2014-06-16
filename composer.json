@@ -1,10 +1,12 @@
 {
     "require": {
-        "mustache/mustache": "~2.6"
+        "mustache/mustache": "~2.6",
+		"nategood/commando": "*"
     },
     "dev_": {
         "liuggio/statsd-php-client": "*",
         "monolog/monolog": "1.9.x",
         "swiftmailer/swiftmailer": "*"
+
     }
 }

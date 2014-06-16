@@ -32,6 +32,11 @@ class ComplexUserID {
 		$this->primary = $p;
 	}
 
+	public function ensurePri() {
+		if (!$this->hasPri()) {
+			$this->genPri();
+		}
+	}
 	public function genPri() {
 		$this->setPri('uuid:' . Utils::genID());
 	}

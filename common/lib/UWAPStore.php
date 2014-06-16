@@ -67,9 +67,9 @@ class UWAPStore {
 			'updates' => $updates,
 		));
 
-		if (isset($userid)) {
-			$criteria["uwap-userid"] = $userid;	
-		}
+		// if (isset($userid)) {
+		// 	$criteria["uwap-userid"] = $userid;	
+		// }
 
 		$updatestmnt = array('$set' => $updates);
 

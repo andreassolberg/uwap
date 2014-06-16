@@ -119,16 +119,24 @@ class OAuth {
 
 			$oauthclient = $this->storage->getClient($e->client_id);
 			$oauthclientdata = $oauthclient->getJSON();
-			$owner = User::getByID($oauthclient->get('uwap-userid'));
 
 			$data = array(
-				'owner'=> $owner->getJSON(),
 				'user' => $userdata,
 				'posturl' => SimpleSAML_Utilities::selfURLNoQuery(),
 				'postdata' => $postdata,
 				'client' => $oauthclientdata,
 				'HOST' => GlobalConfig::hostname(),
 			);
+
+			
+			if ($oauthclient->has('uwap-userid')) {
+				$ownerid = $oauthclient->get('uwap-userid');
+				$owner = User::getByID($ownerid);
+				$data['owner'] = $owner->getJSON();
+			}
+			
+
+
 
 
 			// $data = $config->getConfig();

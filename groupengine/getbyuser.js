@@ -1,11 +1,7 @@
 #!/usr/bin/env node
 
-
 var fs = require('fs');
-
 var GroupEngine = require('./lib/GroupEngine').GroupEngine;
-
-
 
 var readInput = function(callback, error) {
 
@@ -40,7 +36,7 @@ var groupengine = new GroupEngine();
 readInput(function(input) {
 	// console.error("Data read: OK");
 	// console.error(data);
-	console.error(JSON.stringify(input));
+	// console.error(JSON.stringify(input));
 
 	// console.log(groupengine.getByUser(input));
 
@@ -52,7 +48,7 @@ readInput(function(input) {
 
 
 }, function(err) {
-	console.log(JSON.stringify({"message": "Input error: " + err}))
+	console.error(JSON.stringify({"message": "Input error: " + err}))
 	process.exit(1);
 });
 

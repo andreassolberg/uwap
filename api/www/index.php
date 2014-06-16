@@ -52,6 +52,27 @@ try {
 		$response = $user->getJSON(array('type' => 'basic'));
 
 
+
+
+	/**
+	 *  
+	 */
+	} else if (Utils::route('get', '^/authinfo$', $parameters)) {
+
+		$user = $auth->reqToken()->reqScopes(array('userinfo'))->getUser();
+		// $response = $user->getJSON(array('type' => 'extended',  'groups' => true, 'subscriptions' => true));
+		
+
+
+		$response = array('test' => 'bar');
+		
+		$a = new So_StorageServerUWAP();
+		$res = $a->listAuthorization($user->get('userid'));
+
+		$response = $res;
+
+
+
 	/**
 	 *  The userinfo endpoint is used for authentication of clients.
 	 */
