@@ -1,11 +1,17 @@
 <?php
 
 
+// TODO: Did some major changes to HTTPClient that needs to be reflected in this class, if it will be used anymore...
+// 
+
+
+
 class HTTPClientOauth1 extends HTTPClient {
 	
 
 
-	public function get($url, $options) {
+	public function get($method, $url, $options, $method = 'GET', $data = null) {
+
 
 		$session = SimpleSAML_Session::getInstance();
 

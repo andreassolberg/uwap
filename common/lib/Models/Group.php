@@ -12,9 +12,9 @@ class Group extends StoredModel {
 		);
 
 
-	public function __construct($properties) {
+	public function __construct($properties, $stored = false) {
 
-		parent::__construct($properties);
+		parent::__construct($properties, $stored);
 
 	}
 

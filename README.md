@@ -1,5 +1,10 @@
 # UNINETT WebApp Park
 
+
+This is rather OLD. Needs to be updated.
+
+------
+
 core.uwap.org
 
 	Alias /login /var/www/uwap/engine/login-core.php

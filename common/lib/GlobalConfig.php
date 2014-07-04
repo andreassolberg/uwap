@@ -49,9 +49,11 @@ class GlobalConfig {
 
 	// ------ ------ ------ ------ Class methods
 
-	public static function getApp($host = null) {
+	public static function getApp($host = null, $prefix = null ) {
 
-		$id = Utils::getSubID($host);
+		$id = Utils::getSubID($host, $prefix);
+
+		// echo "\n\nGet sub id was " . $id . "\n"; exit;
 
 		if (empty($host)) {
 			$host = Utils::getHost();	
@@ -67,6 +69,8 @@ class GlobalConfig {
 
 		return Client::getByID($id);
 	}
+
+
 
 
 	public static function getInstance() {

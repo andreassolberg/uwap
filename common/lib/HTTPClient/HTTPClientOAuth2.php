@@ -1,11 +1,15 @@
 <?php
 
 
+// TODO: Did some major changes to HTTPClient that needs to be reflected in this class, if it will be used anymore...
+// 
+
+
 class HTTPClientOAuth2 extends HTTPClient {
 	
 
-
-	public function get($url, $options) {
+	//  get($url, $options, $method = 'GET', $data = null) {
+	public function get($method, $url, $options, $method = 'GET', $data = null) {
 
 		
 		$store = new UWAPStore();

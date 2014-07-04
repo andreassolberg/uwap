@@ -19,7 +19,7 @@ class ClientAuthorization extends Model {
 	protected static $validProps = array('scopes', "scopes_requested");
 
 	
-	public function __construct($properties, Client $client, App $targetApp) {
+	public function __construct($properties, Client $client, HostedService $targetApp) {
 
 		// if (!$user instanceof User) throw new Exception('Creating new role without a proper User object');
 		// if (!$group instanceof Group) throw new Exception('Creating new role without a proper Group object');

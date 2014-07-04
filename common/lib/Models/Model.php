@@ -7,8 +7,6 @@ abstract class Model {
 	protected $properties = array();
 	protected static $validProps = array();
 
-	
-
 	public function __construct($properties) {
 
 

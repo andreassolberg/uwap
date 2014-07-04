@@ -1,6 +1,6 @@
 <?php
 
-class App extends Client {
+class App extends HostedService {
 
 /*
 	'id' => true,
@@ -21,13 +21,13 @@ class App extends Client {
 		);
 
 
-	public function __construct($properties) {
+	public function __construct($properties, $stored = false) {
 
 		if (!isset($properties['status'])) {
 			$properties['status'] = array('pendingDAV');
 		}
 
-		parent::__construct($properties);
+		parent::__construct($properties, $stored);
 
 	}
 
@@ -39,13 +39,7 @@ class App extends Client {
 		return parent::get($key, $default);
 	}
 
-	public function getHost() {
-		$ext = $this->get('externalhost', null);
-		if ($ext !== null) {
-			return $ext;
-		}
-		return $this->get('id') . '.' . GlobalConfig::hostname();
-	}
+
 
 	public function hasStatus($statuses) {
 		if (empty($statuses)) return true;
@@ -105,12 +99,7 @@ class App extends Client {
 	}
 
 
-	public function controlsScope($scope) {
 
-		$searchForPrefix = 'rest_' . $this->get('id');
-
-		return (strpos($scope, $searchForPrefix) === 0);
-	}
 
 
 

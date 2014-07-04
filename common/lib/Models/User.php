@@ -15,10 +15,10 @@ class User extends StoredModel {
 
 	protected $groupconnector;
 
-	public function __construct($properties) {
+	public function __construct($properties, $stored = false) {
 
 		// Utils::dump('create new user user:', $properties); exit;
-		parent::__construct($properties);
+		parent::__construct($properties, $stored);
 
 		$this->groupconnector = new GroupConnector($this);
 	}

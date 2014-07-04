@@ -31,6 +31,12 @@ class APIAuthenticator {
 				}
 			}
 		}
+
+		// Optionally, but not reccomended access token may be provided as an query string parameter
+		if (isset($_REQUEST['access_token']) && !empty($_REQUEST['access_token'])) {
+			return trim($_REQUEST['access_token']);
+		}
+
 		return null;
 	}
 
@@ -43,20 +49,48 @@ class APIAuthenticator {
 
 		$tokenstr = $this->getBearerToken();
 		if ($tokenstr === null) {
-			throw new Exception('No token provided. Required...');
+			throw new So_UnauthorizedRequest('unauthorized_client', 'No token provided. Required...');
 		}
 
 		$obj = array(
 			"access_token" => $tokenstr
 		);
 		$result = $this->store->queryOne('oauth2-server-tokens', $obj);
-		if ($result === null) throw new Exception('Could not find the specified access token [].');
+		if ($result === null) throw new So_UnauthorizedRequest('unauthorized_client', 'Could not find the specified access token');
 		
 		$this->token = So_AccessToken::fromObj($result);
 		// $this->token = new AuthenticatedToken($t);
 		// error_log('Token is ' . var_export($this->token, true));
 
 		return $this;
+	}
+
+
+	public function reqAppScope($proxy) {
+		$baseScope = 'rest_' . $proxy->get('id');
+		return $this->reqScopes(array($baseScope));
+	}
+
+	public function getAppScopes($proxy) {
+		$filterPrefix = 'rest_' . $proxy->get('id');
+		return $this->filterScopes($filterPrefix);
+	}
+
+	public function filterScopes($filterPrefix) {
+		$tokenScopes = $this->token->scope;
+		$scopes = array();
+		// echo '<pre>';
+		// echo "looking for " . $filterPrefix;
+		// echo "Token is"; print_r($tokenScopes);
+		foreach($tokenScopes AS $tokenScope) {
+			// echo "check [" . $tokenScope . "]";
+			if (strpos($tokenScope, $filterPrefix . '-') === 0) {
+				// echo "found [" . $tokenScope . "]";
+				$scopes[] = substr($tokenScope, strlen($filterPrefix . '-'));
+			}
+		}
+		// echo "Found "; print_r($scopes); exit;
+		return $scopes;
 	}
 
 	/**
@@ -86,9 +120,11 @@ class APIAuthenticator {
 	}
 
 	public function getClient() {
-		// $this->client = Client::getByID($this->token->client_id);
+		// $this->client = 
+		return Client::getByID($this->token->client_id);
 	}
 
 
 	
 }
+

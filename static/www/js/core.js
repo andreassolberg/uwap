@@ -598,8 +598,6 @@ define(function(require) {
 			data.returnTo = window.location.href;
 			data.appid = UWAP.utils.appid;
 
-
-
 			options = options || {};
 			data.options = options;
 

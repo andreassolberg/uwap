@@ -11,8 +11,10 @@ class Utils {
 	 * @param  [type] $hostname [description]
 	 * @return [type]           [description]
 	 */
-	public static function getSubID($hostname = null) {
+	public static function getSubID($hostname = null, $prefix = null) {
 
+
+		// echo "Get sub id " . $hostname . "  " . $prefix . " " . $_SERVER['REMOTE_ADDR'];
 		if(php_sapi_name() == 'cli' || empty($_SERVER['REMOTE_ADDR'])) {
 			return '_CLI';
 		}
@@ -24,9 +26,19 @@ class Utils {
 		$subhost = null;
 		$mainhost = GlobalConfig::hostname();
 
-		if (preg_match('/^([a-zA-Z0-9]+).' . $mainhost . '$/', $hostname, $matches)) {
+
+
+		if ($prefix !== null) {
+			$mainhost = $prefix . '.' . $mainhost;
+		}
+
+		// echo "Looking up mainhost as " . $mainhost;
+
+		if (preg_match('/^([a-zA-Z0-9-]+).' . $mainhost . '$/', $hostname, $matches)) {
+			// echo "Sub host matches "; print_r($matches);
 			$subhost = $matches[1];
 		} else {
+			// echo "sub hbost did not match";
 			return null;
 		}
 		self::validateID($subhost);
@@ -84,8 +96,10 @@ class Utils {
 		$realmethod = strtolower($_SERVER['REQUEST_METHOD']);
 		return $realmethod  . str_replace('/', '.', $path);
 	}
+
+
 	public static function route($method = false, $match, &$parameters, &$object = null) {
-		if (empty($_SERVER['PATH_INFO']) || strlen($_SERVER['PATH_INFO']) < 2) return false;
+		if (empty($_SERVER['PATH_INFO'])) return false;
 
 		$inputraw = file_get_contents("php://input");
 		if ($inputraw) {
@@ -94,6 +108,8 @@ class Utils {
 		
 
 		$path = $_SERVER['PATH_INFO'];
+		if (empty($_SERVER['PATH_INFO'])) $path = '/';
+		
 		$realmethod = strtolower($_SERVER['REQUEST_METHOD']);
 
 		if ($method !== false) {

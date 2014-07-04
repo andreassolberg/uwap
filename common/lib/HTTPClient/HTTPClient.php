@@ -1,6 +1,29 @@
 <?php
 
 
+class HTTPClientException extends Exception {
+	public $code, $httpmsg, $body;
+	function __construct($message, $code, $httpmsg, $body) {
+		parent::__construct($message);
+		$this->code = $code;
+		$this->httpmsg = $httpmsg;
+		$this->body = $body;
+	}
+}
+
+class HTTPResponse {
+	public $code, $httpmsg, $body, $contentType;
+	function __construct($code, $body) {
+		$this->code = $code;
+		// $this->httpmsg = $httpmsg;
+		$this->body = $body;
+	}
+
+	public function getJSON() {
+
+	}
+}
+
 class HTTPClient {
 	
 	protected $config;
@@ -44,104 +67,6 @@ class HTTPClient {
 	}
 
 
-	// TODO: Security check on URL to not refer to local file system
-	private function file_get_contents_curl($url, $headers = array(), $redir = true) {
-		$ch = curl_init();
-
-	 	$ha = array();
-	 	foreach($headers AS $k => $v) {
-	 		$ha[] = $k . ': ' . $v;
-	 	}
-	 	curl_setopt($ch, CURLOPT_HTTPHEADER, $ha);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //Set curl to return the data instead of printing it to the browser.
-		curl_setopt($ch, CURLOPT_URL, $url);
-		if (!$redir) {
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);	
-		}
-		
-	 
-		$data = curl_exec($ch);
-		curl_close($ch);
-	 
-		return $data;
-	}
-
-	// TODO: Security check on URL to not refer to local file system
-	protected function rawget($url, $headers = array(), $redir = true, $curl = false, $options = array()) {
-
-		// if (isset($options['data'])) {
-		// 	$headers['Content-type'] = 'application/json';
-		// }
-
-
-		$method = "GET";
-		if (isset($options["method"])) {
-			$method = $options["method"];
-		}
-		if (isset($options['options']) && isset($options['options']['_method'])) {
-			$method = $options["options"]["_method"];
-		}
-		$opts = array(
-			// Documentation on http stream options available here:
-			// * http://www.php.net/manual/en/context.http.php
-			'http'=>array(
-				'method'=> $method,
-				'follow_location' => $redir,
-				'max_redirects' => ($redir ? 9 : 1)
-			)
-		);
-
-
-
-
-
-		if (isset($options['data'])) {
-
-			$opts['http']['content'] = json_encode($options['data']);
-			$headers['Content-Type'] = 'application/json';
-		}
-		if (isset($options['options']) && isset($options['options']['_data'])) {
-			$headers['Content-Type'] = 'application/json';
-			$opts['http']['content'] = json_encode($options['options']['_data']);
-		}
-
-
-		// error_log("HTTPClientToken Content data: " . $opts['http']['content']);
-
-		$headerstring = '';
-		foreach($headers AS $k => $v) {
-			$headerstring .= $k . ': ' . $v . "\r\n";
-		}
-		$opts['http']['header'] = $headerstring;
-
-
-		error_log("HTTPCLIENTOptions: " . json_encode($opts));
-		error_log("Header string: " . $headerstring);
-		error_log("HTTPClient      headers:" .  var_export($headers, true));
-
-
-		$context = stream_context_create($opts);
-
-
-		if ($curl) {
-			return $this->file_get_contents_curl($url, $headers, $redir);
-		}
-
-		error_log("About to retrieve: " . $url);
-		$rawdata = file_get_contents($url, false, $context);
-
-		list($version, $status_code, $msg) = explode(' ', $http_response_header[0], 3);
-		$headers = array();
-		foreach($http_response_header AS $hdr) {
-			self::http_parse_headers($hdr, $headers);
-		}
-
-		// print_r($rawdata);
-		if ($rawdata === false) throw new Exception('Status [' . $status_code .  ']: ' . $msg);
-
-		return $rawdata;
-	}
 
 	protected static function http_parse_headers( $header, $hdrs ) {
 		$key = null;
@@ -230,17 +155,84 @@ class HTTPClient {
 		}
 	}
 
-	public function get($url, $options) {
-		$result = array("status" => "ok");
+	protected function setHeaders(&$headers) {
+		return $headers;
+	}
+
+	public function get($method, $url, $options, $requestBody = null, $headers = array()) {
+
+		// $result = array("status" => "ok");
+		// $this->verifyURL($url);
+		// // ($url, $headers = array(), $redir = true, $curl = false, $options = array()) {
+		// $response = $this->rawget($url, array(), true, false, $options);
+		// // error_log("Got data: " . var_export($rawdata, true)) ;
+		// // $result = $this->decode($rawdata, $options);
+		// return $response; // json_decode($rawdata, true);
+
+		$redir = true;
+		if (isset($options['followRedirects'])) {
+			$redir = $options['followRedirects'];
+		}
 
 		$this->verifyURL($url);
 
-		// ($url, $headers = array(), $redir = true, $curl = false, $options = array()) {
-		$rawdata = $this->rawget($url, array(), true, false, $options);
+		// $headers = array();
+		$this->setHeaders($headers);
 
-		error_log("Got data: " . var_export($rawdata, true)) ;
-		// $result = $this->decode($rawdata, $options);
-		return json_decode($rawdata, true);
+
+
+		$ch = curl_init();
+	 	$ha = array();
+	 	foreach($headers AS $k => $v) {
+	 		$ha[] = $k . ': ' . $v;
+	 	}
+
+	 	if ($method !== 'GET') {
+	 		
+	 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+	 	}
+
+	 	curl_setopt($ch, CURLOPT_HTTPHEADER, $ha);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //Set curl to return the data instead of printing it to the browser.
+		curl_setopt($ch, CURLOPT_URL, $url);
+
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,2); 
+		curl_setopt($ch, CURLOPT_TIMEOUT, 2); //timeout in seconds
+
+
+		// TODO: Make an option for whether to validate ssl certiciates. Defualts to on.
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, ($redir ? 1 : 0));
+		if ($requestBody !== null) {
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);
+		}
+
+		// Performing the HTTP Request. All preexec options must be set before this.
+		$data = curl_exec($ch);
+
+		// Obtaining info about the response.
+		$code = intval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
+		$contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+
+
+
+		// if (true) { // debug
+		// 	$debug = curl_getinfo($ch);
+		// 	print_r($debug); exit;
+		// }
+
+		curl_close($ch);
+	 
+		$response = new HTTPResponse($code, $data);
+		$response->contentType = $contentType;
+
+		return $response;
+
+
+
 	}
 
 

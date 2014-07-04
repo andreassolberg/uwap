@@ -247,7 +247,7 @@ class ClientDirectory {
 	 * @param  [type] $appid The client in question that clients requests access to.
 	 * @return [type]           [description]
 	 */
-	public function getAuthorizationQueue(App $app) {
+	public function getAuthorizationQueue(HostedService $app) {
 
 
 		/**
@@ -332,7 +332,7 @@ class ClientDirectory {
 
 
 
-	public function authorizeClientScopes(App $app, Client $client, $scopes) {
+	public function authorizeClientScopes(HostedService $app, Client $client, $scopes) {
 
 		// header('Content-Type: text/plain');
 		// echo "<pre>About to authorize client scopes: ";

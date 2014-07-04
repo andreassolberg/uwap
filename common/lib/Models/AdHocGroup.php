@@ -11,13 +11,13 @@ class AdHocGroup extends Group {
 		'id', 'type', 'displayName', 'description', 'members', 'admins', 'uwap-userid', 'source', 'public');
 
 
-	public function __construct($properties) {
+	public function __construct($properties, $stored = false) {
 
 		if (isset($properties['listable']) && !is_bool($properties['listable'])) {
 			throw new Exception('Creating new AdHocGroup object. then listable property needs to be of type boolean');
 		}
 
-		parent::__construct($properties);
+		parent::__construct($properties, $stored);
 
 		if (empty($this->properties['admins'])) {
 			$this->properties['admins'] = array();

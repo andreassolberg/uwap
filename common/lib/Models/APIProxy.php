@@ -1,6 +1,6 @@
 <?php
 
-class APIProxy extends App {
+class APIProxy extends HostedService {
 	
 
 /*
@@ -22,7 +22,7 @@ class APIProxy extends App {
 
 
 
-	public function __construct($properties) {
+	public function __construct($properties, $stored = false) {
 
 		// header('Content-Type: text/plain'); print_r($properties); exit;
 
@@ -30,7 +30,7 @@ class APIProxy extends App {
 			$properties['status'] = array('operational');
 		}
 
-		parent::__construct($properties);
+		parent::__construct($properties, $stored);
 
 	}
 

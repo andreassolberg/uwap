@@ -11,10 +11,10 @@ class AppHosting {
 	}
 
 	protected function generateDavCredentials() {
-		$username = Utils::generateCleanUsername($this->user->get('id'));
+		$username = Utils::generateCleanUsername($this->user->get('userid'));
 		$password = Utils::generateRandpassword();
 		$credentials = array(
-			'uwap-userid' => $this->user->get('id'),
+			'uwap-userid' => $this->user->get('userid'),
 			'username' => $username,
 			'password' => $password
 		);

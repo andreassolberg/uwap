@@ -20,7 +20,7 @@ class Client extends StoredModel {
 	);
 
 
-	public function __construct($properties) {
+	public function __construct($properties, $stored = false) {
 
 		if (!isset($properties['status'])) {
 			$properties['status'] = array('operational');
@@ -34,7 +34,7 @@ class Client extends StoredModel {
 			$properties['client_secret'] = Utils::genID();
 		}
 
-		parent::__construct($properties);
+		parent::__construct($properties, $stored);
 
 	}
 
@@ -361,18 +361,18 @@ class Client extends StoredModel {
 		return $client;
 	}
 
-	public static function restoreFromProperties($data) {
+	public static function restoreFromProperties($data, $stored = false) {
 		$obj = null;
 
 		if ($data['type'] === 'client') {
-			$obj = new Client($data);
+			$obj = new Client($data, $stored);
 
 		} else if($data['type'] === 'proxy') {
-			$obj = new APIProxy($data);
+			$obj = new APIProxy($data, $stored);
 
 		} else if($data['type'] === 'app') {
 			// echo "CREATING NEW APP with data <pre>"; print_r($data);
-			$obj = new App($data);
+			$obj = new App($data, $stored);
 
 		} else {
 
@@ -390,7 +390,7 @@ class Client extends StoredModel {
 		if ($data === null) {
 			return null;
 		}
-		return self::restoreFromProperties($data);
+		return self::restoreFromProperties($data, true);
 		// echo "Type " . get_called_class() . "\n\n";
 
 	}

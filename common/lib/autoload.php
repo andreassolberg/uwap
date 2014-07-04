@@ -57,6 +57,8 @@ require_once($base . '/Auth/OAuth/So_Server.php');
 require_once($base . '/Auth/OAuth/So_Client.php');
 
 
+require_once($base . '/APIAuthenticator.php');
+
 
 
 // Groups
@@ -78,7 +80,9 @@ require_once($base . '/Models/Model.php');
 require_once($base . '/Models/StoredModel.php');
 require_once($base . '/Models/User.php');
 
+
 require_once($base . '/Models/Client.php');
+require_once($base . '/Models/HostedService.php');
 require_once($base . '/Models/App.php');
 require_once($base . '/Models/APIProxy.php');
 require_once($base . '/Models/ClientAuthorization.php');
@@ -129,7 +133,7 @@ require_once($base . '/Mailer.php');
 
 
 
-require_once($base . '/Proxy/REST.php');
+// require_once($base . '/Proxy/REST.php');
 
 require_once($base . '/LogStore.php');
 

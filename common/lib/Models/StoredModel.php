@@ -74,11 +74,21 @@ abstract class StoredModel extends Model {
 			$update['updated'] = new MongoDate();
 		}
 
+
+	
+
 		// If not already stored in database, create new item in database.
 		if (!$this->stored) {
 			$this->store->store(static::$collection, null, $update);
 			return;
 		}
+
+		// echo "about to store a an updated version of this object\n";
+		// echo "store into this collection: " . static::$collection . "\n";
+		// echo "Mathcing " . var_export(array(static::$primaryKey => $matchValue), true) . "\n";
+		// echo "Update: " . var_export($update, true) . "\n";
+		// exit;
+
 
 		// If already stored, approch an update on the object.
 		$this->store->upsert(static::$collection, 
@@ -156,6 +166,7 @@ abstract class StoredModel extends Model {
 		return self::getRawByKey(static::$primaryKey, $id, $allowEmpty);
 	}
 
+
 	public static function getByKey($key, $value) {
 		$data = self::getRawByKey($key, $value);
 
@@ -169,6 +180,7 @@ abstract class StoredModel extends Model {
 		$data = self::getRawByID($id, true);
 		return ($data !== null);
 	}
+
 
 	public static function getByID($id, $allowEmpty = false) {
 
@@ -189,4 +201,8 @@ abstract class StoredModel extends Model {
 
 		return $item;
 	}
+
+
 }
+
+

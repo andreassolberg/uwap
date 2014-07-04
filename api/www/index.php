@@ -384,6 +384,8 @@ try {
 			$client = Client::getByID($appid);
 			// echo "obtained client by id " . $appid;
 			// echo "result was "; print_r(var_export($client, true));
+			// echo "Class " . get_class($client); exit;
+			// exit;
 
 			$clientdirectory->authorize($client, 'owner');
 			$response = $client->getJSON(array(
@@ -499,7 +501,11 @@ try {
 			$appid = $parameters[1];
 			Utils::validateID($appid);
 			$client = Client::getByID($appid);
+			if (!($client instanceof APIProxy)) 
+				throw new Exception('Cannot modify the proxy subobject of a client that is not an API Proxy');
 			$clientdirectory->authorize($client, 'owner');
+
+			// echo "Dump"; print_r($client); exit;
 
 			$response = $client->updateProxy($object); 
 
@@ -510,10 +516,14 @@ try {
 
 			$appid = $parameters[1];
 			Utils::validateID($appid);
-			$app = App::getByID($appid);
-			$clientdirectory->authorize($app, 'owner');
+			// $app = HostedService::getByID($appid);
+			$service = Client::getByID($appid);
 
-			$authorizationList = $clientdirectory->getAuthorizationQueue($app);
+			if (!($service instanceof HostedService)) 
+				throw new Exception('Cannot obtain a list of clients for this type of [service]');
+
+			$clientdirectory->authorize($service, 'owner');
+			$authorizationList = $clientdirectory->getAuthorizationQueue($service);
 
 			$response = $authorizationList->getJSON();
 
