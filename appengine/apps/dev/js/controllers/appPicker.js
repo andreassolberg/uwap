@@ -8,14 +8,14 @@ define(function(require, exports, module) {
 		console.log("Initing app picker");
 		this.element = element;
 		$(this.element).on("click", "a", this.proxy(this.select));
-	}
+	};
 
 	/**
 	 * Wraps a function to be called with relative to current object
 	 */
 	appPicker.prototype.proxy = function(func) {
 		return $.proxy(func, this);
-	}
+	};
 
 	/**
 	 * Typically when you move to the frontpage, no apps is selected.
@@ -24,7 +24,7 @@ define(function(require, exports, module) {
 	appPicker.prototype.unselect = function() {
 		console.log("UNSELECT");
 		$(this.element).find("a").removeClass("active");
-	}
+	};
 
 	/**
 	 * Detects a click on one of the items.
@@ -44,7 +44,7 @@ define(function(require, exports, module) {
 			$(this.element).find("a").removeClass("active");
 			$(event.currentTarget).addClass("active");
 		}
-	}
+	};
 
 	/**
 	 * Utility function that finds the element of a specific Application ID
@@ -58,7 +58,7 @@ define(function(require, exports, module) {
 		});
 		console.log("  ----> findElement ", appid, found);
 		return found;
-	}
+	};
 
 
 	appPicker.prototype.selectApp = function(appid) {
@@ -70,9 +70,10 @@ define(function(require, exports, module) {
 			$(this.element).find("a").removeClass("active");
 			element.addClass("active");
 		}
-	}
+	};
 
 	appPicker.prototype.getAppItem = function(item) {
+		console.log("Get App Item", item);
 		var ji = $('<a class="list-group-item" href="#">' + UWAP.utils.escape(item.name) + '</a>');
 		ji.attr('data-itemid', UWAP.utils.escape(item.id));
 		ji.attr('data-type', UWAP.utils.escape(item.type));
@@ -81,13 +82,14 @@ define(function(require, exports, module) {
 
 	appPicker.prototype.addList = function(items) {
 		var i;
-		console.log("adding list of apps to be selected...", items);
+		console.log("Adding list of apps to be selected...", items);
 		$(this.element).empty();
 
 		var list = {
 			"app": [], "proxy": [], "client": []
 		};
-		for(var i = 0; i < items.length; i++) {
+
+		for(i = 0; i < items.length; i++) {
 			list[items[i].type].push(items[i]);
 		}
 
@@ -104,6 +106,7 @@ define(function(require, exports, module) {
 		if (list.proxy) {
 			$(this.element).append('<h4 class="list-group-item">Proxies</h4>');
 			for(i = 0; i < list.proxy.length; i++) {
+				console.log("About to proxy ", this.getAppItem(list.proxy[i]));
 				$(this.element).append(this.getAppItem(list.proxy[i]));
 			}
 		}
@@ -111,6 +114,7 @@ define(function(require, exports, module) {
 		if (list.client) {
 			$(this.element).append('<h4 class="list-group-item">Clients</h4>');
 			for(i = 0; i < list.client.length; i++) {
+				// console.log("About to add client ", this.getAppItem(list.app[i]));
 				$(this.element).append(this.getAppItem(list.client[i]));
 			}
 		}
@@ -118,5 +122,5 @@ define(function(require, exports, module) {
 
 
 	return appPicker;
-})
+});
 

@@ -21,7 +21,7 @@ define(function(require, exports, module) {
 
 		this.element.on('click', '.selectPage', $.proxy(this.select, this));
 
-	}
+	};
 
 	ListPager.prototype.select = function(e) {
 		e.preventDefault(); e.stopPropagation();
@@ -36,7 +36,7 @@ define(function(require, exports, module) {
 		var query = this.getQuery();
 
 		this.callback(query);
-	}
+	};
 
 	ListPager.prototype.getQuery = function() {
 
@@ -45,7 +45,7 @@ define(function(require, exports, module) {
 
 		var query = {startsWith: startsWith};
 		return query;
-	}
+	};
 
 	ListPager.prototype.setSet = function(set) {
 		this.set = set;

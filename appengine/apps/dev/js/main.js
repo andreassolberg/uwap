@@ -87,7 +87,7 @@ define(function(require, exports, module) {
 				{title: "Dashboard", href: "#!/"}
 			]);
 
-		}
+		};
 
 
 		/**
@@ -101,7 +101,7 @@ define(function(require, exports, module) {
 			window.location.hash = '#!' + hash;
 			this.routingEnabled = true;
 			return window.location.hash;
-		}
+		};
 
 		/**
 		 * Perform routing, triggered by the hashchange event, and is also called on load.
@@ -167,7 +167,7 @@ define(function(require, exports, module) {
 					target.append('<li><a class="navDashboard" href="' + obj[i].href + '">' + obj[i].title + '</a> <span class="divider"></span></li>');
 				}
 			}
-		}
+		};
 
 		App.prototype.actFrontpage = function(event) {
 			if (event) event.preventDefault();
