@@ -8,12 +8,12 @@
 		src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
 	<script type="text/javascript" language="javascript" 
-		src="//cdn.discojuice.org/engine/discojuice-stable.min.js"></script>
+		src="https://engine.discojuice.org/discojuice-stable.min.js"></script>
 	<script type="text/javascript" language="javascript" 
-		src="//cdn.discojuice.org/engine/idpdiscovery.js"></script>
+		src="https://engine.discojuice.org/idpdiscovery-2.1.min.js"></script>
 
 	<link rel="stylesheet" type="text/css" 
-		href="//cdn.discojuice.org/css/discojuice.css" />
+		href="https://static.discojuice.org/css/discojuice.css" />
 
 
 	<style type="text/css">
@@ -37,14 +37,24 @@
 
 			var acl = ['core.app.bridge.uninett.no', 'core.uwap.org', 'auth.uwap.uninettlabs.no'];
 
-			var options = {
-				"title": "Feide Connect",
-				"feeds": ["uwap"]
-			};
-			var djc = DiscoJuice.Hosted.getConfig(options);
+			// var options = {
+			// 	"title": "Feide Connect",
+			// 	"feeds": ["uwap"]
+			// };
+			// var djc = DiscoJuice.Hosted.getConfig(options);
 
-			djc.always = true;
-			djc.callback = IdPDiscovery.setup(djc, acl);
+			// djc.always = true;
+			// djc.callback = IdPDiscovery.setup(djc, acl);
+
+
+            var djc = DiscoJuice.Hosted.getConfig(
+                "Feide Connect",
+                "https://example.org/saml2/entityid",
+                "http://bridge.uninett.no/response.html", ["feide"], "http://example.org/login?idp="
+            );
+            djc.always = true;
+            djc.callback = IdPDiscovery.setup(djc, acl);
+            $("a.signin").DiscoJuice(djc);
 
 			$("body").DiscoJuice(djc);
 		
