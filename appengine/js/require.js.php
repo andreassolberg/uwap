@@ -77,6 +77,9 @@ requirejs.config({
 	},
 	baseUrl: "<?php echo $hosturl; ?>/js",
 	shim: {
+		'select2/select2': {
+			deps: ['jquery'], exports: 'jQuery'
+		},
 		'uwap-core/js/jquery.tmpl': {deps: ['jquery'], exports: 'jQuery'},
 
 		'uwap-core/bootstrap3/js/bootstrap': {
