@@ -116,22 +116,52 @@ try {
 	error_log("Time to run command:   [" . $key . "]  ======> " . $timer . "ms");
 
 
-} catch(UWAPObjectNotFoundException $e) {
+// } catch(UWAPObjectNotFoundException $e) {
 
-	header("HTTP/1.0 404 Not Found");
-	header('Content-Type: text/plain; charset: utf-8');
-	echo "Error stack trace: \n";
-	print_r($e);
+// 	header("HTTP/1.0 404 Not Found");
+// 	header('Content-Type: text/plain; charset: utf-8');
+// 	echo "Error stack trace: \n";
+// 	print_r($e);
 
 
 } catch(Exception $e) {
 
 	// TODO: Catch OAuth token expiration etc.! return correct error code.
 
+
 	header("HTTP/1.0 500 Internal Server Error");
-	header('Content-Type: text/plain; charset: utf-8');
-	echo "Error stack trace: \n";
-	print_r($e);
+	header('Content-Type: text/html; charset: utf-8');
+
+	// echo "Error stack trace: <pre>\n";
+	// print_r($e);
+
+
+
+	$data = array();
+
+	$globalconfig = GlobalConfig::getInstance();
+
+
+
+	$data['message'] = $e->getMessage();
+	if ($globalconfig->getValue('debug', false)) {
+		$data['error'] = array(
+			'trace' => $e->getTraceAsString(),
+			'line' => $e->getLine(),
+			'file' => $e->getFile()
+		);
+	}
+
+
+	$templateDir = dirname(dirname(dirname(__FILE__))).'/templates';
+	$mustache = new Mustache_Engine(array(
+		// 'cache' => '/tmp/uwap-mustache',
+		'loader' => new Mustache_Loader_FilesystemLoader($templateDir),
+		// 'partials_loader' => new Mustache_Loader_FilesystemLoader(dirname(__FILE__).'/views/partials'),
+	));
+	$tpl = $mustache->loadTemplate('exception');
+	echo $tpl->render($data);
+
 
 
 }
