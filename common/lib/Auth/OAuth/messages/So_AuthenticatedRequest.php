@@ -25,9 +25,8 @@ abstract class So_AuthenticatedRequest extends So_Request {
 		// error_log("Checking credentials Client id is  " . $this->client_id);
 		// error_log("Checking credentials Client secret is  " . $this->client_secret);
 
-
-
 	}
+	
 	function parseServer($server) {
 		if (isset($_SERVER['PHP_AUTH_USER'])) {
 			$this->client_id = $_SERVER['PHP_AUTH_USER'];

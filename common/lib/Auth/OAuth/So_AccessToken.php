@@ -3,23 +3,19 @@
 
 
 class So_AccessToken {
-	public $issued, $validuntil, $client_id, $userid, $access_token, $token_type, $refresh_token, $scope, $userdata, $clientdata;
+	public $issued, $validuntil, $client_id, $userid, $access_token, $token_type, $refresh_token, $scope;
 	
 	function __construct() {
 	}
-	static function generate($client_id, $userid, $userdata, $scope = null, $refreshtoken = true, $expires_in = 3600) {
+
+	static function generate($client_id, $userid, $scope = null, $refreshtoken = true, $expires_in = 3600) {
 		$n = new So_AccessToken();
 
 		$n->client_id = $client_id;
 		$n->userid = $userid;
-		$n->userdata = $userdata;
 		$n->issued = time();
 		$n->validuntil = time() + $expires_in;
 		$n->access_token = So_Utils::gen_uuid();
-
-		$n->clientdata = array(
-			'client_id' => $client_id
-		);
 
 		if ($refreshtoken) {
 			$n->refresh_token = So_Utils::gen_uuid();			
@@ -32,6 +28,7 @@ class So_AccessToken {
 		}
 		return $n;
 	}
+
 	function getScope() {
 		return join(' ', $this->scope);
 	}
@@ -69,8 +66,11 @@ class So_AccessToken {
 	function getObj() {
 		$obj = array();
 		foreach($this AS $key => $value) {
-			if (in_array($key, array())) continue;
 			if ($value === null) continue;
+			if (in_array($key, array('validuntil', 'issued'))) {
+				$obj[$key] = new MongoDate($value);
+				continue;
+			}
 			$obj[$key] = $value;
 		}
 		return $obj;
@@ -78,23 +78,24 @@ class So_AccessToken {
 	
 	static function fromObj($obj) {
 		$n = new So_AccessToken();
-		if (isset($obj['issued'])) $n->issued = $obj['issued'];
-		if (isset($obj['validuntil'])) $n->validuntil = $obj['validuntil'];
+		if (isset($obj['issued'])) $n->issued = $obj['issued']->sec;
+		if (isset($obj['validuntil'])) $n->validuntil = $obj['validuntil']->sec;
+
+
 		if (isset($obj['client_id'])) $n->client_id = $obj['client_id'];
 		if (isset($obj['userid'])) $n->userid = $obj['userid'];
-		if (isset($obj['userdata'])) $n->userdata = $obj['userdata'];
-		if (isset($obj['clientdata'])) $n->clientdata = $obj['clientdata'];
 		if (isset($obj['access_token'])) $n->access_token = $obj['access_token'];
 		if (isset($obj['token_type'])) $n->token_type = $obj['token_type'];
 		if (isset($obj['refresh_token'])) $n->refresh_token = $obj['refresh_token'];
 		if (isset($obj['scope'])) $n->scope = $obj['scope'];
 
-
 		return $n;
 	}
+
 	function getValue() {
 		return $this->access_token;
 	}
+
 	function getToken() {
 		$result = array();
 		$result['access_token'] = $this->access_token;

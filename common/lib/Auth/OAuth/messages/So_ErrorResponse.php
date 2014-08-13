@@ -11,4 +11,19 @@ class So_ErrorResponse extends So_Response {
 		$this->error_uri			= So_Utils::optional($message, 'error_uri');
 		$this->state				= So_Utils::optional($message, 'state');
 	}
+
+	public function sendBodyJSON() {
+
+
+		if($this->error === 'invalid_client') {
+			http_response_code(401);
+		} else if ($this->error === 'invalid_client') {
+			http_response_code(401);
+		} else {
+			http_response_code(400);
+		}
+
+		parent::sendBodyJSON();
+
+	}
 }

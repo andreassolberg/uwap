@@ -12,6 +12,10 @@ function notimplemented() {
 }
 
 
+
+// NOT Used, except from the OAuth client functionality.
+
+
 class So_StorageUWAP extends So_Storage {
 
 	protected $store, $userid, $subid, $config;

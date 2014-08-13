@@ -15,6 +15,13 @@ class OAuth {
 		$this->auth = new Authenticator();
 	}
 
+
+
+	/**
+	 * Process the HTML Form POST where the user has authorized the client with the requested scopes to get
+	 * an access token.
+	 * @return [type] [description]
+	 */
 	function processAuthorizationResponse() {
 
 
@@ -61,55 +68,75 @@ class OAuth {
 
 	}
 
+
+
+	/**
+	 * Perform authorization (authentication and check authorization)
+	 * In contrast to So_Server, this implementation of the authorization endpoint also
+	 * handles authentication, which is not implemented in the gneric So_Server.
+	 * 
+	 * @return [type] [description]
+	 */
 	function authorization() {
 
-		// echo '<pre>'; 
-
+		// Decide whether to run in passive mode. In passive mode no UI is displayed to the enduser.
 		$passive = false;
 		if (isset($_REQUEST["passive"]) && $_REQUEST["passive"] === 'true') $passive = true;
 
+
+		// If SimpleSAML_Auth_State_exceptionId query parameter is set, then something failed 
+		// while performing authentication.
 		if (!empty($_REQUEST['SimpleSAML_Auth_State_exceptionId'])) {
 
-			// echo "Failed because user was not authenticated..."; exit;
-
-			$this->server->authorizationFailed('access_denied', 'https://core.uwap.org/oauth/noPassiveAuthentication', 'Unable to perform passive authentication [1]');
+			// The most likely error is that we are not able to perform passive authentication.
+			$this->server->authorizationFailed('access_denied', 'https://docs.uwap.org', 'Unable to perform passive authentication [1]');
 			return;
 
+		// to doc...
 		} else if (isset($_REQUEST['error']) && $_REQUEST['error'] === '1') {
-			$this->server->authorizationFailed('access_denied', 'https://core.uwap.org/oauth/noPassiveAuthentication', 'Unable to perform passive authentication [2]');
 
-		} else {
-			error_log("About to require authentication from simplesamlphp. Passive (" . var_export($passive, true). ")");
-			$this->auth->req($passive, true);
-
+			$this->server->authorizationFailed('access_denied', 'https://docs.uwap.org', 'Unable to perform passive authentication [2]');
+			return;
 		}
 
+		// We are initiating authentication using simplesamlphp.
+		error_log("About to require authentication from simplesamlphp. Passive (" . var_export($passive, true). ")");
+
+		// (isPassive = false, $allowRedirect, $return)
+		$this->auth->req($passive, true);
+
+		// If we pass this, then we are now already authenticated as a user.
+		// and we obtain information / attributes about the user.
 		$user = $this->auth->getUser(true);
 
+
 		$userid = $user->get('userid');
+
+		// TODO: Do we really need userdata at this point?
 		$userdata = $user->getJSON(array('type' => 'basic'));
 
 
-		// TODO: Do we need to suport passive requests??
+		// TODO: Do we need to suport passive requests?? 
 		// TODO: Check first clients scopes, then check authorization consent.
 
-		UWAPLogger::info('auth', "User is authenticate. Now ready to check authorization.");
+		UWAPLogger::info('auth', "User is authenticated. Now ready to check authorization.");
 
 
 		try {
 
 
-
+			// Invoke the So_Server authorization process, when the user is already authenticated at the 
 			$this->server->authorization($userid, $userdata);
 
+
+		// If user has not already authorizated this client with the requested scopes, then invoke the UI with 
 		} catch(So_AuthorizationRequired $e) {
 
 
 			if ($passive) {
-				$this->server->authorizationFailed('access_denied', 'https://core.uwap.org/oauth/noPassiveAuthorization', 'Unable to perform passive authorization');	
+				$this->server->authorizationFailed('access_denied', 
+					'https://docs.uwap.org/', 'User has not authorized, and were unable to perform passive authorization');	
 			}
-
-
 
 
 			$postdata = array();
@@ -178,7 +205,6 @@ class OAuth {
 
 			// echo '<pre>'; print_r($data); exit;
 
-
 			header("Content-Type: text/html; charset: utf-8");
 
 			$mustache = new Mustache_Engine(array(
@@ -189,7 +215,6 @@ class OAuth {
 			$tpl = $mustache->loadTemplate('oauthgrant');
 			echo $tpl->render($data);
 			exit;
-			// require_once("../../templates/oauthgrant.php"); exit;
 
 		}
 
@@ -219,11 +244,19 @@ class OAuth {
 		}
 	}
 
-
+	/**
+	 * Impmentation of the OAuth 2.0 Token Endpoint.
+	 * @return [type] [description]
+	 */
 	function token() {
 		$this->server->token();
 	}
 
+	/**
+	 * Impementation of an information endpoint, that dumps some useful information 
+	 * about the other endpoints etc.
+	 * @return [type] [description]
+	 */
 	function info() {
 		$this->server->info();
 	}

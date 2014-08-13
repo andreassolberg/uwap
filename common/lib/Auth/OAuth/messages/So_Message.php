@@ -33,7 +33,22 @@ class So_Message {
 		header('Location: ' . $redirurl);
 		exit;
 	}
-	public function sendBody() {
+
+	public function sendBodyJSON() {
+		header('Content-Type: application/json;charset=UTF-8');
+
+		$body = array();
+		foreach($this AS $key => $value) {
+			if (empty($value)) continue;
+			$body[$key] = $value;
+		}
+
+		// echo json_encode($body);
+		echo json_encode($body, JSON_PRETTY_PRINT); 
+		exit;
+	}
+
+	public function sendBodyForm() {
 		// header('Content-Type: application/json; charset=utf-8');
 		header('Content-Type: application/x-www-form-urlencoded');
 

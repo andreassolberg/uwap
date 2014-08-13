@@ -172,15 +172,11 @@ class So_StorageServerUWAP extends So_Storage {
 	}
 
 	public function setAuthorization(So_Authorization $auth) {
-		// notimplemented();
 
 		$obj = $auth->getObj();
-		// $obj["app"] = $this->subid;
-
 
 		$query = array(
 			"client_id" => $obj["client_id"],
-			// "app" => $this->subid,
 			"userid" => $obj["userid"]
 		);
 		$oldone = $this->store->queryOne('oauth2-server-authorization', $query);
@@ -324,10 +320,11 @@ class So_StorageServerUWAP extends So_Storage {
 	}
 		
 	public function putCode(So_AuthorizationCode $code) {
-		$this->store->store("oauth2-server-codes", null, $code->getObj(), 3600);
+		$this->store->store("oauth2-server-codes", null, $code->getObj());
 	}
+
+
 	public function getCode($client_id, $code) {
-		// notimplemented();
 
 		$query = array(
 			"code" => $code,
@@ -337,7 +334,6 @@ class So_StorageServerUWAP extends So_Storage {
 		$result = $this->store->queryOne('oauth2-server-codes', $query);
 		if ($result === null) throw new So_Exception('invalid_grant', 'Invalid authorization code.');
 		$this->store->remove('oauth2-server-codes', null, $result);
-		// $this->db->codes->remove($result, array("safe" => true));
 		return So_AuthorizationCode::fromObj($result);
 	}
 	
@@ -352,6 +348,7 @@ class So_StorageServerUWAP extends So_Storage {
 
 		// $this->db->states->insert($obj);
 	}
+
 	public function getState($state) {
 		notimplemented();
 

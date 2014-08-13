@@ -1,14 +1,16 @@
 <?php
 
 
-
+/**
+ * Implementation of a generic OAuth 2.0 Server
+ */
 class So_Server {
 	
 	protected $store;
 	
 	function __construct($store = null) {
 		if ($store === null) {
-			$this->store = new So_StorageMongo();
+			throw new Exception('Store for So_Server is required.');
 		} else {
 			$this->store = $store;
 		}
@@ -165,6 +167,18 @@ class So_Server {
 	}
 
 
+
+	public function tokenFailed($error, $descr, $url = 'https://docs.uwap.org') {
+		$msg = array(
+			'error' => $error,
+			'error_description' => $url,
+			'error_uri' => $descr
+		);
+		$tokenresponse = new So_ErrorResponse($msg);
+		$tokenresponse->sendBodyJSON();
+		exit;
+	}
+
 	public function authorizationFailed($error, $url, $descr) {
 		$request = new So_AuthRequest($_REQUEST);
 		$clientconfig = $this->store->getClient($request->client_id);
@@ -185,16 +199,43 @@ class So_Server {
 		$tokenresponse->sendRedirect($url, true);
 	}
 
-	public function authorization($userid, $userdata = null) {
-		
-		// echo "authorization()"; exit;
 
-		$request = new So_AuthRequest($_REQUEST);
-		$clientconfig = $this->store->getClient($request->client_id);
+
+
+	/**
+	 * Implementation of the authorization endpoint, where the user is already authenticated.
+	 *
+	 * 
+	 * @param  [type] $userid   [description]
+	 * @param  [type] $userdata [description]
+	 * @return [type]           [description]
+	 */
+	public function authorization($userid, $userdata = null) {
+
+
+		$request = new So_AuthRequest($_REQUEST);	
+		
+		try {
+			$clientconfig = $this->store->getClient($request->client_id);	
+		} catch(Exception $e) {
+			// header('Content-Type: text/plain');
+			// print_r($e);
+
+			$this->server->authorizationFailed('unauthorized_client', 'https://docs.uwap.org', 'Could not find this client.');
+		}
+
 		$url = $this->validateRedirectURI($request, $clientconfig);
 		
 		$authorization = $this->store->getAuthorization($request->client_id, $userid);
 
+
+		// authorization object is null if authorization can not be obtained.
+		// echo "<pre>Authorization "; print_r($authorization); exit;
+
+
+
+		// If the request contains scopes, the requested scopes is the intersection between 
+		// the request and the configuration.
 		$scopes = $clientconfig->get('scopes', array());
 		if (!empty($request->scope)) {
 			// Only consider scopes that the client is authorized to ask for.
@@ -204,8 +245,7 @@ class So_Server {
 		// echo '<pre>';
 		// print_r($request); print_r($clientconfig['scopes']);
 
-
-
+		// authorizationFailed ...
 		// echo "authorization()<pre>"; print_r($authorization); exit;
 
 		if ($authorization === null || !$authorization->includeScopes($scopes)) {
@@ -236,7 +276,6 @@ class So_Server {
 		if ($request->response_type === 'token') {
 
 
-
 			$accesstoken = So_AccessToken::generate($clientconfig->get('id'), $userid, $userdata, $scopes, false, $expires_in);
 			$this->store->putAccessToken($request->client_id, $userid, $accesstoken);
 			error_log('Ive generated a token: ' . var_export($accesstoken->getToken(), true));
@@ -251,7 +290,11 @@ class So_Server {
 
 		} else if ($request->response_type === 'code') {
 
-			$authcode = So_AuthorizationCode::generate($request->client_id, $userid, $userdata, $scopes, $expires_in);
+			// client_id, $userid, $scope, $expires_in
+			$authcode = So_AuthorizationCode::generate($request->client_id, $userid, $scopes, $expires_in);
+			if (!empty($request->redirect_uri)) {
+				$authcode->redirect_uri = $request->redirect_uri;
+			}
 			$this->store->putCode($authcode);
 
 			// echo "put a code <pre>"; print_r($authcode); echo '</pre>'; exit;
@@ -266,6 +309,11 @@ class So_Server {
 
 	}
 	
+
+	/**
+	 * Impmentation of the OAuth 2.0 Token Endpoint.
+	 * @return [type] [description]
+	 */
 	public function token() {
 
 
@@ -282,18 +330,40 @@ class So_Server {
 		
 		if ($tokenrequest->grant_type === 'authorization_code') {
 			
-			$clientconfig = $this->store->getClient($tokenrequest->client_id);
-			$tokenrequest->checkCredentials($clientconfig->get('id'), $clientconfig->get('client_secret'));
-			$code = $this->store->getCode($clientconfig->get('id'), $tokenrequest->code);
+			try {
+				$clientconfig = $this->store->getClient($tokenrequest->client_id);
+				$tokenrequest->checkCredentials($clientconfig->get('id'), $clientconfig->get('client_secret'));
+
+			} catch (Exception $e) {
+				$this->tokenFailed('unauthorized_client', 'Not able to authentication client. ' . $e->getMessage());
+			}
+
+			try {
+				$code = $this->store->getCode($clientconfig->get('id'), $tokenrequest->code);	
+			} catch (Exception $e) {
+				$this->tokenFailed('invalid_grant', 'Could not lookup the provided authorization code. May be it has already been fetched? ' . $e->getMessage());
+			}
+			
+
+			// Validate redirect_uri if used in the original request.
+			if (!empty($code->redirect_uri)) {
+				if (empty($tokenrequest->redirect_uri)) {
+					$this->tokenFailed('invalid_request', 'required_uri is required on the token endpoint when used in the orginal request');
+				} else {
+					if ($code->redirect_uri !== $tokenrequest->redirect_uri) {
+						$this->tokenFailed('invalid_request', 'required_uri is not matching the one used in the orginal request.');
+					}
+				}
+			}
 
 			// echo "got a code <pre>"; print_r($code); echo '</pre>'; exit;
 
-			$accesstoken = So_AccessToken::generate($clientconfig->get('id'), $code->userid, $code->userdata, $code->scope, $code->tokenexpiresin);
+			$accesstoken = So_AccessToken::generate($clientconfig->get('id'), $code->userid, $code->scope, $code->tokenexpiresin);
 			$this->store->putAccessToken($clientconfig->get('id'), $code->userid, $accesstoken);
 			error_log('Ive generated a token: ' . var_export($accesstoken->getToken(), true));
 			$tokenresponse = new So_TokenResponse($accesstoken->getToken());
 			
-			$tokenresponse->sendBody();
+			$tokenresponse->sendBodyJSON();
 			
 		} else if ($tokenrequest->grant_type === 'client_credentials') {
 
@@ -306,8 +376,6 @@ class So_Server {
 				throw new So_Exception('invalid_grant', 'Invalid secret.');
 			}
 
-			// echo "Juhuuuu \n";
-
 			$scopes = $clientconfig->get('scopes', null);
 			if (empty($scopes)) {
 				throw new Exception('Client configuration is missing a list of [scopes] for this client.');
@@ -315,7 +383,7 @@ class So_Server {
 
 			$expiresin = time() + 3600;
 			$accesstoken = So_AccessToken::generate($clientconfig->get('id'), null, null, $clientconfig->get('scopes', array()), $expiresin);
-			$accesstoken->clientdata = $clientconfig->get('id');
+
 
 			// error_log("AT: " . json_encode($accesstoken)); 
 
@@ -323,7 +391,7 @@ class So_Server {
 			error_log('Ive generated a token: ' . var_export($accesstoken->getToken(), true));
 			$tokenresponse = new So_TokenResponse($accesstoken->getToken());
 			
-			$tokenresponse->sendBody();
+			$tokenresponse->sendBodyJSON();
 
 			// echo "\nu: " . $_SERVER['PHP_AUTH_USER'];
 			// echo "\np: " . $_SERVER['PHP_AUTH_PW'];
