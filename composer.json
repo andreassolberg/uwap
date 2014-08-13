@@ -6,7 +6,7 @@
     "dev_": {
         "liuggio/statsd-php-client": "*",
         "monolog/monolog": "1.9.x",
-        "swiftmailer/swiftmailer": "*"
-
+        "swiftmailer/swiftmailer": "*",
+        "nategood/commando": "*"
     }
 }
