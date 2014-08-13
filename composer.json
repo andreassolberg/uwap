@@ -1,12 +1,11 @@
 {
+    "name": "andreassolberg/uwap",
+    "description": "UNINETT WebApp Park",
     "require": {
         "mustache/mustache": "~2.6",
-		"nategood/commando": "*"
+		"nategood/commando": "*",
+        "firebase/php-jwt": "*"
     },
-    "dev_": {
-        "liuggio/statsd-php-client": "*",
-        "monolog/monolog": "1.9.x",
-        "swiftmailer/swiftmailer": "*",
-        "nategood/commando": "*"
-    }
+    "license": ["LGPL-2.1", "LGPL-3.0"],
+    "minimum-stability": "dev"
 }
