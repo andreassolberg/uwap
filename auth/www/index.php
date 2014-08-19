@@ -83,6 +83,21 @@ try {
 		$response = $providerconfig;
 
 
+	// OpenID Connect Discovery 1.0
+	// http://openid.net/specs/openid-connect-discovery-1_0.html
+	} else if  (Utils::route('get', '^/\.well-known/openid-configuration$', $parameters)) {
+
+		$base = $globalconfig->getBaseURL('auth') . 'oauth/';
+		$providerconfig = array(
+			'issuer' => $globalconfig->getValue('connect.issuer'),
+			'authorization_endpoint' => $base . 'authorization',
+			'token_endpoint' => $base . 'token',
+			'token_endpoint_auth_methods_supported' => ['client_secret_basic'],
+			'token_endpoint_auth_signing_alg_values_supported' => ['RS256'],
+			'userinfo_endpoint' =>  $base . 'userinfo',
+		);
+		$response = $providerconfig;
+
 	/*
 	 *	Testing authentication using the auth libs
 	 *	Both API auth and 
