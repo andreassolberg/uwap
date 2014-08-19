@@ -276,7 +276,8 @@ class So_Server {
 		if ($request->response_type === 'token') {
 
 
-			$accesstoken = So_AccessToken::generate($clientconfig->get('id'), $userid, $userdata, $scopes, false, $expires_in);
+			// ($client_id, $userid, $scope = null, $refreshtoken = true, $expires_in = 3600)
+			$accesstoken = So_AccessToken::generate($clientconfig->get('id'), $userid, $scopes, false, $expires_in);
 			$this->store->putAccessToken($request->client_id, $userid, $accesstoken);
 			error_log('Ive generated a token: ' . var_export($accesstoken->getToken(), true));
 			$tokenresponse = new So_TokenResponse($accesstoken->getToken());
@@ -291,7 +292,7 @@ class So_Server {
 		} else if ($request->response_type === 'code') {
 
 			// client_id, $userid, $scope, $expires_in
-			$authcode = So_AuthorizationCode::generate($request->client_id, $userid, $scopes, $expires_in);
+			$authcode = So_AuthorizationCode::generate($request->client_id, $userid, $scopes, false, $expires_in);
 			if (!empty($request->redirect_uri)) {
 				$authcode->redirect_uri = $request->redirect_uri;
 			}
@@ -358,7 +359,8 @@ class So_Server {
 
 			// echo "got a code <pre>"; print_r($code); echo '</pre>'; exit;
 
-			$accesstoken = So_AccessToken::generate($clientconfig->get('id'), $code->userid, $code->scope, $code->tokenexpiresin);
+			//($client_id, $userid, $scope = null, $refreshtoken = true, $expires_in = 3600)
+			$accesstoken = So_AccessToken::generate($clientconfig->get('id'), $code->userid, $code->scope, false, $code->tokenexpiresin);
 			$this->store->putAccessToken($clientconfig->get('id'), $code->userid, $accesstoken);
 			error_log('Ive generated a token: ' . var_export($accesstoken->getToken(), true));
 			$tokenresponse = new So_TokenResponse($accesstoken->getToken());
@@ -382,7 +384,8 @@ class So_Server {
 			}
 
 			$expiresin = time() + 3600;
-			$accesstoken = So_AccessToken::generate($clientconfig->get('id'), null, null, $clientconfig->get('scopes', array()), $expiresin);
+			// ($client_id, $userid, $scope = null, $refreshtoken = true, $expires_in = 3600)
+			$accesstoken = So_AccessToken::generate($clientconfig->get('id'), null, $clientconfig->get('scopes', array()), false, $expiresin);
 
 
 			// error_log("AT: " . json_encode($accesstoken)); 
