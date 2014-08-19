@@ -1207,6 +1207,10 @@ try {
 
 	// UWAPLogger::stat('timing', $key, $timer);
 
+} catch(So_Exception $e) {
+
+	$e->displayError();
+
 } catch(UWAPObjectNotFoundException $e) {
 
 	header("HTTP/1.0 404 Not Found");

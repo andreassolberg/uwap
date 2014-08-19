@@ -38,11 +38,35 @@ class So_Exception extends Exception {
 		if (!empty($this->state)) $message['state'] = $this->state;
 		$m = new So_ErrorResponse();
 	}
+
+	public function displayError() {
+		$httpStatus = '401';
+		if ($this->code === 'invalid_request') {
+			http_response_code(400); // Bad Request
+		} else if ($this->code === 'invalid_token') {
+			http_response_code(401); // Unauthorized
+		} else if ($this->code === 'insufficient_scope') {
+			http_response_code(403); // Forbidden
+		} else {
+			http_response_code(401); // Unauthorized
+		}
+
+		$params = array();
+		$params[] = 'realm="UWAP"';
+		$params[] = 'error="' . $this->code . '"';
+		$params[] = 'error_description="' . urlencode($this->getMessage()) . '"';
+		header('WWW-Authenticate: Bearer ' . join(', ', $params));
+		header("Content-Type: text/plain; charset: utf-8");
+		echo $this->getMessage();
+		exit;
+	}
 }
 
 
 
 class So_UnauthorizedRequest extends So_Exception {
+
+
 
 }
 
