@@ -216,12 +216,13 @@ class So_Server {
 		$request = new So_AuthRequest($_REQUEST);	
 		
 		try {
+			error_log("Looking up client id " . $request->client_id);
 			$clientconfig = $this->store->getClient($request->client_id);	
 		} catch(Exception $e) {
 			// header('Content-Type: text/plain');
 			// print_r($e);
 
-			$this->server->authorizationFailed('unauthorized_client', 'https://docs.uwap.org', 'Could not find this client.');
+			$this->authorizationFailed('unauthorized_client', 'https://docs.uwap.org', 'Could not find this client.');
 		}
 
 		$url = $this->validateRedirectURI($request, $clientconfig);

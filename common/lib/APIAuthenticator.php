@@ -102,6 +102,7 @@ class APIAuthenticator {
 	public function reqScopes(array $scopes) {
 
 		$this->reqToken();
+		// print_r($this->token); exit;
 		if (!$this->token->gotScopes($scopes)) {
 			throw new So_UnauthorizedRequest('unauthorized_client', 'Insufficient scope on provided token. Missing [' . join(',', $scopes) . ']');		
 		}
@@ -114,7 +115,7 @@ class APIAuthenticator {
 		$this->reqToken();
 
 		if (!empty($this->user)) return $this->user;
-		$this->user = User::getByID($this->token->userdata['userid']);
+		$this->user = User::getByID($this->token->userid);
 		return $this->user;
 
 	}
