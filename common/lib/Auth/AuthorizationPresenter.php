@@ -46,7 +46,8 @@ class AuthorizationPresenter {
 
 		}
 
-		$data['unknown'] = array('items' => array('foo', 'bar'));
+		// $data['unknown'] = array('items' => array('foo', 'bar'));
+		$data['unknown'] = array();
 		$knownPerms = array('userinfo', 'groupmanage', 'longterm');
 
 		foreach($toProcess AS $s => $v) {
