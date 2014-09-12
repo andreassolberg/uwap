@@ -59,10 +59,10 @@ try {
 
 } catch(Exception $e) {
 
-	// 	header("Status: 500 Internal Error");
-	// 	header('Content-Type: text/plain; charset: utf-8');
-	// 	echo "Error stack trace: \n";
-	// 	print_r($e);
+	header("Status: 500 Internal Error");
+	header('Content-Type: text/plain; charset: utf-8');
+	echo "Error stack trace: \n";
+	print_r($e);
 }
 
 
