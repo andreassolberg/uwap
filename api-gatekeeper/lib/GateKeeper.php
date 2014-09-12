@@ -28,7 +28,7 @@ class GateKeeper {
 	function show() {
 
 
-		try {
+		// try {
 
 			if (Utils::route(false, '.*', $qs, $args)) {
 
@@ -153,17 +153,17 @@ class GateKeeper {
 				throw new Exception('Bad request.');
 			}
 
-		} catch(Exception $e) {
+		// } catch(Exception $e) {
 
-			// TODO: Catch OAuth token expiration etc.! return correct error code.
+		// 	// TODO: Catch OAuth token expiration etc.! return correct error code.
 
-			header("Status: 500 Internal Error");
-			header('Content-Type: text/plain; charset: utf-8');
-			echo "Error stack trace: \n";
-			print_r($e);
+		// 	header("Status: 500 Internal Error");
+		// 	header('Content-Type: text/plain; charset: utf-8');
+		// 	echo "Error stack trace: \n";
+		// 	print_r($e);
 
 
-		}
+		// }
 
 	}
 

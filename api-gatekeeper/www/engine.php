@@ -11,7 +11,7 @@
 require_once(dirname(dirname(__FILE__)) . '/lib/autoload.php');
 
 header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
-header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");   // Date in the past
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true");
@@ -21,7 +21,7 @@ header("Access-Control-Expose-Headers: Authorization, X-Requested-With, Origin, 
 
 
 if (strtolower($_SERVER['REQUEST_METHOD']) === 'options') {
-	header('Content-Type: application/json; charset=utf-8');
+	// header('Content-Type: application/json; charset=utf-8');
 	exit;
 }
 
@@ -44,22 +44,26 @@ if (!($app instanceof APIProxy))
 	throw new Exception('AppEngine may only run on APIProxies');
 
 
-try {
 
+try {
 
 	$h = new GateKeeper($app);
 	// UWAPLogger::debug('engine', 'Accessing a SOA proxied endpoint', $h->getInfo());
 	$h->show();
 
 
+} catch(So_Exception $e) {
+
+
+	$e->displayError();
 
 } catch(Exception $e) {
-	header("X-Error: Notfound", true, 404);
-	UWAPLogger::error('engine', 'Error processing a static file from app area.', $e->getMessage());
 
-	echo "Error: " . $e->getMessage();
+	// 	header("Status: 500 Internal Error");
+	// 	header('Content-Type: text/plain; charset: utf-8');
+	// 	echo "Error stack trace: \n";
+	// 	print_r($e);
 }
-
 
 
 
