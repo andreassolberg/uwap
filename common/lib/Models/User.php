@@ -171,6 +171,28 @@ class User extends StoredModel {
 	}
 
 
+	/**
+	 * Return an array with zero or more entries of secondary keys that contains a given prefix.
+	 * In example: type=feide
+	 * @param  [type] $type [description]
+	 * @return [type]       [description]
+	 */
+	public function getSecondaryKeysOfType($type) {
+		assert('is_string($type)');
+
+		$res = array();
+
+		$keys = $this->get('userid-sec');
+		foreach($keys AS $key) {
+			if (0 === strpos($key, $type . ':')) {
+				$res[] = substr($key, strlen($type) +1);
+			}
+		}
+
+		return $res;
+
+	}
+
 
 	public function updateUserFromAttributes(UserAttributeInput $userinput) {
 
