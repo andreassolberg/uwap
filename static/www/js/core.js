@@ -256,7 +256,7 @@ define(function(require) {
 					if (typeof callback === 'function') {
 						var x = result;
 						if (typeof dataprocess === 'function') {
-							var x = dataprocess(result);
+							x = dataprocess(result);
 						} 
 						callback(x, jqXHR.status + ' ' + jqXHR.statusText, jqXHR.getAllResponseHeaders());		
 					}
@@ -400,7 +400,7 @@ define(function(require) {
 
 					jso.jso_ensureTokensPassive({"uwap": false}, function() {
 
-						console.log(" [====] Callback success from jso_ensureTokensPassive() ")
+						console.log(" [====] Callback success from jso_ensureTokensPassive() ");
 
 						UWAP._request(
 							'GET', 
