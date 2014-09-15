@@ -61,6 +61,18 @@ class HTTPClient {
 		$headers['UWAP-Client'] = $this->client->get('id');
 		$headers["UWAP-Scopes"] = join(',', $scopes);
 
+		if (
+				isset($this->config['userid-secondary']) && 
+				$this->config['userid-secondary'] !== null &&
+				is_string($this->config['userid-secondary'])
+				) {
+
+			$secKeys = $this->user->getSecondaryKeysOfType($this->config['userid-secondary']);
+			$headers['UWAP-UserIDsec'] = join(',', $secKeys);
+			// $headers['UWAP-UserIDsec'] = 'data';
+
+		}
+		// $headers['CONFIG'] = json_encode($this->config);
 		// echo "Headers: \n"; print_r($headers); exit;
 
 		return $headers;
