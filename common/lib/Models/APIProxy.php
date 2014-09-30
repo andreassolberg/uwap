@@ -3,23 +3,30 @@
 class APIProxy extends HostedService {
 	
 
-/*
-			'id' => true,
-			'name' => true,
-			'descr' => true,
-			'logo' => true,
-			'type' => true,
-			'owner-userid' => true,
-			'owner' => true,
-			'name' => true,
- */
+	/*
+		'id' => true,
+		'name' => true,
+		'descr' => true,
+		'logo' => true,
+		'type' => true,
+		'owner-userid' => true,
+		'owner' => true,
+		'name' => true,
+	 */
 
 	protected static $validProps = array(
 		'id', 'name', 'descr', 'type', 'uwap-userid', 'handlers', 'status', 'scopes', 'scopes_requested',
 		'externalhost',
 		'proxy'
-		);
+	);
 
+	public function getHost() {
+		$ext = $this->get('externalhost', null);
+		if ($ext !== null) {
+			return $ext;
+		}
+		return $this->get('id') . '.gk.' . GlobalConfig::hostname();
+	}
 
 
 	public function __construct($properties, $stored = false) {
@@ -44,13 +51,16 @@ class APIProxy extends HostedService {
 
 
 		$allowedFields = array(
-			'endpoints', 'scopes', 'token_val', 'token_hdr', 'type', 'user', 'policy'
+			'endpoints', 'scopes', 'token_val', 'token_hdr', 'type', 'user', 'userid-secondary', 'policy'
 		);
 
 		foreach($proxy AS $k => $v) {
 			if (!in_array($k, $allowedFields)) {
 				unset($proxy[$k]);
 			}
+		}
+		if (isset($proxy['userid-secondary'])) {
+			$proxy['userid-secondary'] = 'feide';
 		}
 
 		$this->set('proxy', $proxy);
