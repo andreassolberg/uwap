@@ -24,9 +24,9 @@ define(function(require, exports, module) {
 
 	var count_keys = function(myobj) {
 		var c= 0;
-		for (k in myobj) if (myobj.hasOwnProperty(k)) c++;
+		for (var k in myobj) if (myobj.hasOwnProperty(k)) c++;
 		return c;
-	}
+	};
 
 
 	var in_array = function (key, array) {
@@ -37,7 +37,7 @@ define(function(require, exports, module) {
 			if (key === array[i]) return true;
 		}
 		return false;
-	}
+	};
 
 
 	var ProxyDashboard = function(container, appconfig, templates) {
@@ -87,7 +87,7 @@ define(function(require, exports, module) {
 		$(this.container).on('click', '.actGrant', this.proxy(this.actGrant));
 		$(this.container).on('click', '.actReject', this.proxy(this.actReject));
 
-	}
+	};
 
 
 	ProxyDashboard.prototype.updateAppClients = function(data) {
@@ -103,7 +103,7 @@ define(function(require, exports, module) {
 		that.pendingauthorizationlistcontroller.setList(that.authorizationList);
 		that.pendingauthorizationlistcontroller.draw();
 
-	}
+	};
 
 
 
@@ -114,14 +114,14 @@ define(function(require, exports, module) {
 			that.updateAppClients(data);
 
 		} );
-	}
+	};
 
 	ProxyDashboard.prototype.getClientPendingRef = function(id) {
 		throw new Error('getClientPendingRef()');
-		for(var i = 0; i < this.clients.pending.length; i++) {
-			if (this.clients.pending[i].client_id === id) return this.clients.pending[i];
-		}
-	}
+		// for(var i = 0; i < this.clients.pending.length; i++) {
+		// 	if (this.clients.pending[i].client_id === id) return this.clients.pending[i];
+		// }
+	};
 
 	ProxyDashboard.prototype.actGrant = function(e) {
 		e.stopPropagation(); e.preventDefault();
@@ -146,21 +146,21 @@ define(function(require, exports, module) {
 		});
 
 		console.log("Client identifier", client_id, client, authz);
-	}
+	};
 
 	ProxyDashboard.prototype.actReject = function(e) {
 		e.stopPropagation(); e.preventDefault();
 		var client_id = $(e.currentTarget).closest('tr.client').data('clientid');
 		var client = this.getClientPendingRef(client_id);
 		console.log("Client identifier", client_id, client);
-	}
+	};
 
 	ProxyDashboard.prototype.actAPIEdit = function(e) {
 		e.stopPropagation();
 		var el = $(e.currentTarget).parent('li.api');
 		el.addClass('edit');
 		console.log("Edit", el);
-	}
+	};
 
 	ProxyDashboard.prototype.actAPISave = function(e) {
 		e.stopPropagation();
@@ -174,7 +174,7 @@ define(function(require, exports, module) {
 		console.log("Endpoints is ", endpoints, el.find('input'));
 		this.appconfig.proxy.endpoints = endpoints;
 		this.updateProxy();
-	}
+	};
 
 	ProxyDashboard.prototype.actAddScope = function(e) {
 		var that = this;
@@ -215,7 +215,7 @@ define(function(require, exports, module) {
 			// that.appconfig.proxy.scopes.push(svalue);
 			that.updateProxy();
 
-		})
+		});
 		as.on('hidden', function() {
 			as.remove();
 		});
@@ -223,7 +223,8 @@ define(function(require, exports, module) {
 		// var el = $(e.currentTarget).parent('li.api');
 		// el.addClass('edit');
 		console.log("add scope");
-	}
+	};
+
 	ProxyDashboard.prototype.actRemoveScope = function(e) {
 		e.stopPropagation(); e.preventDefault();
 		// var el = $(e.currentTarget).parent('li.api');
@@ -238,7 +239,7 @@ define(function(require, exports, module) {
 			delete this.appconfig.proxy.scopes;
 		}
 
-		console.log("DELETING SCOPE", t, this.appconfig)
+		console.log("DELETING SCOPE", t, this.appconfig);
 
 		// var remaining = [];
 		// for(var i = 0; i < this.appconfig.proxy.scopes.length; i++) {
@@ -250,7 +251,7 @@ define(function(require, exports, module) {
 		// console.log("removing ", t, "remaining", remaining);
 		this.updateProxy();
 
-	}
+	};
 
 	ProxyDashboard.prototype.actChangePolicy = function(e) {
 		e.stopPropagation(); e.preventDefault();
@@ -260,15 +261,15 @@ define(function(require, exports, module) {
 		this.appconfig.proxy.policy = {"auto": auto};
 		this.updateProxy();
 
-	}
+	};
 
 	ProxyDashboard.prototype.proxy = function(func) {
 		return $.proxy(func, this);
-	}
+	};
 
 	ProxyDashboard.prototype.updateStatus = function() {
 
-	}
+	};
 
 
 	
@@ -278,7 +279,7 @@ define(function(require, exports, module) {
 		UWAP.appconfig.bootstrap(this.appconfig.id, template, function() {
 			alert("Successfully applied bootstrap template to your application.");
 		});
-	}
+	};
 
 	ProxyDashboard.prototype.deleteApp = function() {
 		var that = this;
@@ -286,7 +287,7 @@ define(function(require, exports, module) {
 			that.appconfig.status = newstatus;
 			that.drawAppStatus();
 		});
-	}
+	};
 
 	ProxyDashboard.prototype.updateProxy = function() {
 		var that = this;
@@ -295,7 +296,7 @@ define(function(require, exports, module) {
 			that.drawScopes();
 			that.drawEndpoints();
 		});
-	}
+	};
 
 	ProxyDashboard.prototype.listingAdd = function() {
 		var that = this;
@@ -303,14 +304,15 @@ define(function(require, exports, module) {
 			that.appconfig.status = newstatus;
 			that.drawAppStatus();
 		});
-	}
+	};
+
 	ProxyDashboard.prototype.listingRemove = function() {
 		var that = this;
 		UWAP.appconfig.updateStatus(this.appconfig.id, {listing: false}, function(newstatus) {
 			that.appconfig.status = newstatus;
 			that.drawAppStatus();
 		});
-	}
+	};
 
 	ProxyDashboard.prototype.draw = function() {
 		// console.log("DRAW", this.appconfig);
@@ -324,7 +326,8 @@ define(function(require, exports, module) {
 			this.appconfig.appcapacityH = this.appconfig['appdata-stats'].capacityH;
 			this.appconfig.appusage = this.appconfig['appdata-stats'].usage;
 		}
-		this.element = $(this.templates['proxydashboard'](this.appconfig));
+
+		this.element = $(this.templates.proxydashboard(this.appconfig));
 
 		
 		console.log("this element", this.element);
@@ -337,7 +340,7 @@ define(function(require, exports, module) {
 
 		this.drawAuthzHandlers();
 		this.drawAppStatus();
-	}
+	};
 
 	// ProxyDashboard.prototype.drawClients = function() {
 	// 	console.log("draw authorizationList ", this.authorizationList);
@@ -360,7 +363,7 @@ define(function(require, exports, module) {
 
 		$(this.element).find('input#proxyBasicAccessPolicy').attr('checked', auto);
 
-	}
+	};
 
 	ProxyDashboard.prototype.drawEndpoints = function() {
 		var container = $(this.element).find('div.endpoints');
@@ -370,7 +373,7 @@ define(function(require, exports, module) {
 		if(!this.appconfig.proxy.endpoints) return;
 
 		container.append(endpointsTmpl(this.appconfig.proxy));
-	}
+	};
 
 	ProxyDashboard.prototype.drawScopes = function() {
 
@@ -391,7 +394,7 @@ define(function(require, exports, module) {
 		// 	console.log("Processing scopes", i, scope)
 		// });
 
-	}
+	};
 
 	ProxyDashboard.prototype.drawAppStatus = function() {
 
@@ -429,7 +432,7 @@ define(function(require, exports, module) {
 				$("div.listing").append('<p><button class="btn btn-mini btn-success listingAdd">Add to listing</button></p>');
 			}
 		}
-	}
+	};
 
 
 	ProxyDashboard.prototype.hasStatus = function(statuses) {
@@ -440,7 +443,7 @@ define(function(require, exports, module) {
 			}
 		}
 		return true;
-	}
+	};
 
 
 	ProxyDashboard.prototype.drawAuthzHandlers = function() {
@@ -452,7 +455,7 @@ define(function(require, exports, module) {
 
 		if (this.appconfig.handlers) {
 			$.each(this.appconfig.handlers, function(hid, item) {
-				that.handlers[item.id];
+				// that.handlers[item.id];
 				item.id = hid;
 				that.handlers[item.id] = item;
 				if(item.type == "oauth1" || item.type =="oauth2"){
@@ -460,7 +463,7 @@ define(function(require, exports, module) {
 				}
 //					handlertmpl = $("#authorizationhandlertmpl").tmpl(item);
 				console.log('authorizationhandler template-making');
-				handlertmpl = $(that.templates['authorizationhandler'](item));
+				handlertmpl = $(that.templates.authorizationhandler(item));
 				$(that.element).find("tbody.authorizationhandlers").append(handlertmpl);
 				console.log("App has handlers", that.appconfig.handlers, handlertmpl);
 				// console.log(that.element.find("tbody.authorizationhandlers"));
@@ -470,7 +473,7 @@ define(function(require, exports, module) {
 			that.element.find("tbody.authorizationhandlers").empty()
 				.append('<tr><td colspan="5">No authorization handlers registered so far.</td></tr>');
 		}		
-	}
+	};
 
 	ProxyDashboard.prototype.handlerNew = function() {
 		var obj = {"type": "oauth2"};
@@ -488,7 +491,7 @@ define(function(require, exports, module) {
 			
 		}, that.templates);
 		handlerEditor.activate();
-	}
+	};
 
 	ProxyDashboard.prototype.handlerEdit = function(eventObject) {
 //			var obj = $(eventObject.target).closest("tr").tmplItem().data;
@@ -511,11 +514,11 @@ define(function(require, exports, module) {
 			
 		}, that.templates);
 		handlerEditor.activate();
-	}
+	};
 
 	ProxyDashboard.prototype.handlerReset = function(eventObject) {
 		console.log("handler", eventObject);
-	}
+	};
 
 	ProxyDashboard.prototype.handlerDelete = function(eventObject) {
 //			var object = $(eventObject.target).closest("tr").tmplItem().data;
@@ -531,7 +534,7 @@ define(function(require, exports, module) {
 		}, function(error) {
 			console.error("Error storing authorization handler edit.");
 		});
-	}
+	};
 
 	ProxyDashboard.prototype.submit = function() {
 		var obj = {};
@@ -545,7 +548,7 @@ define(function(require, exports, module) {
 		this.callback(obj);
 		$(this.element).modal("hide");
 		$(this.element).remove();
-	}
+	};
 
 	ProxyDashboard.prototype.updateIdentifier = function() {
 		var id = $(this.element).find("#newAppIdentifier").val();
@@ -558,22 +561,22 @@ define(function(require, exports, module) {
 			$(this.element).find("span.idlabels").empty();
 			this.verified = false;
 		}
-	}
+	};
 
 	ProxyDashboard.prototype.checkIfReady = function() {
 		console.log("check if ready");
 		var name = $(this.element).find("#newAppName").val();
 		if (name.length > 1 && this.verified) {
-			console.log("READY")
+			console.log("READY");
 			// $(this.element).find(".createNewBtn").attr("disabled", "disabled");
 			$(this.element).find(".createNewBtn").removeClass("disabled");
 		} else {
-			console.log("NOT READY")
+			console.log("NOT READY");
 			// $(this.element).find(".createNewBtn").removeAttr("disabled");
 			
 			$(this.element).find(".createNewBtn").addClass("disabled");
 		}
-	}
+	};
 
 	ProxyDashboard.prototype.verifyIdentifier = function() {
 		var that = this;
@@ -604,12 +607,12 @@ define(function(require, exports, module) {
 			that.checkIfReady();
 			$(that.element).find("span.idlabels").empty().append('<span class="label label-important">' + error + '</span>');
 		});
-	}
+	};
 
 	ProxyDashboard.prototype.activate = function() {
 		$(this.element).modal('show');
 		$(this.element).find("#newAppIdentifier").focus();
-	}
+	};
 
 	return ProxyDashboard;
 

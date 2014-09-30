@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 		this.verifytimer = null;
 
 		console.log('newProxy.html');
-		this.element = $(this.templates['newProxy']());
+		this.element = $(this.templates.newProxy());
 
 		console.log("this element", this.element);
 		$("div#modalContainer").empty().append(this.element);
@@ -45,7 +45,7 @@ define(function(require, exports, module) {
 			}
 		}
 		return res;
-	}
+	};
 
 
 	newProxy.proxydefcontr = function(arr) {
@@ -56,10 +56,10 @@ define(function(require, exports, module) {
 				policy: {
 					auto: false
 				}
-			}
+			};
 		}
 		return res;
-	}
+	};
 
 	newProxy.prototype.submit = function() {
 
@@ -84,7 +84,8 @@ define(function(require, exports, module) {
 			"token_hdr": "UWAP-X-Auth",
 			"token_val": UWAP.utils.uuid(),
 			"type": "token",
-			"user": true
+			"user": true,
+			"userid-secondary": "feide"
 		};
 
 		// console.log("About to store proxy object", obj); return;
@@ -113,16 +114,16 @@ define(function(require, exports, module) {
 		console.log("check if ready");
 		var name = $(this.element).find("#newProxyName").val();
 		if (name.length > 1 && this.verified) {
-			console.log("READY")
+			console.log("READY");
 			// $(this.element).find(".createNewBtn").attr("disabled", "disabled");
 			$(this.element).find(".createNewBtn").removeClass("disabled");
 		} else {
-			console.log("NOT READY")
+			console.log("NOT READY");
 			// $(this.element).find(".createNewBtn").removeAttr("disabled");
 			
 			$(this.element).find(".createNewBtn").addClass("disabled");
 		}
-	}
+	};
 
 	newProxy.prototype.verifyIdentifier = function() {
 		var that = this;
@@ -153,12 +154,12 @@ define(function(require, exports, module) {
 			that.checkIfReady();
 			$(that.element).find("span.idlabels").empty().append('<span class="label label-important">' + error + '</span>');
 		});
-	}
+	};
 
 	newProxy.prototype.activate = function() {
 		$(this.element).modal('show');
 		$(this.element).find("#newProxyIdentifier").focus();
-	}
+	};
 
 	// newProxy.include(Spine.Events);
 	return newProxy;
