@@ -183,7 +183,7 @@ define(function(require, exports, module) {
 
 
 
-	}
+	};
 
 
 	ClientDashboard.prototype.search = function(term) {
@@ -209,27 +209,22 @@ define(function(require, exports, module) {
 			console.log("Result", proxyTmpl, items);
 			$("div#searchres").append(proxyTmpl(items));
 		});
-	}
-
-
-	ClientDashboard.prototype.draw = function() {
-		console.log("DRAW", this.appconfig, this.appconfig.getAppScopes());
-
-		var clientview = this.appconfig.getView();
-		console.log("CLIENT VIEW CLIENT VIEW ", clientview);
-
-		clientview.providerconfig = this.providerconfig;
-
-		this.element = $(this.templates['clientdashboard'](clientview));
-
-		
-		console.log("this element", this.element);
-		this.container.empty().append(this.element);
-
 	};
 
 
+	ClientDashboard.prototype.draw = function() {
 
+		var clientview = this.appconfig.getView();
+		clientview.providerconfig = this.providerconfig;
+		this.element = $(this.templates.clientdashboard(clientview));
+
+		console.log("DRAW", this.appconfig, this.appconfig.getAppScopes());
+		console.log("CLIENT VIEW CLIENT VIEW ", clientview);		
+		console.log("this element", this.element);
+
+		this.container.empty().append(this.element);
+
+	};
 
 
 

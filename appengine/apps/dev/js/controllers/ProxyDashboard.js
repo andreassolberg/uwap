@@ -84,6 +84,17 @@ define(function(require, exports, module) {
 		$(this.container).on("change", "input#proxyBasicAccessPolicy", 
 			this.proxy(this.actChangePolicy));
 
+
+		$(this.container).on("click", "div.appstatus button.appDelete", 
+			this.proxy(this.deleteApp));
+
+		$(this.container).on("click", "div.appstatus div.listing button.listingAdd", 
+			this.proxy(this.listingAdd));
+		$(this.container).on("click", "div.appstatus div.listing button.listingRemove", 
+			this.proxy(this.listingRemove));
+
+			
+
 		$(this.container).on('click', '.actGrant', this.proxy(this.actGrant));
 		$(this.container).on('click', '.actReject', this.proxy(this.actReject));
 

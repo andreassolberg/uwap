@@ -23,10 +23,10 @@ define(function(require, exports, module) {
 	var authzclientsTmpl = hb.compile(authzclientsTmplText);
 
 	var count_keys = function(myobj) {
-		var c= 0;
+		var c= 0, k;
 		for (k in myobj) if (myobj.hasOwnProperty(k)) c++;
 		return c;
-	}
+	};
 
 
 	var in_array = function (key, array) {
@@ -37,17 +37,24 @@ define(function(require, exports, module) {
 			if (key === array[i]) return true;
 		}
 		return false;
-	}
+	};
 
-
-	var ProxyViewDashboard = function(container, appconfig, templates) {
+	//container, appconfig, templates, providerconfig
+	var ProxyViewDashboard = function(app, container, appconfig, templates, providerconfig) {
+		var that = this;
+		this.app = app;
 		this.container = container;
 		this.appconfig = appconfig;
 		this.templates = templates;
+		this.providerconfig = providerconfig;
 
 		this.clients = [];
 
 		console.log("Proxy view dashboard opens...", appconfig);
+
+		$(this.container).on('click', '.newClient', $.proxy(function() {
+			that.app.actNewClient();
+		}, this));
 
 		this.draw();
 		this.getAppClients();
@@ -55,7 +62,7 @@ define(function(require, exports, module) {
 		// $(this.container).on('click', '.actGrant', this.proxy(this.actGrant));
 		// $(this.container).on('click', '.actReject', this.proxy(this.actReject));
 
-	}
+	};
 
 	ProxyViewDashboard.prototype.getAppClients = function() {
 		var that = this;
@@ -76,25 +83,25 @@ define(function(require, exports, module) {
 			that.clients = {
 				"pending": clientsPending,
 				"authorized": clientsAuthorized,
-			}
+			};
 			that.drawClients();
 		} );
-	}
+	};
 
 	ProxyViewDashboard.prototype.getClientPendingRef = function(id) {
 		for(var i = 0; i < this.clients.pending.length; i++) {
 			if (this.clients.pending[i].client_id === id) return this.clients.pending[i];
 		}
-	}
+	};
 
 
 	ProxyViewDashboard.prototype.proxy = function(func) {
 		return $.proxy(func, this);
-	}
+	};
 
 	ProxyViewDashboard.prototype.updateStatus = function() {
 
-	}
+	};
 
 
 
@@ -110,15 +117,21 @@ define(function(require, exports, module) {
 			this.appconfig.appcapacityH = this.appconfig['appdata-stats'].capacityH;
 			this.appconfig.appusage = this.appconfig['appdata-stats'].usage;
 		}
-		this.element = $(this.templates['proxyviewdashboard'](this.appconfig));
 
+
+		var clientview = this.appconfig.getView();
+		clientview.providerconfig = this.providerconfig;
+		this.element = $(this.templates.proxyviewdashboard(clientview));
 		
 		console.log("this element", this.element);
+		console.log("this clientview", clientview);
 		this.container.empty();
 		this.container.append(this.element);
 
 		this.drawAppStatus();
-	}
+
+	};
+
 
 	ProxyViewDashboard.prototype.drawClients = function() {
 		console.log("draw clients ", this.clients);
@@ -127,7 +140,7 @@ define(function(require, exports, module) {
 
 		container.append(authzclientsTmpl(this.clients));
 
-	}
+	};
 
 
 
@@ -169,7 +182,7 @@ define(function(require, exports, module) {
 		// 		$("div.listing").append('<p><button class="btn btn-mini btn-success listingAdd">Add to listing</button></p>');
 		// 	}
 		// }
-	}
+	};
 
 
 	ProxyViewDashboard.prototype.hasStatus = function(statuses) {
@@ -180,7 +193,7 @@ define(function(require, exports, module) {
 			}
 		}
 		return true;
-	}
+	};
 
 
 	return ProxyViewDashboard;

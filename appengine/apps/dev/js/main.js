@@ -58,7 +58,7 @@ define(function(require, exports, module) {
 
 	$("document").ready(function() {
 
-		$('.dropdown-toggle').dropdown()
+		$('.dropdown-toggle').dropdown();
 
 		var App = function(el, user, providerconfig) {
 			
@@ -147,7 +147,7 @@ define(function(require, exports, module) {
 			}
 
 			// console.log("HASH Change", window.location.hash);
-		}
+		};
 
 
 /*
@@ -218,7 +218,7 @@ define(function(require, exports, module) {
 				} else if (appconfig.type === 'proxy') {
 
 					// adash = new ProxyDashboard($("div#appmaincontainer"), new Proxy(appconfig), templates);
-					rdash = new ProxyViewDashboard($("div#appmaincontainer"), new Proxy(appconfig), templates);
+					rdash = new ProxyViewDashboard(that, $("div#appmaincontainer"), new Proxy(appconfig), templates, that.providerconfig);
 
 				} else {
 
@@ -233,7 +233,7 @@ define(function(require, exports, module) {
 
 			});
 
-		}
+		};
 
 		// App.prototype.actLoadClient = function(appid) {
 		// 	var that = this;
@@ -275,11 +275,11 @@ define(function(require, exports, module) {
 
 				if (appconfig.type === 'app') {
 
-					adash = new AppDashboard($("div#appmaincontainer"), appconfig, templates);
+					adash = new AppDashboard($("div#appmaincontainer"), appconfig, templates, that.providerconfig);
 
 				} else if (appconfig.type === 'proxy') {
 
-					adash = new ProxyDashboard($("div#appmaincontainer"), new Proxy(appconfig), templates);
+					adash = new ProxyDashboard($("div#appmaincontainer"), new Proxy(appconfig), templates, that.providerconfig);
 
 				} else if (appconfig.type === 'client') {
 
@@ -310,7 +310,7 @@ define(function(require, exports, module) {
 			var that = this;
 			if (event) event.preventDefault();
 
-			console.log("Initiating new app...")
+			console.log("Initiating new app...");
 
 			var na = new newApp(that.el, function(no) {
 				
@@ -360,7 +360,7 @@ define(function(require, exports, module) {
 				});
 			}, templates);
 			na.activate();
-		}
+		};
 
 		/**
 		 * Registering a new client
@@ -392,7 +392,7 @@ define(function(require, exports, module) {
 
 			}, templates);
 			na.activate();
-		}
+		};
 
 
 

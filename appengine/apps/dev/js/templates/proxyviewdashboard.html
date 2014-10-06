@@ -23,14 +23,15 @@
 	<h3>Using this API</h3>
 
 
+
+
 	<p>Endpoints for OAuth flow and API access</p>
 	<dl>
-		{{#oauth}}
-			<dt>OAuth 2.0 Authorization Endpoint</dt>
-			<dd><code>{{authorization}}</code></dd>
-			<dt>OAuth 2.0 Token Endpoint</dt>
-			<dd><code>{{token}}</code></dd>
-		{{/oauth}}
+		<dt>OAuth 2.0 Authorization endpoint</dt>
+		<dd><code>{{providerconfig.authorization}}</code></dd>
+
+		<dt>OAuth 2.0 Token endpoint</dt>
+		<dd><code>{{providerconfig.token}}</code></dd>
 
 		<dt>API Base URL</dt>
 		<dd><code>{{url}}</code></dd>
@@ -70,7 +71,7 @@
 
 
 	
-	<p><button class="btn"><i class="icon-plus-sign"></i> Register a new client to access this API</button></p>
+	<p><button class="btn newClient"><i class="icon-plus-sign"></i> Register a new client to access this API</button></p>
 
 	<div id="clientauthorizations"></div>
 
