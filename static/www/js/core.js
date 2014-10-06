@@ -849,7 +849,6 @@ define(function(require) {
 		// },
 
 		getView: function(id, callback) {
-			console.error('››› NOT IMPLEMENTED updates to this API call for appconfig after refactoring');
 			UWAP._request(
 				'GET', 
 				UWAP.utils.getAPIurl('/appconfig/view/' + id),
@@ -882,215 +881,215 @@ define(function(require) {
 			 	null,
 			 	null, callback);
 		}
-	}
-
-
-	UWAP.appconfig2 = {
-		list: function(callback) {
-			
-			$.ajax({
-				type: 'GET',
-				url: '/_/appconfig.php/apps',
-				dataType: 'json',
-				// data: JSON.stringify({ "command": "on" }),
-				// processData: false,
-				success: function(result, textStatus, jqXHR) {
-					// console.log('Response appconfig get()');
-					// console.log(result);
-					if (result.status === 'ok') {
-						callback(result.data);
-					} else {
-						if  (typeof errorcallback === 'function') {
-							errorcallback(result.message);
-						}
-						// console.log('Data request error (server side): ' + result.message);
-					}
-
-				},
-				error: function(err) {
-					if  (typeof errorcallback === 'function') {
-						errorcallback(err);
-					}
-					// console.log('Data request error (client side): ' + err);
-				}
-			});
-
-		},
-
-		store: function(object, callback) {
-
-			$.ajax({
-				type: 'POST',
-				url: '/_/appconfig.php/apps',
-				dataType: 'json',
-				contentType: "application/json",
-				data: JSON.stringify(object),
-				processData: false,
-				success: function(result, textStatus, jqXHR) {
-					// console.log('Response data save()');
-					// console.log(result);
-					if (result.status === 'ok') {
-						callback(result.data);
-					} else {
-						if  (typeof errorcallback === 'function') {
-							errorcallback(result.message);
-						}
-						// console.log('Data request error (server side): ' + result.message);
-					}
-
-				},
-				error: function(err) {
-					if  (typeof errorcallback === 'function') {
-						errorcallback(err);
-					}
-					// console.log('Data request error (client side): ' + err);
-				}
-			});
-
-		},
-		updateStatus: function(id, object, callback) {
-			 UWAP._request(
-			 	'POST', 
-			 	'/_/appconfig.php/app/' + id + '/status',
-			 	object, 
-			 	null, callback);
-		},
-		bootstrap: function(id, template, callback) {
-			UWAP._request(
-				'POST', 
-				'/_/appconfig.php/app/' + id + '/bootstrap',
-				template, 
-				null, callback);
-		},
-
-		updateAuthzHandler: function(id, object, callback) {
-			$.ajax({
-				type: 'POST',
-				url: '/_/appconfig.php/app/' + id + '/authorizationhandler/' + object.id,
-				dataType: 'json',
-				contentType: "application/json",
-				data: JSON.stringify(object),
-				processData: false,
-				success: function(result, textStatus, jqXHR) {
-					// console.log('Response data save()');
-					// console.log(result);
-					if (result.status === 'ok') {
-						callback(result.data);
-					} else {
-						if  (typeof errorcallback === 'function') {
-							errorcallback(result.message);
-						}
-						// console.log('Data request error (server side): ' + result.message);
-					}
-
-				},
-				error: function(err) {
-					if  (typeof errorcallback === 'function') {
-						errorcallback(err);
-					}
-					// console.log('Data request error (client side): ' + err);
-				}
-			});
-
-		},
-		deleteAuthzHandler: function(appid, objectid, callback) {
-			
-			$.ajax({
-				type: 'DELETE',
-				url: '/_/appconfig.php/app/' + appid + '/authorizationhandler/' + objectid,
-				dataType: 'json',
-				contentType: "application/json",
-				// data: JSON.stringify(object),
-				// processData: false,
-				success: function(result, textStatus, jqXHR) {
-					// console.log('Response data save()');
-					// console.log(result);
-					if (result.status === 'ok') {
-						callback(result.data);
-					} else {
-						if  (typeof errorcallback === 'function') {
-							errorcallback(result.message);
-						}
-						// console.log('Data request error (server side): ' + result.message);
-					}
-
-				},
-				error: function(err) {
-					if  (typeof errorcallback === 'function') {
-						errorcallback(err);
-					}
-					// console.log('Data request error (client side): ' + err);
-				}
-			});
-
-		},
-		check: function(id, callback) {
-
-			$.getJSON('/_/appconfig.php/check/' + id, null, function(result, textStatus, jqXHR) {
-				// console.log('Response apiconfig check');
-				// console.log(result);
-				if (result.status === 'ok') {
-					callback(result.data);
-				} else {
-					if  (typeof errorcallback === 'function') {
-						errorcallback(result.message);
-					}
-					// console.log('Data request error (server side): ' + result.message);
-				}
-
-			}, function(err) {
-				if  (typeof errorcallback === 'function') {
-					errorcallback(err);
-				}
-				// console.log('Data request error (client side): ' + err);
-			});
-		},
-		get: function(id, callback) {
-
-			$.getJSON('/_/appconfig.php/app/' + id, null, function(result, textStatus, jqXHR) {
-				// console.log('Response data queryOne()');
-				// console.log(result);
-				if (result.status === 'ok') {
-					callback(result.data);
-				} else {
-					if  (typeof errorcallback === 'function') {
-						errorcallback(result.message);
-					}
-					// console.log('Data request error (server side): ' + result.message);
-				}
-
-			}, function(err) {
-				if  (typeof errorcallback === 'function') {
-					errorcallback(err);
-				}
-				// console.log('Data request error (client side): ' + err);
-			});
-		}
 	};
 
-	UWAP.applisting = {
-		list: function(callback) {
 
-			$.getJSON('/_/applisting.php', {}, function(result, textStatus, jqXHR) {
-				// console.log('Response applisting get()');
-				// console.log(result);
-				if (result.status === 'ok') {
-					callback(result.data);
-				} else {
-					if  (typeof errorcallback === 'function') {
-						errorcallback(result.message);
-					}
-					// console.log('Data request error (server side): ' + result.message);
-				}
+	// UWAP.appconfig2 = {
+	// 	list: function(callback) {
+			
+	// 		$.ajax({
+	// 			type: 'GET',
+	// 			url: '/_/appconfig.php/apps',
+	// 			dataType: 'json',
+	// 			// data: JSON.stringify({ "command": "on" }),
+	// 			// processData: false,
+	// 			success: function(result, textStatus, jqXHR) {
+	// 				// console.log('Response appconfig get()');
+	// 				// console.log(result);
+	// 				if (result.status === 'ok') {
+	// 					callback(result.data);
+	// 				} else {
+	// 					if  (typeof errorcallback === 'function') {
+	// 						errorcallback(result.message);
+	// 					}
+	// 					// console.log('Data request error (server side): ' + result.message);
+	// 				}
 
-			}, function(err) {
-				if  (typeof errorcallback === 'function') {
-					errorcallback(err);
-				}
-				// console.log('Data request error (client side): ' + err);
-			});
-		}
-	};
+	// 			},
+	// 			error: function(err) {
+	// 				if  (typeof errorcallback === 'function') {
+	// 					errorcallback(err);
+	// 				}
+	// 				// console.log('Data request error (client side): ' + err);
+	// 			}
+	// 		});
+
+	// 	},
+
+	// 	store: function(object, callback) {
+
+	// 		$.ajax({
+	// 			type: 'POST',
+	// 			url: '/_/appconfig.php/apps',
+	// 			dataType: 'json',
+	// 			contentType: "application/json",
+	// 			data: JSON.stringify(object),
+	// 			processData: false,
+	// 			success: function(result, textStatus, jqXHR) {
+	// 				// console.log('Response data save()');
+	// 				// console.log(result);
+	// 				if (result.status === 'ok') {
+	// 					callback(result.data);
+	// 				} else {
+	// 					if  (typeof errorcallback === 'function') {
+	// 						errorcallback(result.message);
+	// 					}
+	// 					// console.log('Data request error (server side): ' + result.message);
+	// 				}
+
+	// 			},
+	// 			error: function(err) {
+	// 				if  (typeof errorcallback === 'function') {
+	// 					errorcallback(err);
+	// 				}
+	// 				// console.log('Data request error (client side): ' + err);
+	// 			}
+	// 		});
+
+	// 	},
+	// 	updateStatus: function(id, object, callback) {
+	// 		 UWAP._request(
+	// 		 	'POST', 
+	// 		 	'/_/appconfig.php/app/' + id + '/status',
+	// 		 	object, 
+	// 		 	null, callback);
+	// 	},
+	// 	bootstrap: function(id, template, callback) {
+	// 		UWAP._request(
+	// 			'POST', 
+	// 			'/_/appconfig.php/app/' + id + '/bootstrap',
+	// 			template, 
+	// 			null, callback);
+	// 	},
+
+	// 	updateAuthzHandler: function(id, object, callback) {
+	// 		$.ajax({
+	// 			type: 'POST',
+	// 			url: '/_/appconfig.php/app/' + id + '/authorizationhandler/' + object.id,
+	// 			dataType: 'json',
+	// 			contentType: "application/json",
+	// 			data: JSON.stringify(object),
+	// 			processData: false,
+	// 			success: function(result, textStatus, jqXHR) {
+	// 				// console.log('Response data save()');
+	// 				// console.log(result);
+	// 				if (result.status === 'ok') {
+	// 					callback(result.data);
+	// 				} else {
+	// 					if  (typeof errorcallback === 'function') {
+	// 						errorcallback(result.message);
+	// 					}
+	// 					// console.log('Data request error (server side): ' + result.message);
+	// 				}
+
+	// 			},
+	// 			error: function(err) {
+	// 				if  (typeof errorcallback === 'function') {
+	// 					errorcallback(err);
+	// 				}
+	// 				// console.log('Data request error (client side): ' + err);
+	// 			}
+	// 		});
+
+	// 	},
+	// 	deleteAuthzHandler: function(appid, objectid, callback) {
+			
+	// 		$.ajax({
+	// 			type: 'DELETE',
+	// 			url: '/_/appconfig.php/app/' + appid + '/authorizationhandler/' + objectid,
+	// 			dataType: 'json',
+	// 			contentType: "application/json",
+	// 			// data: JSON.stringify(object),
+	// 			// processData: false,
+	// 			success: function(result, textStatus, jqXHR) {
+	// 				// console.log('Response data save()');
+	// 				// console.log(result);
+	// 				if (result.status === 'ok') {
+	// 					callback(result.data);
+	// 				} else {
+	// 					if  (typeof errorcallback === 'function') {
+	// 						errorcallback(result.message);
+	// 					}
+	// 					// console.log('Data request error (server side): ' + result.message);
+	// 				}
+
+	// 			},
+	// 			error: function(err) {
+	// 				if  (typeof errorcallback === 'function') {
+	// 					errorcallback(err);
+	// 				}
+	// 				// console.log('Data request error (client side): ' + err);
+	// 			}
+	// 		});
+
+	// 	},
+	// 	check: function(id, callback) {
+
+	// 		$.getJSON('/_/appconfig.php/check/' + id, null, function(result, textStatus, jqXHR) {
+	// 			// console.log('Response apiconfig check');
+	// 			// console.log(result);
+	// 			if (result.status === 'ok') {
+	// 				callback(result.data);
+	// 			} else {
+	// 				if  (typeof errorcallback === 'function') {
+	// 					errorcallback(result.message);
+	// 				}
+	// 				// console.log('Data request error (server side): ' + result.message);
+	// 			}
+
+	// 		}, function(err) {
+	// 			if  (typeof errorcallback === 'function') {
+	// 				errorcallback(err);
+	// 			}
+	// 			// console.log('Data request error (client side): ' + err);
+	// 		});
+	// 	},
+	// 	get: function(id, callback) {
+
+	// 		$.getJSON('/_/appconfig.php/app/' + id, null, function(result, textStatus, jqXHR) {
+	// 			// console.log('Response data queryOne()');
+	// 			// console.log(result);
+	// 			if (result.status === 'ok') {
+	// 				callback(result.data);
+	// 			} else {
+	// 				if  (typeof errorcallback === 'function') {
+	// 					errorcallback(result.message);
+	// 				}
+	// 				// console.log('Data request error (server side): ' + result.message);
+	// 			}
+
+	// 		}, function(err) {
+	// 			if  (typeof errorcallback === 'function') {
+	// 				errorcallback(err);
+	// 			}
+	// 			// console.log('Data request error (client side): ' + err);
+	// 		});
+	// 	}
+	// };
+
+	// UWAP.applisting = {
+	// 	list: function(callback) {
+
+	// 		$.getJSON('/_/applisting.php', {}, function(result, textStatus, jqXHR) {
+	// 			// console.log('Response applisting get()');
+	// 			// console.log(result);
+	// 			if (result.status === 'ok') {
+	// 				callback(result.data);
+	// 			} else {
+	// 				if  (typeof errorcallback === 'function') {
+	// 					errorcallback(result.message);
+	// 				}
+	// 				// console.log('Data request error (server side): ' + result.message);
+	// 			}
+
+	// 		}, function(err) {
+	// 			if  (typeof errorcallback === 'function') {
+	// 				errorcallback(err);
+	// 			}
+	// 			// console.log('Data request error (client side): ' + err);
+	// 		});
+	// 	}
+	// };
 
 	return UWAP;
 
