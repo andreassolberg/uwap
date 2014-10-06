@@ -407,6 +407,39 @@ try {
 			}
 
 
+		/*
+		 * Get public view of a client configuration.
+		 */
+		} else if (Utils::route('get', '^/appconfig/view/([a-z0-9\-]+)$', $qs, $parameters)) {
+
+			// $appid = $qs[1];
+			// Utils::validateID($appid);
+			// $ac = Config::getInstance($appid);
+			// $response = $ac->getConfigLimited();
+
+
+
+			$appid = $qs[1];
+			Utils::validateID($appid);
+
+			$client = Client::getByID($appid);
+			// echo "obtained client by id " . $appid;
+			// echo "result was "; print_r(var_export($client, true));
+			// echo "Class " . get_class($client); exit;
+			// exit;
+
+			// $clientdirectory->authorize($client, 'owner');
+			$response = $client->getJSON(array(
+				'appinfo' => true,
+				'type' => 'basic',
+			));
+
+			if (!($client instanceof APIProxy)) {
+				throw new Exception('Getting public view of client only supported for APIProxies for now.');
+			}
+
+
+
 		} else if (Utils::route('get', '^/appconfig/client/([a-z0-9\-]+)/status$', $qs, $parameters)) {
 
 			$appid = $qs[1];
@@ -439,6 +472,9 @@ try {
 			$response = $client->getJSON();
 
 			// echo "OK. Done";
+
+
+
 
 		} else if (Utils::route('post', '^/appconfig/client/([a-z0-9\-]+)/status$', $parameters, $bodyobject)) {
 
@@ -801,12 +837,6 @@ try {
 
 
 
-		} else if (Utils::route('get', '^/appconfig/view/([a-z0-9\-]+)$', $qs, $parameters)) {
-
-			$appid = $qs[1];
-			Utils::validateID($appid);
-			$ac = Config::getInstance($appid);
-			$response = $ac->getConfigLimited();
 
 		// } else if (Utils::route('get', '^/appconfig/app/([a-z0-9\-]+)$', $qs, $parameters)) {
 
