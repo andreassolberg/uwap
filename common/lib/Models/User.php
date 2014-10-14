@@ -30,6 +30,28 @@ class User extends StoredModel {
 	// 	return $has;
 	// }
 
+
+	public function hasAccountProperty($prop) {
+
+		if (!$this->has('accounts')) return false;
+		$accounts = $this->get('accounts');
+		foreach($accounts AS $a) {
+			if (isset($a[$prop])) return true;
+		}
+		return false;
+	}
+
+	public function getAccountProperty($prop) {
+
+		if (!$this->has('accounts')) return null;
+		$accounts = $this->get('accounts');
+		foreach($accounts AS $a) {
+			if (isset($a[$prop])) return $a[$prop];
+		}
+		return null;
+	}
+
+
 	public function getGroups() {
 		return $this->groupconnector->getGroups();
 	}

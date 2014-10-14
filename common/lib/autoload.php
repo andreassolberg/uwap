@@ -87,6 +87,8 @@ require_once($base . '/Models/App.php');
 require_once($base . '/Models/APIProxy.php');
 require_once($base . '/Models/ClientAuthorization.php');
 
+require_once($base . '/Clients/ClientAuthorizationHelper.php');
+
 
 require_once($base . '/Sets/Set.php');
 require_once($base . '/Sets/RoleSet.php');

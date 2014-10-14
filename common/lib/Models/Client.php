@@ -307,6 +307,30 @@ class Client extends StoredModel {
 		return $ret;
 	}
 
+	public function getClientHostname() {
+		if (!$this->has('redirect_uri')) return null;
+		$r = $this->getArray('redirect_uri');
+		if (!is_array($r)) throw new Exception('Not able to get redirect_uri');
+
+		$url = $r[0];
+
+		$host = parse_url($url, PHP_URL_HOST);
+		return $host;
+	}
+
+	public function isRedirectURISecured() {
+		if (!$this->has('redirect_uri')) return null;
+		$r = $this->getArray('redirect_uri');
+		if (!is_array($r)) throw new Exception('Not able to get redirect_uri');
+
+		$url = $r[0];
+		$prot = parse_url($url, PHP_URL_SCHEME);
+
+		return ($prot === 'https');
+
+	}
+
+
 
 	public static function generate($properties, $user) {
 

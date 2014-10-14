@@ -17,7 +17,8 @@ class APIProxy extends HostedService {
 	protected static $validProps = array(
 		'id', 'name', 'descr', 'type', 'uwap-userid', 'handlers', 'status', 'scopes', 'scopes_requested',
 		'externalhost',
-		'proxy'
+		'proxy', 
+		'owner-descr'
 	);
 
 	public function getHost() {
@@ -97,6 +98,22 @@ class APIProxy extends HostedService {
 		}
 		return false;
 	}
+
+	public function getScopeInfo($list) {
+
+		$info = array();
+		foreach($list AS $scope) {
+
+			if (isset($this->properties['proxy']['scopes'][$scope])) {
+				$info[] = $this->properties['proxy']['scopes'][$scope]["name"];
+			}
+
+		}
+		if (empty($info)) return null;
+		return $info;
+
+	}
+
 
 	/**
 	 * Get a boolean response to whether the localScope $scope is automatically accepted or not

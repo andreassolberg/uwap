@@ -424,6 +424,9 @@ class ClientDirectory {
 
 		}
 
+
+
+
 		$client->store(array('scopes', 'scopes_requested'));
 
 	}

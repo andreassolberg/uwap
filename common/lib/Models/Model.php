@@ -47,6 +47,13 @@ abstract class Model {
 		return $this->properties[$key];
 	}
 
+	public function getArray($key, $default = '____NA') {
+		$item = $this->get($key, $default);
+		if (is_scalar($item)) return array($item);
+		if (is_array($item)) return $item;
+		return $default;
+	}
+
 	public function has($key) {
 		return (isset($this->properties[$key]));
 	}

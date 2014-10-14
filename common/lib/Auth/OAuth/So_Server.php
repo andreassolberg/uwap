@@ -151,7 +151,9 @@ class So_Server {
 
 	public function setAuthorization($client_id, $userid, $scopes) {
 
-		error_log('setAuthorization($client_id, $userid, $scopes) ' . "($client_id, $userid, $scopes)");
+		error_log('setAuthorization($client_id, $userid, $scopes) ' . 
+			$client_id . " " . $userid . " " . var_export($scopes, true));
+
 		$clientconfig = $this->store->getClient($client_id);
 		$acceptedScopes = array_intersect($scopes, $clientconfig->get('scopes', array()));
 
@@ -163,7 +165,10 @@ class So_Server {
 		if (!empty($scopes)) {
 			$authorization->addScopes($scopes);
 		}
-		$this->store->setAuthorization($authorization);
+		// if (GlobalConfig::getValue('storeAuthorization', true)) {
+			$this->store->setAuthorization($authorization);
+		// }
+		
 	}
 
 
@@ -212,8 +217,10 @@ class So_Server {
 	 */
 	public function authorization($userid, $userdata = null) {
 
+		// echo '<pre>Request';
+		// print_r($_REQUEST); exit;
 
-		$request = new So_AuthRequest($_REQUEST);	
+		$request = new So_AuthRequest($_REQUEST);
 		
 		try {
 			error_log("Looking up client id " . $request->client_id);

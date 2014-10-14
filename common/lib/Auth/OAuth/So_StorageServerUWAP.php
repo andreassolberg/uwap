@@ -166,12 +166,28 @@ class So_StorageServerUWAP extends So_Storage {
 		);
 		$result = $this->store->queryOne('oauth2-server-authorization', $query);
 
+		if (!empty($result['expires'])) {
+			// header('Content-type: text/plain; charset=utf-8');
+			// echo "Check expiration time \n" . $result['expires'] . "\n";
+			// echo microtime(true)*1000;
+			$now = microtime(true)*1000;
+			if ($now > floatval($result['expires'])) {
+				// echo "EXPIRED";
+				return null;
+			}
+		}		
+
 		error_log('Extracting authz ' . var_export($result, true));
 		if ($result === null) return null;
 		return So_Authorization::fromObj($result);
 	}
 
+
+
 	public function setAuthorization(So_Authorization $auth) {
+
+		$alwaysRequireAuthorization = GlobalConfig::getValue('alwaysRequireAuthorization', false);
+		$expiresIn = $alwaysRequireAuthorization ? 5 : null;
 
 		$obj = $auth->getObj();
 
@@ -182,7 +198,7 @@ class So_StorageServerUWAP extends So_Storage {
 		$oldone = $this->store->queryOne('oauth2-server-authorization', $query);
 
 		if ($oldone === null) {
-			$this->store->store("oauth2-server-authorization", null, $obj);
+			$this->store->store("oauth2-server-authorization", null, $obj, $expiresIn);
 		} else {
 			
 			foreach($obj AS $k => $v) {
@@ -190,7 +206,7 @@ class So_StorageServerUWAP extends So_Storage {
 			} 
 			// echo '<pre>About to update an object: '; print_r($oldone); echo '</pre>';
 
-			$this->store->store("oauth2-server-authorization", null, $oldone);
+			$this->store->store("oauth2-server-authorization", null, $oldone, $expiresIn);
 		}
 
 
@@ -256,6 +272,8 @@ class So_StorageServerUWAP extends So_Storage {
 		// 	'token' => $accesstoken->getObj()
 		// ));
 	}
+	
+
 	
 	/*
 	 * Returns null or an array of So_AccessToken objects.

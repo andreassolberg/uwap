@@ -8,11 +8,8 @@
  *
  */
 
-
 require_once(dirname(dirname(__FILE__)) . '/lib/autoload.php');
 
-
-// error_log("File path: " . $BASE);
 
 // require_once($BASE . '/common/lib/autoload.php');
 // require_once($BASE . '/auth/lib/autoload.php');
@@ -41,8 +38,6 @@ try {
 		exit;
 	}
 
-
-
 	$response = null;
 
 	/**
@@ -56,6 +51,7 @@ try {
 
 		if (Utils::route('post','^/oauth/authorization$', $parameters)) {
 			$oauth->processAuthorizationResponse();
+			// $oauth->authorization();
 
 		} else if (Utils::route('get', '^/oauth/authorization$', $parameters)) {
 			$oauth->authorization();

@@ -12,6 +12,9 @@ class OAuth {
 		$this->server  = new So_Server($this->storage);
 		// $this->auth = new AuthBase();
 
+		// $this->globalconfig = GlobalConfig::getInstance();
+		// $oauthconfig = $this->globalconfig->getValue('oauth');
+
 		$this->auth = new Authenticator();
 	}
 
@@ -23,6 +26,8 @@ class OAuth {
 	 * @return [type] [description]
 	 */
 	function processAuthorizationResponse() {
+
+		// echo "process response"; exit;
 
 
 		$this->auth->req(true, false);
@@ -39,30 +44,36 @@ class OAuth {
 			if ($verifier !== $_REQUEST["verifier"]) {
 				throw new Exception("Invalid verifier code.");
 			}
-			// setAuthorization($client_id, $userid, $scopes) ..
+			// echo "we got verifier"; 
 
-			// echo "about to set authorization: ";
-			// print_r($config->getID());
-			// print_r($auth->getRealUserID());
-			
-			// exit;
-			// $scopes = null;
-			// if (!empty($_REQUEST['scopes'])) {
-			// 	$scopes = explode(',', $_REQUEST['scopes']);
-			// }
 
 			$oauthclient = $this->storage->getClient($_REQUEST['client_id']);
 			$scopes = $oauthclient->get('scopes');
-
-			// echo 'about to set scopes '; print_r($scopes);exit;
 
 			// TODO Add support for deciding which scope to use...
 			// TODO additional verification that the client_id is not modified by the user.
 			$this->server->setAuthorization($_REQUEST["client_id"], $user->get('userid'), $scopes);
 
-			// $this->auth->storeUser();
 
+			// If we pass this, then we are now already authenticated as a user.
+			// and we obtain information / attributes about the user.
+			
+			// $this->auth->req(false, true);
+			// $user = $this->auth->getUser(true);
+			// $userid = $user->get('userid');
+			// $userdata = $user->getJSON(array('type' => 'basic'));
+
+			// $this->server->authorization($userid, $userdata);
+			// return true;
+
+
+		} else {
+			throw new Exception('Missing verifier code');
 		}
+
+
+
+		// echo "about to return to " . $_REQUEST['return']; exit;
 		$return = $_REQUEST['return'];
 		SimpleSAML_Utilities::redirect($return);
 
@@ -108,8 +119,6 @@ class OAuth {
 		// If we pass this, then we are now already authenticated as a user.
 		// and we obtain information / attributes about the user.
 		$user = $this->auth->getUser(true);
-
-
 		$userid = $user->get('userid');
 
 		// TODO: Do we really need userdata at this point?
@@ -124,6 +133,16 @@ class OAuth {
 
 		try {
 
+			// print_r($_REQUEST); 
+
+			// if (GlobalConfig::getValue('alwaysRequireAuthorization', false) && !(empty($_REQUEST['response_type']))) {
+			// 	$a = new So_AuthorizationRequired();
+			// 	// $a->scopes = $_REQUEST['scopes'];
+			// 	$a->client_id = $_REQUEST['client_id'];
+			// 	throw $a;
+			// }
+
+
 
 			// Invoke the So_Server authorization process, when the user is already authenticated at the 
 			$this->server->authorization($userid, $userdata);
@@ -132,22 +151,32 @@ class OAuth {
 		// If user has not already authorizated this client with the requested scopes, then invoke the UI with 
 		} catch(So_AuthorizationRequired $e) {
 
-
 			if ($passive) {
 				$this->server->authorizationFailed('access_denied', 
 					'https://docs.uwap.org/', 'User has not authorized, and were unable to perform passive authorization');	
 			}
 
+			$postattrs = array(); // $_REQUEST;
+			$postattrs['client_id'] = $e->client_id;
+			$postattrs['verifier'] = $user->getVerifier();
+			$postattrs['return'] = SimpleSAML_Utilities::selfURL();
 
 			$postdata = array();
-			$postdata[] = array('key' => 'client_id', 'value' => $e->client_id);
-			$postdata[] = array('key' => 'return', 'value' => SimpleSAML_Utilities::selfURL());
-			$postdata[] = array('key' => 'verifier', 'value' => $user->getVerifier());
+			foreach($postattrs AS $k => $v) {
+				$postdata[] = array('key' => $k, 'value' => $v);
+			}
 
 			$oauthclient = $this->storage->getClient($e->client_id);
 			$oauthclientdata = $oauthclient->getJSON();
 
+
+			$ahelper = new ClientAuthorizationHelper($oauthclient);
+
+
+
+
 			$data = array(
+				'perms' => $ahelper->getInfo(),
 				'user' => $userdata,
 				'posturl' => SimpleSAML_Utilities::selfURLNoQuery(),
 				'postdata' => $postdata,
@@ -155,16 +184,17 @@ class OAuth {
 				'HOST' => GlobalConfig::hostname(),
 			);
 
+			$data['client']['host'] = $oauthclient->getClientHostname();
+			$data['client']['isSecure'] = $oauthclient->isRedirectURISecured();
+
 			
 			if ($oauthclient->has('uwap-userid')) {
 				$ownerid = $oauthclient->get('uwap-userid');
 				$owner = User::getByID($ownerid);
-				$data['owner'] = $owner->getJSON();
+				$data['owner'] = $owner->getJSON(array('type' => 'basic'));
+				$data['owner']['mail'] = $owner->getAccountProperty('mail');
 			}
 			
-
-
-
 
 			// $data = $config->getConfig();
 			// $data = $this->storage->getClient($e->client_id);
@@ -189,8 +219,6 @@ class OAuth {
 			// print_r($owner); 
 			// exit;
 
-
-
 			$cscopes = $oauthclient->get('scopes', array());
 			// $scopes = array();
 			// foreach($cscopes AS $scope) {
@@ -200,10 +228,14 @@ class OAuth {
 			// $data['scopes'] = $scopes;
 			$data['clientname'] = $oauthclient->get('name', 'Unnamed client');
 
-			$ap = new AuthorizationPresenter($cscopes);
-			$data['perm'] = $ap->getData();
+			// $ap = new AuthorizationPresenter($cscopes);
+			// $data['perm'] = $ap->getData();
 
-			// echo '<pre>'; print_r($data); exit;
+			if (isset($_REQUEST['debug'])) {
+				header('Content-Type: text/plain; charset=utf-8');
+				print_r($data); exit;	
+			}
+			
 
 			header("Content-Type: text/html; charset: utf-8");
 
