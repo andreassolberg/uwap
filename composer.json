@@ -1,6 +1,6 @@
 {
     "name": "andreassolberg/uwap",
-    "description": "UNINETT WebApp Park",
+    "description": "UNINETT Feide Connect",
     "require": {
         "mustache/mustache": "~2.6",
 		"nategood/commando": "*",
