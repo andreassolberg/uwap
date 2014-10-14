@@ -1155,9 +1155,9 @@ try {
 				header('Content-Type: image/png');
 				echo base64_decode($default);
 
-			} else if ($targetUser->has("photo") ) {
+			} else if ($targetUser->hasAccountProperty("photo") ) {
 				header('Content-Type: image/jpeg');
-				echo base64_decode($targetUser->get("photo"));
+				echo base64_decode($targetUser->getAccountProperty("photo"));
 			} else {
 				header('Content-Type: image/png');
 				echo base64_decode($default);
@@ -1228,7 +1228,7 @@ try {
 	}
 
 	header('Content-Type: application/json; charset=utf-8');
-	echo json_encode($response);
+	echo json_encode($response, JSON_PRETTY_PRINT);
 
 	// $profiling = microtime(true);
 	$key = Utils::getPathString();
