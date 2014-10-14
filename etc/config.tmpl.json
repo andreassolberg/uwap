@@ -7,9 +7,13 @@
 		"logLevel": 4
 	},
 	"cache": false,
+
+
+	"memcache": null,
 	"mongodb": {
-		"host": "158.38.213.108"
+		"host": "127.0.0.1"
 	},
+
 	"groupengine": {
 		"cmd": "/root/nvm/v0.10.19/bin/node",
 		"path": "groupengine"
