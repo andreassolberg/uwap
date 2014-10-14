@@ -111,7 +111,7 @@ require_once($base . '/Feed/FeedItem.php');
 require_once($base . '/Feed/FeedReader.php');
 
 
-
+require_once($base . '/Config.php');
 require_once($base . '/GlobalConfig.php');
 
 
