@@ -75,8 +75,9 @@ class APIProxy extends HostedService {
 	 * @return [type] [description]
 	 */
 	protected function getPolicy() {
-		if (isset($this->properties['policy']) && isset($this->properties['policy']['auto'])) {
-			return $this->properties['policy']['auto'];
+		$proxy = $this->get('proxy');
+		if (isset($proxy['policy']) && isset($proxy['policy']['auto'])) {
+			return $proxy['policy']['auto'];
 		}
 		return false;
 	}
