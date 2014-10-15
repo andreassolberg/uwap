@@ -572,7 +572,6 @@ try {
 			$client = Client::getByID($clientid);
 			
 			$clientdirectory->authorize($client, 'owner');
-			
 			$clientdirectory->requestScopes($client, $object);
 
 			$response = $client->getJSON();
