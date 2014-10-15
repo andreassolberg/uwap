@@ -32,7 +32,7 @@ define(function(require, exports, module) {
 
 		my.ping = ping;
 		return my;
-	}
+	};
 
 	var performSearch = function(searchfield, callback, getSelection) {
 

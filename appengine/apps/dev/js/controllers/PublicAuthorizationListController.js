@@ -50,7 +50,7 @@ define(function(require, exports, module) {
 			return that.element.find('#apiSearch').val();
 		});
 
-	}
+	};
 
 
 	PublicAuthorizationListController.prototype.search = function(q) {

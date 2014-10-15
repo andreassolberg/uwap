@@ -30,7 +30,7 @@ define(function(require, exports, module) {
 		$(this.element).on("click", ".request", $.proxy(this.request, this));
 		$(this.element).on("click", ".revokeAll", $.proxy(this.revokeAll, this));
 
-	}
+	};
 
 
 	APIAuthorizationListController.prototype.getScopeSelection = function(targetid, target, include) {
