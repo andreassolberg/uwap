@@ -1,13 +1,4 @@
 # Feide Connect
 
-
-Contains:
-
-* API Gatekeeper
-* Core API
-* AppEngine
-* Self service web apps
-* AuthEngine
-
-
-
+* This project is moved to <http://github.com/feideconnect/feideconnect-authengine>
+* Se also <http://feideconnect.no>
